@@ -76,6 +76,7 @@
 */
 namespace SweNet
 {
+    using SweNet.Tools;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -1024,78 +1025,78 @@ namespace SweNet
 //  return ERR;
 //}
 
-///* closes all open files, frees space of planetary data, 
-// * deletes memory of all computed positions 
-// */
-//void FAR PASCAL_CONV swe_close(void) 
-//{
-//  int i;
-//  /* close SWISSEPH files */
-//  for (i = 0; i < SEI_NEPHFILES; i ++) {
-//    if (swed.fidat[i].fptr != NULL) 
-//      fclose(swed.fidat[i].fptr);
-//    memset((void *) &swed.fidat[i], 0, sizeof(struct file_data));
-//  }
-//  /* free planets data space */
-//  for (i = 0; i < SEI_NPLANETS; i++) {
-//    if (swed.pldat[i].segp != NULL) {
-//      free((void *) swed.pldat[i].segp);
-//    }
-//    if (swed.pldat[i].refep != NULL) {
-//      free((void *) swed.pldat[i].refep);
-//    }
-//    memset((void *) &swed.pldat[i], 0, sizeof(struct plan_data));
-//  }
-//  for (i = 0; i <= SE_NPLANETS; i++) /* "<=" is correct! see decl. */
-//    memset((void *) &swed.savedat[i], 0, sizeof(struct save_positions));
-//  /* clear node data space */
-//  for (i = 0; i < SEI_NNODE_ETC; i++) {
-//#if 0
-//    memset((void *) &swed.nddat[i], 0, sizeof(struct node_data));
-//#else
-//    memset((void *) &swed.nddat[i], 0, sizeof(struct plan_data));
-//#endif
-//  }
-//  memset((void *) &swed.oec, 0, sizeof(struct epsilon));
-//  memset((void *) &swed.oec2000, 0, sizeof(struct epsilon));
-//  memset((void *) &swed.nut, 0, sizeof(struct nut));
-//  memset((void *) &swed.nut2000, 0, sizeof(struct nut));
-//  memset((void *) &swed.nutv, 0, sizeof(struct nut));
-//  /* close JPL file */
-//#ifndef NO_JPL
-//  swi_close_jpl_file();
-//#endif
-//  swed.jpl_file_is_open = FALSE;
-//  swed.jpldenum = 0;
-//  /* close fixed stars */
-//  if (swed.fixfp != NULL) {
-//    fclose(swed.fixfp);
-//    swed.fixfp = NULL;
-//  }
-//#ifdef TRACE
-//#define TRACE_CLOSE FALSE
-//  swi_open_trace(NULL);
-//  if (swi_fp_trace_c != NULL) {
-//    if (swi_trace_count < TRACE_COUNT_MAX) {
-//      fputs("\n/*SWE_CLOSE*/\n", swi_fp_trace_c);
-//      fputs("  swe_close();\n", swi_fp_trace_c);
-//#if TRACE_CLOSE
-//      fputs("}\n", swi_fp_trace_c);
-//#endif
-//      fflush(swi_fp_trace_c);
-//    }
-//#if TRACE_CLOSE
-//    fclose(swi_fp_trace_c);
-//#endif
-//  }
-//#if TRACE_CLOSE
-//  if (swi_fp_trace_out != NULL)
-//    fclose(swi_fp_trace_out);
-//  swi_fp_trace_c = NULL;
-//  swi_fp_trace_out = NULL;
-//#endif
-//#endif  /* TRACE */
-//}
+        /* closes all open files, frees space of planetary data, 
+         * deletes memory of all computed positions 
+         */
+        protected void swe_close() {
+            // TODO Finalize swe_close
+            //  int i;
+            //  /* close SWISSEPH files */
+            //  for (i = 0; i < SEI_NEPHFILES; i ++) {
+            //    if (swed.fidat[i].fptr != NULL) 
+            //      fclose(swed.fidat[i].fptr);
+            //    memset((void *) &swed.fidat[i], 0, sizeof(struct file_data));
+            //  }
+            //  /* free planets data space */
+            //  for (i = 0; i < SEI_NPLANETS; i++) {
+            //    if (swed.pldat[i].segp != NULL) {
+            //      free((void *) swed.pldat[i].segp);
+            //    }
+            //    if (swed.pldat[i].refep != NULL) {
+            //      free((void *) swed.pldat[i].refep);
+            //    }
+            //    memset((void *) &swed.pldat[i], 0, sizeof(struct plan_data));
+            //  }
+            //  for (i = 0; i <= SE_NPLANETS; i++) /* "<=" is correct! see decl. */
+            //    memset((void *) &swed.savedat[i], 0, sizeof(struct save_positions));
+            //  /* clear node data space */
+            //  for (i = 0; i < SEI_NNODE_ETC; i++) {
+            //#if 0
+            //    memset((void *) &swed.nddat[i], 0, sizeof(struct node_data));
+            //#else
+            //    memset((void *) &swed.nddat[i], 0, sizeof(struct plan_data));
+            //#endif
+            //  }
+            //  memset((void *) &swed.oec, 0, sizeof(struct epsilon));
+            //  memset((void *) &swed.oec2000, 0, sizeof(struct epsilon));
+            //  memset((void *) &swed.nut, 0, sizeof(struct nut));
+            //  memset((void *) &swed.nut2000, 0, sizeof(struct nut));
+            //  memset((void *) &swed.nutv, 0, sizeof(struct nut));
+            //  /* close JPL file */
+            //#ifndef NO_JPL
+            //  swi_close_jpl_file();
+            //#endif
+            //  swed.jpl_file_is_open = FALSE;
+            //  swed.jpldenum = 0;
+            //  /* close fixed stars */
+            //  if (swed.fixfp != NULL) {
+            //    fclose(swed.fixfp);
+            //    swed.fixfp = NULL;
+            //  }
+            //#ifdef TRACE
+            //#define TRACE_CLOSE FALSE
+            //  swi_open_trace(NULL);
+            //  if (swi_fp_trace_c != NULL) {
+            //    if (swi_trace_count < TRACE_COUNT_MAX) {
+            //      fputs("\n/*SWE_CLOSE*/\n", swi_fp_trace_c);
+            //      fputs("  swe_close();\n", swi_fp_trace_c);
+            //#if TRACE_CLOSE
+            //      fputs("}\n", swi_fp_trace_c);
+            //#endif
+            //      fflush(swi_fp_trace_c);
+            //    }
+            //#if TRACE_CLOSE
+            //    fclose(swi_fp_trace_c);
+            //#endif
+            //  }
+            //#if TRACE_CLOSE
+            //  if (swi_fp_trace_out != NULL)
+            //    fclose(swi_fp_trace_out);
+            //  swi_fp_trace_c = NULL;
+            //  swi_fp_trace_out = NULL;
+            //#endif
+            //#endif  /* TRACE */
+        }
 
 ///* sets ephemeris file path. 
 // * also calls swe_close(). this makes sure that swe_calc()
@@ -2094,50 +2095,49 @@ namespace SweNet
 //  return(OK);
 //}
 
-///*
-// * Alois 2.12.98: inserted error message generation for file not found 
-// */
-//FILE *swi_fopen(int ifno, char *fname, char *ephepath, char *serr)
-//{
-//  int np, i, j;
-//  FILE *fp = NULL;
-//  char *fnamp, fn[AS_MAXCH];
-//  char *cpos[20];
-//  char s[2 * AS_MAXCH], *s1 = s + AS_MAXCH;	/* a little trick */
-//  if (ifno >= 0) {
-//    fnamp = swed.fidat[ifno].fnam;
-//  } else {
-//    fnamp = fn; 
-//  }
-//  strcpy(s1, ephepath);
-//  np = swi_cutstr(s1, PATH_SEPARATOR, cpos, 20);
-//  for (i = 0; i < np; i++) {
-//    strcpy(s, cpos[i]);
-//    if (strcmp(s, ".") == 0) { /* current directory */
-//      *s = '\0';
-//    } else {
-//      j = strlen(s);
-//      if (*(s + j - 1) != *DIR_GLUE && *s != '\0')
-//    strcat(s, DIR_GLUE);
-//    }
-//    if (strlen(s) + strlen(fname) < AS_MAXCH) {
-//      strcat(s, fname);
-//    } else {
-//      if (serr != NULL)
-//    sprintf(serr, "error: file path and name must be shorter than %d.", AS_MAXCH);
-//      return NULL;
-//    }
-//    strcpy(fnamp, s);
-//    fp = fopen(fnamp, BFILE_R_ACCESS);
-//    if (fp != NULL) 
-//      return fp;
-//  }
-//  sprintf(s, "SwissEph file '%s' not found in PATH '%s'", fname, ephepath);
-//  s[AS_MAXCH-1] = '\0';		/* s must not be longer then AS_MAXCH */
-//  if (serr != NULL)
-//    strcpy(serr, s);
-//  return NULL;
-//}
+        /*
+         * Alois 2.12.98: inserted error message generation for file not found 
+         */
+        //FILE swi_fopen(int ifno, string fname, string ephepath, out string serr) {
+            //  int np, i, j;
+            //  FILE *fp = NULL;
+            //  char *fnamp, fn[AS_MAXCH];
+            //  char *cpos[20];
+            //  char s[2 * AS_MAXCH], *s1 = s + AS_MAXCH;	/* a little trick */
+            //  if (ifno >= 0) {
+            //    fnamp = swed.fidat[ifno].fnam;
+            //  } else {
+            //    fnamp = fn; 
+            //  }
+            //  strcpy(s1, ephepath);
+            //  np = swi_cutstr(s1, PATH_SEPARATOR, cpos, 20);
+            //  for (i = 0; i < np; i++) {
+            //    strcpy(s, cpos[i]);
+            //    if (strcmp(s, ".") == 0) { /* current directory */
+            //      *s = '\0';
+            //    } else {
+            //      j = strlen(s);
+            //      if (*(s + j - 1) != *DIR_GLUE && *s != '\0')
+            //    strcat(s, DIR_GLUE);
+            //    }
+            //    if (strlen(s) + strlen(fname) < AS_MAXCH) {
+            //      strcat(s, fname);
+            //    } else {
+            //      if (serr != NULL)
+            //    sprintf(serr, "error: file path and name must be shorter than %d.", AS_MAXCH);
+            //      return NULL;
+            //    }
+            //    strcpy(fnamp, s);
+            //    fp = fopen(fnamp, BFILE_R_ACCESS);
+            //    if (fp != NULL) 
+            //      return fp;
+            //  }
+            //  sprintf(s, "SwissEph file '%s' not found in PATH '%s'", fname, ephepath);
+            //  s[AS_MAXCH-1] = '\0';		/* s must not be longer then AS_MAXCH */
+            //  if (serr != NULL)
+            //    strcpy(serr, s);
+            //  return NULL;
+        //}
 
 ///* converts planets from barycentric to geocentric,
 // * apparent positions

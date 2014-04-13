@@ -80,206 +80,218 @@ namespace SweNet
     using System.Linq;
     using System.Text;
 
+    /// <summary>
+    /// sweph.h is not exported, so all is private
+    /// </summary>
     partial class SwissEph
     {
 
-///*
-// * move over from swephexp.h
-// */
+        /*
+         * move over from swephexp.h
+         */
 
-//#define SE_VERSION      "2.00.00"
+        const String SE_VERSION = "2.00.00";
 
-//#define J2000           2451545.0  	/* 2000 January 1.5 */
-//#define B1950           2433282.42345905  	/* 1950 January 0.923 */
-//#define J1900           2415020.0  	/* 1900 January 0.5 */
+        /// <summary>
+        /// 2000 January 1.5
+        /// </summary>
+        const double J2000 = 2451545.0;
+        /// <summary>
+        /// 1950 January 0.923 
+        /// </summary>
+        const double B1950 = 2433282.42345905; 
+ 	   /// <summary>
+        /// 1900 January 0.5
+ 	   /// </summary>
+        const double J1900 = 2415020.0;
 
-//#define MPC_CERES       1
-//#define MPC_PALLAS      2
-//#define MPC_JUNO        3
-//#define MPC_VESTA       4
-//#define MPC_CHIRON      2060
-//#define MPC_PHOLUS      5145
+        const int MPC_CERES = 1;
+        const int MPC_PALLAS = 2;
+        const int MPC_JUNO = 3;
+        const int MPC_VESTA = 4;
+        const int MPC_CHIRON = 2060;
+        const int MPC_PHOLUS = 5145;
 
-//#define SE_NAME_SUN             "Sun"
-//#define SE_NAME_MOON            "Moon"
-//#define SE_NAME_MERCURY         "Mercury"
-//#define SE_NAME_VENUS           "Venus"
-//#define SE_NAME_MARS            "Mars"
-//#define SE_NAME_JUPITER         "Jupiter"
-//#define SE_NAME_SATURN          "Saturn"
-//#define SE_NAME_URANUS          "Uranus"
-//#define SE_NAME_NEPTUNE         "Neptune"
-//#define SE_NAME_PLUTO           "Pluto"
-//#define SE_NAME_MEAN_NODE       "mean Node"
-//#define SE_NAME_TRUE_NODE       "true Node"
-//#define SE_NAME_MEAN_APOG       "mean Apogee"
-//#define SE_NAME_OSCU_APOG       "osc. Apogee"
-//#define SE_NAME_INTP_APOG       "intp. Apogee"
-//#define SE_NAME_INTP_PERG       "intp. Perigee"
-//#define SE_NAME_EARTH           "Earth"
-//#define SE_NAME_CERES           "Ceres"
-//#define SE_NAME_PALLAS          "Pallas"
-//#define SE_NAME_JUNO            "Juno"
-//#define SE_NAME_VESTA           "Vesta"
-//#define SE_NAME_CHIRON          "Chiron"
-//#define SE_NAME_PHOLUS          "Pholus"
+//#define SE_NAME_SUN             "Sun";
+//#define SE_NAME_MOON            "Moon";
+//#define SE_NAME_MERCURY         "Mercury";
+//#define SE_NAME_VENUS           "Venus";
+//#define SE_NAME_MARS            "Mars";
+//#define SE_NAME_JUPITER         "Jupiter";
+//#define SE_NAME_SATURN          "Saturn";
+//#define SE_NAME_URANUS          "Uranus";
+//#define SE_NAME_NEPTUNE         "Neptune";
+//#define SE_NAME_PLUTO           "Pluto";
+//#define SE_NAME_MEAN_NODE       "mean Node";
+//#define SE_NAME_TRUE_NODE       "true Node";
+//#define SE_NAME_MEAN_APOG       "mean Apogee";
+//#define SE_NAME_OSCU_APOG       "osc. Apogee";
+//#define SE_NAME_INTP_APOG       "intp. Apogee";
+//#define SE_NAME_INTP_PERG       "intp. Perigee";
+//#define SE_NAME_EARTH           "Earth";
+//#define SE_NAME_CERES           "Ceres";
+//#define SE_NAME_PALLAS          "Pallas";
+//#define SE_NAME_JUNO            "Juno";
+//#define SE_NAME_VESTA           "Vesta";
+//#define SE_NAME_CHIRON          "Chiron";
+//#define SE_NAME_PHOLUS          "Pholus";
 
  
-//#define SE_NAME_CUPIDO          "Cupido"
-//#define SE_NAME_HADES           "Hades"
-//#define SE_NAME_ZEUS            "Zeus"
-//#define SE_NAME_KRONOS          "Kronos"
-//#define SE_NAME_APOLLON         "Apollon"
-//#define SE_NAME_ADMETOS         "Admetos"
-//#define SE_NAME_VULKANUS        "Vulkanus"
-//#define SE_NAME_POSEIDON        "Poseidon"
-//#define SE_NAME_ISIS            "Isis"
-//#define SE_NAME_NIBIRU          "Nibiru"
-//#define SE_NAME_HARRINGTON      "Harrington"
-//#define SE_NAME_NEPTUNE_LEVERRIER       "Leverrier"
-//#define SE_NAME_NEPTUNE_ADAMS   "Adams"
-//#define SE_NAME_PLUTO_LOWELL    "Lowell"
-//#define SE_NAME_PLUTO_PICKERING "Pickering"
-//#define SE_NAME_VULCAN          "Vulcan"
-//#define SE_NAME_WHITE_MOON      "White Moon"
+//#define SE_NAME_CUPIDO          "Cupido";
+//#define SE_NAME_HADES           "Hades";
+//#define SE_NAME_ZEUS            "Zeus";
+//#define SE_NAME_KRONOS          "Kronos";
+//#define SE_NAME_APOLLON         "Apollon";
+//#define SE_NAME_ADMETOS         "Admetos";
+//#define SE_NAME_VULKANUS        "Vulkanus";
+//#define SE_NAME_POSEIDON        "Poseidon";
+//#define SE_NAME_ISIS            "Isis";
+//#define SE_NAME_NIBIRU          "Nibiru";
+//#define SE_NAME_HARRINGTON      "Harrington";
+//#define SE_NAME_NEPTUNE_LEVERRIER       "Leverrier";
+//#define SE_NAME_NEPTUNE_ADAMS   "Adams";
+//#define SE_NAME_PLUTO_LOWELL    "Lowell";
+//#define SE_NAME_PLUTO_PICKERING "Pickering";
+//#define SE_NAME_VULCAN          "Vulcan";
+//#define SE_NAME_WHITE_MOON      "White Moon";
 
-///* for delta t: intrinsic tidal acceleration in the mean motion of the moon,
-// * not given in the parameters list of the ephemeris files but computed
-// * by Chapront/Chapront-Touzé/Francou A&A 387 (2002), p. 705.
-// */
-//#define SE_TIDAL_DE200          (-23.8946)
-//#define SE_TIDAL_DE403          (-25.580)  /* was (-25.8) until V. 1.76.2 */
-//#define SE_TIDAL_DE404          (-25.580)  /* was (-25.8) until V. 1.76.2 */
-//#define SE_TIDAL_DE405          (-25.826)  /* was (-25.7376) until V. 1.76.2 */
-//#define SE_TIDAL_DE406          (-25.826)  /* was (-25.7376) until V. 1.76.2 */
-//#define SE_TIDAL_DE421          (-25.85)   /* JPL Interoffice Memorandum 14-mar-2008 on DE421 Lunar Orbit */
-//#define SE_TIDAL_DE430          (-25.82)   /* JPL Interoffice Memorandum 9-jul-2013 on DE430 Lunar Orbit */
-//#define SE_TIDAL_DE431          (-25.82)   /* waiting for information */
+        /* for delta t: intrinsic tidal acceleration in the mean motion of the moon,
+         * not given in the parameters list of the ephemeris files but computed
+         * by Chapront/Chapront-Touzé/Francou A&A 387 (2002), p. 705.
+         */
+        const double SE_TIDAL_DE200 = (-23.8946);
+        const double SE_TIDAL_DE403 = (-25.580);  /* was (-25.8) until V. 1.76.2 */
+        const double SE_TIDAL_DE404 = (-25.580);  /* was (-25.8) until V. 1.76.2 */
+        const double SE_TIDAL_DE405 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
+        const double SE_TIDAL_DE406 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
+        const double SE_TIDAL_DE421 = (-25.85);   /* JPL Interoffice Memorandum 14-mar-2008 on DE421 Lunar Orbit */
+        const double SE_TIDAL_DE430 = (-25.82);   /* JPL Interoffice Memorandum 9-jul-2013 on DE430 Lunar Orbit */
+        const double SE_TIDAL_DE431 = (-25.82);   /* waiting for information */
 
-//#define SE_TIDAL_26             (-26.0)
+        const double SE_TIDAL_26 = (-26.0);
 
-//#define SE_TIDAL_DEFAULT        SE_TIDAL_DE431
+        const double SE_TIDAL_DEFAULT = SE_TIDAL_DE431;
 
 ///*
 // * earlier content
 // */
 
-//#define PI              M_PI	/* 3.14159265358979323846, math.h */
-//#define TWOPI           (2.0 * PI)
+//#define PI              M_PI;	/* 3.14159265358979323846, math.h */
+//#define TWOPI           (2.0 * PI);
 
-//#define ENDMARK         -99
+//#define ENDMARK         -99;
 
-//#define SEI_EPSILON     -2
-//#define SEI_NUTATION    -1
-//#define SEI_EMB		0	
-//#define SEI_EARTH	0	
-//#define SEI_SUN  	0	
-//#define	SEI_MOON	1	
-//#define	SEI_MERCURY	2	
-//#define	SEI_VENUS	3	
-//#define	SEI_MARS	4	
-//#define	SEI_JUPITER	5	
-//#define	SEI_SATURN	6	
-//#define	SEI_URANUS	7	
-//#define	SEI_NEPTUNE	8	
-//#define	SEI_PLUTO	9	
-//#define	SEI_SUNBARY	10	/* barycentric sun */
-//#define	SEI_ANYBODY	11	/* any asteroid */
-//#define	SEI_CHIRON	12	
-//#define	SEI_PHOLUS	13	
-//#define	SEI_CERES	14	
-//#define	SEI_PALLAS	15	
-//#define	SEI_JUNO	16	
-//#define	SEI_VESTA	17	
+//#define SEI_EPSILON     -2;
+//#define SEI_NUTATION    -1;
+//#define SEI_EMB		0;	
+//#define SEI_EARTH	0;	
+//#define SEI_SUN  	0;	
+//#define	SEI_MOON	1;	
+//#define	SEI_MERCURY	2;	
+//#define	SEI_VENUS	3;	
+//#define	SEI_MARS	4;	
+//#define	SEI_JUPITER	5;	
+//#define	SEI_SATURN	6;	
+//#define	SEI_URANUS	7;	
+//#define	SEI_NEPTUNE	8;	
+//#define	SEI_PLUTO	9;	
+//#define	SEI_SUNBARY	10;	/* barycentric sun */
+//#define	SEI_ANYBODY	11;	/* any asteroid */
+//#define	SEI_CHIRON	12;	
+//#define	SEI_PHOLUS	13;	
+//#define	SEI_CERES	14;	
+//#define	SEI_PALLAS	15;	
+//#define	SEI_JUNO	16;	
+//#define	SEI_VESTA	17;	
 
-//#define SEI_NPLANETS    18
+//#define SEI_NPLANETS    18;
 
-//#define SEI_MEAN_NODE   0
-//#define SEI_TRUE_NODE   1
-//#define SEI_MEAN_APOG   2
-//#define SEI_OSCU_APOG   3
-//#define SEI_INTP_APOG   4
-//#define SEI_INTP_PERG   5
+//#define SEI_MEAN_NODE   0;
+//#define SEI_TRUE_NODE   1;
+//#define SEI_MEAN_APOG   2;
+//#define SEI_OSCU_APOG   3;
+//#define SEI_INTP_APOG   4;
+//#define SEI_INTP_PERG   5;
 
-//#define SEI_NNODE_ETC    6
+//#define SEI_NNODE_ETC    6;
 
-//#define SEI_FLG_HELIO   1
-//#define SEI_FLG_ROTATE  2
-//#define SEI_FLG_ELLIPSE 4
-//#define SEI_FLG_EMBHEL  8   	/* TRUE, if heliocentric earth is given
+//#define SEI_FLG_HELIO   1;
+//#define SEI_FLG_ROTATE  2;
+//#define SEI_FLG_ELLIPSE 4;
+//#define SEI_FLG_EMBHEL  8;   	/* TRUE, if heliocentric earth is given
 //                 * instead of barycentric sun 
 //                 * i.e. bary sun is computed from 
 //                 * barycentric and heliocentric earth */
 
-//#define SEI_FILE_PLANET	  0
-//#define SEI_FILE_MOON	  1 
-//#define SEI_FILE_MAIN_AST 2
-//#define SEI_FILE_ANY_AST  3
-//#define SEI_FILE_FIXSTAR  4
+//#define SEI_FILE_PLANET	  0;
+//#define SEI_FILE_MOON	  1 ;
+//#define SEI_FILE_MAIN_AST 2;
+//#define SEI_FILE_ANY_AST  3;
+//#define SEI_FILE_FIXSTAR  4;
 
 //#if 0
 //#define SEI_FILE_TEST_ENDIAN     (97L * 65536L + 98L * 256L + 99L) /*abc*/
 //#endif
-//#define SEI_FILE_TEST_ENDIAN     (0x616263L) 	/* abc*/ 
-//#define SEI_FILE_BIGENDIAN	0
-//#define SEI_FILE_NOREORD	0
-//#define SEI_FILE_LITENDIAN	1
-//#define SEI_FILE_REORD  	2
+//#define SEI_FILE_TEST_ENDIAN     (0x616263L); 	/* abc*/ 
+//#define SEI_FILE_BIGENDIAN	0;
+//#define SEI_FILE_NOREORD	0;
+//#define SEI_FILE_LITENDIAN	1;
+//#define SEI_FILE_REORD  	2;
 
-//#define SEI_FILE_NMAXPLAN	50
-//#define SEI_FILE_EFPOSBEGIN      500
+//#define SEI_FILE_NMAXPLAN	50;
+//#define SEI_FILE_EFPOSBEGIN      500;
 
-//#define SE_FILE_SUFFIX	"se1"
+//#define SE_FILE_SUFFIX	"se1";
 
-//#define SEI_NEPHFILES   7
-//#define SEI_CURR_FPOS   -1
+//#define SEI_NEPHFILES   7;
+//#define SEI_CURR_FPOS   -1;
 
 ///* Chiron's orbit becomes chaotic 
 // * before 720 AD and after 4606 AD, because of close encounters
 // * with Saturn. Accepting a maximum error of 5 degrees, 
 // * the ephemeris is good between the following dates:
 // */
-//#define CHIRON_START    1958470.5  	/* 1.1.650 */
-//#define CHIRON_END      3419437.5  	/* 1.1.4650 */
+//#define CHIRON_START    1958470.5;  	/* 1.1.650 */
+//#define CHIRON_END      3419437.5;  	/* 1.1.4650 */
 
 ///* Pholus's orbit is unstable as well, because he sometimes
 // * approaches Saturn.
 // * Accepting a maximum error of 5 degrees,
 // * the ephemeris is good after the following date:
 // */
-//#define PHOLUS_START    314845.5  	/* 1.1.-3850 */
+//#define PHOLUS_START    314845.5;  	/* 1.1.-3850 */
 
-//#define MOSHPLEPH_START	 625000.5
-//#define MOSHPLEPH_END  	2818000.5
-//#define MOSHLUEPH_START	 625000.5
-//#define MOSHLUEPH_END  	2818000.5
-///*#define MOSHNDEPH_START	-254900.5 */	/* 14 Feb -5410 00:00 ET jul.cal.*/
-///*#define MOSHNDEPH_END  	3697000.5 */	/* 11 Dec 5409 00:00 ET, greg. cal */
-//#define MOSHNDEPH_START	-3100015.5	/* 15 Aug -13200 00:00 ET jul.cal.*/
-//#define MOSHNDEPH_END  	8000016.5       /* 15 Mar 17191 00:00 ET, greg. cal */
+//#define MOSHPLEPH_START	 625000.5;
+//#define MOSHPLEPH_END  	2818000.5;
+//#define MOSHLUEPH_START	 625000.5;
+//#define MOSHLUEPH_END  	2818000.5;
+///*#define MOSHNDEPH_START	-254900.5; */	/* 14 Feb -5410 00:00 ET jul.cal.*/
+///*#define MOSHNDEPH_END  	3697000.5; */	/* 11 Dec 5409 00:00 ET, greg. cal */
+//#define MOSHNDEPH_START	-3100015.5;	/* 15 Aug -13200 00:00 ET jul.cal.*/
+//#define MOSHNDEPH_END  	8000016.5;       /* 15 Mar 17191 00:00 ET, greg. cal */
 ///*
-//#define MOSHPLEPH_START	 -225000.5
-//#define MOSHPLEPH_END  	3600000.5
-//#define MOSHLUEPH_START	 -225000.5
-//#define MOSHLUEPH_END  	3600000.5
+//#define MOSHPLEPH_START	 -225000.5;
+//#define MOSHPLEPH_END  	3600000.5;
+//#define MOSHLUEPH_START	 -225000.5;
+//#define MOSHLUEPH_END  	3600000.5;
 //*/
-//#define JPL_DE431_START -3027215.5 
-//#define JPL_DE431_END    7930192.5
+//#define JPL_DE431_START -3027215.5; 
+//#define JPL_DE431_END    7930192.5;
 
 //#if FALSE	/*	Alois commented out, not used anywhere  */
-//#define JPLEPH_START	 625307.5	/* about -3000 (DE406) */
-//#define JPLEPH_END	2816848.5	/* about  3000 (DE406) */
-//#define SWIEPH_START	 625614.927151
-//#define SWIEPH_END	2813641.5
-//#define ALLEPH_START	MOSHPLEPH_START
-//#define ALLEPH_END	MOSHPLEPH_END
-//#define BEG_YEAR       (-3000)
-//#define END_YEAR       3000
+//#define JPLEPH_START	 625307.5;	/* about -3000 (DE406) */
+//#define JPLEPH_END	2816848.5;	/* about  3000 (DE406) */
+//#define SWIEPH_START	 625614.927151;
+//#define SWIEPH_END	2813641.5;
+//#define ALLEPH_START	MOSHPLEPH_START;
+//#define ALLEPH_END	MOSHPLEPH_END;
+//#define BEG_YEAR       (-3000);
+//#define END_YEAR       3000;
 //#endif
 
-//#define MAXORD          40
+//#define MAXORD          40;
 
-//#define NCTIES         6.0     /* number of centuries per eph. file */
+//#define NCTIES         6.0;     /* number of centuries per eph. file */
 
 //#define OK (0)
 //#define ERR (-1)

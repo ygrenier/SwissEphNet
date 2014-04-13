@@ -22,6 +22,8 @@ namespace SweNet
         /// Internal release resources
         /// </summary>
         protected virtual void Dispose(bool disposing) {
+            if (disposing)
+                swe_close();
         }
 
         /// <summary>
@@ -96,7 +98,7 @@ namespace SweNet
         ///                    and notifies errors like 32 January.
         /// </para>
         /// </remarks>
-        public static double JulDay(int year, int month, int day, double hour, int gregflag) {
+        public double JulDay(int year, int month, int day, double hour, int gregflag) {
             return swe_julday(year, month, day, hour, gregflag);
         }
 
@@ -129,9 +131,18 @@ namespace SweNet
         /// with bug fix for year < -4711 16-aug-88 Alois Treindl
         /// </para>
         /// </remarks>
-        public static void RevJul(double jd, int gregflag,
+        public void RevJul(double jd, int gregflag,
                  ref int jyear, ref int jmon, ref int jday, ref double jut) {
             swe_revjul(jd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+        }
+
+        /// <summary>
+        /// delta t from Julian day number
+        /// </summary>
+        /// <param name="tjd">The Julian Day number</param>
+        /// <returns></returns>
+        public double DeltaT(double tjd) {
+            return swe_deltat(tjd);
         }
 
         #endregion

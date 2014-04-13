@@ -253,7 +253,7 @@ namespace SweNet
         public const int ERR = (-1);
 //#endif
 
-///* hack because UCHAR is already used by mingw gcc */
+///* h-ack because UCHAR is already used by mingw gcc */
 //#ifdef __GNUC__
 //#ifdef _WIN32
 //#define UCHAR SWE_UCHAR
