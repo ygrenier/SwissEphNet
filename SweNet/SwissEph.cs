@@ -8,7 +8,7 @@ namespace SweNet
     /// <summary>
     /// Swiss Ephemeris context
     /// </summary>
-    public class SwissEph
+    public partial class SwissEph
     {
     }
 }

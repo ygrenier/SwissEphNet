@@ -36,6 +36,28 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="cport\SwissEph.swecl.c.cs" />
+    <Compile Include="cport\SwissEph.swedate.c.cs" />
+    <Compile Include="cport\SwissEph.swedate.h.cs" />
+    <Compile Include="cport\SwissEph.swedll.h.cs" />
+    <Compile Include="cport\SwissEph.swehel.c.cs" />
+    <Compile Include="cport\SwissEph.swehouse.c.cs" />
+    <Compile Include="cport\SwissEph.swehouse.h.cs" />
+    <Compile Include="cport\SwissEph.swejpl.c.cs" />
+    <Compile Include="cport\SwissEph.swejpl.h.cs" />
+    <Compile Include="cport\SwissEph.swemmoon.c.cs" />
+    <Compile Include="cport\SwissEph.swemplan.c.cs" />
+    <Compile Include="cport\SwissEph.swemptab.c.cs" />
+    <Compile Include="cport\SwissEph.swenut2000a.h.cs" />
+    <Compile Include="cport\SwissEph.sweodef.h.cs" />
+    <Compile Include="cport\SwissEph.swepcalc.c.cs" />
+    <Compile Include="cport\SwissEph.swepcalc.h.cs" />
+    <Compile Include="cport\SwissEph.swepdate.c.cs" />
+    <Compile Include="cport\SwissEph.sweph.c.cs" />
+    <Compile Include="cport\SwissEph.sweph.h.cs" />
+    <Compile Include="cport\SwissEph.swephexp.h.cs" />
+    <Compile Include="cport\SwissEph.swephlib.c.cs" />
+    <Compile Include="cport\SwissEph.swephlib.h.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwissEph.cs" />
   </ItemGroup>
