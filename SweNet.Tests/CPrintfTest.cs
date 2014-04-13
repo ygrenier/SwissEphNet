@@ -5,7 +5,7 @@ using System.IO;
 namespace SweNet.Tests
 {
     [TestClass]
-    public class CTest
+    public class CPrintfTest
     {
         private string sepDecimal = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         private string sep1000 = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;

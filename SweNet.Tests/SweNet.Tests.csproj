@@ -55,7 +55,8 @@
   <ItemGroup>
     <Compile Include="SwissEphTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CTest.cs" />
+    <Compile Include="CPrintfTest.cs" />
+    <Compile Include="CScanfTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SweNet\SweNet.csproj">
