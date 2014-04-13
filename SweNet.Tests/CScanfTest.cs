@@ -75,10 +75,10 @@ namespace SweNet.Tests
             Assert.AreEqual(-123, r1);
 
             Assert.AreEqual(1, C.sscanf("040", "%d", ref r1));
-            Assert.AreEqual(32, r1);
+            Assert.AreEqual(40, r1);
 
             Assert.AreEqual(1, C.sscanf("0x40", "%d", ref r1));
-            Assert.AreEqual(64, r1);
+            Assert.AreEqual(0, r1);
 
             Assert.AreEqual(1, C.sscanf("123 ", "%2d", ref r1));
             Assert.AreEqual(12, r1);
@@ -102,10 +102,10 @@ namespace SweNet.Tests
             Assert.AreEqual((uint)123, r1);
 
             Assert.AreEqual(1, C.sscanf("040", "%u", ref r1));
-            Assert.AreEqual((uint)32, r1);
+            Assert.AreEqual((uint)40, r1);
 
             Assert.AreEqual(1, C.sscanf("0x40", "%u", ref r1));
-            Assert.AreEqual((uint)64, r1);
+            Assert.AreEqual((uint)0, r1);
 
             Assert.AreEqual(1, C.sscanf("123 ", "%2u", ref r1));
             Assert.AreEqual((uint)12, r1);

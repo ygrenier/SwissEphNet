@@ -461,14 +461,15 @@ namespace SweNet
                 int start = input.Position;
                 if (input.Peek() == '+' || input.Peek() == '-') {
                     input.MoveAhead();
-                } else if (input.Peek() == '0') {
-                    if (Char.ToLower(input.Peek(1)) == 'x') {
-                        radix = 16;
-                        input.MoveAhead(2);
-                    } else {
-                        radix = 8;
-                        input.MoveAhead();
-                    }
+                // Disable Octal et Hexadecimal format
+                //} else if (input.Peek() == '0') {
+                //    if (Char.ToLower(input.Peek(1)) == 'x') {
+                //        radix = 16;
+                //        input.MoveAhead(2);
+                //    } else {
+                //        radix = 8;
+                //        input.MoveAhead();
+                //    }
                 }
 
                 // Parse digits
