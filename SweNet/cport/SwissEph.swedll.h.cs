@@ -83,7 +83,7 @@ namespace SweNet
     partial class SwissEph
     {
 
-///* $Id: swedll.h,v 1.75 2009/04/08 07:19:08 dieter Exp $ */
+        /* $Id: swedll.h,v 1.75 2009/04/08 07:19:08 dieter Exp $ */
 
 //#ifdef __cplusplus
 //extern "C" {

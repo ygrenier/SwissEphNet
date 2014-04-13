@@ -107,90 +107,90 @@ namespace SweNet
 
 //#include "sweodef.h"
 
-///***********************************************************
-// * definitions for use also by non-C programmers
-// ***********************************************************/
+        /***********************************************************
+         * definitions for use also by non-C programmers
+         ***********************************************************/
 
-///* values for gregflag in swe_julday() and swe_revjul() */
-//# define SE_JUL_CAL	0
-//# define SE_GREG_CAL	1
+        /* values for gregflag in swe_julday() and swe_revjul() */
+        public const int SE_JUL_CAL = 0;
+        public const int SE_GREG_CAL = 1;
 
-///*
-// * planet numbers for the ipl parameter in swe_calc()
-// */
-//#define SE_ECL_NUT      -1      
+        /*
+         * planet numbers for the ipl parameter in swe_calc()
+         */
+        public const int SE_ECL_NUT = -1;
 
-//#define SE_SUN          0       
-//#define SE_MOON         1       
-//#define SE_MERCURY      2       
-//#define SE_VENUS        3       
-//#define SE_MARS         4       
-//#define SE_JUPITER      5       
-//#define SE_SATURN       6       
-//#define SE_URANUS       7       
-//#define SE_NEPTUNE      8       
-//#define SE_PLUTO        9       
-//#define SE_MEAN_NODE    10      
-//#define SE_TRUE_NODE    11
-//#define SE_MEAN_APOG    12      
-//#define SE_OSCU_APOG    13    
-//#define SE_EARTH        14      
-//#define SE_CHIRON       15      
-//#define SE_PHOLUS       16      
-//#define SE_CERES        17      
-//#define SE_PALLAS       18      
-//#define SE_JUNO         19      
-//#define SE_VESTA        20      
-//#define SE_INTP_APOG    21      
-//#define SE_INTP_PERG    22    
+        public const int SE_SUN = 0;
+        public const int SE_MOON = 1;
+        public const int SE_MERCURY = 2;
+        public const int SE_VENUS = 3;
+        public const int SE_MARS = 4;
+        public const int SE_JUPITER = 5;
+        public const int SE_SATURN = 6;
+        public const int SE_URANUS = 7;
+        public const int SE_NEPTUNE = 8;
+        public const int SE_PLUTO = 9;
+        public const int SE_MEAN_NODE = 10;
+        public const int SE_TRUE_NODE = 11;
+        public const int SE_MEAN_APOG = 12;
+        public const int SE_OSCU_APOG = 13;
+        public const int SE_EARTH = 14;
+        public const int SE_CHIRON = 15;
+        public const int SE_PHOLUS = 16;
+        public const int SE_CERES = 17;
+        public const int SE_PALLAS = 18;
+        public const int SE_JUNO = 19;
+        public const int SE_VESTA = 20;
+        public const int SE_INTP_APOG = 21;
+        public const int SE_INTP_PERG = 22;
 
-//#define SE_NPLANETS     23      
+        public const int SE_NPLANETS = 23;
 
-//#define SE_AST_OFFSET   10000
-//#define SE_VARUNA   (SE_AST_OFFSET + 20000)
+        public const int SE_AST_OFFSET = 10000;
+        public const int SE_VARUNA = (SE_AST_OFFSET + 20000);
 
-//#define SE_FICT_OFFSET  	40
-//#define SE_FICT_OFFSET_1  	39
-//#define SE_FICT_MAX  	       999 
-//#define SE_NFICT_ELEM           15
+        public const int SE_FICT_OFFSET = 40;
+        public const int SE_FICT_OFFSET_1 = 39;
+        public const int SE_FICT_MAX = 999;
+        public const int SE_NFICT_ELEM = 15;
 
-//#define SE_COMET_OFFSET 1000
+        public const int SE_COMET_OFFSET = 1000;
 
-//#define SE_NALL_NAT_POINTS      (SE_NPLANETS + SE_NFICT_ELEM)
+        public const int SE_NALL_NAT_POINTS = (SE_NPLANETS + SE_NFICT_ELEM);
 
-///* Hamburger or Uranian "planets" */
-//#define SE_CUPIDO       	40
-//#define SE_HADES        	41
-//#define SE_ZEUS         	42
-//#define SE_KRONOS       	43
-//#define SE_APOLLON      	44
-//#define SE_ADMETOS      	45
-//#define SE_VULKANUS     	46
-//#define SE_POSEIDON     	47
-///* other fictitious bodies */
-//#define SE_ISIS         	48
-//#define SE_NIBIRU       	49
-//#define SE_HARRINGTON           50
-//#define SE_NEPTUNE_LEVERRIER    51
-//#define SE_NEPTUNE_ADAMS        52
-//#define SE_PLUTO_LOWELL         53
-//#define SE_PLUTO_PICKERING      54
-//#define SE_VULCAN      		55
-//#define SE_WHITE_MOON  		56
-//#define SE_PROSERPINA  		57
-//#define SE_WALDEMATH  		58
+        /* Hamburger or Uranian "planets" */
+        public const int SE_CUPIDO = 40;
+        public const int SE_HADES = 41;
+        public const int SE_ZEUS = 42;
+        public const int SE_KRONOS = 43;
+        public const int SE_APOLLON = 44;
+        public const int SE_ADMETOS = 45;
+        public const int SE_VULKANUS = 46;
+        public const int SE_POSEIDON = 47;
+        /* other fictitious bodies */
+        public const int SE_ISIS = 48;
+        public const int SE_NIBIRU = 49;
+        public const int SE_HARRINGTON = 50;
+        public const int SE_NEPTUNE_LEVERRIER = 51;
+        public const int SE_NEPTUNE_ADAMS = 52;
+        public const int SE_PLUTO_LOWELL = 53;
+        public const int SE_PLUTO_PICKERING = 54;
+        public const int SE_VULCAN = 55;
+        public const int SE_WHITE_MOON = 56;
+        public const int SE_PROSERPINA = 57;
+        public const int SE_WALDEMATH = 58;
 
-//#define SE_FIXSTAR      -10
+        public const int SE_FIXSTAR = -10;
 
-//#define SE_ASC			0
-//#define SE_MC			1
-//#define SE_ARMC			2
-//#define SE_VERTEX		3
-//#define SE_EQUASC  		4	/* "equatorial ascendant" */
-//#define SE_COASC1		5	/* "co-ascendant" (W. Koch) */
-//#define SE_COASC2		6	/* "co-ascendant" (M. Munkasey) */
-//#define SE_POLASC		7	/* "polar ascendant" (M. Munkasey) */
-//#define SE_NASCMC		8
+        public const int SE_ASC = 0;
+        public const int SE_MC = 1;
+        public const int SE_ARMC = 2;
+        public const int SE_VERTEX = 3;
+        public const int SE_EQUASC = 4;	/* "equatorial ascendant" */
+        public const int SE_COASC1 = 5;	/* "co-ascendant" (W. Koch) */
+        public const int SE_COASC2 = 6;	/* "co-ascendant" (M. Munkasey) */
+        public const int SE_POLASC = 7;	/* "polar ascendant" (M. Munkasey) */
+        public const int SE_NASCMC = 8;
 
 ///*
 // * flag bits for parameter iflag in function swe_calc()
@@ -204,79 +204,79 @@ namespace SweNet
 // *
 // * The 'L' behind the number indicates that 32-bit integers (Long) are used.
 // */
-//#define SEFLG_JPLEPH    1       /* use JPL ephemeris */
-//#define SEFLG_SWIEPH    2       /* use SWISSEPH ephemeris */
-//#define SEFLG_MOSEPH    4       /* use Moshier ephemeris */
+        public const int SEFLG_JPLEPH = 1;       /* use JPL ephemeris */
+        public const int SEFLG_SWIEPH = 2;       /* use SWISSEPH ephemeris */
+        public const int SEFLG_MOSEPH = 4;       /* use Moshier ephemeris */
 
-//#define SEFLG_HELCTR	8      /* return heliocentric position */
-//#define SEFLG_TRUEPOS	16     /* return true positions, not apparent */
-//#define SEFLG_J2000	32     /* no precession, i.e. give J2000 equinox */
-//#define SEFLG_NONUT	64     /* no nutation, i.e. mean equinox of date */
-//#define SEFLG_SPEED3	128     /* speed from 3 positions (do not use it,
-//                                  SEFLG_SPEED is faster and more precise.) */
-//#define SEFLG_SPEED	256     /* high precision speed  */
-//#define SEFLG_NOGDEFL	512     /* turn off gravitational deflection */
-//#define SEFLG_NOABERR	1024    /* turn off 'annual' aberration of light */
-//#define SEFLG_EQUATORIAL (2*1024)    /* equatorial positions are wanted */
-//#define SEFLG_XYZ	(4*1024)    /* cartesian, not polar, coordinates */
-//#define SEFLG_RADIANS	(8*1024)    /* coordinates in radians, not degrees */
-//#define SEFLG_BARYCTR	(16*1024)   /* barycentric positions */
-//#define SEFLG_TOPOCTR	(32*1024)   /* topocentric positions */
-//#define SEFLG_SIDEREAL	(64*1024)   /* sidereal positions */
-//#define SEFLG_ICRS	(128*1024)   /* ICRS (DE406 reference frame) */
-//#define SEFLG_DPSIDEPS_1980	(256*1024) /* reproduce JPL Horizons 
-//                                      * 1962 - today to 0.002 arcsec. */
-//#define SEFLG_JPLHOR	SEFLG_DPSIDEPS_1980
-//#define SEFLG_JPLHOR_APPROX	(512*1024)   /* approximate JPL Horizons 1962 - today */
+        public const int SEFLG_HELCTR = 8;      /* return heliocentric position */
+        public const int SEFLG_TRUEPOS = 16;     /* return true positions, not apparent */
+        public const int SEFLG_J2000 = 32;     /* no precession, i.e. give J2000 equinox */
+        public const int SEFLG_NONUT = 64;     /* no nutation, i.e. mean equinox of date */
+        public const int SEFLG_SPEED3 = 128;     /* speed from 3 positions (do not use it,
+                                                    SEFLG_SPEED is faster and more precise.) */
+        public const int SEFLG_SPEED = 256;     /* high precision speed  */
+        public const int SEFLG_NOGDEFL = 512;     /* turn off gravitational deflection */
+        public const int SEFLG_NOABERR = 1024;    /* turn off 'annual' aberration of light */
+        public const int SEFLG_EQUATORIAL = (2 * 1024);    /* equatorial positions are wanted */
+        public const int SEFLG_XYZ = (4 * 1024);    /* cartesian, not polar, coordinates */
+        public const int SEFLG_RADIANS = (8 * 1024);    /* coordinates in radians, not degrees */
+        public const int SEFLG_BARYCTR = (16 * 1024);   /* barycentric positions */
+        public const int SEFLG_TOPOCTR = (32 * 1024);   /* topocentric positions */
+        public const int SEFLG_SIDEREAL = (64 * 1024);   /* sidereal positions */
+        public const int SEFLG_ICRS = (128 * 1024);   /* ICRS (DE406 reference frame) */
+        public const int SEFLG_DPSIDEPS_1980 = (256 * 1024); /* reproduce JPL Horizons 
+                                                                1962 - today to 0.002 arcsec. */
+        public const int SEFLG_JPLHOR = SEFLG_DPSIDEPS_1980;
+        public const int SEFLG_JPLHOR_APPROX = (512 * 1024);   /* approximate JPL Horizons 1962 - today */
 
-//#define SE_SIDBITS		256
-///* for projection onto ecliptic of t0 */
-//#define SE_SIDBIT_ECL_T0        256
-///* for projection onto solar system plane */
-//#define SE_SIDBIT_SSY_PLANE     512
+        public const int SE_SIDBITS = 256;
+        /* for projection onto ecliptic of t0 */
+        public const int SE_SIDBIT_ECL_T0 = 256;
+        /* for projection onto solar system plane */
+        public const int SE_SIDBIT_SSY_PLANE = 512;
 
-///* sidereal modes (ayanamsas) */
-//#define SE_SIDM_FAGAN_BRADLEY    0
-//#define SE_SIDM_LAHIRI           1
-//#define SE_SIDM_DELUCE           2
-//#define SE_SIDM_RAMAN            3
-//#define SE_SIDM_USHASHASHI       4
-//#define SE_SIDM_KRISHNAMURTI     5
-//#define SE_SIDM_DJWHAL_KHUL      6
-//#define SE_SIDM_YUKTESHWAR       7
-//#define SE_SIDM_JN_BHASIN        8
-//#define SE_SIDM_BABYL_KUGLER1    9
-//#define SE_SIDM_BABYL_KUGLER2   10
-//#define SE_SIDM_BABYL_KUGLER3   11
-//#define SE_SIDM_BABYL_HUBER    	12
-//#define SE_SIDM_BABYL_ETPSC    	13
-//#define SE_SIDM_ALDEBARAN_15TAU 14
-//#define SE_SIDM_HIPPARCHOS      15
-//#define SE_SIDM_SASSANIAN       16
-//#define SE_SIDM_GALCENT_0SAG    17
-//#define SE_SIDM_J2000           18
-//#define SE_SIDM_J1900           19
-//#define SE_SIDM_B1950           20
-//#define SE_SIDM_SURYASIDDHANTA  21
-//#define SE_SIDM_SURYASIDDHANTA_MSUN  22
-//#define SE_SIDM_ARYABHATA       23
-//#define SE_SIDM_ARYABHATA_MSUN  24
-//#define SE_SIDM_SS_REVATI       25
-//#define SE_SIDM_SS_CITRA        26
-//#define SE_SIDM_TRUE_CITRA      27
-//#define SE_SIDM_TRUE_REVATI     28
-//#define SE_SIDM_USER            255
+        /* sidereal modes (ayanamsas) */
+        public const int SE_SIDM_FAGAN_BRADLEY = 0;
+        public const int SE_SIDM_LAHIRI = 1;
+        public const int SE_SIDM_DELUCE = 2;
+        public const int SE_SIDM_RAMAN = 3;
+        public const int SE_SIDM_USHASHASHI = 4;
+        public const int SE_SIDM_KRISHNAMURTI = 5;
+        public const int SE_SIDM_DJWHAL_KHUL = 6;
+        public const int SE_SIDM_YUKTESHWAR = 7;
+        public const int SE_SIDM_JN_BHASIN = 8;
+        public const int SE_SIDM_BABYL_KUGLER1 = 9;
+        public const int SE_SIDM_BABYL_KUGLER2 = 10;
+        public const int SE_SIDM_BABYL_KUGLER3 = 11;
+        public const int SE_SIDM_BABYL_HUBER = 12;
+        public const int SE_SIDM_BABYL_ETPSC = 13;
+        public const int SE_SIDM_ALDEBARAN_15TAU = 14;
+        public const int SE_SIDM_HIPPARCHOS = 15;
+        public const int SE_SIDM_SASSANIAN = 16;
+        public const int SE_SIDM_GALCENT_0SAG = 17;
+        public const int SE_SIDM_J2000 = 18;
+        public const int SE_SIDM_J1900 = 19;
+        public const int SE_SIDM_B1950 = 20;
+        public const int SE_SIDM_SURYASIDDHANTA = 21;
+        public const int SE_SIDM_SURYASIDDHANTA_MSUN = 22;
+        public const int SE_SIDM_ARYABHATA = 23;
+        public const int SE_SIDM_ARYABHATA_MSUN = 24;
+        public const int SE_SIDM_SS_REVATI = 25;
+        public const int SE_SIDM_SS_CITRA = 26;
+        public const int SE_SIDM_TRUE_CITRA = 27;
+        public const int SE_SIDM_TRUE_REVATI = 28;
+        public const int SE_SIDM_USER = 255;
 
-//#define SE_NSIDM_PREDEF	      29
+        public const int SE_NSIDM_PREDEF = 29;
 
-///* used for swe_nod_aps(): */
-//#define SE_NODBIT_MEAN		1   /* mean nodes/apsides */
-//#define SE_NODBIT_OSCU		2   /* osculating nodes/apsides */
-//#define SE_NODBIT_OSCU_BAR	4   /* same, but motion about solar system barycenter is considered */
-//#define SE_NODBIT_FOPOINT	256   /* focal point of orbit instead of aphelion */
+        /* used for swe_nod_aps(): */
+        public const int SE_NODBIT_MEAN = 1;   /* mean nodes/apsides */
+        public const int SE_NODBIT_OSCU = 2;   /* osculating nodes/apsides */
+        public const int SE_NODBIT_OSCU_BAR = 4;   /* same, but motion about solar system barycenter is considered */
+        public const int SE_NODBIT_FOPOINT = 256;   /* focal point of orbit instead of aphelion */
 
-///* default ephemeris used when no ephemeris flagbit is set */
-//#define SEFLG_DEFAULTEPH SEFLG_SWIEPH
+        /* default ephemeris used when no ephemeris flagbit is set */
+        public const int SEFLG_DEFAULTEPH = SEFLG_SWIEPH;
 
 //#define SE_MAX_STNAME		256	/* maximum size of fixstar name;
 //                                         * the parameter star in swe_fixstar
@@ -284,65 +284,65 @@ namespace SweNet
 //                         * the returned star name.
 //                     */
 
-///* defines for eclipse computations */
+        /* defines for eclipse computations */
 
-//#define SE_ECL_CENTRAL		1
-//#define SE_ECL_NONCENTRAL	2
-//#define SE_ECL_TOTAL		4
-//#define SE_ECL_ANNULAR		8
-//#define SE_ECL_PARTIAL		16
-//#define SE_ECL_ANNULAR_TOTAL	32
-//#define SE_ECL_PENUMBRAL	64
-//#define SE_ECL_ALLTYPES_SOLAR   (SE_ECL_CENTRAL|SE_ECL_NONCENTRAL|SE_ECL_TOTAL|SE_ECL_ANNULAR|SE_ECL_PARTIAL|SE_ECL_ANNULAR_TOTAL)
-//#define SE_ECL_ALLTYPES_LUNAR   (SE_ECL_TOTAL|SE_ECL_PARTIAL|SE_ECL_PENUMBRAL)
-//#define SE_ECL_VISIBLE			128
-//#define SE_ECL_MAX_VISIBLE		256
-//#define SE_ECL_1ST_VISIBLE		512	/* begin of partial eclipse */
-//#define SE_ECL_PARTBEG_VISIBLE		512	/* begin of partial eclipse */
-//#define SE_ECL_2ND_VISIBLE		1024	/* begin of total eclipse */
-//#define SE_ECL_TOTBEG_VISIBLE		1024	/* begin of total eclipse */
-//#define SE_ECL_3RD_VISIBLE		2048    /* end of total eclipse */
-//#define SE_ECL_TOTEND_VISIBLE		2048    /* end of total eclipse */
-//#define SE_ECL_4TH_VISIBLE		4096    /* end of partial eclipse */
-//#define SE_ECL_PARTEND_VISIBLE		4096    /* end of partial eclipse */
-//#define SE_ECL_PENUMBBEG_VISIBLE	8192    /* begin of penumbral eclipse */
-//#define SE_ECL_PENUMBEND_VISIBLE	16384   /* end of penumbral eclipse */
-//#define SE_ECL_OCC_BEG_DAYLIGHT		8192    /* occultation begins during the day */
-//#define SE_ECL_OCC_END_DAYLIGHT		16384   /* occultation ends during the day */
-//#define SE_ECL_ONE_TRY          (32*1024) 
-//        /* check if the next conjunction of the moon with
-//         * a planet is an occultation; don't search further */
+        public const int SE_ECL_CENTRAL = 1;
+        public const int SE_ECL_NONCENTRAL = 2;
+        public const int SE_ECL_TOTAL = 4;
+        public const int SE_ECL_ANNULAR = 8;
+        public const int SE_ECL_PARTIAL = 16;
+        public const int SE_ECL_ANNULAR_TOTAL = 32;
+        public const int SE_ECL_PENUMBRAL = 64;
+        public const int SE_ECL_ALLTYPES_SOLAR = (SE_ECL_CENTRAL | SE_ECL_NONCENTRAL | SE_ECL_TOTAL | SE_ECL_ANNULAR | SE_ECL_PARTIAL | SE_ECL_ANNULAR_TOTAL);
+        public const int SE_ECL_ALLTYPES_LUNAR = (SE_ECL_TOTAL | SE_ECL_PARTIAL | SE_ECL_PENUMBRAL);
+        public const int SE_ECL_VISIBLE = 128;
+        public const int SE_ECL_MAX_VISIBLE = 256;
+        public const int SE_ECL_1ST_VISIBLE = 512;	/* begin of partial eclipse */
+        public const int SE_ECL_PARTBEG_VISIBLE = 512;	/* begin of partial eclipse */
+        public const int SE_ECL_2ND_VISIBLE = 1024;	/* begin of total eclipse */
+        public const int SE_ECL_TOTBEG_VISIBLE = 1024;	/* begin of total eclipse */
+        public const int SE_ECL_3RD_VISIBLE = 2048;    /* end of total eclipse */
+        public const int SE_ECL_TOTEND_VISIBLE = 2048;    /* end of total eclipse */
+        public const int SE_ECL_4TH_VISIBLE = 4096;    /* end of partial eclipse */
+        public const int SE_ECL_PARTEND_VISIBLE = 4096;    /* end of partial eclipse */
+        public const int SE_ECL_PENUMBBEG_VISIBLE = 8192;    /* begin of penumbral eclipse */
+        public const int SE_ECL_PENUMBEND_VISIBLE = 16384;   /* end of penumbral eclipse */
+        public const int SE_ECL_OCC_BEG_DAYLIGHT = 8192;    /* occultation begins during the day */
+        public const int SE_ECL_OCC_END_DAYLIGHT = 16384;   /* occultation ends during the day */
+        public const int SE_ECL_ONE_TRY = (32 * 1024); 
+                                                        /* check if the next conjunction of the moon with
+                                                         * a planet is an occultation; don't search further */
 
-///* for swe_rise_transit() */
-//#define SE_CALC_RISE		1
-//#define SE_CALC_SET		2
-//#define SE_CALC_MTRANSIT	4
-//#define SE_CALC_ITRANSIT	8
-//#define SE_BIT_DISC_CENTER      256 /* to be or'ed to SE_CALC_RISE/SET,
-//                     * if rise or set of disc center is 
-//                     * required */
-//#define SE_BIT_DISC_BOTTOM      8192 /* to be or'ed to SE_CALC_RISE/SET,
-//                                      * if rise or set of lower limb of 
-//                      * disc is requried */
-//#define SE_BIT_NO_REFRACTION    512 /* to be or'ed to SE_CALC_RISE/SET, 
-//                     * if refraction is to be ignored */
-//#define SE_BIT_CIVIL_TWILIGHT    1024 /* to be or'ed to SE_CALC_RISE/SET */
-//#define SE_BIT_NAUTIC_TWILIGHT   2048 /* to be or'ed to SE_CALC_RISE/SET */
-//#define SE_BIT_ASTRO_TWILIGHT    4096 /* to be or'ed to SE_CALC_RISE/SET */
-//#define SE_BIT_FIXED_DISC_SIZE (16*1024) /* or'ed to SE_CALC_RISE/SET:
-//                                     * neglect the effect of distance on
-//                     * disc size */
+        /* for swe_rise_transit() */
+        public const int SE_CALC_RISE = 1;
+        public const int SE_CALC_SET = 2;
+        public const int SE_CALC_MTRANSIT = 4;
+        public const int SE_CALC_ITRANSIT = 8;
+        public const int SE_BIT_DISC_CENTER = 256; /* to be or'ed to SE_CALC_RISE/SET,
+                                                    * if rise or set of disc center is 
+                                                    * required */
+        public const int SE_BIT_DISC_BOTTOM = 8192; /* to be or'ed to SE_CALC_RISE/SET,
+                                                     * if rise or set of lower limb of 
+                                                     * disc is requried */
+        public const int SE_BIT_NO_REFRACTION = 512; /* to be or'ed to SE_CALC_RISE/SET, 
+                                                      * if refraction is to be ignored */
+        public const int SE_BIT_CIVIL_TWILIGHT = 1024; /* to be or'ed to SE_CALC_RISE/SET */
+        public const int SE_BIT_NAUTIC_TWILIGHT = 2048; /* to be or'ed to SE_CALC_RISE/SET */
+        public const int SE_BIT_ASTRO_TWILIGHT = 4096; /* to be or'ed to SE_CALC_RISE/SET */
+        public const int SE_BIT_FIXED_DISC_SIZE = (16 * 1024); /* or'ed to SE_CALC_RISE/SET:
+                                                                * neglect the effect of distance on
+                                                                * disc size */
 
 
-///* for swe_azalt() and swe_azalt_rev() */
-//#define SE_ECL2HOR		0
-//#define SE_EQU2HOR		1
-//#define SE_HOR2ECL		0
-//#define SE_HOR2EQU		1
+        /* for swe_azalt() and swe_azalt_rev() */
+        public const int SE_ECL2HOR = 0;
+        public const int SE_EQU2HOR = 1;
+        public const int SE_HOR2ECL = 0;
+        public const int SE_HOR2EQU = 1;
 
-///* for swe_refrac() */
-//#define SE_TRUE_TO_APP	0
-//#define SE_APP_TO_TRUE	1
+        /* for swe_refrac() */
+        public const int SE_TRUE_TO_APP = 0;
+        public const int SE_APP_TO_TRUE = 1;
 
 ///*
 // * only used for experimenting with various JPL ephemeris files
@@ -390,63 +390,63 @@ namespace SweNet
 //#endif
 //#endif  /* SE_EPHE_PATH */
 
-///* defines for function swe_split_deg() (in swephlib.c) */
-//# define SE_SPLIT_DEG_ROUND_SEC    1
-//# define SE_SPLIT_DEG_ROUND_MIN    2
-//# define SE_SPLIT_DEG_ROUND_DEG    4
-//# define SE_SPLIT_DEG_ZODIACAL     8
-//# define SE_SPLIT_DEG_KEEP_SIGN   16	/* don't round to next sign, 
-//                     * e.g. 29.9999999 will be rounded
-//                     * to 29d59'59" (or 29d59' or 29d) */
-//# define SE_SPLIT_DEG_KEEP_DEG    32	/* don't round to next degree
-//                     * e.g. 13.9999999 will be rounded
-//                     * to 13d59'59" (or 13d59' or 13d) */
+        /* defines for function swe_split_deg() (in swephlib.c) */
+        public const int SE_SPLIT_DEG_ROUND_SEC = 1;
+        public const int SE_SPLIT_DEG_ROUND_MIN = 2;
+        public const int SE_SPLIT_DEG_ROUND_DEG = 4;
+        public const int SE_SPLIT_DEG_ZODIACAL = 8;
+        public const int SE_SPLIT_DEG_KEEP_SIGN = 16;	/* don't round to next sign, 
+                                                         * e.g. 29.9999999 will be rounded
+                                                         * to 29d59'59" (or 29d59' or 29d) */
+        public const int SE_SPLIT_DEG_KEEP_DEG = 32;	/* don't round to next degree
+                                                         * e.g. 13.9999999 will be rounded
+                                                         * to 13d59'59" (or 13d59' or 13d) */
 
-///* for heliacal functions */
-//#define SE_HELIACAL_RISING		1
-//#define SE_HELIACAL_SETTING		2
-//#define SE_MORNING_FIRST		SE_HELIACAL_RISING
-//#define SE_EVENING_LAST			SE_HELIACAL_SETTING
-//#define SE_EVENING_FIRST		3
-//#define SE_MORNING_LAST			4
-//#define SE_ACRONYCHAL_RISING		5  /* still not implemented */
-//#define SE_ACRONYCHAL_SETTING		6  /* still not implemented */
-//#define SE_COSMICAL_SETTING		SE_ACRONYCHAL_SETTING
+        /* for heliacal functions */
+        public const int SE_HELIACAL_RISING = 1;
+        public const int SE_HELIACAL_SETTING = 2;
+        public const int SE_MORNING_FIRST = SE_HELIACAL_RISING;
+        public const int SE_EVENING_LAST = SE_HELIACAL_SETTING;
+        public const int SE_EVENING_FIRST = 3;
+        public const int SE_MORNING_LAST = 4;
+        public const int SE_ACRONYCHAL_RISING = 5;  /* still not implemented */
+        public const int SE_ACRONYCHAL_SETTING = 6;  /* still not implemented */
+        public const int SE_COSMICAL_SETTING = SE_ACRONYCHAL_SETTING;
 
-//#define SE_HELFLAG_LONG_SEARCH 		128
-//#define SE_HELFLAG_HIGH_PRECISION 	256
-//#define SE_HELFLAG_OPTICAL_PARAMS	512
-//#define SE_HELFLAG_NO_DETAILS		1024
-//#define SE_HELFLAG_SEARCH_1_PERIOD	(1 << 11)  /*  2048 */
-//#define SE_HELFLAG_VISLIM_DARK		(1 << 12)  /*  4096 */
-//#define SE_HELFLAG_VISLIM_NOMOON	(1 << 13)  /*  8192 */
-//#define SE_HELFLAG_VISLIM_PHOTOPIC	(1 << 14)  /* 16384 */
-//#define SE_HELFLAG_AV	 		(1 << 15)  /* 32768 */
-//#define SE_HELFLAG_AVKIND_VR 		(1 << 15)  /* 32768 */
-//#define SE_HELFLAG_AVKIND_PTO 		(1 << 16)
-//#define SE_HELFLAG_AVKIND_MIN7 		(1 << 17)
-//#define SE_HELFLAG_AVKIND_MIN9 		(1 << 18)
-//#define SE_HELFLAG_AVKIND (SE_HELFLAG_AVKIND_VR|SE_HELFLAG_AVKIND_PTO|SE_HELFLAG_AVKIND_MIN7|SE_HELFLAG_AVKIND_MIN9)
-//#define TJD_INVALID		 	99999999.0
-//#define SIMULATE_VICTORVB               1
+        public const int SE_HELFLAG_LONG_SEARCH = 128;
+        public const int SE_HELFLAG_HIGH_PRECISION = 256;
+        public const int SE_HELFLAG_OPTICAL_PARAMS = 512;
+        public const int SE_HELFLAG_NO_DETAILS = 1024;
+        public const int SE_HELFLAG_SEARCH_1_PERIOD = (1 << 11);  /*  2048 */
+        public const int SE_HELFLAG_VISLIM_DARK = (1 << 12);  /*  4096 */
+        public const int SE_HELFLAG_VISLIM_NOMOON = (1 << 13);  /*  8192 */
+        public const int SE_HELFLAG_VISLIM_PHOTOPIC = (1 << 14);  /* 16384 */
+        public const int SE_HELFLAG_AV = (1 << 15);  /* 32768 */
+        public const int SE_HELFLAG_AVKIND_VR = (1 << 15);  /* 32768 */
+        public const int SE_HELFLAG_AVKIND_PTO = (1 << 16);
+        public const int SE_HELFLAG_AVKIND_MIN7 = (1 << 17);
+        public const int SE_HELFLAG_AVKIND_MIN9 = (1 << 18);
+        public const int SE_HELFLAG_AVKIND = (SE_HELFLAG_AVKIND_VR | SE_HELFLAG_AVKIND_PTO | SE_HELFLAG_AVKIND_MIN7 | SE_HELFLAG_AVKIND_MIN9);
+        public const double TJD_INVALID = 99999999.0;
+        public const int SIMULATE_VICTORVB = 1;
 
-//#define SE_HELIACAL_LONG_SEARCH 	128
-//#define SE_HELIACAL_HIGH_PRECISION 	256
-//#define SE_HELIACAL_OPTICAL_PARAMS	512
-//#define SE_HELIACAL_NO_DETAILS		1024
-//#define SE_HELIACAL_SEARCH_1_PERIOD	(1 << 11)  /*  2048 */
-//#define SE_HELIACAL_VISLIM_DARK		(1 << 12)  /*  4096 */
-//#define SE_HELIACAL_VISLIM_NOMOON	(1 << 13)  /*  8192 */
-//#define SE_HELIACAL_VISLIM_PHOTOPIC	(1 << 14)  /* 16384 */
-//#define SE_HELIACAL_AVKIND_VR 		(1 << 15)  /* 32768 */
-//#define SE_HELIACAL_AVKIND_PTO 		(1 << 16)
-//#define SE_HELIACAL_AVKIND_MIN7 		(1 << 17)
-//#define SE_HELIACAL_AVKIND_MIN9 		(1 << 18)
-//#define SE_HELIACAL_AVKIND (SE_HELFLAG_AVKIND_VR|SE_HELFLAG_AVKIND_PTO|SE_HELFLAG_AVKIND_MIN7|SE_HELFLAG_AVKIND_MIN9)
+        public const int SE_HELIACAL_LONG_SEARCH = 128;
+        public const int SE_HELIACAL_HIGH_PRECISION = 256;
+        public const int SE_HELIACAL_OPTICAL_PARAMS = 512;
+        public const int SE_HELIACAL_NO_DETAILS = 1024;
+        public const int SE_HELIACAL_SEARCH_1_PERIOD = (1 << 11);  /*  2048 */
+        public const int SE_HELIACAL_VISLIM_DARK = (1 << 12);  /*  4096 */
+        public const int SE_HELIACAL_VISLIM_NOMOON = (1 << 13);  /*  8192 */
+        public const int SE_HELIACAL_VISLIM_PHOTOPIC = (1 << 14);  /* 16384 */
+        public const int SE_HELIACAL_AVKIND_VR = (1 << 15);  /* 32768 */
+        public const int SE_HELIACAL_AVKIND_PTO = (1 << 16);
+        public const int SE_HELIACAL_AVKIND_MIN7 = (1 << 17);
+        public const int SE_HELIACAL_AVKIND_MIN9 = (1 << 18);
+        public const int SE_HELIACAL_AVKIND = (SE_HELFLAG_AVKIND_VR | SE_HELFLAG_AVKIND_PTO | SE_HELFLAG_AVKIND_MIN7 | SE_HELFLAG_AVKIND_MIN9);
 
-//#define SE_PHOTOPIC_FLAG		0
-//#define SE_SCOTOPIC_FLAG		1
-//#define SE_MIXEDOPIC_FLAG		2
+        public const int SE_PHOTOPIC_FLAG = 0;
+        public const int SE_SCOTOPIC_FLAG = 1;
+        public const int SE_MIXEDOPIC_FLAG = 2;
 
 ///*
 // * by compiling with -DPAIR_SWEPH in the compiler options it

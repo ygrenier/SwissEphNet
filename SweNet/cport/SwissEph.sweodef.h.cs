@@ -249,8 +249,8 @@ namespace SweNet
 //#endif
 
 //#ifndef OK 
-//#  define OK (0)
-//#  define ERR (-1)
+        public const int OK = (0);
+        public const int ERR = (-1);
 //#endif
 
 ///* hack because UCHAR is already used by mingw gcc */
@@ -264,10 +264,11 @@ namespace SweNet
 //#define UCP	(UCHAR*)
 //#define SCP	(char*)
 
-//# define ODEGREE_STRING "°"	/* degree as string, utf8 encoding */
+        /// <summary>
+        /// degree as string, utf8 encoding
+        /// </summary>
+        public const String ODEGREE_STRING = "°";
  
-
-
 //#ifndef HUGE
 //#  define HUGE 1.7E+308     /* biggest value for REAL8 */
 //#endif
@@ -278,31 +279,31 @@ namespace SweNet
 //#define forward static
 
 //#define AS_MAXCH 256    /* used for string declarations, allowing 255 char+\0 */
- 
-//#define DEGTORAD 0.0174532925199433
-//#define RADTODEG 57.2957795130823
+
+        public const double DEGTORAD = 0.0174532925199433;
+        public const double RADTODEG = 57.2957795130823;
  
 //typedef int32    centisec;       /* centiseconds used for angles and times */
 //#define CS	(centisec)	/* use for casting */
 //#define CSEC	centisec	/* use for typing */
 
-//#define DEG     360000  /* degree expressed in centiseconds */
-//#define DEG7_30 (2700000)	/* 7.5 degrees */
-//#define DEG15   (15 * DEG)
-//#define DEG24   (24 * DEG)
-//#define DEG30   (30 * DEG)
-//#define DEG60   (60 * DEG)
-//#define DEG90   (90 * DEG)
-//#define DEG120  (120 * DEG)
-//#define DEG150  (150 * DEG)
-//#define DEG180  (180 * DEG)
-//#define DEG270  (270 * DEG)
-//#define DEG360  (360 * DEG)
- 
-//#define CSTORAD  4.84813681109536E-08 /* centisec to rad: pi / 180 /3600/100 */
-//#define RADTOCS  2.06264806247096E+07 /* rad to centisec 180*3600*100/pi */
- 
-//#define CS2DEG	(1.0/360000.0)	/* centisec to degree */
+        public const int DEG = 360000;  /* degree expressed in centiseconds */
+        public const int DEG7_30 = (2700000);	/* 7.5 degrees */
+        public const int DEG15 = (15 * DEG);
+        public const int DEG24 = (24 * DEG);
+        public const int DEG30 = (30 * DEG);
+        public const int DEG60 = (60 * DEG);
+        public const int DEG90 = (90 * DEG);
+        public const int DEG120 = (120 * DEG);
+        public const int DEG150 = (150 * DEG);
+        public const int DEG180 = (180 * DEG);
+        public const int DEG270 = (270 * DEG);
+        public const int DEG360 = (360 * DEG);
+
+        public const double CSTORAD = 4.84813681109536E-08; /* centisec to rad: pi / 180 /3600/100 */
+        public const double RADTOCS = 2.06264806247096E+07; /* rad to centisec 180*3600*100/pi */
+
+        public const double CS2DEG = (1.0 / 360000.0);	/* centisec to degree */
 
 ///* control strings for fopen()	*/
 //#if UNIX_FS
