@@ -147,6 +147,17 @@ namespace SweNet
 
         #endregion
 
+        #region Planets
+
+        /// <summary>
+        /// Get the planet name
+        /// </summary>
+        public string GetPlanetName(int ipl) {
+            return swe_get_planet_name(ipl);
+        }
+
+        #endregion
+
     }
 
 }

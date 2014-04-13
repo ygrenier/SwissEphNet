@@ -76,9 +76,9 @@
 */
 namespace SweNet
 {
-    using SweNet.Tools;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Text;
 
@@ -103,9 +103,9 @@ namespace SweNet
 
 //struct meff_ele {double r,m;};
 
-///****************
-// * global stuff *
-// ****************/
+        /****************
+         * global stuff *
+         ****************/
 //struct swe_data FAR swed = {FALSE,	/* ephe_path_is_set = FALSE */
 //                            FALSE,	/* jpl_file_is_open = FALSE */
 //                            NULL,	/* fixfp, fixed stars file pointer */
@@ -116,6 +116,17 @@ namespace SweNet
 //                FALSE,	/* ayana_is_set, ayanamsa is set */
 //                FALSE,	/* is_old_starfile, fixstars.cat is used (default is sefstars.txt) */
 //                };
+        swe_data swed = new swe_data() {
+            ephe_path_is_set = false,
+            jpl_file_is_open = false,
+            fixfp = null,
+            ephepath = SE_EPHE_PATH,
+            jplfnam = SE_FNAME_DFT,
+            jpldenum = 0,
+            geopos_is_set = false,
+            ayana_is_set = false,
+            is_old_starfile = false
+        };
 
 ///*************
 // * constants *
@@ -1073,13 +1084,14 @@ namespace SweNet
             //    fclose(swed.fixfp);
             //    swed.fixfp = NULL;
             //  }
-            //#ifdef TRACE
+#if TRACE
             //#define TRACE_CLOSE FALSE
             //  swi_open_trace(NULL);
             //  if (swi_fp_trace_c != NULL) {
             //    if (swi_trace_count < TRACE_COUNT_MAX) {
-            //      fputs("\n/*SWE_CLOSE*/\n", swi_fp_trace_c);
+            trace(true, "\n/*SWE_CLOSE*/");
             //      fputs("  swe_close();\n", swi_fp_trace_c);
+            trace(true, "  swe_close();");
             //#if TRACE_CLOSE
             //      fputs("}\n", swi_fp_trace_c);
             //#endif
@@ -1095,7 +1107,7 @@ namespace SweNet
             //  swi_fp_trace_c = NULL;
             //  swi_fp_trace_out = NULL;
             //#endif
-            //#endif  /* TRACE */
+#endif  //* TRACE */
         }
 
 ///* sets ephemeris file path. 
@@ -2098,8 +2110,9 @@ namespace SweNet
         /*
          * Alois 2.12.98: inserted error message generation for file not found 
          */
-        //FILE swi_fopen(int ifno, string fname, string ephepath, out string serr) {
-            //  int np, i, j;
+        TextReader swi_fopen(int ifno, string fname, string ephepath, out string serr) {
+            throw new NotImplementedException("swi_fopen");
+            int np, i, j;
             //  FILE *fp = NULL;
             //  char *fnamp, fn[AS_MAXCH];
             //  char *cpos[20];
@@ -2137,7 +2150,7 @@ namespace SweNet
             //  if (serr != NULL)
             //    strcpy(serr, s);
             //  return NULL;
-        //}
+        }
 
 ///* converts planets from barycentric to geocentric,
 // * apparent positions
@@ -6045,180 +6058,180 @@ namespace SweNet
 //#endif
 
 
-//char *FAR PASCAL_CONV swe_get_planet_name(int ipl, char *s) 
-//{
-//  int i;
-//  int32 retc;
-//  double xp[6];
-//#ifdef TRACE
-//  swi_open_trace(NULL);
-//  trace_swe_get_planet_name(1, ipl, s);
-//#endif
-//  /* function calls for Pluto with asteroid number 134340
-//   * are treated as calls for Pluto as main body SE_PLUTO */
-//  if (ipl == SE_AST_OFFSET + 134340)
-//    ipl = SE_PLUTO;
-//  if (ipl != 0 && ipl == swed.i_saved_planet_name) {
-//    strcpy(s, swed.saved_planet_name);
-//    return s;
-//  }
-//  switch(ipl) {
-//    case SE_SUN: 
-//      strcpy(s, SE_NAME_SUN);
-//      break;
-//    case SE_MOON: 
-//      strcpy(s, SE_NAME_MOON);
-//      break;
-//    case SE_MERCURY: 
-//      strcpy(s, SE_NAME_MERCURY);
-//      break;
-//    case SE_VENUS: 
-//      strcpy(s, SE_NAME_VENUS);
-//      break;
-//    case SE_MARS: 
-//      strcpy(s, SE_NAME_MARS);
-//      break;
-//    case SE_JUPITER: 
-//      strcpy(s, SE_NAME_JUPITER);
-//      break;
-//    case SE_SATURN: 
-//      strcpy(s, SE_NAME_SATURN);
-//      break;
-//    case SE_URANUS: 
-//      strcpy(s, SE_NAME_URANUS);
-//      break;
-//    case SE_NEPTUNE: 
-//      strcpy(s, SE_NAME_NEPTUNE);
-//      break;
-//    case SE_PLUTO: 
-//      strcpy(s, SE_NAME_PLUTO);
-//      break;
-//    case SE_MEAN_NODE: 
-//      strcpy(s, SE_NAME_MEAN_NODE);
-//      break;
-//    case SE_TRUE_NODE: 
-//      strcpy(s, SE_NAME_TRUE_NODE);
-//      break;
-//    case SE_MEAN_APOG: 
-//      strcpy(s, SE_NAME_MEAN_APOG);
-//      break;
-//    case SE_OSCU_APOG: 
-//      strcpy(s, SE_NAME_OSCU_APOG);
-//      break;  
-//    case SE_INTP_APOG: 
-//      strcpy(s, SE_NAME_INTP_APOG);
-//      break;  
-//    case SE_INTP_PERG: 
-//      strcpy(s, SE_NAME_INTP_PERG);
-//      break;  
-//    case SE_EARTH: 
-//      strcpy(s, SE_NAME_EARTH);
-//      break;
-//    case SE_CHIRON: 
-//    case SE_AST_OFFSET + MPC_CHIRON: 
-//      strcpy(s, SE_NAME_CHIRON);
-//      break;
-//    case SE_PHOLUS: 
-//    case SE_AST_OFFSET + MPC_PHOLUS: 
-//      strcpy(s, SE_NAME_PHOLUS);
-//      break;
-//    case SE_CERES: 
-//    case SE_AST_OFFSET + MPC_CERES: 
-//      strcpy(s, SE_NAME_CERES);
-//      break;
-//    case SE_PALLAS: 
-//    case SE_AST_OFFSET + MPC_PALLAS: 
-//      strcpy(s, SE_NAME_PALLAS);
-//      break;
-//    case SE_JUNO: 
-//    case SE_AST_OFFSET + MPC_JUNO: 
-//      strcpy(s, SE_NAME_JUNO);
-//      break;
-//    case SE_VESTA: 
-//    case SE_AST_OFFSET + MPC_VESTA: 
-//      strcpy(s, SE_NAME_VESTA);
-//      break;
-//    default: 
-//      /* fictitious planets */
-//      if (ipl >= SE_FICT_OFFSET && ipl <= SE_FICT_MAX) {
-//        swi_get_fict_name(ipl - SE_FICT_OFFSET, s);
-//        break;
-//      }
-//      /* asteroids */
-//      if (ipl > SE_AST_OFFSET) {
-//    /* if name is already available */
-//    if (ipl == swed.fidat[SEI_FILE_ANY_AST].ipl[0])
-//      strcpy(s, swed.fidat[SEI_FILE_ANY_AST].astnam);
-//        /* else try to get it from ephemeris file */
-//    else {
-//      retc = sweph(J2000, ipl, SEI_FILE_ANY_AST, 0, NULL, NO_SAVE, xp, NULL);
-//      if (retc != ERR && retc != NOT_AVAILABLE)
-//        strcpy(s, swed.fidat[SEI_FILE_ANY_AST].astnam);
-//      else
-//        sprintf(s, "%d: not found", ipl - SE_AST_OFFSET);
-//    }
-//        /* If there is a provisional designation only in ephemeris file,
-//         * we look for a name in seasnam.txt, which can be updated by
-//         * the user.
-//         * Some old ephemeris files return a '?' in the first position.
-//         * There are still a couple of unnamed bodies that got their
-//         * provisional designation before 1925, when the current method
-//         * of provisional designations was introduced. They have an 'A'
-//         * as the first character, e.g. A924 RC. 
-//         * The file seasnam.txt may contain comments starting with '#'.
-//         * There must be at least two columns: 
-//         * 1. asteroid catalog number
-//         * 2. asteroid name
-//         * The asteroid number may or may not be in brackets
-//         */
-//        if (s[0] == '?' || isdigit((int) s[1])) {
-//          int ipli = (int) (ipl - SE_AST_OFFSET), iplf = 0;
-//          FILE *fp;
-//          char si[AS_MAXCH], *sp, *sp2;
-//          if ((fp = swi_fopen(-1, SE_ASTNAMFILE, swed.ephepath, NULL)) != NULL) {
-//            while(ipli != iplf && (sp = fgets(si, AS_MAXCH, fp)) != NULL) {
-//              while (*sp == ' ' || *sp == '\t' 
-//                     || *sp == '(' || *sp == '[' || *sp == '{')
-//                sp++;
-//              if (*sp == '#' || *sp == '\r' || *sp == '\n' || *sp == '\0')
-//                continue;
-//              /* catalog number of body of current line */
-//              iplf = atoi(sp);
-//              if (ipli != iplf)
-//                continue;
-//              /* set pointer after catalog number */
-//              sp = strpbrk(sp, " \t");
-//              if (sp == NULL)
-//                continue; /* there is no name */
-//              while (*sp == ' ' || *sp == '\t')
-//                sp++;
-//              sp2 = strpbrk(sp, "#\r\n");
-//              if (sp2 != NULL)
-//                *sp2 = '\0'; 
-//              if (*sp == '\0')
-//                continue;
-//              swi_right_trim(sp);
-//              strcpy(s, sp);
-//            }
-//            fclose(fp);
-//          }
-//        }
-//      } else  {
-//    i = ipl;
-//    sprintf(s, "%d", i);
-//      }
-//      break;
-//  }
-//#ifdef TRACE
-//  swi_open_trace(NULL);
-//  trace_swe_get_planet_name(2, ipl, s);
-//#endif
-//  if (strlen(s) < 80) {
-//    swed.i_saved_planet_name = ipl;
-//    strcpy(swed.saved_planet_name, s);
-//  }
-//  return s;
-//}
+        protected string swe_get_planet_name(int ipl) {
+            int i;
+            Int32 retc;
+            double[] xp = new double[6];
+            string s = String.Empty;
+#if TRACE
+            //  swi_open_trace(NULL);
+            trace_swe_get_planet_name(1, ipl, s);
+#endif
+            /* function calls for Pluto with asteroid number 134340
+               * are treated as calls for Pluto as main body SE_PLUTO */
+            if (ipl == SE_AST_OFFSET + 134340)
+                ipl = SE_PLUTO;
+            if (ipl != 0 && ipl == swed.i_saved_planet_name) {
+                return swed.saved_planet_name;
+            }
+            switch (ipl) {
+                case SE_SUN:
+                    s = SE_NAME_SUN;
+                    break;
+                case SE_MOON:
+                    s = SE_NAME_MOON;
+                    break;
+                case SE_MERCURY:
+                    s = SE_NAME_MERCURY;
+                    break;
+                case SE_VENUS:
+                    s = SE_NAME_VENUS;
+                    break;
+                case SE_MARS:
+                    s = SE_NAME_MARS;
+                    break;
+                case SE_JUPITER:
+                    s = SE_NAME_JUPITER;
+                    break;
+                case SE_SATURN:
+                    s = SE_NAME_SATURN;
+                    break;
+                case SE_URANUS:
+                    s = SE_NAME_URANUS;
+                    break;
+                case SE_NEPTUNE:
+                    s = SE_NAME_NEPTUNE;
+                    break;
+                case SE_PLUTO:
+                    s = SE_NAME_PLUTO;
+                    break;
+                case SE_MEAN_NODE:
+                    s = SE_NAME_MEAN_NODE;
+                    break;
+                case SE_TRUE_NODE:
+                    s = SE_NAME_TRUE_NODE;
+                    break;
+                case SE_MEAN_APOG:
+                    s = SE_NAME_MEAN_APOG;
+                    break;
+                case SE_OSCU_APOG:
+                    s = SE_NAME_OSCU_APOG;
+                    break;
+                case SE_INTP_APOG:
+                    s = SE_NAME_INTP_APOG;
+                    break;
+                case SE_INTP_PERG:
+                    s = SE_NAME_INTP_PERG;
+                    break;
+                case SE_EARTH:
+                    s = SE_NAME_EARTH;
+                    break;
+                case SE_CHIRON:
+                case SE_AST_OFFSET + MPC_CHIRON:
+                    s = SE_NAME_CHIRON;
+                    break;
+                case SE_PHOLUS:
+                case SE_AST_OFFSET + MPC_PHOLUS:
+                    s = SE_NAME_PHOLUS;
+                    break;
+                case SE_CERES:
+                case SE_AST_OFFSET + MPC_CERES:
+                    s = SE_NAME_CERES;
+                    break;
+                case SE_PALLAS:
+                case SE_AST_OFFSET + MPC_PALLAS:
+                    s = SE_NAME_PALLAS;
+                    break;
+                case SE_JUNO:
+                case SE_AST_OFFSET + MPC_JUNO:
+                    s = SE_NAME_JUNO;
+                    break;
+                case SE_VESTA:
+                case SE_AST_OFFSET + MPC_VESTA:
+                    s = SE_NAME_VESTA;
+                    break;
+                default:
+                    throw new NotImplementedException();    // TODO Implements
+                //      /* fictitious planets */
+                //      if (ipl >= SE_FICT_OFFSET && ipl <= SE_FICT_MAX) {
+                //        swi_get_fict_name(ipl - SE_FICT_OFFSET, s);
+                //        break;
+                //      }
+                //      /* asteroids */
+                //      if (ipl > SE_AST_OFFSET) {
+                //    /* if name is already available */
+                //    if (ipl == swed.fidat[SEI_FILE_ANY_AST].ipl[0])
+                //      strcpy(s, swed.fidat[SEI_FILE_ANY_AST].astnam);
+                //        /* else try to get it from ephemeris file */
+                //    else {
+                //      retc = sweph(J2000, ipl, SEI_FILE_ANY_AST, 0, NULL, NO_SAVE, xp, NULL);
+                //      if (retc != ERR && retc != NOT_AVAILABLE)
+                //        strcpy(s, swed.fidat[SEI_FILE_ANY_AST].astnam);
+                //      else
+                //        sprintf(s, "%d: not found", ipl - SE_AST_OFFSET);
+                //    }
+                //        /* If there is a provisional designation only in ephemeris file,
+                //         * we look for a name in seasnam.txt, which can be updated by
+                //         * the user.
+                //         * Some old ephemeris files return a '?' in the first position.
+                //         * There are still a couple of unnamed bodies that got their
+                //         * provisional designation before 1925, when the current method
+                //         * of provisional designations was introduced. They have an 'A'
+                //         * as the first character, e.g. A924 RC. 
+                //         * The file seasnam.txt may contain comments starting with '#'.
+                //         * There must be at least two columns: 
+                //         * 1. asteroid catalog number
+                //         * 2. asteroid name
+                //         * The asteroid number may or may not be in brackets
+                //         */
+                //        if (s[0] == '?' || isdigit((int) s[1])) {
+                //          int ipli = (int) (ipl - SE_AST_OFFSET), iplf = 0;
+                //          FILE *fp;
+                //          char si[AS_MAXCH], *sp, *sp2;
+                //          if ((fp = swi_fopen(-1, SE_ASTNAMFILE, swed.ephepath, NULL)) != NULL) {
+                //            while(ipli != iplf && (sp = fgets(si, AS_MAXCH, fp)) != NULL) {
+                //              while (*sp == ' ' || *sp == '\t' 
+                //                     || *sp == '(' || *sp == '[' || *sp == '{')
+                //                sp++;
+                //              if (*sp == '#' || *sp == '\r' || *sp == '\n' || *sp == '\0')
+                //                continue;
+                //              /* catalog number of body of current line */
+                //              iplf = atoi(sp);
+                //              if (ipli != iplf)
+                //                continue;
+                //              /* set pointer after catalog number */
+                //              sp = strpbrk(sp, " \t");
+                //              if (sp == NULL)
+                //                continue; /* there is no name */
+                //              while (*sp == ' ' || *sp == '\t')
+                //                sp++;
+                //              sp2 = strpbrk(sp, "#\r\n");
+                //              if (sp2 != NULL)
+                //                *sp2 = '\0'; 
+                //              if (*sp == '\0')
+                //                continue;
+                //              swi_right_trim(sp);
+                //              strcpy(s, sp);
+                //            }
+                //            fclose(fp);
+                //          }
+                //        }
+                //      } else  {
+                //    i = ipl;
+                //    sprintf(s, "%d", i);
+                //      }
+                //break;
+            }
+#if TRACE
+            //  swi_open_trace(NULL);
+            trace_swe_get_planet_name(2, ipl, s);
+#endif
+            //if (strlen(s) < 80) {
+            swed.i_saved_planet_name = ipl;
+            swed.saved_planet_name = s;
+            //}
+            return s;
+        }
 
 //char *FAR PASCAL_CONV swe_get_ayanamsa_name(int32 isidmode) 
 //{
@@ -6227,7 +6240,7 @@ namespace SweNet
 //  return NULL;
 //}
 
-//#ifdef TRACE
+#if TRACE
 //static void trace_swe_calc(int swtch, double tjd, int ipl, int32 iflag, double *xx, char *serr)
 //{
 //  if (swi_trace_count >= TRACE_COUNT_MAX)
@@ -6308,37 +6321,34 @@ namespace SweNet
 //  }
 //}
 
-//static void trace_swe_get_planet_name(int swtch, int ipl, char *s)
-//{
-//  if (swi_trace_count >= TRACE_COUNT_MAX)
-//    return;
-//  switch(swtch) {
-//    case 1:
-//      if (swi_fp_trace_c != NULL) {
-//    fputs("\n/*SWE_GET_PLANET_NAME*/\n", swi_fp_trace_c);
-//    fprintf(swi_fp_trace_c, "  ipl = %d;\n", ipl);
-//    fprintf(swi_fp_trace_c, "  swe_get_planet_name(ipl, s);");
-//    fprintf(swi_fp_trace_c, "   /* s = %d */\n", (int32) s);
-//    fflush(swi_fp_trace_c);
-//      } 
-//      break;
-//    case 2:
-//      if (swi_fp_trace_c != NULL) {
-//    fputs("  printf(\"swe_get_planet_name: %d\\t%s\\t\\n\", ", swi_fp_trace_c);
-//    fputs("ipl, s);\n", swi_fp_trace_c);/**/
-//    fflush(swi_fp_trace_c);
-//      }
-//      if (swi_fp_trace_out != NULL) {
-//    fprintf(swi_fp_trace_out, "swe_get_planet_name: %d\t%s\t\n", ipl, s);
-//    fflush(swi_fp_trace_out);
-//      }
-//      break;
-//    default:
-//      break;
-//  }
-//}
+        void trace_swe_get_planet_name(int swtch, int ipl, string s) {
+            //if (swi_trace_count >= TRACE_COUNT_MAX)
+            //    return;
+            switch (swtch) {
+                case 1:
+                    //if (swi_fp_trace_c != NULL) {
+                    trace(true, "\n/*SWE_GET_PLANET_NAME*/");
+                    trace(true, "  ipl = %d;", ipl);
+                    trace(true, "  swe_get_planet_name(ipl, s);   /* s = %s */", s);
+                    //    fflush(swi_fp_trace_c);
+                    //}
+                    break;
+                case 2:
+                    //if (swi_fp_trace_c != NULL) {
+                    trace(true, "  printf(\"swe_get_planet_name: %d\\t%s\\t\\n\", ipl, s);", ipl, s);/**/
+                    //    fflush(swi_fp_trace_c);
+                    //}
+                    //if (swi_fp_trace_out != NULL) {
+                    trace(false, "swe_get_planet_name: %d\t%s\t", ipl, s);
+                    //    fflush(swi_fp_trace_out);
+                    //}
+                    break;
+                //default:
+                //    break;
+            }
+        }
 
-//#endif
+#endif
 
 ///* set geographic position and altitude of observer */
 //void FAR PASCAL_CONV swe_set_topo(double geolon, double geolat, double geoalt)

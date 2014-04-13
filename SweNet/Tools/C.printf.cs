@@ -447,7 +447,7 @@ namespace SweNet
                     #region s - string
                     case 's':   // string
                         string t = "{0" + (fieldLength != int.MinValue ? "," + (flagLeft2Right ? "-" : String.Empty) + fieldLength.ToString() : String.Empty) + ":s}";
-                        w = o.ToString();
+                        w = (o ?? String.Empty).ToString();
                         if (fieldPrecision >= 0)
                             w = w.Substring(0, fieldPrecision);
 

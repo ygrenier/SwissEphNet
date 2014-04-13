@@ -2375,8 +2375,8 @@ namespace SweNet
             //int i;
             //  char s[AS_MAXCH];
             //  char *sp;
-            //if (!init_dt_done) {
-            //    init_dt_done = true;
+            if (!init_dt_done) {
+                init_dt_done = true;
                 /* no error message if file is missing */
                 //    if ((fp = swi_fopen(-1, "swe_deltat.txt", swed.ephepath, NULL)) == NULL
                 //      && (fp = swi_fopen(-1, "sedeltat.txt", swed.ephepath, NULL)) == NULL)
@@ -2399,7 +2399,7 @@ namespace SweNet
                 //      dt[tab_index] = atof(sp);
                 //    }
                 //    fclose(fp);
-            //}
+            }
             /* find table size */
             tabsiz = 2001 - TABSTART + 1;
             //for (i = tabsiz - 1; i < TABSIZ_SPACE; i++) {

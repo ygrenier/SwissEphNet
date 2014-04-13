@@ -344,31 +344,31 @@ namespace SweNet
         public const int SE_TRUE_TO_APP = 0;
         public const int SE_APP_TO_TRUE = 1;
 
-///*
-// * only used for experimenting with various JPL ephemeris files
-// * which are available at Astrodienst's internal network
-// */
-//#define SE_DE_NUMBER    431
-//#define SE_FNAME_DE200  "de200.eph"
-//#define SE_FNAME_DE403  "de403.eph"
-//#define SE_FNAME_DE404  "de404.eph"
-//#define SE_FNAME_DE405  "de405.eph"
-//#define SE_FNAME_DE406  "de406.eph"
-//#define SE_FNAME_DE431  "de431.eph"
-//#define SE_FNAME_DFT    SE_FNAME_DE431
-//#define SE_FNAME_DFT2   SE_FNAME_DE406
-//#define SE_STARFILE_OLD "fixstars.cat"
-//#define SE_STARFILE     "sefstars.txt"
-//#define SE_ASTNAMFILE   "seasnam.txt"
-//#define SE_FICTFILE     "seorbel.txt"
+        /*
+         * only used for experimenting with various JPL ephemeris files
+         * which are available at Astrodienst's internal network
+         */
+        public const int SE_DE_NUMBER = 431;
+        public const string SE_FNAME_DE200 = "de200.eph";
+        public const string SE_FNAME_DE403 = "de403.eph";
+        public const string SE_FNAME_DE404 = "de404.eph";
+        public const string SE_FNAME_DE405 = "de405.eph";
+        public const string SE_FNAME_DE406 = "de406.eph";
+        public const string SE_FNAME_DE431 = "de431.eph";
+        public const string SE_FNAME_DFT = SE_FNAME_DE431;
+        public const string SE_FNAME_DFT2 = SE_FNAME_DE406;
+        public const string SE_STARFILE_OLD = "fixstars.cat";
+        public const string SE_STARFILE = "sefstars.txt";
+        public const string SE_ASTNAMFILE = "seasnam.txt";
+        public const string SE_FICTFILE = "seorbel.txt";
 
-///*
-// * ephemeris path
-// * this defines where ephemeris files are expected if the function
-// * swe_set_ephe_path() is not called by the application.
-// * Normally, every application should make this call to define its
-// * own place for the ephemeris files.
-// */
+       /*
+        * ephemeris path
+        * this defines where ephemeris files are expected if the function
+        * swe_set_ephe_path() is not called by the application.
+        * Normally, every application should make this call to define its
+        * own place for the ephemeris files.
+        */
 
 //#ifndef SE_EPHE_PATH
 //#if MSDOS
@@ -389,6 +389,10 @@ namespace SweNet
 //# endif
 //#endif
 //#endif  /* SE_EPHE_PATH */
+        /// <summary>
+        /// SweNet : We create a pseudo constant for detect ephemeris path when loading
+        /// </summary>
+        public const String SE_EPHE_PATH = "[ephe]";
 
         /* defines for function swe_split_deg() (in swephlib.c) */
         public const int SE_SPLIT_DEG_ROUND_SEC = 1;

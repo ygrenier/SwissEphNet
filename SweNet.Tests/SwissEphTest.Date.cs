@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 namespace SweNet.Tests
 {
-    [TestClass]
-    public class SwissEphTestDate
+    partial class SwissEphTest
     {
 
         [TestMethod]

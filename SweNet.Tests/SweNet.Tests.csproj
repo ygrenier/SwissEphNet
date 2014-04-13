@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CPrintfTest.cs" />
     <Compile Include="CScanfTest.cs" />
+    <Compile Include="SwissEphTest.Planets.cs" />
     <Compile Include="SwissEphTest.Date.cs" />
   </ItemGroup>
   <ItemGroup>

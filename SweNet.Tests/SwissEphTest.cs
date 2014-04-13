@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SweNet.Tests
 {
     [TestClass]
-    public class SwissEphTest
+    public partial class SwissEphTest
     {
         [TestMethod]
         public void TestConstructor() {
