@@ -84,6 +84,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using SweNet;
 
 namespace SweMini
 {
@@ -156,7 +157,18 @@ namespace SweMini
 
     class Program
     {
-        static void Main(string[] args) {
+        static int Main(string[] args) {
+
+#if DEBUG
+            Console.Write("\nPress a key to quit...");
+            Console.ReadKey();
+#endif
+            return 0;
         }
+
+        public static void printf(string Format, params object[] Parameters) {
+            Console.Write(C.sprintf(Format, Parameters));
+        }
+
     }
 }

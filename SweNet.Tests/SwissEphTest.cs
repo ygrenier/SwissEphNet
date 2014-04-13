@@ -8,8 +8,9 @@ namespace SweNet.Tests
     {
         [TestMethod]
         public void TestConstructor() {
-            var target = new SwissEph();
+            using (var target = new SwissEph()) {
 
+            }
         }
     }
 }
