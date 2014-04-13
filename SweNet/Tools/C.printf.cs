@@ -633,13 +633,15 @@ namespace SweNet
                     if (w.StartsWith("-"))
                         w = w.Substring(1);
                     if (FieldLength != int.MinValue)
-                        w = w.PadLeft(FieldLength - 1, Padding);
-                    if (IsPositive(Value, true))
-                        w = (PositiveSign ?
-                                "+" : (PositiveSpace ?
-                                        " " : (FieldLength != int.MinValue ?
-                                                Padding.ToString() : String.Empty))) + w;
-                    else
+                        w = w.PadLeft(FieldLength - (PositiveSign || PositiveSpace || !IsPositive(Value, false) ? 1 : 0), Padding);
+                    if (IsPositive(Value, true)) {
+                        if (PositiveSign || PositiveSpace) {
+                            w = (PositiveSign ?
+                                    "+" : (PositiveSpace ?
+                                            " " : (FieldLength != int.MinValue ?
+                                                    Padding.ToString() : String.Empty))) + w;
+                        }
+                    } else
                         w = "-" + w;
                 }
             }

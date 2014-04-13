@@ -120,6 +120,18 @@ namespace SweNet.Tests
             Assert.IsTrue(RunTest("[%+010ld]", "[+000000042]", 42));
             Assert.IsTrue(RunTest("[%-+010ld]", "[+42       ]", 42));
 
+            Assert.IsTrue(RunTest("[%2ld]", "[42]", 42));
+            Assert.IsTrue(RunTest("[%-2ld]", "[42]", 42));
+            Assert.IsTrue(RunTest("[% 2ld]", "[ 42]", 42));
+            Assert.IsTrue(RunTest("[%02ld]", "[42]", 42));
+            Assert.IsTrue(RunTest("[%-02ld]", "[42]", 42));
+            Assert.IsTrue(RunTest("[%+ld]", "[+42]", 42));
+            Assert.IsTrue(RunTest("[%+2ld]", "[+42]", 42));
+            Assert.IsTrue(RunTest("[%+ 2ld]", "[+42]", 42));
+            Assert.IsTrue(RunTest("[%-+2ld]", "[+42]", 42));
+            Assert.IsTrue(RunTest("[%+02ld]", "[+42]", 42));
+            Assert.IsTrue(RunTest("[%-+02ld]", "[+42]", 42));
+
             Assert.IsTrue(RunTest("[%ld]", "[42]", (byte)42));
             Assert.IsTrue(RunTest("[%ld]", "[42]", (sbyte)42));
             Assert.IsTrue(RunTest("[%ld]", "[42]", (Int16)42));
