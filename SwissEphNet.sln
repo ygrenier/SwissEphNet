@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6D5C2702
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweNet.Tests", "SweNet.Tests\SweNet.Tests.csproj", "{2704F962-2890-40DD-9285-52D6877F0E28}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Programs", "Programs", "{DA9EB626-FC40-46C3-A44D-3EE76D044CC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweMini", "SweMini\SweMini.csproj", "{D2043376-EA04-4677-803E-698CB384D361}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweTest", "SweTest\SweTest.csproj", "{29AABD40-C169-40B9-8A84-2CFA070CE9E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,11 +37,21 @@ Global
 		{2704F962-2890-40DD-9285-52D6877F0E28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2704F962-2890-40DD-9285-52D6877F0E28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2704F962-2890-40DD-9285-52D6877F0E28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2043376-EA04-4677-803E-698CB384D361}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2043376-EA04-4677-803E-698CB384D361}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2043376-EA04-4677-803E-698CB384D361}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2043376-EA04-4677-803E-698CB384D361}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2704F962-2890-40DD-9285-52D6877F0E28} = {6D5C2702-2FF1-42A8-B86D-E5E5EAE41F66}
+		{D2043376-EA04-4677-803E-698CB384D361} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
+		{29AABD40-C169-40B9-8A84-2CFA070CE9E5} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
 	EndGlobalSection
 EndGlobal
