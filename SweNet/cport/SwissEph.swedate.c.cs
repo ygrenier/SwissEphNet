@@ -136,115 +136,112 @@ namespace SweNet
 //  }
 //}	/* end date_conversion */
 
-///*************** swe_julday ********************************************
-// * This function returns the absolute Julian day number (JD)
-// * for a given calendar date.
-// * The arguments are a calendar date: day, month, year as integers,
-// * hour as double with decimal fraction.
-// * If gregflag = SE_GREG_CAL (1), Gregorian calendar is assumed,
-// * if gregflag = SE_JUL_CAL (0),Julian calendar is assumed.
+        /*************** swe_julday ********************************************
+         * This function returns the absolute Julian day number (JD)
+         * for a given calendar date.
+         * The arguments are a calendar date: day, month, year as integers,
+         * hour as double with decimal fraction.
+         * If gregflag = SE_GREG_CAL (1), Gregorian calendar is assumed,
+         * if gregflag = SE_JUL_CAL (0),Julian calendar is assumed.
   
-// The Julian day number is a system of numbering all days continously
-// within the time range of known human history. It should be familiar
-// to every astrological or astronomical programmer. The time variable
-// in astronomical theories is usually expressed in Julian days or
-// Julian centuries (36525 days per century) relative to some start day;
-// the start day is called 'the epoch'.
-// The Julian day number is a double representing the number of
-// days since JD = 0.0 on 1 Jan -4712, 12:00 noon (in the Julian calendar).
+         The Julian day number is a system of numbering all days continously
+         within the time range of known human history. It should be familiar
+         to every astrological or astronomical programmer. The time variable
+         in astronomical theories is usually expressed in Julian days or
+         Julian centuries (36525 days per century) relative to some start day;
+         the start day is called 'the epoch'.
+         The Julian day number is a double representing the number of
+         days since JD = 0.0 on 1 Jan -4712, 12:00 noon (in the Julian calendar).
  
-// Midnight has always a JD with fraction .5, because traditionally
-// the astronomical day started at noon. This was practical because
-// then there was no change of date during a night at the telescope.
-// From this comes also the fact the noon ephemerides were printed
-// before midnight ephemerides were introduced early in the 20th century.
+         Midnight has always a JD with fraction .5, because traditionally
+         the astronomical day started at noon. This was practical because
+         then there was no change of date during a night at the telescope.
+         From this comes also the fact the noon ephemerides were printed
+         before midnight ephemerides were introduced early in the 20th century.
  
-// NOTE: The Julian day number must not be confused with the Julian 
-// calendar system.
+         NOTE: The Julian day number must not be confused with the Julian 
+         calendar system.
 
-// Be aware the we always use astronomical year numbering for the years
-// before Christ, not the historical year numbering.
-// Astronomical years are done with negative numbers, historical
-// years with indicators BC or BCE (before common era).
-// Year 0 (astronomical)  	= 1 BC
-// year -1 (astronomical) 	= 2 BC
-// etc.
+         Be aware the we always use astronomical year numbering for the years
+         before Christ, not the historical year numbering.
+         Astronomical years are done with negative numbers, historical
+         years with indicators BC or BCE (before common era).
+         Year 0 (astronomical)  	= 1 BC
+         year -1 (astronomical) 	= 2 BC
+         etc.
 
-// Original author: Marc Pottenger, Los Angeles.
-// with bug fix for year < -4711   15-aug-88 by Alois Treindl
-// (The parameter sequence m,d,y still indicates the US origin,
-//  be careful because the similar function date_conversion() uses
-//  other parameter sequence and also Astrodienst relative juldate.)
+         Original author: Marc Pottenger, Los Angeles.
+         with bug fix for year < -4711   15-aug-88 by Alois Treindl
+         (The parameter sequence m,d,y still indicates the US origin,
+          be careful because the similar function date_conversion() uses
+          other parameter sequence and also Astrodienst relative juldate.)
  
-// References: Oliver Montenbruck, Grundlagen der Ephemeridenrechnung,
-//             Verlag Sterne und Weltraum (1987), p.49 ff
+         References: Oliver Montenbruck, Grundlagen der Ephemeridenrechnung,
+                     Verlag Sterne und Weltraum (1987), p.49 ff
  
-// related functions: swe_revjul() reverse Julian day number: compute the
-//                   calendar date from a given JD
-//                date_conversion() includes test for legal date values
-//            and notifies errors like 32 January.
-// ****************************************************************/
+         related functions: swe_revjul() reverse Julian day number: compute the
+                           calendar date from a given JD
+                        date_conversion() includes test for legal date values
+                    and notifies errors like 32 January.
+         ****************************************************************/
+        protected static double swe_julday(int year, int month, int day, double hour, int gregflag) {
+            double jd;
+            double u, u0, u1, u2;
+            u = year;
+            if (month < 3) u -= 1;
+            u0 = u + 4712.0;
+            u1 = month + 1.0;
+            if (u1 < 4) u1 += 12.0;
+            jd = Math.Floor(u0 * 365.25)
+               + Math.Floor(30.6 * u1 + 0.000001)
+               + day + hour / 24.0 - 63.5;
+            if (gregflag == SE_GREG_CAL) {
+                u2 = Math.Floor(Math.Abs(u) / 100) - Math.Floor(Math.Abs(u) / 400);
+                if (u < 0.0) u2 = -u2;
+                jd = jd - u2 + 2;
+                if ((u < 0.0) && (u / 100 == Math.Floor(u / 100)) && (u / 400 != Math.Floor(u / 400)))
+                    jd -= 1;
+            }
+            return jd;
+        }
 
-//double FAR PASCAL_CONV swe_julday(int year, int month, int day, double hour, int gregflag) 
-//{
-//  double jd;
-//  double u,u0,u1,u2;
-//  u = year;
-//  if (month < 3) u -=1;
-//  u0 = u + 4712.0;
-//  u1 = month + 1.0;
-//  if (u1 < 4) u1 += 12.0;
-//  jd = floor(u0*365.25)
-//     + floor(30.6*u1+0.000001)
-//     + day + hour/24.0 - 63.5;
-//  if (gregflag == SE_GREG_CAL) {
-//    u2 = floor(fabs(u) / 100) - floor(fabs(u) / 400);
-//    if (u < 0.0) u2 = -u2;
-//    jd = jd - u2 + 2;            
-//    if ((u < 0.0) && (u/100 == floor(u/100)) && (u/400 != floor(u/400)))
-//      jd -=1;
-//  }
-//  return jd;
-//}
+        /*** swe_revjul ******************************************************
+          swe_revjul() is the inverse function to swe_julday(), see the description
+          there.
+          Arguments are julian day number, calendar flag (0=julian, 1=gregorian)
+          return values are the calendar day, month, year and the hour of
+          the day with decimal fraction (0 .. 23.999999).
 
-///*** swe_revjul ******************************************************
-//  swe_revjul() is the inverse function to swe_julday(), see the description
-//  there.
-//  Arguments are julian day number, calendar flag (0=julian, 1=gregorian)
-//  return values are the calendar day, month, year and the hour of
-//  the day with decimal fraction (0 .. 23.999999).
+          Be aware the we use astronomical year numbering for the years
+          before Christ, not the historical year numbering.
+          Astronomical years are done with negative numbers, historical
+          years with indicators BC or BCE (before common era).
+          Year  0 (astronomical)  	= 1 BC historical year
+          year -1 (astronomical) 	= 2 BC historical year
+          year -234 (astronomical) 	= 235 BC historical year
+          etc.
 
-//  Be aware the we use astronomical year numbering for the years
-//  before Christ, not the historical year numbering.
-//  Astronomical years are done with negative numbers, historical
-//  years with indicators BC or BCE (before common era).
-//  Year  0 (astronomical)  	= 1 BC historical year
-//  year -1 (astronomical) 	= 2 BC historical year
-//  year -234 (astronomical) 	= 235 BC historical year
-//  etc.
-
-//  Original author Mark Pottenger, Los Angeles.
-//  with bug fix for year < -4711 16-aug-88 Alois Treindl
-//*************************************************************************/
-//void FAR PASCAL_CONV swe_revjul (double jd, int gregflag,
-//         int *jyear, int *jmon, int *jday, double *jut)
-//{
-//  double u0,u1,u2,u3,u4;
-//  u0 = jd + 32082.5;
-//  if (gregflag == SE_GREG_CAL) {
-//    u1 = u0 + floor (u0/36525.0) - floor (u0/146100.0) - 38.0;
-//    if (jd >= 1830691.5) u1 +=1;
-//    u0 = u0 + floor (u1/36525.0) - floor (u1/146100.0) - 38.0;
-//  }
-//  u2 = floor (u0 + 123.0);
-//  u3 = floor ( (u2 - 122.2) / 365.25);
-//  u4 = floor ( (u2 - floor (365.25 * u3) ) / 30.6001);
-//  *jmon = (int) (u4 - 1.0);
-//  if (*jmon > 12) *jmon -= 12;
-//  *jday = (int) (u2 - floor (365.25 * u3) - floor (30.6001 * u4));
-//  *jyear = (int) (u3 + floor ( (u4 - 2.0) / 12.0) - 4800);
-//  *jut = (jd - floor (jd + 0.5) + 0.5) * 24.0;
-//}
+          Original author Mark Pottenger, Los Angeles.
+          with bug fix for year < -4711 16-aug-88 Alois Treindl
+        *************************************************************************/
+        protected static void swe_revjul(double jd, int gregflag,
+                 ref int jyear, ref int jmon, ref int jday, ref double jut) {
+            double u0, u1, u2, u3, u4;
+            u0 = jd + 32082.5;
+            if (gregflag == SE_GREG_CAL) {
+                u1 = u0 + Math.Floor(u0 / 36525.0) - Math.Floor(u0 / 146100.0) - 38.0;
+                if (jd >= 1830691.5) u1 += 1;
+                u0 = u0 + Math.Floor(u1 / 36525.0) - Math.Floor(u1 / 146100.0) - 38.0;
+            }
+            u2 = Math.Floor(u0 + 123.0);
+            u3 = Math.Floor((u2 - 122.2) / 365.25);
+            u4 = Math.Floor((u2 - Math.Floor(365.25 * u3)) / 30.6001);
+            jmon = (int)(u4 - 1.0);
+            if (jmon > 12) jmon -= 12;
+            jday = (int)(u2 - Math.Floor(365.25 * u3) - Math.Floor(30.6001 * u4));
+            jyear = (int)(u3 + Math.Floor((u4 - 2.0) / 12.0) - 4800);
+            jut = (jd - Math.Floor(jd + 0.5) + 0.5) * 24.0;
+        }
 
 ///* transform local time to UTC or UTC to local time
 // *
