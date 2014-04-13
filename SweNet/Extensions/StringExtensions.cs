@@ -19,6 +19,17 @@ namespace SweNet
             return s.Contains(c.ToString());
         }
 
+        /// <summary>
+        /// String.Contains() for Char
+        /// </summary>
+        public static bool Contains(this String s, Char[] charSet) {
+            if (charSet == null || String.IsNullOrWhiteSpace(s)) return false;
+            foreach (var c in charSet) {
+                if (s.Contains(c)) return true;
+            }
+            return false;
+        }
+
     }
 
 }

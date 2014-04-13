@@ -2111,45 +2111,46 @@ namespace SweNet
          * Alois 2.12.98: inserted error message generation for file not found 
          */
         TextReader swi_fopen(int ifno, string fname, string ephepath, out string serr) {
-            throw new NotImplementedException("swi_fopen");
+            serr = null;
             int np, i, j;
-            //  FILE *fp = NULL;
-            //  char *fnamp, fn[AS_MAXCH];
-            //  char *cpos[20];
+            TextReader fp = null;
+            string fnamp, fn = String.Empty;
+            string[] cpos;
             //  char s[2 * AS_MAXCH], *s1 = s + AS_MAXCH;	/* a little trick */
-            //  if (ifno >= 0) {
-            //    fnamp = swed.fidat[ifno].fnam;
-            //  } else {
-            //    fnamp = fn; 
-            //  }
-            //  strcpy(s1, ephepath);
-            //  np = swi_cutstr(s1, PATH_SEPARATOR, cpos, 20);
-            //  for (i = 0; i < np; i++) {
-            //    strcpy(s, cpos[i]);
-            //    if (strcmp(s, ".") == 0) { /* current directory */
-            //      *s = '\0';
-            //    } else {
-            //      j = strlen(s);
-            //      if (*(s + j - 1) != *DIR_GLUE && *s != '\0')
-            //    strcat(s, DIR_GLUE);
-            //    }
-            //    if (strlen(s) + strlen(fname) < AS_MAXCH) {
-            //      strcat(s, fname);
-            //    } else {
-            //      if (serr != NULL)
-            //    sprintf(serr, "error: file path and name must be shorter than %d.", AS_MAXCH);
-            //      return NULL;
-            //    }
-            //    strcpy(fnamp, s);
-            //    fp = fopen(fnamp, BFILE_R_ACCESS);
-            //    if (fp != NULL) 
-            //      return fp;
-            //  }
-            //  sprintf(s, "SwissEph file '%s' not found in PATH '%s'", fname, ephepath);
-            //  s[AS_MAXCH-1] = '\0';		/* s must not be longer then AS_MAXCH */
-            //  if (serr != NULL)
-            //    strcpy(serr, s);
-            //  return NULL;
+            string s = String.Empty, s1 = String.Empty;
+            if (ifno >= 0) {
+                fnamp = swed.fidat[ifno].fnam;
+            } else {
+                fnamp = fn;
+            }
+            s1 = ephepath;
+            cpos = s1.Split(new char[] { PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
+            np = cpos.Length;
+            for (i = 0; i < np; i++) {
+                s = cpos[i];
+                fp = LoadFile(fnamp, ephepath);
+                if (fp != null) return fp;
+                //    if (strcmp(s, ".") == 0) { /* current directory */
+                //      *s = '\0';
+                //    } else {
+                //      j = strlen(s);
+                //      if (*(s + j - 1) != *DIR_GLUE && *s != '\0')
+                //    strcat(s, DIR_GLUE);
+                //    }
+                //    if (strlen(s) + strlen(fname) < AS_MAXCH) {
+                //      strcat(s, fname);
+                //    } else {
+                //      if (serr != NULL)
+                //    sprintf(serr, "error: file path and name must be shorter than %d.", AS_MAXCH);
+                //      return NULL;
+                //    }
+                //    strcpy(fnamp, s);
+                //    fp = fopen(fnamp, BFILE_R_ACCESS);
+                //    if (fp != NULL) 
+                //      return fp;
+            }
+            serr = C.sprintf("SwissEph file '%s' not found in PATH '%s'", fname, ephepath);
+            return null;
         }
 
 ///* converts planets from barycentric to geocentric,
@@ -6151,12 +6152,12 @@ namespace SweNet
                     s = SE_NAME_VESTA;
                     break;
                 default:
+                    /* fictitious planets */
+                    if (ipl >= SE_FICT_OFFSET && ipl <= SE_FICT_MAX) {
+                        s = swi_get_fict_name(ipl - SE_FICT_OFFSET);
+                        break;
+                    }
                     throw new NotImplementedException();    // TODO Implements
-                //      /* fictitious planets */
-                //      if (ipl >= SE_FICT_OFFSET && ipl <= SE_FICT_MAX) {
-                //        swi_get_fict_name(ipl - SE_FICT_OFFSET, s);
-                //        break;
-                //      }
                 //      /* asteroids */
                 //      if (ipl > SE_AST_OFFSET) {
                 //    /* if name is already available */

@@ -122,16 +122,15 @@ namespace SweNet
         //static double deltat_stephenson_morrison_1600(double tjd);
         //static double deltat_aa(double tjd);
 
-        ///* Reduce x modulo 360 degrees
-        // */
-        //double FAR PASCAL_CONV swe_degnorm(double x)
-        //{
-        //  double y;
-        //  y = fmod(x, 360.0);
-        //  if (fabs(y) < 1e-13) y = 0;	/* Alois fix 11-dec-1999 */
-        //  if( y < 0.0 ) y += 360.0;
-        //  return(y);
-        //}
+        /* Reduce x modulo 360 degrees
+         */
+        double swe_degnorm(double x) {
+            double y;
+            y = (x / 360.0);
+            if (Math.Abs(y) < 1e-13) y = 0;	/* Alois fix 11-dec-1999 */
+            if (y < 0.0) y += 360.0;
+            return (y);
+        }
 
         ///* Reduce x modulo TWOPI degrees
         // */

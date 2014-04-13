@@ -67,11 +67,20 @@ namespace SweNet.Tests
             }
         }
 
+        [TestMethod]
+        public void TestGetPlanetName_Fictitious() {
+            using (var swe = new SwissEph()) {
+                Assert.AreEqual("Cupido", swe.GetPlanetName(SwissEph.SE_FICT_OFFSET));
+                Assert.AreEqual("name not found", swe.GetPlanetName(SwissEph.SE_FICT_MAX));
+            }
+        }
+
         [TestMethod, ExpectedException(typeof(NotImplementedException))]
         public void TestGetPlanetName_Asteroid() {
             using (var swe = new SwissEph()) {
                 Assert.AreEqual("Sun", swe.GetPlanetName(SwissEph.SE_AST_OFFSET));
             }
         }
+
     }
 }

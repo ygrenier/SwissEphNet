@@ -59,6 +59,7 @@
     <Compile Include="cport\SwissEph.swephexp.h.cs" />
     <Compile Include="cport\SwissEph.swephlib.c.cs" />
     <Compile Include="cport\SwissEph.swephlib.h.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwissEph.cs" />
