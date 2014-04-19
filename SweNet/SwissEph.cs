@@ -16,6 +16,7 @@ namespace SweNet
         /// Create a new context
         /// </summary>
         public SwissEph() {
+            pnoint2jpl = PNOINT2JPL.ToArray();
         }
 
         /// <summary>
@@ -154,6 +155,35 @@ namespace SweNet
         /// </summary>
         public string GetPlanetName(int ipl) {
             return swe_get_planet_name(ipl);
+        }
+
+        #endregion
+
+        #region Calculation
+
+        /// <summary>
+        /// It checks whether a position for the same planet, the same t, and the
+        /// same flag bits has already been computed. 
+        /// If yes, this position is returned. Otherwise it is computed.
+        /// </summary>
+        /// <remarks>
+        /// -> If the SEFLG_SPEED flag has been specified, the speed will be returned
+        /// at offset 3 of position array x[]. Its precision is probably better 
+        /// than 0.002"/day.
+        /// -> If the SEFLG_SPEED3 flag has been specified, the speed will be computed
+        /// from three positions. This speed is less accurate than SEFLG_SPEED,
+        /// i.e. better than 0.1"/day. And it is much slower. It is used for 
+        /// program tests only.
+        /// -> If no speed flag has been specified, no speed will be returned.
+        /// </remarks>
+        /// <param name="tjd"></param>
+        /// <param name="ipl"></param>
+        /// <param name="iflag"></param>
+        /// <param name="xx"></param>
+        /// <param name="serr"></param>
+        /// <returns></returns>
+        public int Calc(double tjd, int ipl, Int32 iflag, double[] xx, out string serr) {
+            return swe_calc(tjd, ipl, iflag, xx, out serr);
         }
 
         #endregion

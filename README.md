@@ -26,3 +26,7 @@ All exported methods are defined as protected in the class. Each of this methods
 The other elements are declared as private.
 
 The compilation configuration use pre-processor constants. We remove lot of them in our case. The other are converted as constants, not pre-processor.
+
+## SwissEphemeris configuration
+
+We don't use 

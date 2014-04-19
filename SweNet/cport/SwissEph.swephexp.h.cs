@@ -278,11 +278,11 @@ namespace SweNet
         /* default ephemeris used when no ephemeris flagbit is set */
         public const int SEFLG_DEFAULTEPH = SEFLG_SWIEPH;
 
-//#define SE_MAX_STNAME		256	/* maximum size of fixstar name;
-//                                         * the parameter star in swe_fixstar
-//                     * must allow twice this space for
-//                         * the returned star name.
-//                     */
+        public const int SE_MAX_STNAME = 256;	/* maximum size of fixstar name;
+                                                 * the parameter star in swe_fixstar
+                                                 * must allow twice this space for
+                                                 * the returned star name.
+                                                 */
 
         /* defines for eclipse computations */
 

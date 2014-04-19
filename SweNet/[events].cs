@@ -15,9 +15,8 @@ namespace SweNet
         /// <summary>
         /// Create new arguments
         /// </summary>
-        public TraceEventArgs(String message, bool isCTrace = false) {
+        public TraceEventArgs(String message) {
             this.Message = message;
-            this.IsCTrace = isCTrace;
         }
 
         /// <summary>
@@ -25,10 +24,6 @@ namespace SweNet
         /// </summary>
         public String Message { get; private set; }
 
-        /// <summary>
-        /// Is a C trace ?
-        /// </summary>
-        public bool IsCTrace { get; private set; }
     }
 
     /// <summary>
@@ -74,9 +69,9 @@ namespace SweNet
         public String Path { get; private set; }
 
         /// <summary>
-        /// File
+        /// C File
         /// </summary>
-        public TextReader File { get; set; }
+        public CFile File { get; set; }
 
     }
 

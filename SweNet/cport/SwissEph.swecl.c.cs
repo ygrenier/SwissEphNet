@@ -88,7 +88,7 @@ namespace SweNet
 //#include "sweph.h"
 //#include "swephlib.h"
 
-//#define SEFLG_EPHMASK	(SEFLG_JPLEPH|SEFLG_SWIEPH|SEFLG_MOSEPH)
+        public const int SEFLG_EPHMASK = (SEFLG_JPLEPH | SEFLG_SWIEPH | SEFLG_MOSEPH);
 //static int find_maximum(double y00, double y11, double y2, double dx, 
 //            double *dxret, double *yret);
 //static int find_zero(double y00, double y11, double y2, double dx, 
@@ -642,7 +642,7 @@ namespace SweNet
 //  double rmoon = RMOON;
 //  double dmoon = 2 * rmoon;
 //  int32 iflag, iflag2;
-//  /* double ecce = sqrt(2 * EARTH_OBLATENESS - EARTH_OBLATENESS * EARTH_OBLATENESS); */
+//  /* double ecce =Math.Sqrt(2 * EARTH_OBLATENESS - EARTH_OBLATENESS * EARTH_OBLATENESS); */
 //  AS_BOOL no_eclipse = FALSE;
 //  struct epsilon *oe = &swed.oec;
 //  for (i = 0; i < 10; i++) 
@@ -673,7 +673,7 @@ namespace SweNet
 //  for (i = 0; i <= 2; i++)
 //    rmt[i] = rm[i];
 //  if (iflag & SEFLG_NONUT)
-//    sidt = swe_sidtime0(tjd_ut, oe->eps * RADTODEG, 0) * 15 * DEGTORAD;
+//    sidt = swe_sidtime0(tjd_ut, oe.eps * RADTODEG, 0) * 15 * DEGTORAD;
 //  else
 //    sidt = swe_sidtime(tjd_ut) * 15 * DEGTORAD;
 //  /*
@@ -702,7 +702,7 @@ namespace SweNet
 //  swi_polcart(lx, rm);
 //  rm[2] /= earthobl;
 //  /* distance of moon from geocenter */
-//  dm = sqrt(square_sum(rm));
+//  dm =Math.Sqrt(square_sum(rm));
 //  /* Account for oblateness of earth */
 //  for (i = 0; i <= 2; i++)
 //    lx[i] = ls[i];
@@ -714,8 +714,8 @@ namespace SweNet
 //    et[i] = (rmt[i] - rst[i]);
 //  }
 //  /* distance sun - moon */
-//  dsm = sqrt(square_sum(e));
-//  dsmt = sqrt(square_sum(et));
+//  dsm =Math.Sqrt(square_sum(e));
+//  dsmt =Math.Sqrt(square_sum(et));
 //  /* sun - moon unit vector */
 //  for (i = 0; i <= 2; i++) {
 //    e[i] /= dsm;
@@ -725,13 +725,13 @@ namespace SweNet
 //#endif
 //  }
 //  sinf1 = ((drad - rmoon) / dsm);
-//  cosf1 = sqrt(1 - sinf1 * sinf1);
+//  cosf1 =Math.Sqrt(1 - sinf1 * sinf1);
 //  sinf2 = ((drad + rmoon) / dsm);
-//  cosf2 = sqrt(1 - sinf2 * sinf2);
+//  cosf2 =Math.Sqrt(1 - sinf2 * sinf2);
 //  /* distance of moon from fundamental plane */
 //  s0 = -dot_prod(rm, e);
 //  /* distance of shadow axis from geocenter */
-//  r0 = sqrt(dm * dm - s0 * s0);
+//  r0 =Math.Sqrt(dm * dm - s0 * s0);
 //  /* diameter of core shadow on fundamental plane */
 //  d0 = (s0 / dsm * (drad * 2 - dmoon) - dmoon) / cosf1;
 //  /* diameter of half-shadow on fundamental plane */
@@ -749,13 +749,13 @@ namespace SweNet
 //  retc = 0;
 //  if (de * cosf1 >= r0) {
 //    retc |= SE_ECL_CENTRAL;
-//  } else if (r0 <= de * cosf1 + fabs(d0) / 2) {
+//  } else if (r0 <= de * cosf1 + Math.Abs(d0) / 2) {
 //    retc |= SE_ECL_NONCENTRAL;
 //  } else if (r0 <= de * cosf2 + D0 / 2) {
 //    retc |= (SE_ECL_PARTIAL | SE_ECL_NONCENTRAL);
 //  } else {
 //    if (serr != NULL)
-//      sprintf(serr, "no solar eclipse at tjd = %f", tjd);
+        //      serr=C.sprintf("no solar eclipse at tjd = %f", tjd);
 //    for (i = 0; i < 10; i++)
 //      geopos[i] = 0;
 //    *dcore = 0;
@@ -767,7 +767,7 @@ namespace SweNet
 //  /* distance of shadow point from fundamental plane */
 //  d = s0 * s0 + de * de - dm * dm;
 //  if (d > 0)
-//    d = sqrt(d);
+//    d =Math.Sqrt(d);
 //  else 
 //    d = 0;
 //  /* distance of moon from shadow point on earth */
@@ -783,7 +783,7 @@ namespace SweNet
 //  if (d == 0) {
 //    double ds, a, b;
 //    /* distance of sun from geocenter */
-//    ds = sqrt(square_sum(rs));
+//    ds =Math.Sqrt(square_sum(rs));
 //    a = PI - acos(swi_dot_prod_unit(e, erm));
 //       /* refraction at horizon + sun radius = about 0.83 degrees */
 //    b = 34.4556 / 60.0 * DEGTORAD + asin(drad / ds);
@@ -828,7 +828,7 @@ namespace SweNet
 //    double cosfi = cos(xst[1]);
 //    double sinfi = sin(xst[1]);
 //    double eobl = EARTH_OBLATENESS;
-//    double cc= 1 / sqrt(cosfi * cosfi + (1-eobl) * (1-eobl) * sinfi * sinfi); 
+//    double cc= 1 /Math.Sqrt(cosfi * cosfi + (1-eobl) * (1-eobl) * sinfi * sinfi); 
 //    double ss= (1-eobl) * (1-eobl) * cc; 
 //    earthobl =  ss;
 //    niter++;
@@ -851,7 +851,7 @@ namespace SweNet
 //   * first, distance moon - place of eclipse on earth */
 //  for (i = 0; i <= 2; i++) 
 //    x[i] = rmt[i] - xst[i];
-//  s = sqrt(square_sum(x));
+//  s =Math.Sqrt(square_sum(x));
 //  /* diameter of core shadow at place of maximum eclipse */
 //  *dcore = (s / dsmt * ( drad * 2 - dmoon) - dmoon) * cosf1;
 //  *dcore *= AUNIT / 1000.0;
@@ -1025,14 +1025,14 @@ namespace SweNet
 //   */
 //  if (dctr < rsminusrm)
 //    retc = SE_ECL_ANNULAR;
-//  else if (dctr < fabs(rsminusrm))
+//  else if (dctr < Math.Abs(rsminusrm))
 //    retc = SE_ECL_TOTAL;
 //  else if (dctr < rsplusrm)
 //    retc = SE_ECL_PARTIAL;
 //  else {
 //    retc = 0;
 //    if (serr != NULL)
-//      sprintf(serr, "no solar eclipse at tjd = %f", tjd_ut);
+        //      serr=C.sprintf("no solar eclipse at tjd = %f", tjd_ut);
 //  }
 //  /*
 //   * ratio of diameter of moon to that of sun
@@ -1090,10 +1090,10 @@ namespace SweNet
 //  /* approximate minimum height for visibility, considering
 //   * refraction and dip
 //   * 34.4556': refraction at horizon, from Bennets formulae 
-//   * 1.75' / sqrt(geohgt): dip of horizon
-//   * 0.37' / sqrt(geohgt): refraction between horizon and observer */
-//  hmin_appr = -(34.4556 + (1.75 + 0.37) * sqrt(geohgt)) / 60;	
-//  if (xh[1] + rsun + fabs(hmin_appr) >= 0 && retc) 
+//   * 1.75' /Math.Sqrt(geohgt): dip of horizon
+//   * 0.37' /Math.Sqrt(geohgt): refraction between horizon and observer */
+//  hmin_appr = -(34.4556 + (1.75 + 0.37) *Math.Sqrt(geohgt)) / 60;	
+//  if (xh[1] + rsun + Math.Abs(hmin_appr) >= 0 && retc) 
 //    retc |= SE_ECL_VISIBLE;	/* eclipse visible */
 //#if USE_AZ_NAV   /* old */
 //  attr[4] = swe_degnorm(90 - xh[0]); /* azimuth, from north, clockwise, via east */
@@ -1188,7 +1188,7 @@ namespace SweNet
 //  iflagcart = iflag | SEFLG_XYZ;
 //  if (ifltype == (SE_ECL_PARTIAL | SE_ECL_CENTRAL)) {
 //    if (serr != NULL)
-//      strcpy(serr, "central partial eclipses do not exist");
+//      serr= "central partial eclipses do not exist";
 //    return ERR;
 //  }
 //  if (ifltype == 0)
@@ -1360,7 +1360,7 @@ namespace SweNet
 //      if (n == 0)
 //        dc[i] = dcore[4] / 2 + de / dcore[5] - dcore[2];
 //      else if (n == 1)
-//        dc[i] = fabs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
+//        dc[i] = Math.Abs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
 //      else if (n == 2)
 //        dc[i] = de / dcore[6] - dcore[2];
 //    }
@@ -1375,7 +1375,7 @@ namespace SweNet
 //          if (n == 0)
 //            dc[i] = dcore[4] / 2 + de / dcore[5] - dcore[2];
 //          else if (n == 1)
-//            dc[i] = fabs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
+//            dc[i] = Math.Abs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
 //          else if (n == 2)
 //            dc[i] = de / dcore[6] - dcore[2];
 //        }
@@ -1575,7 +1575,7 @@ namespace SweNet
 //   */
 //  if (ifltype == (SE_ECL_PARTIAL | SE_ECL_CENTRAL)) {
 //    if (serr != NULL)
-//      strcpy(serr, "central partial eclipses do not exist");
+//      serr= "central partial eclipses do not exist";
 //    return ERR;
 //  }
 //  if (ifltype == 0)
@@ -1600,7 +1600,7 @@ namespace SweNet
 //      tjd = t - direction * dadd2;
 //      t = tjd;
 //      break;
-//    } else if (fabs(tjd - t) > (30 - dadd2 * 0.8)) {
+//    } else if (Math.Abs(tjd - t) > (30 - dadd2 * 0.8)) {
 //      t = tjd;
 //    } else if (i == nstartpos-1) {
 //      /*for (j = 0; j < nstartpos; j++)
@@ -1612,7 +1612,7 @@ namespace SweNet
 //        } else {
 //      swe_get_planet_name(ipl , s);
 //        }
-//    sprintf(serr, "error in swe_lun_occult_when_glob(): conjunction of moon with planet %s not found\n", s);
+        //    serr=C.sprintf("error in swe_lun_occult_when_glob(): conjunction of moon with planet %s not found\n", s);
 //      }
 //      return ERR;
 //    }
@@ -1769,7 +1769,7 @@ namespace SweNet
 //      if (n == 0)
 //        dc[i] = dcore[4] / 2 + de / dcore[5] - dcore[2];
 //      else if (n == 1)
-//        dc[i] = fabs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
+//        dc[i] = Math.Abs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
 //      else if (n == 2)
 //        dc[i] = de / dcore[6] - dcore[2];
 //    }
@@ -1784,7 +1784,7 @@ namespace SweNet
 //          if (n == 0)
 //            dc[i] = dcore[4] / 2 + de / dcore[5] - dcore[2];
 //          else if (n == 1)
-//            dc[i] = fabs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
+//            dc[i] = Math.Abs(dcore[3]) / 2 + de / dcore[6] - dcore[2];
 //          else if (n == 2)
 //            dc[i] = de / dcore[6] - dcore[2];
 //        }
@@ -2081,8 +2081,8 @@ namespace SweNet
 //        return ERR;
 //      if (swe_calc(t, SE_MOON, iflag, lm, serr) == ERR)
 //        return ERR;
-//      dm = sqrt(square_sum(xm));
-//      ds = sqrt(square_sum(xs));
+//      dm =Math.Sqrt(square_sum(xm));
+//      ds =Math.Sqrt(square_sum(xs));
 //      for (k = 0; k < 3; k++) {
 //        x1[k] = xs[k] / ds /*ls[2]*/;
 //        x2[k] = xm[k] / dm /*lm[2]*/;
@@ -2123,23 +2123,23 @@ namespace SweNet
 //  }
 //  if (dctr < rsminusrm)
 //    retflag = SE_ECL_ANNULAR;
-//  else if (dctr < fabs(rsminusrm))
+//  else if (dctr < Math.Abs(rsminusrm))
 //    retflag = SE_ECL_TOTAL;
 //  else if (dctr <= rsplusrm)
 //    retflag = SE_ECL_PARTIAL;
 //  dctrmin = dctr;
 //  /* contacts 2 and 3 */
-//  if (dctr > fabs(rsminusrm))  /* partial, no 2nd and 3rd contact */
+//  if (dctr > Math.Abs(rsminusrm))  /* partial, no 2nd and 3rd contact */
 //    tret[2] = tret[3] = 0;
 //  else {
-//    dc[1] = fabs(rsminusrm) - dctrmin;
+//    dc[1] = Math.Abs(rsminusrm) - dctrmin;
 //    for (i = 0, t = tjd - twomin; i <= 2; i += 2, t = tjd + twomin) {
 //      if (swe_calc(t, SE_SUN, iflagcart, xs, serr) == ERR)
 //        return ERR;
 //      if (swe_calc(t, SE_MOON, iflagcart, xm, serr) == ERR)
 //        return ERR;
-//      dm = sqrt(square_sum(xm));
-//      ds = sqrt(square_sum(xs));
+//      dm =Math.Sqrt(square_sum(xm));
+//      ds =Math.Sqrt(square_sum(xs));
 //      rmoon = asin(RMOON / dm) * RADTODEG;
 //      rmoon *= 0.99916; /* gives better accuracy for 2nd/3rd contacts */
 //      rsun = asin(RSUN / ds) * RADTODEG;
@@ -2149,7 +2149,7 @@ namespace SweNet
 //        x2[k] = xm[k] / dm /*lm[2]*/;
 //      }
 //      dctr = acos(swi_dot_prod_unit(x1, x2)) * RADTODEG;
-//      dc[i] = fabs(rsminusrm) - dctr;
+//      dc[i] = Math.Abs(rsminusrm) - dctr;
 //    }
 //    find_zero(dc[0], dc[1], dc[2], twomin, &dt1, &dt2);
 //    tret[2] = tjd + dt1 + twomin;
@@ -2167,8 +2167,8 @@ namespace SweNet
 //              xm[k] -= xm[k+3] * dt;
 //            }
 //          }
-//          dm = sqrt(square_sum(xm));
-//          ds = sqrt(square_sum(xs));
+//          dm =Math.Sqrt(square_sum(xm));
+//          ds =Math.Sqrt(square_sum(xs));
 //          rmoon = asin(RMOON / dm) * RADTODEG;
 //      rmoon *= 0.99916; /* gives better accuracy for 2nd/3rd contacts */
 //          rsun = asin(RSUN / ds) * RADTODEG;
@@ -2178,7 +2178,7 @@ namespace SweNet
 //            x2[k] = xm[k] / dm /*lm[2]*/;
 //          }
 //          dctr = acos(swi_dot_prod_unit(x1, x2)) * RADTODEG;
-//          dc[i] = fabs(rsminusrm) - dctr;
+//          dc[i] = Math.Abs(rsminusrm) - dctr;
 //        }
 //        dt1 = -dc[0] / ((dc[0] - dc[1]) / dt);
 //        tret[j] += dt1;
@@ -2194,8 +2194,8 @@ namespace SweNet
 //      return ERR;
 //    if (swe_calc(t, SE_MOON, iflagcart, xm, serr) == ERR)
 //      return ERR;
-//    dm = sqrt(square_sum(xm));
-//    ds = sqrt(square_sum(xs));
+//    dm =Math.Sqrt(square_sum(xm));
+//    ds =Math.Sqrt(square_sum(xs));
 //    rmoon = asin(RMOON / dm) * RADTODEG;
 //    rsun = asin(RSUN / ds) * RADTODEG;
 //    rsplusrm = rsun + rmoon;
@@ -2222,8 +2222,8 @@ namespace SweNet
 //            xm[k] -= xm[k+3] * dt;
 //          }
 //        }
-//        dm = sqrt(square_sum(xm));
-//        ds = sqrt(square_sum(xs));
+//        dm =Math.Sqrt(square_sum(xm));
+//        ds =Math.Sqrt(square_sum(xs));
 //        rmoon = asin(RMOON / dm) * RADTODEG;
 //        rsun = asin(RSUN / ds) * RADTODEG;
 //        rsplusrm = rsun + rmoon;
@@ -2232,7 +2232,7 @@ namespace SweNet
 //          x2[k] = xm[k] / dm /*lm[2]*/;
 //        }
 //        dctr = acos(swi_dot_prod_unit(x1, x2)) * RADTODEG;
-//        dc[i] = fabs(rsplusrm) - dctr;
+//        dc[i] = Math.Abs(rsplusrm) - dctr;
 //      }
 //      dt1 = -dc[0] / ((dc[0] - dc[1]) / dt);
 //      tret[j] += dt1;
@@ -2346,7 +2346,7 @@ namespace SweNet
 //      tjd = t - direction*dadd2;
 //      t = tjd;
 //      break;
-//    } else if (fabs(tjd - t) > (30 - dadd2 * 0.8)) {
+//    } else if (Math.Abs(tjd - t) > (30 - dadd2 * 0.8)) {
 //      t = tjd;
 //      break; /* use initial tjd */
 //    } else if (i == nstartpos-1) {
@@ -2386,7 +2386,7 @@ namespace SweNet
 //        return ERR;
 //      if (swe_calc(t, SE_MOON, iflag, lm, serr) == ERR)
 //        return ERR;
-//      if (dt < 1 && fabs(ls[1] - lm[1]) > 2) {
+//      if (dt < 1 && Math.Abs(ls[1] - lm[1]) > 2) {
 //        if (one_try) {
 //          stop_after_this = TRUE;
 //        } else {
@@ -2441,23 +2441,23 @@ namespace SweNet
 //  }
 //  if (dctr < rsminusrm)
 //    retflag = SE_ECL_ANNULAR;
-//  else if (dctr < fabs(rsminusrm))
+//  else if (dctr < Math.Abs(rsminusrm))
 //    retflag = SE_ECL_TOTAL;
 //  else if (dctr <= rsplusrm)
 //    retflag = SE_ECL_PARTIAL;
 //  dctrmin = dctr;
 //  /* contacts 2 and 3 */
-//  if (dctr > fabs(rsminusrm))  /* partial, no 2nd and 3rd contact */
+//  if (dctr > Math.Abs(rsminusrm))  /* partial, no 2nd and 3rd contact */
 //    tret[2] = tret[3] = 0;
 //  else {
-//    dc[1] = fabs(rsminusrm) - dctrmin;
+//    dc[1] = Math.Abs(rsminusrm) - dctrmin;
 //    for (i = 0, t = tjd - twomin; i <= 2; i += 2, t = tjd + twomin) {
 //      if (calc_planet_star(t, ipl, starname, iflagcart, xs, serr) == ERR)
 //        return ERR;
 //      if (swe_calc(t, SE_MOON, iflagcart, xm, serr) == ERR)
 //        return ERR;
-//      dm = sqrt(square_sum(xm));
-//      ds = sqrt(square_sum(xs));
+//      dm =Math.Sqrt(square_sum(xm));
+//      ds =Math.Sqrt(square_sum(xs));
 //      rmoon = asin(RMOON / dm) * RADTODEG;
 //      rmoon *= 0.99916; /* gives better accuracy for 2nd/3rd contacts */
 //      rsun = asin(drad / ds) * RADTODEG;
@@ -2467,7 +2467,7 @@ namespace SweNet
 //        x2[k] = xm[k] / dm /*lm[2]*/;
 //      }
 //      dctr = acos(swi_dot_prod_unit(x1, x2)) * RADTODEG;
-//      dc[i] = fabs(rsminusrm) - dctr;
+//      dc[i] = Math.Abs(rsminusrm) - dctr;
 //    }
 //    find_zero(dc[0], dc[1], dc[2], twomin, &dt1, &dt2);
 //    tret[2] = tjd + dt1 + twomin;
@@ -2485,8 +2485,8 @@ namespace SweNet
 //              xm[k] -= xm[k+3] * dt;
 //            }
 //          }
-//          dm = sqrt(square_sum(xm));
-//          ds = sqrt(square_sum(xs));
+//          dm =Math.Sqrt(square_sum(xm));
+//          ds =Math.Sqrt(square_sum(xs));
 //          rmoon = asin(RMOON / dm) * RADTODEG;
 //      rmoon *= 0.99916; /* gives better accuracy for 2nd/3rd contacts */
 //          rsun = asin(drad / ds) * RADTODEG;
@@ -2496,7 +2496,7 @@ namespace SweNet
 //            x2[k] = xm[k] / dm /*lm[2]*/;
 //          }
 //          dctr = acos(swi_dot_prod_unit(x1, x2)) * RADTODEG;
-//          dc[i] = fabs(rsminusrm) - dctr;
+//          dc[i] = Math.Abs(rsminusrm) - dctr;
 //        }
 //        dt1 = -dc[0] / ((dc[0] - dc[1]) / dt);
 //        tret[j] += dt1;
@@ -2512,8 +2512,8 @@ namespace SweNet
 //      return ERR;
 //    if (swe_calc(t, SE_MOON, iflagcart, xm, serr) == ERR)
 //      return ERR;
-//    dm = sqrt(square_sum(xm));
-//    ds = sqrt(square_sum(xs));
+//    dm =Math.Sqrt(square_sum(xm));
+//    ds =Math.Sqrt(square_sum(xs));
 //    rmoon = asin(RMOON / dm) * RADTODEG;
 //    rsun = asin(drad / ds) * RADTODEG;
 //    rsplusrm = rsun + rmoon;
@@ -2540,8 +2540,8 @@ namespace SweNet
 //            xm[k] -= xm[k+3] * dt;
 //          }
 //        }
-//        dm = sqrt(square_sum(xm));
-//        ds = sqrt(square_sum(xs));
+//        dm =Math.Sqrt(square_sum(xm));
+//        ds =Math.Sqrt(square_sum(xs));
 //        rmoon = asin(RMOON / dm) * RADTODEG;
 //        rsun = asin(drad / ds) * RADTODEG;
 //        rsplusrm = rsun + rmoon;
@@ -2550,7 +2550,7 @@ namespace SweNet
 //          x2[k] = xm[k] / dm /*lm[2]*/;
 //        }
 //        dctr = acos(swi_dot_prod_unit(x1, x2)) * RADTODEG;
-//        dc[i] = fabs(rsplusrm) - dctr;
+//        dc[i] = Math.Abs(rsplusrm) - dctr;
 //      }
 //      dt1 = -dc[0] / ((dc[0] - dc[1]) / dt);
 //      tret[j] += dt1;
@@ -3008,7 +3008,7 @@ namespace SweNet
 //  double d = 1-1.8480*krefr*atpress/(273.16+attemp)/(273.16+attemp);
 //  /* return -0.03203*sqrt(geoalt)*sqrt(d); */
 //  /* double a = acos(1/(1+geoalt/EARTH_RADIUS));*/
-//  return -180.0/PI * acos(1 / (1 + geoalt / EARTH_RADIUS)) * sqrt(d);
+//  return -180.0/PI * acos(1 / (1 + geoalt / EARTH_RADIUS)) *Math.Sqrt(d);
 //}
 
 
@@ -3102,12 +3102,12 @@ namespace SweNet
 //  if (swe_calc(tjd, SE_MOON, iflag, rm, serr) == ERR)
 //    return ERR;
 //  /* distance of moon from geocenter */
-//  dm = sqrt(square_sum(rm));
+//  dm =Math.Sqrt(square_sum(rm));
 //  /* sun in cartesian coordinates */
 //  if (swe_calc(tjd, SE_SUN, iflag, rs, serr) == ERR)
 //    return ERR;
 //  /* distance of sun from geocenter */
-//  ds = sqrt(square_sum(rs));
+//  ds =Math.Sqrt(square_sum(rs));
 //  for (i = 0; i < 3; i++) {
 //    x1[i] = rs[i] / ds;
 //    x2[i] = rm[i] / dm;
@@ -3123,21 +3123,21 @@ namespace SweNet
 //  for (i = 0; i <= 2; i++)
 //    e[i] = (rm[i] - rs[i]);
 //  /* distance sun - earth */
-//  dsm = sqrt(square_sum(e));
+//  dsm =Math.Sqrt(square_sum(e));
 //  /* sun - earth unit vector */
 //  for (i = 0; i <= 2; i++)
 //    e[i] /= dsm;
 //  f1 = ((RSUN - REARTH) / dsm);
-//  cosf1 = sqrt(1 - f1 * f1);
+//  cosf1 =Math.Sqrt(1 - f1 * f1);
 //  f2 = ((RSUN + REARTH) / dsm);
-//  cosf2 = sqrt(1 - f2 * f2);
+//  cosf2 =Math.Sqrt(1 - f2 * f2);
 //  /* distance of earth from fundamental plane */
 //  s0 = -dot_prod(rm, e);
 //  /* distance of shadow axis from selenocenter */
-//  r0 = sqrt(dm * dm - s0 * s0);
+//  r0 =Math.Sqrt(dm * dm - s0 * s0);
 //  /* diameter of core shadow on fundamental plane */
 //         /* one 50th is added for effect of atmosphere, AA98, L4 */
-//  d0 = fabs(s0 / dsm * (DSUN - DEARTH) - DEARTH) * (1 + 1.0 / 50.0) / cosf1;
+//  d0 = Math.Abs(s0 / dsm * (DSUN - DEARTH) - DEARTH) * (1 + 1.0 / 50.0) / cosf1;
 //  /* diameter of half-shadow on fundamental plane */
 //  D0 = (s0 / dsm * (DSUN + DEARTH) + DEARTH) * (1 + 1.0 / 50.0) / cosf2;
 //  d0 /= cosf1;
@@ -3165,7 +3165,7 @@ namespace SweNet
 //    attr[0] = 0;
 //  } else {
 //    if (serr != NULL)
-//      sprintf(serr, "no lunar eclipse at tjd = %f", tjd);
+        //      serr=C.sprintf("no lunar eclipse at tjd = %f", tjd);
 //  }
 //  attr[8] = attr[0];
 //  /**************************
@@ -3173,7 +3173,7 @@ namespace SweNet
 //   **************************/
 //  attr[1] = (D0 / 2 - r0 + rmoon) / dmoon;
 //  if (retc != 0)
-//    attr[7] = 180 - fabs(dctr);
+//    attr[7] = 180 - Math.Abs(dctr);
 //  /* saros series and member */
 //  for (i = 0; i < NSAROS_LUNAR; i++) {
 //    d = (tjd_ut - saros_data_lunar[i].tstart) / SAROS_CYCLE;
@@ -3321,8 +3321,8 @@ namespace SweNet
 //        xs[m] -= xm[m];	/* selenocentric sun */
 //        xm[m] = -xm[m];	/* selenocentric earth */
 //      }
-//      ds = sqrt(square_sum(xs));
-//      dm = sqrt(square_sum(xm));
+//      ds =Math.Sqrt(square_sum(xs));
+//      dm =Math.Sqrt(square_sum(xm));
 //      for (m = 0; m < 3; m++) {
 //        xa[m] = xs[m] / ds;
 //        xb[m] = xm[m] / dm;
@@ -3547,7 +3547,7 @@ namespace SweNet
 // */
 //#define EULER 2.718281828459
 //#define NMAG_ELEM  (SE_VESTA + 1)
-//static double mag_elem[NMAG_ELEM][4] = {
+//static double mag_elem[NMAG_ELEM,4] = {
 //                /* DTV-Atlas Astronomie, p. 32 */
 //                {-26.86, 0, 0, 0},
 //                {-12.55, 0, 0, 0},
@@ -3661,28 +3661,28 @@ namespace SweNet
 //  /* 
 //   * apparent magnitude 
 //   */
-//  if (ipl > SE_AST_OFFSET || (ipl < NMAG_ELEM && mag_elem[ipl][0] < 99)) {
+//  if (ipl > SE_AST_OFFSET || (ipl < NMAG_ELEM && mag_elem[ipl,0] < 99)) {
 //    if (ipl == SE_SUN) {
 //      /* ratio apparent diameter : average diameter */
 //      fac = attr[3] / (asin(pla_diam[SE_SUN] / 2.0 / AUNIT) * 2 * RADTODEG);
 //      fac *= fac;
-//      attr[4] = mag_elem[ipl][0] - 2.5 * log10(fac);
+//      attr[4] = mag_elem[ipl,0] - 2.5 * log10(fac);
 //    } else if (ipl == SE_MOON) {
 //      /* formula according to Allen, C.W., 1976, Astrophysical Quantities */
-//      /*attr[4] = -21.62 + 5 * log10(384410497.8 / EARTH_RADIUS) / log10(10) + 0.026 * fabs(attr[0]) + 0.000000004 * pow(attr[0], 4);*/
-//      attr[4] = -21.62 + 5 * log10(lbr[2] * AUNIT / EARTH_RADIUS) / log10(10) + 0.026 * fabs(attr[0]) + 0.000000004 * pow(attr[0], 4);
+//      /*attr[4] = -21.62 + 5 * log10(384410497.8 / EARTH_RADIUS) / log10(10) + 0.026 * Math.Abs(attr[0]) + 0.000000004 * pow(attr[0], 4);*/
+//      attr[4] = -21.62 + 5 * log10(lbr[2] * AUNIT / EARTH_RADIUS) / log10(10) + 0.026 * Math.Abs(attr[0]) + 0.000000004 * pow(attr[0], 4);
 //#if 0
 //      /* ratio apparent diameter : average diameter */
 //      fac = attr[3] / (asin(pla_diam[SE_MOON] / 2.0 / 384400000.0) * 2 * RADTODEG);
 //      /* distance sun - moon */
 //      for (i = 0; i < 3; i++)
 //        xxs[i] -= xx[i];
-//      dsm = sqrt(square_sum(xxs));
+//      dsm =Math.Sqrt(square_sum(xxs));
 //      /* account for phase and distance of moon: */
 //      fac *= fac * attr[1];
 //      /* account for distance of sun from moon: */
 //      fac *= dsm * dsm;
-//      attr[4] = mag_elem[ipl][0] - 2.5 * log10(fac);
+//      attr[4] = mag_elem[ipl,0] - 2.5 * log10(fac);
 //#endif
 //      /*printf("1 = %f, 2 = %f\n", mag, mag2);*/
 //    } else if (ipl == SE_SATURN) {
@@ -3690,7 +3690,7 @@ namespace SweNet
 //      T = (tjd - dt - J2000) / 36525.0;
 //      in = (28.075216 - 0.012998 * T + 0.000004 * T * T) * DEGTORAD;
 //      om = (169.508470 + 1.394681 * T + 0.000412 * T * T) * DEGTORAD;
-//      sinB = fabs(sin(in) * cos(lbr[1] * DEGTORAD) 
+//      sinB = Math.Abs(sin(in) * cos(lbr[1] * DEGTORAD) 
 //                    * sin(lbr[0] * DEGTORAD - om)
 //                    - cos(in) * sin(lbr[1] * DEGTORAD));
 //      u1 = atan2(sin(in) * tan(lbr2[1] * DEGTORAD) 
@@ -3703,22 +3703,22 @@ namespace SweNet
 //      if (du > 10) 
 //        du = 360 - du;
 //      attr[4] = 5 * log10(lbr2[2] * lbr[2])
-//                  + mag_elem[ipl][1] * sinB
-//                  + mag_elem[ipl][2] * sinB * sinB
-//                  + mag_elem[ipl][3] * du
-//                  + mag_elem[ipl][0];
+//                  + mag_elem[ipl,1] * sinB
+//                  + mag_elem[ipl,2] * sinB * sinB
+//                  + mag_elem[ipl,3] * du
+//                  + mag_elem[ipl,0];
 //    } else if (ipl < SE_CHIRON) {
 //      attr[4] = 5 * log10(lbr2[2] * lbr[2])
-//                  + mag_elem[ipl][1] * attr[0] /100.0
-//                  + mag_elem[ipl][2] * attr[0] * attr[0] / 10000.0
-//                  + mag_elem[ipl][3] * attr[0] * attr[0] * attr[0] / 1000000.0
-//                  + mag_elem[ipl][0];
+//                  + mag_elem[ipl,1] * attr[0] /100.0
+//                  + mag_elem[ipl,2] * attr[0] * attr[0] / 10000.0
+//                  + mag_elem[ipl,3] * attr[0] * attr[0] * attr[0] / 1000000.0
+//                  + mag_elem[ipl,0];
 //    } else if (ipl < NMAG_ELEM || ipl > SE_AST_OFFSET) { /* asteroids */
 //      ph1 = pow(EULER, -3.33 * pow(tan(attr[0] * DEGTORAD / 2), 0.63));
 //      ph2 = pow(EULER, -1.87 * pow(tan(attr[0] * DEGTORAD / 2), 1.22));
 //      if (ipl < NMAG_ELEM) {    /* main asteroids */
-//        me[0] = mag_elem[ipl][0];
-//        me[1] = mag_elem[ipl][1];
+//        me[0] = mag_elem[ipl,0];
+//        me[1] = mag_elem[ipl,1];
 //      } else if (ipl == SE_AST_OFFSET + 1566) { 
 //                  /* Icarus has elements from JPL database */
 //                me[0] = 16.9;
@@ -3775,11 +3775,11 @@ namespace SweNet
 //      /* local hour angle of the moon */
 //      h = swe_degnorm(tsid - xm[0] / DEGTORAD);
 //      /* geocentric latitude of the observer */
-//      e = sqrt(f * (2 - f));
+//      e =Math.Sqrt(f * (2 - f));
 //      phi = atan((1 - e * e) * tan(swed.topd.geolat * DEGTORAD));
 //      /* sine of geocentric zenith angle of moon */
 //      cosz = sin(xm[1]) * sin(phi) + cos(xm[1]) * cos(phi) * cos(h * DEGTORAD);
-//      sinz = sqrt(1 - cosz * cosz);
+//      sinz =Math.Sqrt(1 - cosz * cosz);
 //      attr[5] = asin(sinz * sinhp / (1 - sinz * sinhp)) / DEGTORAD;
 //      }
 //#endif
@@ -3817,8 +3817,8 @@ namespace SweNet
 //  a = (y2 + y00) / 2.0 - c;
 //  if (b * b - 4 * a * c < 0) 
 //    return ERR;
-//  x1 = (-b + sqrt(b * b - 4 * a * c)) / 2 / a;
-//  x2 = (-b - sqrt(b * b - 4 * a * c)) / 2 / a;
+//  x1 = (-b +Math.Sqrt(b * b - 4 * a * c)) / 2 / a;
+//  x2 = (-b -Math.Sqrt(b * b - 4 * a * c)) / 2 / a;
 //  *dxret = (x1 - 1) * dx;
 //  *dxret2 = (x2 - 1) * dx;
 //  return OK;
@@ -3881,7 +3881,7 @@ namespace SweNet
 //{
 //  int i, j, k, ii, calc_culm, nculm = -1;
 //  double tjd_et = tjd_ut + swe_deltat(tjd_ut);
-//  double xc[6], xh[20][6], ah[6], aha;
+//  double xc[6], xh[20,6], ah[6], aha;
 //  double tculm[4], tcu, tc[20], h[20], t2[6], dc[6], dtint, dx, rdi, dd = 0;
 //  int32 iflag = epheflag;
 //  int jmax = 14;
@@ -3892,7 +3892,7 @@ namespace SweNet
 //   * are treated as calls for Pluto as main body SE_PLUTO */
 //  if (ipl == SE_AST_OFFSET + 134340)
 //    ipl = SE_PLUTO;
-//  xh[0][0] = 0; /* to shut up mint */
+//  xh[0,0] = 0; /* to shut up mint */
 //  /* allowing SEFLG_NONUT and SEFLG_TRUEPOS speeds it up */
 //  iflag &= (SEFLG_EPHMASK | SEFLG_NONUT | SEFLG_TRUEPOS);
 //  *tret = 0;
@@ -3956,27 +3956,27 @@ namespace SweNet
 //    swe_azalt(t, SE_EQU2HOR, geopos, atpress, attemp, xc, xh[ii]);
 //    if (rsmi & SE_BIT_DISC_BOTTOM) {
 //      /* true height of bottom point of body */
-//      xh[ii][1] -= rdi;
+//      xh[ii,1] -= rdi;
 //    } else {
 //      /* true height of uppermost point of body */
-//      xh[ii][1] += rdi;
+//      xh[ii,1] += rdi;
 //    }
 //    /* apparent height of uppermost point of body */
 //    if (rsmi & SE_BIT_NO_REFRACTION) {
-//      xh[ii][1] -= horhgt;
-//      h[ii] = xh[ii][1];
+//      xh[ii,1] -= horhgt;
+//      h[ii] = xh[ii,1];
 //    } else {
 //      swe_azalt_rev(t, SE_HOR2EQU, geopos, xh[ii], xc);
 //      swe_azalt(t, SE_EQU2HOR, geopos, atpress, attemp, xc, xh[ii]);
-//      xh[ii][1] -= horhgt;
-//      xh[ii][2] -= horhgt;
-//      h[ii] = xh[ii][2];
+//      xh[ii,1] -= horhgt;
+//      xh[ii,2] -= horhgt;
+//      h[ii] = xh[ii,2];
 //    }
 //    calc_culm = 0;
 //    if (ii > 1) {
-//      dc[0] = xh[ii-2][1];
-//      dc[1] = xh[ii-1][1];
-//      dc[2] = xh[ii][1];
+//      dc[0] = xh[ii-2,1];
+//      dc[1] = xh[ii-1,1];
+//      dc[2] = xh[ii,1];
 //      if (dc[1] > dc[0] && dc[1] > dc[2])
 //        calc_culm = 1;
 //      if (dc[1] < dc[0] && dc[1] < dc[2])
@@ -4122,7 +4122,7 @@ namespace SweNet
 //    }
 //  }
 //  if (serr)
-//    sprintf(serr, "rise or set not found for planet %d", ipl);
+        //    serr=C.sprintf("rise or set not found for planet %d", ipl);
 //  return -2; /* no t of rise or set found */
 //}
 
@@ -4439,7 +4439,7 @@ namespace SweNet
 // *                 be returned instead of the aphelia.
 // */
 ///* mean elements for Mercury - Neptune from VSOP87 (mean equinox of date) */
-//static double el_node[8][4] = 
+//static double el_node[8,4] = 
 //  {{ 48.330893,  1.1861890,  0.00017587,  0.000000211,}, /* Mercury */
 //  { 76.679920,  0.9011190,  0.00040665, -0.000000080,}, /* Venus   */
 //  {  0       ,  0        ,  0         ,  0          ,}, /* Earth   */
@@ -4449,7 +4449,7 @@ namespace SweNet
 //  { 74.005947,  0.5211258,  0.00133982,  0.000018516,}, /* Uranus  */
 //  {131.784057,  1.1022057,  0.00026006, -0.000000636,}, /* Neptune */
 //  };
-//static double el_peri[8][4] = 
+//static double el_peri[8,4] = 
 //  {{ 77.456119,  1.5564775,  0.00029589,  0.000000056,}, /* Mercury */
 //  {131.563707,  1.4022188, -0.00107337, -0.000005315,}, /* Venus   */
 //  {102.937348,  1.7195269,  0.00045962,  0.000000499,}, /* Earth   */
@@ -4459,7 +4459,7 @@ namespace SweNet
 //  {173.005159,  1.4863784,  0.00021450,  0.000000433,}, /* Uranus  */
 //  { 48.123691,  1.4262677,  0.00037918, -0.000000003,}, /* Neptune */
 //  };
-//static double el_incl[8][4] = 
+//static double el_incl[8,4] = 
 //  {{  7.004986,  0.0018215, -0.00001809,  0.000000053,}, /* Mercury */
 //  {  3.394662,  0.0010037, -0.00000088, -0.000000007,}, /* Venus   */
 //  {  0,         0,          0,           0          ,}, /* Earth   */
@@ -4469,7 +4469,7 @@ namespace SweNet
 //  {  0.773196,  0.0007744,  0.00003749, -0.000000092,}, /* Uranus  */
 //  {  1.769952, -0.0093082, -0.00000708,  0.000000028,}, /* Neptune */
 //  };
-//static double el_ecce[8][4] = 
+//static double el_ecce[8,4] = 
 //  {{  0.20563175,  0.000020406, -0.0000000284, -0.00000000017,}, /* Mercury */
 //  {  0.00677188, -0.000047766,  0.0000000975,  0.00000000044,}, /* Venus   */
 //  {  0.01670862, -0.000042037, -0.0000001236,  0.00000000004,}, /* Earth   */
@@ -4479,7 +4479,7 @@ namespace SweNet
 //  {  0.04629590, -0.000027337,  0.0000000790,  0.00000000025,}, /* Uranus  */
 //  {  0.00898809,  0.000006408, -0.0000000008, -0.00000000005,}, /* Neptune */
 //  };
-//static double el_sema[8][4] = 
+//static double el_sema[8,4] = 
 //  {{  0.387098310,  0.0,  0.0,  0.0,}, /* Mercury */
 //  {  0.723329820,  0.0,  0.0,  0.0,}, /* Venus   */
 //  {  1.000001018,  0.0,  0.0,  0.0,}, /* Earth   */
@@ -4516,18 +4516,18 @@ namespace SweNet
 //  double plm;
 //  double t = (tjd_et - J2000) / 36525, dt;
 //  double x[6], xx[24], *xp, xobs[6], x2000[6]; 
-//  double xpos[3][6], xnorm[6];
+//  double xpos[3,6], xnorm[6];
 //  double xposm[6];
-//  double xn[3][6], xs[3][6];
-//  double xq[3][6], xa[3][6];
+//  double xn[3,6], xs[3,6];
+//  double xq[3,6], xa[3,6];
 //  double xobs2[6], x2[6];
 //  double *xna, *xnd, *xpe, *xap;
 //  double incl, sema, ecce, parg, ea, vincl, vsema, vecce, pargx, eax;
 //  struct plan_data *pedp = &swed.pldat[SEI_EARTH];
 //  struct plan_data *psbdp = &swed.pldat[SEI_SUNBARY];
 //  struct plan_data pldat;
-//  double *xsun = psbdp->x;
-//  double *xear = pedp->x;
+//  double *xsun = psbdp.x;
+//  double *xear = pedp.x;
 //  double *ep;
 //  double Gmsm, dzmin;
 //  double rxy, rxyz, fac, sgn;
@@ -4549,7 +4549,7 @@ namespace SweNet
 //  xnd = xx+6; 
 //  xpe = xx+12; 
 //  xap = xx+18;
-//  xpos[0][0] = 0; /* to shut up mint */
+//  xpos[0,0] = 0; /* to shut up mint */
 //  /* to get control over the save area: */
 //  swi_force_app_pos_etc();
 //  method %= SE_NODBIT_FOPOINT;
@@ -4570,7 +4570,7 @@ namespace SweNet
 //      (ipl >= SE_NPLANETS && ipl <= SE_AST_OFFSET)) {
 //      /*(ipl >= SE_FICT_OFFSET && ipl - SE_FICT_OFFSET < SE_NFICT_ELEM)) */
 //    if (serr != NULL)
-//      sprintf(serr, "nodes/apsides for planet %5.0f are not implemented", (double) ipl);
+        //      serr=C.sprintf("nodes/apsides for planet %5.0f are not implemented", (double) ipl);
 //    if (xnasc != NULL)
 //      for (i = 0; i <= 5; i++)
 //    xnasc[i] = 0;
@@ -4653,13 +4653,13 @@ namespace SweNet
 //      xap[5] = (sema + vsema) * (1 + ecce + vecce) - xap[2];
 //    }
 //    /* heliocentric distance of nodes */
-//    ea = atan(tan(-parg * DEGTORAD / 2) * sqrt((1-ecce)/(1+ecce))) * 2;
-//    eax = atan(tan(-pargx * DEGTORAD / 2) * sqrt((1-ecce-vecce)/(1+ecce+vecce))) * 2;
+//    ea = atan(tan(-parg * DEGTORAD / 2) *Math.Sqrt((1-ecce)/(1+ecce))) * 2;
+//    eax = atan(tan(-pargx * DEGTORAD / 2) *Math.Sqrt((1-ecce-vecce)/(1+ecce+vecce))) * 2;
 //    xna[2] = sema * (cos(ea) - ecce) / cos(parg * DEGTORAD);
 //    xna[5] = (sema+vsema) * (cos(eax) - ecce - vecce) / cos(pargx * DEGTORAD);
 //    xna[5] -= xna[2];
-//    ea = atan(tan((180 - parg) * DEGTORAD / 2) * sqrt((1-ecce)/(1+ecce))) * 2;
-//    eax = atan(tan((180 - pargx) * DEGTORAD / 2) * sqrt((1-ecce-vecce)/(1+ecce+vecce))) * 2;
+//    ea = atan(tan((180 - parg) * DEGTORAD / 2) *Math.Sqrt((1-ecce)/(1+ecce))) * 2;
+//    eax = atan(tan((180 - pargx) * DEGTORAD / 2) *Math.Sqrt((1-ecce-vecce)/(1+ecce+vecce))) * 2;
 //    xnd[2] = sema * (cos(ea) - ecce) / cos((180 - parg) * DEGTORAD);
 //    xnd[5] = (sema+vsema) * (cos(eax) - ecce - vecce) / cos((180 - pargx) * DEGTORAD);
 //    xnd[5] -= xnd[2];
@@ -4722,66 +4722,66 @@ namespace SweNet
 //        if (swe_calc(t, SE_MOON, iflJ2000 & ~(SEFLG_BARYCTR|SEFLG_HELCTR), xposm, serr) == ERR)
 //          return ERR;
 //        for (j = 0; j <= 2; j++)
-//          xpos[i][j] += xposm[j] / (EARTH_MOON_MRAT + 1.0);
+//          xpos[i,j] += xposm[j] / (EARTH_MOON_MRAT + 1.0);
 //      }
 //      swi_plan_for_osc_elem(iflg0, t, xpos[i]);
 //    }
 //    for (i = istart; i <= iend; i++) {
-//      if (fabs(xpos[i][5]) < dzmin)
-//        xpos[i][5] = dzmin;
-//      fac = xpos[i][2] / xpos[i][5];
-//      sgn = xpos[i][5] / fabs(xpos[i][5]);
+//      if (Math.Abs(xpos[i,5]) < dzmin)
+//        xpos[i,5] = dzmin;
+//      fac = xpos[i,2] / xpos[i,5];
+//      sgn = xpos[i,5] / Math.Abs(xpos[i,5]);
 //      for (j = 0; j <= 2; j++) {
-//        xn[i][j] = (xpos[i][j] - fac * xpos[i][j+3]) * sgn;
-//        xs[i][j] = -xn[i][j];
+//        xn[i,j] = (xpos[i,j] - fac * xpos[i,j+3]) * sgn;
+//        xs[i,j] = -xn[i,j];
 //      }
 //    }
 //    for (i = istart; i <= iend; i++) {
 //      /* node */
-//      rxy =  sqrt(xn[i][0] * xn[i][0] + xn[i][1] * xn[i][1]);
-//      cosnode = xn[i][0] / rxy;	
-//      sinnode = xn[i][1] / rxy;
+//      rxy = Math.Sqrt(xn[i,0] * xn[i,0] + xn[i,1] * xn[i,1]);
+//      cosnode = xn[i,0] / rxy;	
+//      sinnode = xn[i,1] / rxy;
 //      /* inclination */
 //      swi_cross_prod(xpos[i], xpos[i]+3, xnorm);
 //      rxy =  xnorm[0] * xnorm[0] + xnorm[1] * xnorm[1];
 //      c2 = (rxy + xnorm[2] * xnorm[2]);
-//      rxyz = sqrt(c2);
-//      rxy = sqrt(rxy);
+//      rxyz =Math.Sqrt(c2);
+//      rxy =Math.Sqrt(rxy);
 //      sinincl = rxy / rxyz;
-//      cosincl = sqrt(1 - sinincl * sinincl);
+//      cosincl =Math.Sqrt(1 - sinincl * sinincl);
 //      if (xnorm[2] < 0) cosincl = -cosincl; /* retrograde asteroid, e.g. 20461 Dioretsa */
 //      /* argument of latitude */
-//      cosu = xpos[i][0] * cosnode + xpos[i][1] * sinnode;
-//      sinu = xpos[i][2] / sinincl;	
+//      cosu = xpos[i,0] * cosnode + xpos[i,1] * sinnode;
+//      sinu = xpos[i,2] / sinincl;	
 //      uu = atan2(sinu, cosu);	
 //      /* semi-axis */
-//      rxyz = sqrt(square_sum(xpos[i]));
+//      rxyz =Math.Sqrt(square_sum(xpos[i]));
 //      v2 = square_sum((xpos[i]+3));
 //      sema = 1 / (2 / rxyz - v2 / Gmsm);	
 //      /* eccentricity */
 //      pp = c2 / Gmsm;
-//      ecce = sqrt(1 - pp / sema);	
+//      ecce =Math.Sqrt(1 - pp / sema);	
 //      /* eccentric anomaly */
 //      cosE = 1 / ecce * (1 - rxyz / sema);	
-//      sinE = 1 / ecce / sqrt(sema * Gmsm) * dot_prod(xpos[i], (xpos[i]+3));
+//      sinE = 1 / ecce /Math.Sqrt(sema * Gmsm) * dot_prod(xpos[i], (xpos[i]+3));
 //      /* true anomaly */
 //      ny = 2 * atan(sqrt((1+ecce)/(1-ecce)) * sinE / (1 + cosE));
 //      /* distance of perihelion from ascending node */
-//      xq[i][0] = swi_mod2PI(uu - ny);
-//      xq[i][1] = 0;			/* latitude */
-//      xq[i][2] = sema * (1 - ecce);	/* distance of perihelion */
+//      xq[i,0] = swi_mod2PI(uu - ny);
+//      xq[i,1] = 0;			/* latitude */
+//      xq[i,2] = sema * (1 - ecce);	/* distance of perihelion */
 //      /* transformation to ecliptic coordinates */
 //      swi_polcart(xq[i], xq[i]);
 //      swi_coortrf2(xq[i], xq[i], -sinincl, cosincl);
 //      swi_cartpol(xq[i], xq[i]);
 //      /* adding node, we get perihelion in ecl. coord. */
-//      xq[i][0] += atan2(sinnode, cosnode);
-//      xa[i][0] = swi_mod2PI(xq[i][0] + PI);
-//      xa[i][1] = -xq[i][1];
+//      xq[i,0] += atan2(sinnode, cosnode);
+//      xa[i,0] = swi_mod2PI(xq[i,0] + PI);
+//      xa[i,1] = -xq[i,1];
 //      if (do_focal_point) {
-//        xa[i][2] = sema * ecce * 2;	/* distance of aphelion */
+//        xa[i,2] = sema * ecce * 2;	/* distance of aphelion */
 //      } else {
-//        xa[i][2] = sema * (1 + ecce);	/* distance of aphelion */
+//        xa[i,2] = sema * (1 + ecce);	/* distance of aphelion */
 //      }
 //      swi_polcart(xq[i], xq[i]);
 //      swi_polcart(xa[i], xa[i]);
@@ -4790,38 +4790,38 @@ namespace SweNet
 //      ny = swi_mod2PI(ny - uu);
 //      ny2 = swi_mod2PI(ny + PI);
 //      /* eccentric anomaly */
-//      cosE = cos(2 * atan(tan(ny / 2) / sqrt((1+ecce) / (1-ecce))));
-//      cosE2 = cos(2 * atan(tan(ny2 / 2) / sqrt((1+ecce) / (1-ecce))));
+//      cosE = cos(2 * atan(tan(ny / 2) /Math.Sqrt((1+ecce) / (1-ecce))));
+//      cosE2 = cos(2 * atan(tan(ny2 / 2) /Math.Sqrt((1+ecce) / (1-ecce))));
 //      /* new distance */
 //      rn = sema * (1 - ecce * cosE);
 //      rn2 = sema * (1 - ecce * cosE2);
 //      /* old node distance */
-//      ro = sqrt(square_sum(xn[i]));
-//      ro2 = sqrt(square_sum(xs[i]));
+//      ro =Math.Sqrt(square_sum(xn[i]));
+//      ro2 =Math.Sqrt(square_sum(xs[i]));
 //      /* correct length of position vector */
 //      for (j = 0; j <= 2; j++) {
-//        xn[i][j] *= rn / ro;
-//        xs[i][j] *= rn2 / ro2;
+//        xn[i,j] *= rn / ro;
+//        xs[i,j] *= rn2 / ro2;
 //      }
 //    }
 //    for (i = 0; i <= 2; i++) {
 //      if (iflag & SEFLG_SPEED) {
-//        xpe[i] = xq[1][i];
-//        xpe[i+3] = (xq[2][i] - xq[0][i]) / dt / 2;
-//        xap[i] = xa[1][i];
-//        xap[i+3] = (xa[2][i] - xa[0][i]) / dt / 2;
-//        xna[i] = xn[1][i];
-//        xna[i+3] = (xn[2][i] - xn[0][i]) / dt / 2;
-//        xnd[i] = xs[1][i];
-//        xnd[i+3] = (xs[2][i] - xs[0][i]) / dt / 2;
+//        xpe[i] = xq[1,i];
+//        xpe[i+3] = (xq[2,i] - xq[0,i]) / dt / 2;
+//        xap[i] = xa[1,i];
+//        xap[i+3] = (xa[2,i] - xa[0,i]) / dt / 2;
+//        xna[i] = xn[1,i];
+//        xna[i+3] = (xn[2,i] - xn[0,i]) / dt / 2;
+//        xnd[i] = xs[1,i];
+//        xnd[i+3] = (xs[2,i] - xs[0,i]) / dt / 2;
 //      } else {
-//        xpe[i] = xq[0][i];
+//        xpe[i] = xq[0,i];
 //        xpe[i+3] = 0;
-//        xap[i] = xa[0][i];
+//        xap[i] = xa[0,i];
 //        xap[i+3] = 0;
-//        xna[i] = xn[0][i];
+//        xna[i] = xn[0,i];
 //        xna[i+3] = 0;
-//        xnd[i] = xs[0][i];
+//        xnd[i] = xs[0,i];
 //        xnd[i+3] = 0;
 //      }
 //    }
@@ -4886,8 +4886,8 @@ namespace SweNet
 //      if (iflag & SEFLG_SPEED)
 //        swi_coortrf2(xp+3, xp+3, -swed.nut.snut, swed.nut.cnut);
 //    }
-//    swi_coortrf2(xp, xp, -oe->seps, oe->ceps);
-//    swi_coortrf2(xp+3, xp+3, -oe->seps, oe->ceps);
+//    swi_coortrf2(xp, xp, -oe.seps, oe.ceps);
+//    swi_coortrf2(xp+3, xp+3, -oe.seps, oe.ceps);
 //    if (is_true_nodaps) {
 //      /****************************
 //       * to mean ecliptic of date 
@@ -4924,7 +4924,7 @@ namespace SweNet
 //    /*********************
 //     * light deflection 
 //     *********************/
-//    dt = sqrt(square_sum(xp)) * AUNIT / CLIGHT / 86400.0;     
+//    dt =Math.Sqrt(square_sum(xp)) * AUNIT / CLIGHT / 86400.0;     
 //    if (do_defl)
 //      swi_deflect_light(xp, dt, iflag);
 //    /*********************
@@ -4998,9 +4998,9 @@ namespace SweNet
 //     * with sidereal calc. this will be overwritten *
 //     * afterwards.                                  *
 //     ************************************************/
-//    swi_coortrf2(xp, xp, oe->seps, oe->ceps);
+//    swi_coortrf2(xp, xp, oe.seps, oe.ceps);
 //    if (iflag & SEFLG_SPEED)
-//      swi_coortrf2(xp+3, xp+3, oe->seps, oe->ceps);
+//      swi_coortrf2(xp+3, xp+3, oe.seps, oe.ceps);
 //    if (!(iflag & SEFLG_NONUT)) {
 //      swi_coortrf2(xp, xp, swed.nut.snut, swed.nut.cnut);
 //      if (iflag & SEFLG_SPEED)
@@ -5121,7 +5121,7 @@ namespace SweNet
 //  AS_BOOL above_horizon = FALSE;
 //  if (imeth < 0 || imeth > 5) {
 //    if (serr)
-//          sprintf(serr, "invalid method: %d", imeth);
+        //          serr=C.sprintf("invalid method: %d", imeth);
 //    return ERR;
 //  }
 //  /* function calls for Pluto with asteroid number 134340
@@ -5218,7 +5218,7 @@ namespace SweNet
 //  } else {
 //    *dgsect = 0;
 //    if (serr)
-//      sprintf(serr, "rise or set not found for planet %d", ipl);
+        //      serr=C.sprintf("rise or set not found for planet %d", ipl);
 //    return ERR;
 //  }
 //}

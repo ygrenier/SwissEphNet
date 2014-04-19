@@ -173,7 +173,7 @@ namespace SweNet
 //*/
 //double juldays(int gregflag, ADATE *adp ) 
 //{
-//  return swe_julday(adp->year, adp->month, adp->day, adp->csec / 360000.0, gregflag);
+//  return swe_julday(adp.year, adp.month, adp.day, adp.csec / 360000.0, gregflag);
 //}
 
 ///*** revjul ******************************************************
@@ -209,8 +209,8 @@ namespace SweNet
 //void revjuls(double jd, int gregflag, struct adate *adp)
 //{
 //  double jut;
-//  swe_revjul(jd, gregflag, &adp->year, &adp->month, &adp->day, &jut);
-//  adp->csec = jut * 360000.0 + 0.5;
+//  swe_revjul(jd, gregflag, &adp.year, &adp.month, &adp.day, &jut);
+//  adp.csec = jut * 360000.0 + 0.5;
 //}
 
 ///*********************************************************

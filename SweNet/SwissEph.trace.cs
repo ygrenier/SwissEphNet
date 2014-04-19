@@ -15,15 +15,14 @@ namespace SweNet
 
 #if TRACE
         /// <summary>
-        /// Trace a message or C code
+        /// Trace a message
         /// </summary>
-        /// <param name="isC"></param>
         /// <param name="format"></param>
         /// <param name="args"></param>
-        protected void trace(bool isC, String format, params object[] args) {
+        protected void trace(String format, params object[] args) {
             var h = OnTrace;
             if (h != null)
-                h(this, new TraceEventArgs(C.sprintf(format, args), isC));
+                h(this, new TraceEventArgs(C.sprintf(format, args)));
         }
 
         /// <summary>

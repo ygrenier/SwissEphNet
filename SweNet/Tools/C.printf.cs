@@ -244,7 +244,7 @@ namespace SweNet
             #region Variables
             StringBuilder f = new StringBuilder();
             Regex r = new Regex(@"\%(\d*\$)?([\'\#\-\+ ]*)(\d*)(?:\.(\d+))?([hl])?([dioxXucsfeEgGpn%])");
-            //"%[parameter][flags][width][.precision][length]type"
+            //"%[parameter,flags,width,.precision,length]type"
             Match m = null;
             string w = String.Empty;
             int defaultParamIx = 0;

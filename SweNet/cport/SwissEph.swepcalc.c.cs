@@ -117,7 +117,7 @@ namespace SweNet
 // * required for relative distances rgeo, where the distance is given
 // * as 100 when a planet is closest and as 0 when farthest from earth.
 // */
-//static double rmima[CALC_N][2] = {	
+//static double rmima[CALC_N,2] = {	
 //    { 0.98296342,  1.01704665},
 //    { 0.00238267,  0.00271861},
 //    { 0.54900496,  1.45169607},
@@ -166,13 +166,13 @@ namespace SweNet
 //      plon [planet] = -1;
 //      if (pspe != NULL) pspe [planet] = 0;
 //      if (result != ERR) {	/* save first error message */
-//    strcpy(err, placalc_get_errtext());
+//    err= placalc_get_errtext();
 //      }
 //      result = ERR;
 //    }
 //  }
 //  if (result == ERR)
-//    strcpy(perrtx, err);
+//    perrtx= err;
 //  return result;
 //}	/* end nacalc */
 
@@ -209,7 +209,7 @@ namespace SweNet
 //      betcs [p] = swe_d2l (rlat * DEG);
 //      rau [p] = rrad;
 //    } else {
-//      sprintf(so,"error at planet %d", p);
+        //      so=C.sprintf("error at planet %d", p);
 //      return ( ERR);
 //    }
 //  }
@@ -229,14 +229,14 @@ namespace SweNet
 //  for (planet = SUN; planet < CALC_N; planet++) {
 //    if (! check_bit(plalist, planet)) continue;
 //    sprintf (s ,",%d", lcs[planet]);
-//    strcat (so + so_len, s);
+//    so + so_len+= s;
 //    so_len += strlen (s);
 //  }
 //  if (flag & CALC_BIT_SPEED) {
 //    for (planet = SUN; planet < CALC_N; planet++)  {
 //      if (! check_bit(plalist, planet)) continue;
 //      sprintf (s ,",%d", lpcs[planet]);
-//      strcat (so + so_len, s);
+//      so + so_len+= s;
 //      so_len += strlen (s);
 //    }
 //  }
@@ -244,7 +244,7 @@ namespace SweNet
 //    for (planet = SUN; planet < CALC_N; planet++)  {
 //      if (! check_bit(plalist, planet)) continue;
 //      sprintf (s ,",%d", betcs[planet]);
-//      strcat (so + so_len, s);
+//      so + so_len+= s;
 //      so_len += strlen (s);
 //    }
 //  }
@@ -252,7 +252,7 @@ namespace SweNet
 //    for (planet = SUN; planet < CALC_N; planet++)  {
 //      if (! check_bit(plalist, planet)) continue;
 //      sprintf (s ,",%d", rel_geo(planet,rau[planet]));
-//      strcat (so + so_len, s);
+//      so + so_len+= s;
 //      so_len += strlen (s);
 //    }
 //  }
@@ -260,7 +260,7 @@ namespace SweNet
 //    for (planet = SUN; planet < CALC_N; planet++)  {
 //      if (! check_bit(plalist, planet)) continue;
 //      sprintf (s ,",%.8f", rau[planet]);
-//      strcat (so + so_len, s);
+//      so + so_len+=s;
 //      so_len += strlen (s);
 //    }
 //  }
@@ -332,7 +332,7 @@ namespace SweNet
 //  else if (planet >= SUN && planet <= VESTA)
 //    ipl = plac2swe[planet];
 //  else {
-//    sprintf(perrtx, "invalid planet number %d. ", planet);
+        //    perrtx=C.sprintf("invalid planet number %d. ", planet);
 //    return ERR;
 //  }
 //  /* flag */
@@ -380,7 +380,7 @@ namespace SweNet
 //  if (planet == MEAN_NODE || planet == TRUE_NODE || planet == LILITH) {
 //    return 0;
 //  } else {
-//    rgeo = 1000 * (1.0 - (rau - rmima[planet][0]) / (rmima[planet][1] - rmima[planet][0]));
+//    rgeo = 1000 * (1.0 - (rau - rmima[planet,0]) / (rmima[planet,1] - rmima[planet,0]));
 //  }
 //  if (rgeo < 0)
 //    rgeo = 0;
@@ -526,7 +526,7 @@ namespace SweNet
 //    free((void *) epath);
 //  epath =  malloc(strlen(path) + 1);
 //  if (epath != NULL) {
-//    strcpy(epath, path);
+//    epath= path;
 //    swe_set_ephe_path(epath);
 //  }
 //  return epath;
@@ -573,7 +573,7 @@ namespace SweNet
 //   * whereas swe_fixstar starts with 1 */
 //  if (isdigit((int) *star)) {
 //    i = atoi(star);
-//    sprintf(star, "%d", i+1);
+        //    star=C.sprintf("%d", i+1);
 //  }
 //  retflag = swe_fixstar(star, jd, 0, x, perrtx);
 //  *lon = x[0];
@@ -604,8 +604,8 @@ namespace SweNet
 //{
 //  CSEC cx;
 //  int i = 2;
-//  cx = swe_difcsn(pp, hsp->cusp [1]); 	/* distance from cusp 1 */
-//  while (i < 13 && cx >= difcsn(hsp->cusp [i], hsp->cusp [1])) i++;
+//  cx = swe_difcsn(pp, hsp.cusp [1]); 	/* distance from cusp 1 */
+//  while (i < 13 && cx >= difcsn(hsp.cusp [i], hsp.cusp [1])) i++;
 //  return (i - 1);
 //} 
 
@@ -617,8 +617,8 @@ namespace SweNet
 //{ 
 //  CSEC cx;
 //  int i = 2;
-//  cx = swe_difcsn(pp, hsp->cusp [1] + coff [1]); 
-//  while(i<13 &&  cx >= swe_difcsn(hsp->cusp[i] + coff[i], hsp->cusp[1] + coff[1])) 
+//  cx = swe_difcsn(pp, hsp.cusp [1] + coff [1]); 
+//  while(i<13 &&  cx >= swe_difcsn(hsp.cusp[i] + coff[i], hsp.cusp[1] + coff[1])) 
 //    i++;
 //  return (i - 1);
 //}
@@ -641,7 +641,7 @@ namespace SweNet
 //    for (i = 1; i < 13; i++) {
 //      j = i + 1;
 //      if (j > 12) j = 1;
-//      myoff[j] = swe_degnorm((hsp->cusp[j] - hsp->cusp[i]) / 360000.0) / 30.0 * myoff[j];
+//      myoff[j] = swe_degnorm((hsp.cusp[j] - hsp.cusp[i]) / 360000.0) / 30.0 * myoff[j];
 //    }
 //  }
 //  return InpHouseNr(hsp, pp, myoff);
@@ -678,9 +678,9 @@ namespace SweNet
 //  retc = swe_houses_armc(th / cs2deg, fi / cs2deg, mekl / cs2deg, (int) hsy, 
 //            cusps, ascmc);
 //  for (i = 0; i < 13; i++)
-//    hsp->cusp[i] = swe_d2l(cusps[i] * cs2deg);
-//  hsp->ac = swe_d2l(ascmc[0] * cs2deg);
-//  hsp->mc = swe_d2l(ascmc[1] * cs2deg);
+//    hsp.cusp[i] = swe_d2l(cusps[i] * cs2deg);
+//  hsp.ac = swe_d2l(ascmc[0] * cs2deg);
+//  hsp.mc = swe_d2l(ascmc[1] * cs2deg);
 //  /*
 //   * this is just to shut up lint
 //   */
@@ -694,47 +694,47 @@ namespace SweNet
 //  centisec diff,orbis;
 //  int p1, p2, i;
 //  struct aspRec *arp;
-//  if (a->ppos2 == NULL) {	/* no set ppos2, no interaspects */
-//    for (p1 = 0; p1 < a->NrOfPlanets; p1++) {
-//      a->Asp[p1][p1].index = 0;		/* ignore p1 conjunct p1 */
-//      for (p2 = p1 + 1; p2 < a->NrOfPlanets; p2++) {
-//    arp = &(a->Asp[p1][p2]);
-//    diff =  a->PlanetPos [p2] - a->PlanetPos [p1];
+//  if (a.ppos2 == NULL) {	/* no set ppos2, no interaspects */
+//    for (p1 = 0; p1 < a.NrOfPlanets; p1++) {
+//      a.Asp[p1,p1].index = 0;		/* ignore p1 conjunct p1 */
+//      for (p2 = p1 + 1; p2 < a.NrOfPlanets; p2++) {
+//    arp = &(a.Asp[p1,p2]);
+//    diff =  a.PlanetPos [p2] - a.PlanetPos [p1];
 //    if (diff >= DEG180) 
 //      diff -= DEG360;
 //    else if (diff <  - DEG180) 
 //      diff += DEG360;
 //    i = 1;                  
-//    arp->index = 0;
-//    while (i <= a->NrOfAspects) {
-//      orbis = ABS4 (diff) - a->Angle [i];
-//      if (ABS4 (orbis) <= a->Maxorb [i]) {
-//        arp->index = i;
-//        arp->orb = orbis;
+//    arp.index = 0;
+//    while (i <= a.NrOfAspects) {
+//      orbis = ABS4 (diff) - a.Angle [i];
+//      if (ABS4 (orbis) <= a.Maxorb [i]) {
+//        arp.index = i;
+//        arp.orb = orbis;
 //        break; 	/* out of while */
 //      }
 //      i++;
 //    }
-//    a->Asp [p2][p1].index = arp->index;
-//    a->Asp [p2][p1].orb = arp->orb;
+//    a.Asp [p2,p1].index = arp.index;
+//    a.Asp [p2,p1].orb = arp.orb;
 //      } /* for p2 */
 //    } /* for p1 */ 
 //  } else {	/* interaspects between set 1 and set 2 */
-//    for (p1 = 0; p1 < a->NrOfPlanets; p1++) {
-//      for (p2 = 0; p2 < a->NrOfPlanets; p2++) {
-//    arp = &(a->Asp[p1][p2]);
-//    diff =  a->ppos2 [p2] - a->PlanetPos [p1];
+//    for (p1 = 0; p1 < a.NrOfPlanets; p1++) {
+//      for (p2 = 0; p2 < a.NrOfPlanets; p2++) {
+//    arp = &(a.Asp[p1,p2]);
+//    diff =  a.ppos2 [p2] - a.PlanetPos [p1];
 //    if (diff >= DEG180) 
 //      diff -= DEG360;
 //    else if (diff <  - DEG180) 
 //      diff += DEG360;
 //    i = 1;                  
-//    arp->index = 0;
-//    while (i <= a->NrOfAspects) {
-//      orbis = ABS4 (diff) - a->Angle [i];
-//      if (ABS4 (orbis) <= a->Maxorb [i]) {
-//        arp->index = i;
-//        arp->orb = orbis;
+//    arp.index = 0;
+//    while (i <= a.NrOfAspects) {
+//      orbis = ABS4 (diff) - a.Angle [i];
+//      if (ABS4 (orbis) <= a.Maxorb [i]) {
+//        arp.index = i;
+//        arp.orb = orbis;
 //        break; 	/* out of while */
 //      }
 //      i++;
@@ -742,7 +742,7 @@ namespace SweNet
 //      } /* for p2 */
 //    } /* for p1 */ 
 //  } 	/* else */
-//  a->dataValid = TRUE;
+//  a.dataValid = TRUE;
 //} 
 
 ///***********************************************************

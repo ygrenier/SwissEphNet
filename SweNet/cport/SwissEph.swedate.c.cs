@@ -407,7 +407,7 @@ namespace SweNet
 //  swe_revjul(tjd_ut1, gregflag, &iyear2, &imonth2, &iday2, &d);
 //  if (iyear != iyear2 || imonth != imonth2 || iday != iday2) {
 //    if (serr != NULL)
-//      sprintf(serr, "invalid date: year = %d, month = %d, day = %d", iyear, imonth, iday);
+        //      serr=C.sprintf("invalid date: year = %d, month = %d, day = %d", iyear, imonth, iday);
 //    return ERR;
 //  }
 //  if (ihour < 0 || ihour > 23 
@@ -415,7 +415,7 @@ namespace SweNet
 //   || dsec < 0 || dsec >= 61
 //   || (dsec >= 60 && (imin < 59 || ihour < 23 || tjd_ut1 < J1972))) {
 //    if (serr != NULL)
-//      sprintf(serr, "invalid time: %d:%d:%.2f", ihour, imin, dsec);
+        //      serr=C.sprintf("invalid time: %d:%d:%.2f", ihour, imin, dsec);
 //    return ERR;
 //  }
 //  dhour = (double) ihour + ((double) imin) / 60.0 + dsec / 3600.0;
@@ -470,7 +470,7 @@ namespace SweNet
 //    }
 //    if (j != 1) {
 //      if (serr != NULL)
-//    sprintf(serr, "invalid time (no leap second!): %d:%d:%.2f", ihour, imin, dsec);
+        //    serr=C.sprintf("invalid time (no leap second!): %d:%d:%.2f", ihour, imin, dsec);
 //      return ERR;
 //    }
 //  }

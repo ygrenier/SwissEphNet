@@ -19,7 +19,7 @@ namespace SweNet
 		/// <param name="filename">File name</param>
 		/// <param name="path">Path where to load the file</param>
 		/// <returns>File loaded or null if file not found</returns>
-        protected TextReader LoadFile(String filename, String path) {
+        protected CFile LoadFile(String filename, String path) {
             var h = OnLoadFile;
             if (h != null) {
                 var e = new LoadFileEventArgs(filename, path);

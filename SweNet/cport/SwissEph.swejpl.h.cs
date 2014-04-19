@@ -89,21 +89,21 @@ namespace SweNet
         
 //#include "sweodef.h"
 
-//#define J_MERCURY	0	/* jpl body indices, modified by Alois */
-//#define J_VENUS		1	/* now they start at 0 and not at 1 */
-//#define J_EARTH		2
-//#define J_MARS		3
-//#define J_JUPITER	4
-//#define J_SATURN	5
-//#define J_URANUS	6
-//#define J_NEPTUNE	7
-//#define J_PLUTO		8
-//#define J_MOON		9
-//#define J_SUN		10
-//#define J_SBARY		11
-//#define J_EMB		12
-//#define J_NUT		13
-//#define J_LIB		14
+        const int J_MERCURY	=0;	/* jpl body indices, modified by Alois */
+        const int J_VENUS		=1;	/* now they start at 0 and not at 1 */
+        const int J_EARTH		=2;
+        const int J_MARS		=3;
+        const int J_JUPITER	=4;
+        const int J_SATURN	=5;
+        const int J_URANUS	=6;
+        const int J_NEPTUNE	=7;
+        const int J_PLUTO		=8;
+        const int J_MOON		=9;
+        const int J_SUN		=10;
+        const int J_SBARY		=11;
+        const int J_EMB		=12;
+        const int J_NUT		=13;
+        const int J_LIB = 14;
 
 ///*
 // * compute position and speed at time et, for body ntarg with center

@@ -131,15 +131,15 @@ namespace SweMini
                         /*
                          * do the coordinate calculation for this planet p
                          */
-                        //      iflgret = swe_calc(te, p, iflag, x2, serr);
+                        iflgret = swe.Calc(te, p, iflag, x2, out serr);
                         /*
                          * if there is a problem, a negative value is returned and an 
                          * errpr message is in serr.
                          */
-                        //      if (iflgret < 0) 
-                        //    printf("error: %s\n", serr);
-                        //      else if (iflgret != iflag)
-                        //    printf("warning: iflgret != iflag. %s\n", serr);
+                        if (iflgret < 0)
+                            printf("error: %s\n", serr);
+                        else if (iflgret != iflag)
+                            printf("warning: iflgret != iflag. %s\n", serr);
                         /*
                          * get the name of the planet p
                          */

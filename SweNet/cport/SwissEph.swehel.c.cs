@@ -312,7 +312,7 @@ namespace SweNet
 //  char s[AS_MAXCH];
 //  char *sp;
 //  int32 ipl;
-//  strcpy(s, ObjectName);
+//  s = ObjectName;
 //  for (sp = s; *sp != '\0'; sp++)
 //    *sp = tolower(*sp);
 //  if (strncmp(s, "sun", 3) == 0)
@@ -346,23 +346,23 @@ namespace SweNet
 //  int32 retval = OK, ipli, i;
 //  double dtjd;
 //  static double tjdsv[3];
-//  static double xsv[3][6];
+//  static double xsv[3,6];
 //  static int32 iflagsv[3];
 //  ipli = ipl;
 //  if (ipli > SE_MOON) 
 //    ipli = 2;
 //  dtjd = tjd - tjdsv[ipli];
-//  if (tjdsv[ipli] != 0 && iflag == iflagsv[ipli] && fabs(dtjd) < 5.0 / 1440.0) {
+//  if (tjdsv[ipli] != 0 && iflag == iflagsv[ipli] && Math.Abs(dtjd) < 5.0 / 1440.0) {
 //    for (i = 0; i < 3; i++) 
-//      x[i] = xsv[ipli][i] + dtjd * xsv[ipli][i+3];
+//      x[i] = xsv[ipli,i] + dtjd * xsv[ipli,i+3];
 //    for (i = 3; i < 6; i++) 
-//      x[i] = xsv[ipli][i];
+//      x[i] = xsv[ipli,i];
 //  } else {
 //    retval = swe_calc(tjd, ipl, iflag, x, serr);
 //    tjdsv[ipli] = tjd;
 //    iflagsv[ipli] = iflag;
 //    for (i = 0; i < 6; i++) 
-//      xsv[ipli][i] = x[i];
+//      xsv[ipli,i] = x[i];
 //  }
 //  return retval;
 //}
@@ -374,7 +374,7 @@ namespace SweNet
 //{
 //  int32 retval;
 //  char star2[AS_MAXCH];
-//  strcpy(star2, star);
+//  star2 = star;
 //  retval =  swe_fixstar(star2, tjd, iflag, xx, serr);
 //  return retval;
 //}
@@ -391,8 +391,8 @@ namespace SweNet
 //    *mag = dmag;
 //    return OK;
 //  }
-//  strcpy(star_save, star);
-//  strcpy(star2, star);
+//  star_save = star;
+//  star2 = star;
 //  retval = swe_fixstar_mag(star2, &dmag, serr);
 //  *mag = dmag;
 //  return retval;
@@ -405,7 +405,7 @@ namespace SweNet
 //  int32 retval;
 //  int32 iflag = helflag & (SEFLG_JPLEPH|SEFLG_SWIEPH|SEFLG_MOSEPH);
 //  char star2[AS_MAXCH];
-//  strcpy(star2, star);
+//  star2 = star;
 //  retval = swe_rise_trans(tjd, ipl, star2, iflag, eventtype, dgeo, atpress, attemp, tret, serr);
 //  return retval;
 //}
@@ -431,12 +431,12 @@ namespace SweNet
 //    iflag |= SEFLG_NONUT|SEFLG_TRUEPOS;
 //  if (swe_calc_ut(tjd0, SE_SUN, iflag, xs, serr) == 0) {
 //    if (serr != NULL)
-//      strcpy(serr, "error in calc_rise_and_set(): calc(sun) failed ");
+//      serr = "error in calc_rise_and_set(): calc(sun) failed ";
 //    return ERR;
 //  }
 //  if (swe_calc_ut(tjd0, ipl, iflag, xx, serr) == 0) {
 //    if (serr != NULL)
-//      strcpy(serr, "error in calc_rise_and_set(): calc(sun) failed ");
+//      serr= "error in calc_rise_and_set(): calc(sun) failed ";
 //    return ERR;
 //  }
 //  tjdnoon -= swe_degnorm(xs[0] - xx[0])/360.0 + 0;
@@ -462,7 +462,7 @@ namespace SweNet
 //  /* position of planet */
 //  if (swe_calc_ut(tjdnoon, ipl, iflag, xx, serr) == ERR) {
 //    if (serr != NULL)
-//      strcpy(serr, "error in calc_rise_and_set(): calc(sun) failed ");
+//      serr ="error in calc_rise_and_set(): calc(sun) failed ";
 //    return ERR;
 //  }
 //  /* apparent radius of solar disk (ignoring refraction) */
@@ -509,8 +509,8 @@ namespace SweNet
 //  if (starname != NULL && *starname != '\0')
 //    ipl = DeterObject(starname);
 //  /* for non-circumpolar planets we can use a faster algorithm */
-//  /*if (!(helflag & SE_HELFLAG_HIGH_PRECISION) && ipl != -1 && fabs(dgeo[1]) < 58) {*/
-//  if (ipl != -1 && fabs(dgeo[1]) < 63) {
+//  /*if (!(helflag & SE_HELFLAG_HIGH_PRECISION) && ipl != -1 && Math.Abs(dgeo[1]) < 58) {*/
+//  if (ipl != -1 && Math.Abs(dgeo[1]) < 63) {
 //    retc = calc_rise_and_set(tjd, ipl, dgeo, datm, eventtype, helflag, tret, serr);
 //  /* for stars and circumpolar planets we use a rigorous algorithm */
 //  } else {
@@ -942,14 +942,14 @@ namespace SweNet
 //      kaact = Betaa * scaleHaerosol / 1000 * tau2astr;
 //      if (kaact < 0) {
 //    if (serr != NULL)
-//      strcpy(serr, "The provided Meteorological range is too long, when taking into acount other atmospheric parameters"); /* is a warning */
+//      serr= "The provided Meteorological range is too long, when taking into acount other atmospheric parameters"; /* is a warning */
 //        /* return 0; * return "#HIGHVR"; */
 //      }
 //    } else {
 //      kaact = VR - kW(HeightEye, TempS, RH) - kR(AltS, HeightEye) - kOZ(AltS, sunra, Lat);
 //      if (kaact < 0) {
 //    if (serr != NULL)
-//      strcpy(serr, "The provided atmosphic coeefficent (ktot) is too low, when taking into acount other atmospheric parameters"); /* is a warning */
+//      serr= "The provided atmosphic coeefficent (ktot) is too low, when taking into acount other atmospheric parameters"; /* is a warning */
 //        /* return 0; * "#LOWktot"; */
 //      }
 //    }
@@ -1019,7 +1019,7 @@ namespace SweNet
 //*/
 //static double Xext(double scaleH, double zend, double Press)
 //{
-//  return Press / 1013.0 / (cos(zend) + 0.01 * sqrt(scaleH / 1000.0) * exp(-30.0 / sqrt(scaleH / 1000.0) * cos(zend)));
+//  return Press / 1013.0 / (cos(zend) + 0.01 *Math.Sqrt(scaleH / 1000.0) * exp(-30.0 /Math.Sqrt(scaleH / 1000.0) * cos(zend)));
 //}
 
 ///*###################################################################
@@ -1030,9 +1030,9 @@ namespace SweNet
 //*/
 //static double Xlay(double scaleH, double zend, double Press)
 //{
-//  /*return Press / 1013.0 / sqrt(1.0 - pow(sin(zend) / (1.0 + (scaleH / Ra)), 2));*/
+//  /*return Press / 1013.0 /Math.Sqrt(1.0 - pow(sin(zend) / (1.0 + (scaleH / Ra)), 2));*/
 //  double a = sin(zend) / (1.0 + (scaleH / Ra));
-//  return Press / 1013.0 / sqrt(1.0 - a * a);
+//  return Press / 1013.0 /Math.Sqrt(1.0 - a * a);
 //}
 
 ///*###################################################################
@@ -1131,7 +1131,7 @@ namespace SweNet
 //  Bna = B0 * (1 + 0.3 * cos(6.283 * (YearB + ((DayB - 1) / 30.4 + MonthB - 1) / 12 - 1990.33) / 11.1));
 //  kX = Deltam(AltO, AltS, sunra, Lat, HeightEye, datm, helflag, serr);
 //  /* From Schaefer , Archaeoastronomy, XV, 2000, page 129 */
-//  Bnb = Bna * (0.4 + 0.6 / sqrt(1 - 0.96 * pow(sin(zend), 2))) * pow(10, -0.4 * kX);
+//  Bnb = Bna * (0.4 + 0.6 /Math.Sqrt(1 - 0.96 * pow(sin(zend), 2))) * pow(10, -0.4 * kX);
 //  return mymax(Bnb, 0) * erg2nL;
 //}
 
@@ -1179,7 +1179,7 @@ namespace SweNet
 //  if (ipli > SE_MOON) 
 //    ipli = 2;
 //  dtjd = tjd - tjdsv[ipli];
-//  if (tjdsv[ipli] != 0 && helflag == helflagsv[ipli] && fabs(dtjd) < 5.0 / 1440.0) {
+//  if (tjdsv[ipli] != 0 && helflag == helflagsv[ipli] && Math.Abs(dtjd) < 5.0 / 1440.0) {
 //    *dmag = dmagsv[ipli];
 //  } else {
 //    retval = Magnitude(tjd, dgeo, ObjectName, helflag, dmag, serr);
@@ -1200,7 +1200,7 @@ namespace SweNet
 //{
 //  double log10 = 2.302585092994;
 //  /*Moon's brightness changes with distance: http://hem.passagen.se/pausch/comp/ppcomp.html#15 */
-//  return -21.62 + 5 * log(dist / (Ra / 1000)) / log10 + 0.026 * fabs(phasemoon) + 0.000000004 * pow(phasemoon, 4);
+//  return -21.62 + 5 * log(dist / (Ra / 1000)) / log10 + 0.026 * Math.Abs(phasemoon) + 0.000000004 * pow(phasemoon, 4);
 //}
 
 ///*###################################################################
@@ -1425,9 +1425,9 @@ namespace SweNet
 //    if (BNIGHT * BNIGHT_FACTOR > Bsk && BNIGHT / BNIGHT_FACTOR < Bsk)
 //      *scotopic_flag |= 2;
 //  }
-//  /*Th = C1 * pow(1 + sqrt(C2 * Bsk), 2) * Fa;*/
+//  /*Th = C1 * pow(1 +Math.Sqrt(C2 * Bsk), 2) * Fa;*/
 //  Bsk = Bsk / CorrFactor1;
-//  Th = C1 * pow(1 + sqrt(C2 * Bsk), 2) * CorrFactor2;
+//  Th = C1 * pow(1 +Math.Sqrt(C2 * Bsk), 2) * CorrFactor2;
 //#if DEBUG
 //  fprintf(stderr, "Bsk=%f\n", Bsk);
 //  fprintf(stderr, "kX =%f\n", kX);
@@ -1464,7 +1464,7 @@ namespace SweNet
 //  if (ObjectLoc(tjdut, dgeo, datm, ObjectName, 0, helflag, &AltO, serr) == ERR)
 //    return ERR;
 //  if (AltO < 0 && serr != NULL) {
-//    strcpy(serr, "object is below local horizon");
+//    serr = "object is below local horizon";
 //    *dret = -100;
 //    return -2;
 //  }
@@ -1552,7 +1552,7 @@ namespace SweNet
 //  /* if (*serr != '\0') return ERR; * serr is only a warning */
 //  /* http://en.wikipedia.org/wiki/Bisection_method*/
 //  if ((Yl * Yr) <= 0) {
-//    while(fabs(xR - Xl) > epsilon) {
+//    while(Math.Abs(xR - Xl) > epsilon) {
 //      /*Calculate midpoint of domain*/
 //      Xm = (xR + Xl) / 2.0;
 //      AltSi = AltO - Xm;
@@ -1643,7 +1643,7 @@ namespace SweNet
 //  if (TopoArcVisionis(Magn, dobs, Xl, AziO, AltM, AziM, JDNDaysUT, AziS, sunra, Lat, HeightEye, datm, helflag, &Yl, serr) == ERR)
 //    return ERR;
 //  /* http://en.wikipedia.org/wiki/Bisection_method*/
-//  while(fabs(xR - Xl) > 0.1) {
+//  while(Math.Abs(xR - Xl) > 0.1) {
 //    /* Calculate midpoint of domain */
 //    Xm = (xR + Xl) / 2.0;
 //    DELTAx = 0.025;
@@ -1974,7 +1974,7 @@ namespace SweNet
 //    crosspoint = crossing(DeltaAltoud, DeltaAlt, MinTAVoud, MinTAVact);
 //    Ta = TimePointer - TimeStep * (1 - crosspoint);
 //      }
-//    } while (fabs(TimePointer - RiseSetS) <= MaxTryHours / 24.0 && Ta == 0 && !((TbVR != 0 && (TypeEvent == 3 || TypeEvent == 4) && (strncmp(ObjectName, "moon", 4) != 0 && strncmp(ObjectName, "venus", 5) != 0 && strncmp(ObjectName, "mercury", 7) != 0))));
+//    } while (Math.Abs(TimePointer - RiseSetS) <= MaxTryHours / 24.0 && Ta == 0 && !((TbVR != 0 && (TypeEvent == 3 || TypeEvent == 4) && (strncmp(ObjectName, "moon", 4) != 0 && strncmp(ObjectName, "venus", 5) != 0 && strncmp(ObjectName, "mercury", 7) != 0))));
 //    if (RS == 2) {
 //      TfirstVR = Tc;
 //      TlastVR = Ta;
@@ -2087,15 +2087,15 @@ namespace SweNet
 //    avkind = SE_HELFLAG_AVKIND_VR;
 //  if (avkind != SE_HELFLAG_AVKIND_VR) {
 //    if (serr != NULL)
-//      strcpy(serr, "error: in valid AV kind for the moon");
+//      serr = "error: in valid AV kind for the moon";
 //    return ERR;
 //  }
 //  if (TypeEvent == 1 || TypeEvent == 2) {
 //    if (serr != NULL)
-//      strcpy(serr, "error: the moon has no morning first or evening last");
+//      serr = "error: the moon has no morning first or evening last";
 //    return ERR;
 //  }
-//  strcpy(ObjectName, "moon");
+//  ObjectName = "moon";
 //  Planet = SE_MOON;
 //  iflag = SEFLG_TOPOCTR | SEFLG_EQUATORIAL | epheflag;
 //  if (!(helflag & SE_HELFLAG_HIGH_PRECISION))
@@ -2154,14 +2154,14 @@ namespace SweNet
 //      if (DeterTAV(dobs, TimeCheck, dgeo, datm, ObjectName, helflag, &LocalminCheck, serr) == ERR)
 //        return ERR;
 ///*printf("%f, %f <= %f\n", tjd_moonevent, MinTAV, MinTAVoud);*/
-//    /* while (MinTAV <= MinTAVoud && fabs(tjd_moonevent - tjd_moonevent_start) < 120.0 / 60.0 / 24.0);*/
-//    } while ((MinTAV <= MinTAVoud || LocalminCheck < MinTAV) && fabs(tjd_moonevent - tjd_moonevent_start) < 120.0 / 60.0 / 24.0);
-//  /* while (DeltaAlt < MinTAVoud && fabs(JDNDaysUT - JDNDaysUTi) < 15);*/
-//  } while (DeltaAltoud < MinTAVoud && fabs(JDNDaysUT - JDNDaysUTi) < 15);
-//  if (fabs(JDNDaysUT - JDNDaysUTi) < 15) {
+//    /* while (MinTAV <= MinTAVoud && Math.Abs(tjd_moonevent - tjd_moonevent_start) < 120.0 / 60.0 / 24.0);*/
+//    } while ((MinTAV <= MinTAVoud || LocalminCheck < MinTAV) && Math.Abs(tjd_moonevent - tjd_moonevent_start) < 120.0 / 60.0 / 24.0);
+//  /* while (DeltaAlt < MinTAVoud && Math.Abs(JDNDaysUT - JDNDaysUTi) < 15);*/
+//  } while (DeltaAltoud < MinTAVoud && Math.Abs(JDNDaysUT - JDNDaysUTi) < 15);
+//  if (Math.Abs(JDNDaysUT - JDNDaysUTi) < 15) {
 //    tjd_moonevent += (1 - x2min(MinTAV, MinTAVoud, OldestMinTAV)) * Sgn(Daystep) / 60.0 / 24.0;
 //  } else {
-//    strcpy(serr, "no date found for lunar event");
+//    serr = "no date found for lunar event";
 //    return ERR;
 //  }
 //  dret[0] = tjd_moonevent;
@@ -2244,7 +2244,7 @@ namespace SweNet
 //    ArcusVisDelta = 199;
 //    ArcusVisPto = -5.55;
 //    do { /* this is a do {} while() loop */
-//      if (fabs(DayStep) == 1) doneoneday = 1;
+//      if (Math.Abs(DayStep) == 1) doneoneday = 1;
 //      do { /* this is a do {} while() loop */
 //    /* init search for heliacal rise */
 //    JDNDaysUTstepoud = JDNDaysUTstep;
@@ -2321,7 +2321,7 @@ namespace SweNet
 //      if (doneoneday == 0 && (JDNDaysUTfinal - JDNDaysUTstep) * Sgn(DayStep) > 0) {
 //    /* go back to date before heliacal altitude */
 //    ArcusVisDelta = ArcusVisDeltaoud;
-//    DayStep = ((int) (fabs(DayStep) / 2.0)) * Sgn(DayStep);
+//    DayStep = ((int) (Math.Abs(DayStep) / 2.0)) * Sgn(DayStep);
 //    JDNDaysUTstep = JDNDaysUTstepoud;
 //      }
 //    } while (doneoneday == 0 && (JDNDaysUTfinal - JDNDaysUTstep) * Sgn(DayStep) > 0);
@@ -2330,7 +2330,7 @@ namespace SweNet
 //  if (d <= 0 || d >= maxlength) {
 //    dret[0] = JDNDaysUTinp; /* no date found, just return input */
 //    retval = -2; /* marks "not found" within synodic period */
-//    sprintf(serr, "heliacal event not found within maxlength %f\n", maxlength);
+        //    serr=C.sprintf("heliacal event not found within maxlength %f\n", maxlength);
 //    goto swe_heliacal_err;
 //  } 
 //#if 0
@@ -2398,14 +2398,14 @@ namespace SweNet
 //  }
 //  if (JDNarcvisUT < -9999999 || JDNarcvisUT > 9999999) {
 //    dret[0] = JDNDaysUT; /* no date found, just return input */
-//    strcpy(serr, "no heliacal date found");
+//    serr = "no heliacal date found";
 //    retval = ERR;
 //    goto swe_heliacal_err;
 //  }
 //  dret[0] = JDNarcvisUT;
 //swe_heliacal_err:
 //  if (serr_ret != NULL && *serr != '\0')
-//    strcpy(serr_ret, serr);
+//    serr_ret = serr;
 //  return retval;
 //}
 
@@ -2417,7 +2417,7 @@ namespace SweNet
 //  double x[6], adp;
 //  char s[AS_MAXCH];
 //  char star2[AS_MAXCH];
-//  strcpy(star2, star);
+//  star2 = star;
 //  if (ipl == -1) {
 //    if ((retval = swe_fixstar(star2, tjd, epheflag | SEFLG_EQUATORIAL, x, serr)) == ERR)
 //      return ERR;
@@ -2426,12 +2426,12 @@ namespace SweNet
 //      return ERR;
 //  }
 //  adp = tan(dgeo[1] * DEGTORAD) * tan(x[1] * DEGTORAD);
-//  if (fabs(adp) > 1) {
+//  if (Math.Abs(adp) > 1) {
 //    if (star != NULL && *star != '\0')
-//      strcpy(s, star);
+//      s = star;
 //    else
 //      swe_get_planet_name(ipl, s);
-//    sprintf(serr, "%s is circumpolar, cannot calculate heliacal event", s);
+        //    serr=C.sprintf("%s is circumpolar, cannot calculate heliacal event", s);
 //    return -2;
 //  }
 //  adp = asin(adp) / DEGTORAD;
@@ -2458,12 +2458,12 @@ namespace SweNet
 //      return ERR;
 //  }
 //  adp = tan(dgeo[1] * DEGTORAD) * tan(x[1] * DEGTORAD); 
-//  if (fabs(adp) > 1) {
+//  if (Math.Abs(adp) > 1) {
 //    if (star != NULL && *star != '\0') 
-//      strcpy(s, star);
+//      s = star;
 //    else 
 //      swe_get_planet_name(ipl, s);
-//    sprintf(serr, "%s is circumpolar, cannot calculate heliacal event", s);
+        //    serr=C.sprintf("%s is circumpolar, cannot calculate heliacal event", s);
 //    return -2;
 //  }
 //  adp = asin(adp) / DEGTORAD;
@@ -2590,13 +2590,13 @@ namespace SweNet
 //  daystep = 20;
 //  i = 0;
 //  while (dsunpl_save == -999999999 ||
-//      /*fabs(dsunpl - dsunpl_save) > 180 ||*/
-//      fabs(dsunpl) + fabs(dsunpl_save) > 180 ||
+//      /*Math.Abs(dsunpl - dsunpl_save) > 180 ||*/
+//      Math.Abs(dsunpl) + Math.Abs(dsunpl_save) > 180 ||
 //      (retro && !(dsunpl_save < 0 && dsunpl >= 0)) ||
 //      (!retro && !(dsunpl_save >= 0 && dsunpl < 0))) {
 //    i++;
 //    if (i > 5000) {
-//      sprintf(serr, "loop in get_asc_obl_with_sun() (1)");
+        //      serr=C.sprintf("loop in get_asc_obl_with_sun() (1)");
 //      return ERR;
 //    }
 //    dsunpl_save = dsunpl;
@@ -2614,10 +2614,10 @@ namespace SweNet
 //  if (retval != OK)  /* retval may be ERR or -2 */
 //    return retval;
 //  i = 0;
-//  while (fabs(dsunpl) > 0.00001) {
+//  while (Math.Abs(dsunpl) > 0.00001) {
 //    i++;
 //    if (i > 5000) {
-//      sprintf(serr, "loop in get_asc_obl_with_sun() (2)");
+        //      serr=C.sprintf("loop in get_asc_obl_with_sun() (2)");
 //      return ERR;
 //    }
 //    if (dsunpl_save * dsunpl_test >= 0) {
@@ -2855,7 +2855,7 @@ namespace SweNet
 //      }
 //    }
 //  }
-//  sprintf(serr, "heliacal event does not happen");
+        //  serr=C.sprintf("heliacal event does not happen");
 //  return -2;
 //}
 
@@ -3031,9 +3031,9 @@ namespace SweNet
 //  }
 //  dtret = 999;
 //#if 0
-//  while (fabs(dtret) > 0.5) {
+//  while (Math.Abs(dtret) > 0.5) {
 //#else
-//  while (fabs(dtret) > 0.5 / 1440.0) {
+//  while (Math.Abs(dtret) > 0.5 / 1440.0) {
 //#endif
 //    tjd += 0.7 * direct;
 //    if (direct < 0) tjd -= 1;
@@ -3055,17 +3055,17 @@ namespace SweNet
 //      return ERR;
 //    dtret = acos(swi_dot_prod_unit(darr+3, darr+9)) / DEGTORAD;
 //#else
-//    dtret = fabs(tret - tret_dark);
+//    dtret = Math.Abs(tret - tret_dark);
 //#endif
 //  }
 //  if (azalt_cart(tret, dgeo, datm, "sun", helflag, darr, serr) == ERR)
 //    return ERR;
 //  *thel = tret;
 //  if (darr[1] < -12) {
-//    sprintf(serr, "acronychal rising/setting not available, %f", darr[1]);
+        //    serr=C.sprintf("acronychal rising/setting not available, %f", darr[1]);
 //    return OK;
 //  } else {
-//    sprintf(serr, "solar altitude, %f", darr[1]);
+        //    serr=C.sprintf("solar altitude, %f", darr[1]);
 //  }
 //  return OK;
 //}
@@ -3114,14 +3114,14 @@ namespace SweNet
 //  }
 //  /*if (retval == OK && dret[0] == dret[1]) */
 //  if (optimum_undefined || limit_1_undefined || limit_2_undefined) {
-//    sprintf(serr, "return values [");
+        //    serr=C.sprintf("return values [");
 //    if (limit_1_undefined)
-//      strcat(serr, "0,");
+//      serr+= "0,";
 //    if (optimum_undefined)
-//      strcat(serr, "1,");
+//      serr+= "1,";
 //    if (limit_2_undefined)
-//      strcat(serr, "2,");
-//    strcat(serr, "] are uncertain due to change between photopic and scotopic vision");
+//      serr+= "2,";
+//    serr+= "] are uncertain due to change between photopic and scotopic vision";
 //  }
 //  return OK;
 //}
@@ -3210,7 +3210,7 @@ namespace SweNet
 //  } /* if (1) */
 //swe_heliacal_err:
 //  if (serr_ret != NULL && *serr != '\0')
-//    strcpy(serr_ret, serr);
+//    serr_ret = serr;
 //  return retval;
 //}
 
@@ -3225,10 +3225,10 @@ namespace SweNet
 //  dret[0] = tjdstart; /* will be returned in error case */
 //  if (TypeEvent == 1 || TypeEvent == 2) {
 //    if (serr != NULL)
-//      strcpy(serr, "error: the moon has no morning first or evening last");
+//      serr = "error: the moon has no morning first or evening last";
 //    return ERR;
 //  }
-//  strcpy(ObjectName, "moon");
+//  ObjectName = "moon";
 //  ipl = SE_MOON;
 //  iflag = SEFLG_TOPOCTR | SEFLG_EQUATORIAL | epheflag;
 //  if (!(helflag & SE_HELFLAG_HIGH_PRECISION))
@@ -3271,7 +3271,7 @@ namespace SweNet
 //    if (trise < dret[1]) {
 //      dret[0] = trise;
 //      /* do not warn, it happens too often */
-//      /*strcpy(serr, "start time given is sunset, but moon is observable before that");*/
+//      /*serr = "start time given is sunset, but moon is observable before that";*/
 //    }
 //  /* if the moon is visible after sunrise, we return sunrise as end time */
 //  } else {
@@ -3280,7 +3280,7 @@ namespace SweNet
 //    if (dret[0] > trise) {
 //      dret[0] = trise;
 //      /* do not warn, it happens too often */
-//      /*strcpy(serr, "end time given is sunrise, but moon is observable after that");*/
+//      /*serr = "end time given is sunrise, but moon is observable after that";*/
 //    }
 //  }
 //  /* correct order of the three times: */
@@ -3291,7 +3291,7 @@ namespace SweNet
 //  }
 //moon_event_err:
 //  if (serr_ret != NULL && *serr != '\0')
-//    strcpy(serr_ret, serr);
+//    serr_ret  serr;
 //  return retval;
 //}
 
@@ -3369,7 +3369,7 @@ namespace SweNet
 //  if (Planet == SE_MOON) {
 //    if (TypeEvent == 1 || TypeEvent == 2) {
 //      if (serr_ret != NULL) {
-//        sprintf(serr_ret, "%s (event type %d) does not exist for the moon\n", sevent[TypeEvent], TypeEvent);
+        //        serr_ret=C.sprintf("%s (event type %d) does not exist for the moon\n", sevent[TypeEvent], TypeEvent);
 //      }
 //      return ERR;
 //    }
@@ -3381,7 +3381,7 @@ namespace SweNet
 //      retval = MoonEventJDut(tjd, dgeo, datm, dobs, TypeEvent, helflag, dret, serr);
 //    }
 //    if (serr_ret != NULL && *serr != '\0')
-//      strcpy(serr_ret, serr);
+//      serr_ret = serr;
 //    return retval;
 //  }
 //  /* 
@@ -3392,10 +3392,10 @@ namespace SweNet
 //      if (TypeEvent == 3 || TypeEvent == 4) {
 //    if (serr_ret != NULL) {
 //      if (Planet == -1)
-//        strcpy(s, ObjectName);
+//        s = ObjectName;
 //      else
 //        swe_get_planet_name(Planet, s);
-//      sprintf(serr_ret, "%s (event type %d) does not exist for %s\n", sevent[TypeEvent], TypeEvent, s);
+        //      serr_ret=C.sprintf("%s (event type %d) does not exist for %s\n", sevent[TypeEvent], TypeEvent, s);
 //    }
 //    return ERR;
 //      }
@@ -3415,10 +3415,10 @@ namespace SweNet
 //    if (TypeEvent == SE_ACRONYCHAL_RISING || TypeEvent == SE_ACRONYCHAL_SETTING) {
 //      if (serr_ret != NULL) {
 //    if (Planet == -1)
-//      strcpy(s, ObjectName);
+//      s = ObjectName;
 //    else
 //      swe_get_planet_name(Planet, s);
-//    sprintf(serr_ret, "%s (event type %d) is not provided for %s\n", sevent[TypeEvent], TypeEvent, s);
+        //    serr_ret=C.sprintf("%s (event type %d) is not provided for %s\n", sevent[TypeEvent], TypeEvent, s);
 //      }
 //      return ERR;
 //    }
@@ -3451,14 +3451,14 @@ namespace SweNet
 //   * no event was found within MaxCountSynodicPeriod, return error
 //   */ 
 //  if ((helflag & SE_HELFLAG_SEARCH_1_PERIOD) && (retval == -2 || dret[0] > tjd0 + dsynperiod * 1.5)) {
-//    strcpy(serr, "no heliacal date found within this synodic period");
+//    serr = "no heliacal date found within this synodic period";
 //    retval = -2;
 //  } else if (retval == -2) {
-//    sprintf(serr, "no heliacal date found within %d synodic periods", MaxCountSynodicPeriod);
+        //    serr=C.sprintf("no heliacal date found within %d synodic periods", MaxCountSynodicPeriod);
 //    retval = ERR;
 //  }
 //  if (serr_ret != NULL && *serr != '\0')
-//    strcpy(serr_ret, serr);
+//    serr_ret = serr;
 //  return retval;
 //}
 

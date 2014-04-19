@@ -46,24 +46,15 @@ namespace SweNet.Tests
         [TestMethod]
         public void TestGetPlanetName_Trace() {
             using (var swe = new SwissEph()) {
-                List<String> trace_out = new List<string>(), trace_c = new List<string>();
+                List<String> trace_out = new List<string>();
                 swe.OnTrace += (s, e) => {
-                    if (e.IsCTrace)
-                        trace_c.Add(e.Message);
-                    else
-                        trace_out.Add(e.Message);
+                    trace_out.Add(e.Message);
                 };
                 Assert.AreEqual("Sun", swe.GetPlanetName(SwissEph.SE_SUN));
 
                 CollectionAssert.AreEqual(new String[] {
                     "swe_get_planet_name: 0\tSun\t"
                 }, trace_out);
-                CollectionAssert.AreEqual(new String[] { 
-                    "\n/*SWE_GET_PLANET_NAME*/",
-                    "  ipl = 0;",
-                    "  swe_get_planet_name(ipl, s);   /* s =  */",
-                    "  printf(\"swe_get_planet_name: 0\\tSun\\t\\n\", ipl, s);"
-                }, trace_c);
             }
         }
 

@@ -229,9 +229,9 @@ namespace SweNet
 //    /*houses_to_sidereal(tjde, geolat, hsys, eps, cusp, ascmc, iflag);*/
 //  armc = swe_degnorm(swe_sidtime0(tjd_ut, eps_mean + nutlo[1], nutlo[0]) * 15 + geolon);
 //  if (iflag & SEFLG_SIDEREAL) { 
-//    if (sip->sid_mode & SE_SIDBIT_ECL_T0)
+//    if (sip.sid_mode & SE_SIDBIT_ECL_T0)
 //      retc = sidereal_houses_ecl_t0(tjde, armc, eps_mean + nutlo[1], nutlo, geolat, hsys, cusp, ascmc);
-//    else if (sip->sid_mode & SE_SIDBIT_SSY_PLANE)
+//    else if (sip.sid_mode & SE_SIDBIT_SSY_PLANE)
 //      retc = sidereal_houses_ssypl(tjde, armc, eps_mean + nutlo[1], nutlo, geolat, hsys, cusp, ascmc);
 //    else
 //      retc = sidereal_houses_trad(tjde, armc, eps_mean + nutlo[1], nutlo[0], geolat, hsys, cusp, ascmc);
@@ -293,7 +293,7 @@ namespace SweNet
 //  else
 //    ito = 12;
 //  /* epsilon at t0 */
-//  epst0 = swi_epsiln(sip->t0, 0);
+//  epst0 = swi_epsiln(sip.t0, 0);
 //  /* cartesian coordinates of an imaginary moving body on the
 //   * the mean ecliptic of t0; we take the vernal point: */
 //  x[0] = x[4] = 1; 
@@ -302,9 +302,9 @@ namespace SweNet
 //  swi_coortrf(x, x, -epst0);
 //  swi_coortrf(x+3, x+3, -epst0);
 //  /* to tjd_et */
-//  swi_precess(x, sip->t0, 0, J_TO_J2000);
+//  swi_precess(x, sip.t0, 0, J_TO_J2000);
 //  swi_precess(x, tjde, 0, J2000_TO_J);
-//  swi_precess(x+3, sip->t0, 0, J_TO_J2000);
+//  swi_precess(x+3, sip.t0, 0, J_TO_J2000);
 //  swi_precess(x+3, tjde, 0, J2000_TO_J);
 //  /* to true equator of tjd_et */
 //  swi_coortrf(x, x, (eps - nutlo[1]) * DEGTORAD);
@@ -319,14 +319,14 @@ namespace SweNet
 //  swi_cross_prod(x, x+3, xnorm);
 //  rxy =  xnorm[0] * xnorm[0] + xnorm[1] * xnorm[1];
 //  c2 = (rxy + xnorm[2] * xnorm[2]);
-//  rxyz = sqrt(c2);
-//  rxy = sqrt(rxy);
+//  rxyz =Math.Sqrt(c2);
+//  rxy =Math.Sqrt(rxy);
 //  epsx = asin(rxy / rxyz) * RADTODEG;           /* 1a */
 //  /* auxiliary vernal point */
-//  if (fabs(x[5]) < 1e-15)
+//  if (Math.Abs(x[5]) < 1e-15)
 //    x[5] = 1e-15;
 //  fac = x[2] / x[5];
-//  sgn = x[5] / fabs(x[5]);
+//  sgn = x[5] / Math.Abs(x[5]);
 //  for (j = 0; j <= 2; j++)
 //    xvpx[j] = (x[j] - fac * x[j+3]) * sgn;      /* 1b */
 //  /* distance of the auxiliary vernal point from 
@@ -340,12 +340,12 @@ namespace SweNet
 //  /* distance between auxiliary vernal point and
 //   * vernal point of t0 (a section on the sidereal plane) */
 //  dvpxe = acos(swi_dot_prod_unit(x, xvpx)) * RADTODEG;  /* 5 */
-//  if (tjde < sip->t0)
+//  if (tjde < sip.t0)
 //    dvpxe = -dvpxe;
 //  for (i = 1; i <= ito; i++)                     /* 6, 7 */
-//    cusp[i] = swe_degnorm(cusp[i] - dvpxe - sip->ayan_t0);
+//    cusp[i] = swe_degnorm(cusp[i] - dvpxe - sip.ayan_t0);
 //  for (i = 0; i <= SE_NASCMC; i++)
-//    ascmc[i] = swe_degnorm(ascmc[i] - dvpxe - sip->ayan_t0);
+//    ascmc[i] = swe_degnorm(ascmc[i] - dvpxe - sip.ayan_t0);
 //  return retc;
 //}
 
@@ -418,14 +418,14 @@ namespace SweNet
 //  swi_cross_prod(x, x+3, xnorm);
 //  rxy =  xnorm[0] * xnorm[0] + xnorm[1] * xnorm[1];
 //  c2 = (rxy + xnorm[2] * xnorm[2]);
-//  rxyz = sqrt(c2);
-//  rxy = sqrt(rxy);
+//  rxyz =Math.Sqrt(c2);
+//  rxy =Math.Sqrt(rxy);
 //  epsx = asin(rxy / rxyz) * RADTODEG;           /* 1a */
 //  /* auxiliary vernal point */
-//  if (fabs(x[5]) < 1e-15)
+//  if (Math.Abs(x[5]) < 1e-15)
 //    x[5] = 1e-15;
 //  fac = x[2] / x[5];
-//  sgn = x[5] / fabs(x[5]);
+//  sgn = x[5] / Math.Abs(x[5]);
 //  for (j = 0; j <= 2; j++)
 //    xvpx[j] = (x[j] - fac * x[j+3]) * sgn;      /* 1b */
 //  /* distance of the auxiliary vernal point from 
@@ -448,8 +448,8 @@ namespace SweNet
 //  x0[0] = 1; 
 //  x0[1] = x0[2] = 0; 
 //  /* zero point of t0 in J2000 system */
-//  if (sip->t0 != J2000)
-//    swi_precess(x0, sip->t0, 0, J_TO_J2000);
+//  if (sip.t0 != J2000)
+//    swi_precess(x0, sip.t0, 0, J_TO_J2000);
 //  /* zero point to ecliptic 2000 */
 //  swi_coortrf(x0, x0, eps2000);
 //  /* to solar system plane */
@@ -461,9 +461,9 @@ namespace SweNet
 //  x0[0] += SSY_PLANE_NODE;
 //  x00 = x0[0] * RADTODEG;                       /* 7 */
 //  for (i = 1; i <= ito; i++)                     /* 6, 8, 9 */
-//    cusp[i] = swe_degnorm(cusp[i] - dvpxe - sip->ayan_t0 - x00);
+//    cusp[i] = swe_degnorm(cusp[i] - dvpxe - sip.ayan_t0 - x00);
 //  for (i = 0; i <= SE_NASCMC; i++)
-//    ascmc[i] = swe_degnorm(ascmc[i] - dvpxe - sip->ayan_t0 - x00);
+//    ascmc[i] = swe_degnorm(ascmc[i] - dvpxe - sip.ayan_t0 - x00);
 //  return retc;
 //}
 
@@ -709,7 +709,7 @@ namespace SweNet
 //  sine  = sind(ekl);
 //  tane  = tand(ekl);
 //  /* north and south poles */
-//  if (fabs(fabs(fi) - 90) < VERY_SMALL) {
+//  if (Math.Abs(Math.Abs(fi) - 90) < VERY_SMALL) {
 //    if (fi < 0)
 //      fi = -90 + VERY_SMALL;
 //    else
@@ -717,23 +717,23 @@ namespace SweNet
 //  }
 //  tanfi = tand(fi);
 //  /* mc */
-//  if (fabs(th - 90) > VERY_SMALL
-//      && fabs(th - 270) > VERY_SMALL) {
+//  if (Math.Abs(th - 90) > VERY_SMALL
+//      && Math.Abs(th - 270) > VERY_SMALL) {
 //    tant = tand(th);
-//    hsp->mc = atand(tant / cose);
+//    hsp.mc = atand(tant / cose);
 //    if (th > 90 && th <= 270)
-//      hsp->mc = swe_degnorm(hsp->mc + 180);
+//      hsp.mc = swe_degnorm(hsp.mc + 180);
 //  } else {
-//    if (fabs(th - 90) <= VERY_SMALL)
-//      hsp->mc = 90;
+//    if (Math.Abs(th - 90) <= VERY_SMALL)
+//      hsp.mc = 90;
 //    else
-//      hsp->mc = 270;
+//      hsp.mc = 270;
 //  } /*  if */
-//  hsp->mc = swe_degnorm(hsp->mc);
+//  hsp.mc = swe_degnorm(hsp.mc);
 //  /* ascendant */
-//  hsp->ac = Asc1 (th + 90, fi, sine, cose);
-//  hsp->cusp[1] = hsp->ac;
-//  hsp->cusp[10] = hsp->mc;
+//  hsp.ac = Asc1 (th + 90, fi, sine, cose);
+//  hsp.cusp[1] = hsp.ac;
+//  hsp.cusp[10] = hsp.mc;
 //  if (hsy > 95) hsy = (char) (hsy - 32);/* translate into capital letter */
 //  switch (hsy) {
 //  case 'A':	/* equal houses */
@@ -741,13 +741,13 @@ namespace SweNet
 //    /*
 //     * within polar circle we swap AC/DC if AC is on wrong side
 //     */
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//      hsp->ac = swe_degnorm(hsp->ac + 180);
-//      hsp->cusp[1] = hsp->ac;
+//      hsp.ac = swe_degnorm(hsp.ac + 180);
+//      hsp.cusp[1] = hsp.ac;
 //    }
 //    for (i = 2; i <=12; i++)
-//      hsp->cusp [i] = swe_degnorm(hsp->cusp [1] + (i-1) * 30);
+//      hsp.cusp [i] = swe_degnorm(hsp.cusp [1] + (i-1) * 30);
 //    break;
 //  case 'C': /* Campanus houses and Horizon or Azimut system */
 //  case 'H':
@@ -757,7 +757,7 @@ namespace SweNet
 //      else
 //        fi = -90 - fi;
 //      /* equator */
-//      if (fabs(fabs(fi) - 90) < VERY_SMALL) {
+//      if (Math.Abs(Math.Abs(fi) - 90) < VERY_SMALL) {
 //        if (fi < 0)
 //          fi = -90 + VERY_SMALL;
 //        else
@@ -768,7 +768,7 @@ namespace SweNet
 //    fh1 = asind(sind (fi) / 2);
 //    fh2 = asind(sqrt (3.0) / 2 * sind(fi));
 //    cosfi = cosd(fi);
-//    if (fabs(cosfi) == 0) {	/* '==' should be save! */ 
+//    if (Math.Abs(cosfi) == 0) {	/* '==' should be save! */ 
 //      if (fi > 0)
 //    xh1 = xh2 = 90; /* cosfi = VERY_SMALL; */
 //      else
@@ -777,113 +777,113 @@ namespace SweNet
 //      xh1 = atand(sqrt (3.0) / cosfi);
 //      xh2 = atand(1 / sqrt (3.0) / cosfi);
 //    }
-//    hsp->cusp [11] = Asc1 (th + 90 - xh1, fh1, sine, cose);
-//    hsp->cusp [12] = Asc1 (th + 90 - xh2, fh2, sine, cose);
+//    hsp.cusp [11] = Asc1 (th + 90 - xh1, fh1, sine, cose);
+//    hsp.cusp [12] = Asc1 (th + 90 - xh2, fh2, sine, cose);
 //    if (hsy == 'H') 
-//      hsp->cusp [1] = Asc1 (th + 90, fi, sine, cose);
-//    hsp->cusp [2] = Asc1 (th + 90 + xh2, fh2, sine, cose);
-//    hsp->cusp [3] = Asc1 (th + 90 + xh1, fh1, sine, cose);
+//      hsp.cusp [1] = Asc1 (th + 90, fi, sine, cose);
+//    hsp.cusp [2] = Asc1 (th + 90 + xh2, fh2, sine, cose);
+//    hsp.cusp [3] = Asc1 (th + 90 + xh1, fh1, sine, cose);
 //    /* within polar circle, when mc sinks below horizon and 
 //     * ascendant changes to western hemisphere, all cusps
 //     * must be added 180 degrees. 
 //     * houses will be in clockwise direction */
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
-//      acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
+//      acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //      if (acmc < 0) {
-//        hsp->ac = swe_degnorm(hsp->ac + 180);
-//        hsp->mc = swe_degnorm(hsp->mc + 180);
+//        hsp.ac = swe_degnorm(hsp.ac + 180);
+//        hsp.mc = swe_degnorm(hsp.mc + 180);
 //    for (i = 1; i <= 12; i++)
-//      hsp->cusp[i] = swe_degnorm(hsp->cusp[i] + 180);
+//      hsp.cusp[i] = swe_degnorm(hsp.cusp[i] + 180);
 //      }
 //    }
 //    if (hsy == 'H') {
 //      for (i = 1; i <= 3; i++)
-//        hsp->cusp[i] = swe_degnorm(hsp->cusp[i] + 180);
+//        hsp.cusp[i] = swe_degnorm(hsp.cusp[i] + 180);
 //      for (i = 11; i <= 12; i++)
-//        hsp->cusp[i] = swe_degnorm(hsp->cusp[i] + 180);
+//        hsp.cusp[i] = swe_degnorm(hsp.cusp[i] + 180);
 //      /* restore fi and th */
 //      if (fi > 0)
 //        fi = 90 - fi;
 //      else
 //    fi = -90 - fi;
 //      th = swe_degnorm(th + 180);
-//      acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//      acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //      if (acmc < 0) {
-//        hsp->ac = swe_degnorm(hsp->ac + 180);
+//        hsp.ac = swe_degnorm(hsp.ac + 180);
 //      }
 //    }
 //    break;
 //  case 'K': /* Koch houses */
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
 //      retc = ERR;
 //      goto porphyry;
 //    }
-//    sina = sind(hsp->mc) * sine / cosd(fi);
+//    sina = sind(hsp.mc) * sine / cosd(fi);
 //    if (sina > 1) sina = 1;
 //    if (sina < -1) sina = -1;
-//    cosa = sqrt(1 - sina * sina);		/* always >> 0 */
+//    cosa =Math.Sqrt(1 - sina * sina);		/* always >> 0 */
 //    c = atand(tanfi / cosa);
 //    ad3 = asind(sind(c) * sina) / 3.0;
-//    hsp->cusp [11] = Asc1 (th + 30 - 2 * ad3, fi, sine, cose);
-//    hsp->cusp [12] = Asc1 (th + 60 - ad3, fi, sine, cose);
-//    hsp->cusp [2] = Asc1 (th + 120 + ad3, fi, sine, cose);
-//    hsp->cusp [3] = Asc1 (th + 150 + 2 * ad3, fi, sine, cose);
+//    hsp.cusp [11] = Asc1 (th + 30 - 2 * ad3, fi, sine, cose);
+//    hsp.cusp [12] = Asc1 (th + 60 - ad3, fi, sine, cose);
+//    hsp.cusp [2] = Asc1 (th + 120 + ad3, fi, sine, cose);
+//    hsp.cusp [3] = Asc1 (th + 150 + 2 * ad3, fi, sine, cose);
 //    break;
 //  case 'O':	/* Porphyry houses */
 //porphyry:
 //    /*
 //     * within polar circle we swap AC/DC if AC is on wrong side
 //     */
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//     hsp->ac = swe_degnorm(hsp->ac + 180);
-//     hsp->cusp[1] = hsp->ac;
-//     acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//     hsp.ac = swe_degnorm(hsp.ac + 180);
+//     hsp.cusp[1] = hsp.ac;
+//     acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    }
-//    hsp->cusp [2] = swe_degnorm(hsp->ac + (180 - acmc) / 3);
-//    hsp->cusp [3] = swe_degnorm(hsp->ac + (180 - acmc) / 3 * 2);
-//    hsp->cusp [11] = swe_degnorm(hsp->mc + acmc / 3);
-//    hsp->cusp [12] = swe_degnorm(hsp->mc + acmc / 3 * 2);
+//    hsp.cusp [2] = swe_degnorm(hsp.ac + (180 - acmc) / 3);
+//    hsp.cusp [3] = swe_degnorm(hsp.ac + (180 - acmc) / 3 * 2);
+//    hsp.cusp [11] = swe_degnorm(hsp.mc + acmc / 3);
+//    hsp.cusp [12] = swe_degnorm(hsp.mc + acmc / 3 * 2);
 //    break;
 //  case 'R':	/* Regiomontanus houses */
 //    fh1 = atand (tanfi * 0.5);
 //    fh2 = atand (tanfi * cosd(30));
-//    hsp->cusp [11] = Asc1 (30 + th, fh1, sine, cose); 
-//    hsp->cusp [12] = Asc1 (60 + th, fh2, sine, cose); 
-//    hsp->cusp [2] = Asc1 (120 + th, fh2, sine, cose);
-//    hsp->cusp [3] = Asc1 (150 + th, fh1, sine, cose); 
+//    hsp.cusp [11] = Asc1 (30 + th, fh1, sine, cose); 
+//    hsp.cusp [12] = Asc1 (60 + th, fh2, sine, cose); 
+//    hsp.cusp [2] = Asc1 (120 + th, fh2, sine, cose);
+//    hsp.cusp [3] = Asc1 (150 + th, fh1, sine, cose); 
 //    /* within polar circle, when mc sinks below horizon and 
 //     * ascendant changes to western hemisphere, all cusps
 //     * must be added 180 degrees.
 //     * houses will be in clockwise direction */
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
-//      acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
+//      acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //      if (acmc < 0) {
-//        hsp->ac = swe_degnorm(hsp->ac + 180);
-//        hsp->mc = swe_degnorm(hsp->mc + 180);
+//        hsp.ac = swe_degnorm(hsp.ac + 180);
+//        hsp.mc = swe_degnorm(hsp.mc + 180);
 //    for (i = 1; i <= 12; i++)
-//      hsp->cusp[i] = swe_degnorm(hsp->cusp[i] + 180);
+//      hsp.cusp[i] = swe_degnorm(hsp.cusp[i] + 180);
 //      }
 //    }
 //    break;
 //  case 'T':	/* 'topocentric' houses */
 //    fh1 = atand (tanfi / 3.0);
 //    fh2 = atand (tanfi * 2.0 / 3.0);
-//    hsp->cusp [11] =  Asc1 (30 + th, fh1, sine, cose); 
-//    hsp->cusp [12] =  Asc1 (60 + th, fh2, sine, cose);
-//    hsp->cusp [2] =  Asc1 (120 + th, fh2, sine, cose); 
-//    hsp->cusp [3] =  Asc1 (150 + th, fh1, sine, cose);
+//    hsp.cusp [11] =  Asc1 (30 + th, fh1, sine, cose); 
+//    hsp.cusp [12] =  Asc1 (60 + th, fh2, sine, cose);
+//    hsp.cusp [2] =  Asc1 (120 + th, fh2, sine, cose); 
+//    hsp.cusp [3] =  Asc1 (150 + th, fh1, sine, cose);
 //    /* within polar circle, when mc sinks below horizon and 
 //     * ascendant changes to western hemisphere, all cusps
 //     * must be added 180 degrees.
 //     * houses will be in clockwise direction */
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
-//      acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
+//      acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //      if (acmc < 0) {
-//        hsp->ac = swe_degnorm(hsp->ac + 180);
-//    hsp->mc = swe_degnorm(hsp->mc + 180);
+//        hsp.ac = swe_degnorm(hsp.ac + 180);
+//    hsp.mc = swe_degnorm(hsp.mc + 180);
 //    for (i = 1; i <= 12; i++)
-//      hsp->cusp[i] = swe_degnorm(hsp->cusp[i] + 180);
+//      hsp.cusp[i] = swe_degnorm(hsp.cusp[i] + 180);
 //      }
 //    }
 //    break;
@@ -891,27 +891,27 @@ namespace SweNet
 //    /*
 //    * within polar circle we swap AC/DC if AC is on wrong side
 //    */
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//      hsp->ac = swe_degnorm(hsp->ac + 180);
-//      hsp->cusp[1] = hsp->ac;
+//      hsp.ac = swe_degnorm(hsp.ac + 180);
+//      hsp.cusp[1] = hsp.ac;
 //    }
-//    hsp->cusp [1] = swe_degnorm(hsp->ac - 15);
+//    hsp.cusp [1] = swe_degnorm(hsp.ac - 15);
 //    for (i = 2; i <=12; i++)
-//      hsp->cusp [i] = swe_degnorm(hsp->cusp [1] + (i-1) * 30);
+//      hsp.cusp [i] = swe_degnorm(hsp.cusp [1] + (i-1) * 30);
 //    break;
 //  case 'W':	/* equal, whole-sign houses */
 //    /*
 //    * within polar circle we swap AC/DC if AC is on wrong side
 //    */
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//      hsp->ac = swe_degnorm(hsp->ac + 180);
-//      hsp->cusp[1] = hsp->ac;
+//      hsp.ac = swe_degnorm(hsp.ac + 180);
+//      hsp.cusp[1] = hsp.ac;
 //    }
-//    hsp->cusp [1] = hsp->ac - fmod(hsp->ac, 30);
+//    hsp.cusp [1] = hsp.ac - fmod(hsp.ac, 30);
 //    for (i = 2; i <=12; i++)
-//      hsp->cusp [i] = swe_degnorm(hsp->cusp [1] + (i-1) * 30);
+//      hsp.cusp [i] = swe_degnorm(hsp.cusp [1] + (i-1) * 30);
 //    break;
 //  case 'X': {
 //    /*
@@ -925,23 +925,23 @@ namespace SweNet
 //      j = i + 10;
 //      if (j > 12) j -= 12;
 //      a = swe_degnorm(a + 30);
-//      if (fabs(a - 90) > VERY_SMALL
-//        && fabs(a - 270) > VERY_SMALL) {
+//      if (Math.Abs(a - 90) > VERY_SMALL
+//        && Math.Abs(a - 270) > VERY_SMALL) {
 //        tant = tand(a);
-//        hsp->cusp[j] = atand(tant / cose);
+//        hsp.cusp[j] = atand(tant / cose);
 //        if (a > 90 && a <= 270) 
-//          hsp->cusp[j] = swe_degnorm(hsp->cusp[j] + 180);
+//          hsp.cusp[j] = swe_degnorm(hsp.cusp[j] + 180);
 //      } else {
-//        if (fabs(a - 90) <= VERY_SMALL)
-//          hsp->cusp[j] = 90;
+//        if (Math.Abs(a - 90) <= VERY_SMALL)
+//          hsp.cusp[j] = 90;
 //        else 
-//          hsp->cusp[j] = 270;
+//          hsp.cusp[j] = 270;
 //      } /*  if */
-//      hsp->cusp[j] = swe_degnorm(hsp->cusp[j]);
+//      hsp.cusp[j] = swe_degnorm(hsp.cusp[j]);
 //    }
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//      hsp->ac = swe_degnorm(hsp->ac + 180);
+//      hsp.ac = swe_degnorm(hsp.ac + 180);
 //    }
 //    break; }
 //  case 'M': {
@@ -960,11 +960,11 @@ namespace SweNet
 //      x[0] = a;
 //      x[1] = 0;
 //      swe_cotrans(x, x, ekl);
-//      hsp->cusp[j] = x[0];
+//      hsp.cusp[j] = x[0];
 //    }
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//      hsp->ac = swe_degnorm(hsp->ac + 180);
+//      hsp.ac = swe_degnorm(hsp.ac + 180);
 //    }
 //    break; }
 //  case 'B': {	/* Alcabitius */
@@ -977,18 +977,18 @@ namespace SweNet
 //       the ecliptic. */
 //    double dek, r, sna, sda, sn3, sd3;
 //#if FALSE
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
 //      retc = ERR;
 //      goto porphyry;
 //    }
 //#endif
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//     hsp->ac = swe_degnorm(hsp->ac + 180);
-//     hsp->cusp[1] = hsp->ac;
-//     acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//     hsp.ac = swe_degnorm(hsp.ac + 180);
+//     hsp.cusp[1] = hsp.ac;
+//     acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    }
-//    dek = asind(sind(hsp->ac) * sine);	/* declination of Ascendant */
+//    dek = asind(sind(hsp.ac) * sine);	/* declination of Ascendant */
 //    /* must treat the case fi == 90 or -90 */
 //    r = -tanfi * tand(dek);
 //    /* must treat the case of abs(r) > 1; probably does not happen
@@ -1002,20 +1002,20 @@ namespace SweNet
 //    rectasc = swe_degnorm(th + sd3);	/* cusp 11 */
 //    /* project rectasc onto eclipitic with pole height 0, i.e. along the
 //    declination circle */
-//    hsp->cusp [11] = Asc1 (rectasc, 0, sine, cose);
+//    hsp.cusp [11] = Asc1 (rectasc, 0, sine, cose);
 //    rectasc = swe_degnorm(th + 2 * sd3);	/* cusp 12 */
-//    hsp->cusp [12] = Asc1 (rectasc, 0, sine, cose);
+//    hsp.cusp [12] = Asc1 (rectasc, 0, sine, cose);
 //    rectasc = swe_degnorm(th + 180 - 2 * sn3);	/* cusp 2 */
-//    hsp->cusp [2] = Asc1 (rectasc, 0, sine, cose);
+//    hsp.cusp [2] = Asc1 (rectasc, 0, sine, cose);
 //    rectasc = swe_degnorm(th + 180 -  sn3);	/* cusp 3 */
-//    hsp->cusp [3] = Asc1 (rectasc, 0, sine, cose);
+//    hsp.cusp [3] = Asc1 (rectasc, 0, sine, cose);
 //    }
 //    break;
 //  case 'G': 	/* 36 Gauquelin sectors */
 //    for (i = 1; i <= 36; i++) {
-//      hsp->cusp[i] = 0;
+//      hsp.cusp[i] = 0;
 //    }
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
 //      retc = ERR;
 //      goto porphyry;
 //    }
@@ -1027,24 +1027,24 @@ namespace SweNet
 //      fh1 = atand(sind(a * ih2 / 9) / tane);
 //      rectasc = swe_degnorm((90 / 9) * ih2 + th);
 //      tant = tand(asind(sine * sind(Asc1 (rectasc, fh1, sine, cose))));
-//      if (fabs(tant) < VERY_SMALL) {
-//    hsp->cusp[ih] = rectasc;
+//      if (Math.Abs(tant) < VERY_SMALL) {
+//    hsp.cusp[ih] = rectasc;
 //      } else {
 //    /* pole height */
 //    f = atand(sind(asind(tanfi * tant) * ih2 / 9)  /tant);
-//        hsp->cusp [ih] = Asc1 (rectasc, f, sine, cose);
+//        hsp.cusp [ih] = Asc1 (rectasc, f, sine, cose);
 //        for (i = 1; i <= iteration_count; i++) {
-//      tant = tand(asind(sine * sind(hsp->cusp[ih])));
-//      if (fabs(tant) < VERY_SMALL) {
-//        hsp->cusp[ih] = rectasc;
+//      tant = tand(asind(sine * sind(hsp.cusp[ih])));
+//      if (Math.Abs(tant) < VERY_SMALL) {
+//        hsp.cusp[ih] = rectasc;
 //        break;
 //      }
 //      /* pole height */
 //      f = atand(sind(asind(tanfi * tant) * ih2 / 9) / tant);
-//      hsp->cusp[ih] = Asc1 (rectasc, f, sine, cose);
+//      hsp.cusp[ih] = Asc1 (rectasc, f, sine, cose);
 //        }
 //      }
-//      hsp->cusp[ih+18] = swe_degnorm(hsp->cusp[ih] + 180);
+//      hsp.cusp[ih+18] = swe_degnorm(hsp.cusp[ih] + 180);
 //    }
 //    /*************** first/third quarter ***************/
 //    for (ih = 29; ih <= 36; ih++) {
@@ -1052,29 +1052,29 @@ namespace SweNet
 //      fh1 = atand(sind(a * ih2 / 9) / tane);
 //      rectasc = swe_degnorm(180 - ih2 * 90 / 9 + th);
 //      tant = tand(asind(sine * sind(Asc1 (rectasc, fh1, sine, cose))));
-//      if (fabs(tant) < VERY_SMALL) {
-//        hsp->cusp[ih] = rectasc;
+//      if (Math.Abs(tant) < VERY_SMALL) {
+//        hsp.cusp[ih] = rectasc;
 //      } else {
 //        f = atand(sind(asind(tanfi * tant) * ih2 / 9) / tant);
 //        /*  pole height */
-//        hsp->cusp[ih] = Asc1 (rectasc, f, sine, cose);
+//        hsp.cusp[ih] = Asc1 (rectasc, f, sine, cose);
 //        for (i = 1; i <= iteration_count; i++) {
-//      tant = tand(asind(sine * sind(hsp->cusp[ih])));
-//      if (fabs(tant) < VERY_SMALL) {
-//        hsp->cusp[ih] = rectasc;
+//      tant = tand(asind(sine * sind(hsp.cusp[ih])));
+//      if (Math.Abs(tant) < VERY_SMALL) {
+//        hsp.cusp[ih] = rectasc;
 //        break;
 //      }
 //      f = atand(sind(asind(tanfi * tant) * ih2 / 9) / tant);
 //      /*  pole height */
-//      hsp->cusp[ih] = Asc1 (rectasc, f, sine, cose);
+//      hsp.cusp[ih] = Asc1 (rectasc, f, sine, cose);
 //    }
 //      }
-//      hsp->cusp[ih-18] = swe_degnorm(hsp->cusp[ih] + 180);
+//      hsp.cusp[ih-18] = swe_degnorm(hsp.cusp[ih] + 180);
 //    }
-//    hsp->cusp[1] = hsp->ac;
-//    hsp->cusp[10] = hsp->mc;
-//    hsp->cusp[19] = swe_degnorm(hsp->ac + 180);
-//    hsp->cusp[28] = swe_degnorm(hsp->mc + 180);
+//    hsp.cusp[1] = hsp.ac;
+//    hsp.cusp[10] = hsp.mc;
+//    hsp.cusp[19] = swe_degnorm(hsp.ac + 180);
+//    hsp.cusp[28] = swe_degnorm(hsp.mc + 180);
 //    break;
 //  case 'U': /* Krusinski-Pisa */
 //    /*
@@ -1117,12 +1117,12 @@ namespace SweNet
 //    /*
 //     * within polar circle we swap AC/DC if AC is on wrong side
 //     */
-//    acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //    if (acmc < 0) {
-//      hsp->ac = swe_degnorm(hsp->ac + 180);
+//      hsp.ac = swe_degnorm(hsp.ac + 180);
 //    }
 //    /* A0. Start point - ecliptic coords of ascendant */
-//    x[0] = hsp->ac; /* Asc longitude   */
+//    x[0] = hsp.ac; /* Asc longitude   */
 //    x[1] = 0.0;     /* Asc declination */
 //    x[2] = 1.0;     /* Radius to test validity of subsequent transformations. */
 //    swe_cotrans(x, x, -ekl);      /* A1. Transform into equatorial coords */
@@ -1144,30 +1144,30 @@ namespace SweNet
 //      x[0] = swe_degnorm(x[0] + (th-90));    /* B4. Rotate back -> RA of house cusp as result. */
 //      /* B5. Where's this house cusp on ecliptic? */
 //      /* ... so last but not least - get ecliptic longitude of house cusp: */
-//      hsp->cusp[i+1] = atand(tand(x[0])/cosd(ekl));
+//      hsp.cusp[i+1] = atand(tand(x[0])/cosd(ekl));
 //      if (x[0] > 90 && x[0] <= 270)
-//    hsp->cusp[i+1] = swe_degnorm(hsp->cusp[i+1] + 180);
-//      hsp->cusp[i+1] = swe_degnorm(hsp->cusp[i+1]);
-//      hsp->cusp[i+7] = swe_degnorm(hsp->cusp[i+1]+180);
+//    hsp.cusp[i+1] = swe_degnorm(hsp.cusp[i+1] + 180);
+//      hsp.cusp[i+1] = swe_degnorm(hsp.cusp[i+1]);
+//      hsp.cusp[i+7] = swe_degnorm(hsp.cusp[i+1]+180);
 //    }
 //    break;
 //  case 'Y':     /* APC houses */
 //    for (i = 1; i <= 12; i++) {
-//      hsp->cusp[i] = apc_sector(i, fi * DEGTORAD, ekl * DEGTORAD, th * DEGTORAD);
+//      hsp.cusp[i] = apc_sector(i, fi * DEGTORAD, ekl * DEGTORAD, th * DEGTORAD);
 //    }
-//    hsp->ac = hsp->cusp[1];
-//    hsp->mc = hsp->cusp[10];
+//    hsp.ac = hsp.cusp[1];
+//    hsp.mc = hsp.cusp[10];
 //    /* within polar circle, when mc sinks below horizon and 
 //     * ascendant changes to western hemisphere, all cusps
 //     * must be added 180 degrees. 
 //     * houses will be in clockwise direction */
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
-//      acmc = swe_difdeg2n(hsp->ac, hsp->mc);
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
+//      acmc = swe_difdeg2n(hsp.ac, hsp.mc);
 //      if (acmc < 0) {
-//        hsp->ac = swe_degnorm(hsp->ac + 180);
-//        hsp->mc = swe_degnorm(hsp->mc + 180);
+//        hsp.ac = swe_degnorm(hsp.ac + 180);
+//        hsp.mc = swe_degnorm(hsp.mc + 180);
 //    for (i = 1; i <= 12; i++)
-//      hsp->cusp[i] = swe_degnorm(hsp->cusp[i] + 180);
+//      hsp.cusp[i] = swe_degnorm(hsp.cusp[i] + 180);
 //      }
 //    }
 //    break;
@@ -1176,7 +1176,7 @@ namespace SweNet
 //    if (hsy != 'P')
 //      fprintf (stderr, "swe_houses: make Placidus, unknown key %c\n", hsy);
 //#endif
-//    if (fabs(fi) >= 90 - ekl) {  /* within polar circle */
+//    if (Math.Abs(fi) >= 90 - ekl) {  /* within polar circle */
 //      retc = ERR;
 //      goto porphyry;
 //    } 
@@ -1186,134 +1186,134 @@ namespace SweNet
 //    /* ************  house 11 ******************** */
 //    rectasc = swe_degnorm(30 + th);
 //    tant = tand(asind(sine * sind(Asc1 (rectasc, fh1, sine, cose))));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [11] = rectasc;
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [11] = rectasc;
 //    } else {
 //      /* pole height */
 //      f = atand(sind(asind(tanfi * tant) / 3)  /tant);  
-//      hsp->cusp [11] = Asc1 (rectasc, f, sine, cose);
+//      hsp.cusp [11] = Asc1 (rectasc, f, sine, cose);
 //      for (i = 1; i <= iteration_count; i++) {
-//    tant = tand(asind(sine * sind(hsp->cusp [11])));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [11] = rectasc;
+//    tant = tand(asind(sine * sind(hsp.cusp [11])));
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [11] = rectasc;
 //      break;
 //    }
 //    /* pole height */
 //    f = atand(sind(asind(tanfi * tant) / 3) / tant);
-//    hsp->cusp [11] = Asc1 (rectasc, f, sine, cose);
+//    hsp.cusp [11] = Asc1 (rectasc, f, sine, cose);
 //      }
 //    }
 //    /* ************  house 12 ******************** */
 //    rectasc = swe_degnorm(60 + th);
 //    tant = tand(asind(sine*sind(Asc1 (rectasc,  fh2, sine, cose))));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [12] = rectasc;
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [12] = rectasc;
 //    } else {
 //      f = atand(sind(asind(tanfi * tant) / 1.5) / tant);  
 //      /*  pole height */
-//      hsp->cusp [12] = Asc1 (rectasc, f, sine, cose);
+//      hsp.cusp [12] = Asc1 (rectasc, f, sine, cose);
 //      for (i = 1; i <= iteration_count; i++) {
-//    tant = tand(asind(sine * sind(hsp->cusp [12])));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [12] = rectasc;
+//    tant = tand(asind(sine * sind(hsp.cusp [12])));
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [12] = rectasc;
 //      break;
 //    }
 //    f = atand(sind(asind(tanfi * tant) / 1.5) / tant);  
 //    /*  pole height */
-//    hsp->cusp [12] = Asc1 (rectasc, f, sine, cose);
+//    hsp.cusp [12] = Asc1 (rectasc, f, sine, cose);
 //      }
 //    }
 //    /* ************  house  2 ******************** */
 //    rectasc = swe_degnorm(120 + th);
 //    tant = tand(asind(sine * sind(Asc1 (rectasc, fh2, sine, cose))));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [2] = rectasc;
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [2] = rectasc;
 //    } else {
 //      f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
 //      /*  pole height */
-//      hsp->cusp [2] = Asc1 (rectasc, f, sine, cose);
+//      hsp.cusp [2] = Asc1 (rectasc, f, sine, cose);
 //      for (i = 1; i <= iteration_count; i++) {
-//    tant = tand(asind(sine * sind(hsp->cusp [2])));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [2] = rectasc;
+//    tant = tand(asind(sine * sind(hsp.cusp [2])));
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [2] = rectasc;
 //      break;
 //    }
 //    f = atand(sind(asind(tanfi * tant) / 1.5) / tant);
 //    /*  pole height */
-//    hsp->cusp [2] = Asc1 (rectasc, f, sine, cose);
+//    hsp.cusp [2] = Asc1 (rectasc, f, sine, cose);
 //      }
 //    }
 //    /* ************  house  3 ******************** */
 //    rectasc = swe_degnorm(150 + th);
 //    tant = tand(asind(sine * sind(Asc1 (rectasc, fh1, sine, cose))));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [3] = rectasc;
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [3] = rectasc;
 //    } else {
 //      f = atand(sind(asind(tanfi * tant) / 3) / tant);  
 //      /*  pole height */
-//      hsp->cusp [3] = Asc1(rectasc, f, sine, cose);
+//      hsp.cusp [3] = Asc1(rectasc, f, sine, cose);
 //      for (i = 1; i <= iteration_count; i++) {
-//    tant = tand(asind(sine * sind(hsp->cusp [3])));
-//    if (fabs(tant) < VERY_SMALL) {
-//      hsp->cusp [3] = rectasc;
+//    tant = tand(asind(sine * sind(hsp.cusp [3])));
+//    if (Math.Abs(tant) < VERY_SMALL) {
+//      hsp.cusp [3] = rectasc;
 //      break;
 //    }
 //    f = atand(sind(asind(tanfi * tant) / 3) / tant);
 //    /*  pole height */
-//    hsp->cusp [3] = Asc1 (rectasc, f, sine, cose);
+//    hsp.cusp [3] = Asc1 (rectasc, f, sine, cose);
 //      }
 //    }
 //    break;
 //  } /* end switch */
 //  if (hsy != 'G' && hsy != 'Y') {
-//    hsp->cusp [4] = swe_degnorm(hsp->cusp [10] + 180);
-//    hsp->cusp [5] = swe_degnorm(hsp->cusp [11] + 180);
-//    hsp->cusp [6] = swe_degnorm(hsp->cusp [12] + 180);
-//    hsp->cusp [7] = swe_degnorm(hsp->cusp [1] + 180);
-//    hsp->cusp [8] = swe_degnorm(hsp->cusp [2] + 180);
-//    hsp->cusp [9] = swe_degnorm(hsp->cusp [3] + 180);
+//    hsp.cusp [4] = swe_degnorm(hsp.cusp [10] + 180);
+//    hsp.cusp [5] = swe_degnorm(hsp.cusp [11] + 180);
+//    hsp.cusp [6] = swe_degnorm(hsp.cusp [12] + 180);
+//    hsp.cusp [7] = swe_degnorm(hsp.cusp [1] + 180);
+//    hsp.cusp [8] = swe_degnorm(hsp.cusp [2] + 180);
+//    hsp.cusp [9] = swe_degnorm(hsp.cusp [3] + 180);
 //  }
 //  /* vertex */
 //  if (fi >= 0)
 //    f = 90 - fi;
 //  else
 //    f = -90 - fi;
-//  hsp->vertex = Asc1 (th - 90, f, sine, cose);
+//  hsp.vertex = Asc1 (th - 90, f, sine, cose);
 //  /* with tropical latitudes, the vertex behaves strange, 
 //   * in a similar way as the ascendant within the polar
 //   * circle. we keep it always on the western hemisphere.*/
-//  if (fabs(fi) <= ekl) {
-//    vemc = swe_difdeg2n(hsp->vertex, hsp->mc);
+//  if (Math.Abs(fi) <= ekl) {
+//    vemc = swe_difdeg2n(hsp.vertex, hsp.mc);
 //    if (vemc > 0)
-//      hsp->vertex = swe_degnorm(hsp->vertex + 180);
+//      hsp.vertex = swe_degnorm(hsp.vertex + 180);
 //  }
 //  /* 
 //   * some strange points:
 //   */
 //  /* equasc (equatorial ascendant) */
 //  th2 = swe_degnorm(th + 90);
-//  if (fabs(th2 - 90) > VERY_SMALL
-//    && fabs(th2 - 270) > VERY_SMALL) {
+//  if (Math.Abs(th2 - 90) > VERY_SMALL
+//    && Math.Abs(th2 - 270) > VERY_SMALL) {
 //    tant = tand(th2);
-//    hsp->equasc = atand(tant / cose);
+//    hsp.equasc = atand(tant / cose);
 //    if (th2 > 90 && th2 <= 270)
-//      hsp->equasc = swe_degnorm(hsp->equasc + 180);
+//      hsp.equasc = swe_degnorm(hsp.equasc + 180);
 //  } else {
-//    if (fabs(th2 - 90) <= VERY_SMALL)
-//      hsp->equasc = 90;
+//    if (Math.Abs(th2 - 90) <= VERY_SMALL)
+//      hsp.equasc = 90;
 //    else
-//      hsp->equasc = 270;
+//      hsp.equasc = 270;
 //  } /*  if */
-//  hsp->equasc = swe_degnorm(hsp->equasc);
+//  hsp.equasc = swe_degnorm(hsp.equasc);
 //  /* "co-ascendant" W. Koch */
-//  hsp->coasc1 = swe_degnorm(Asc1 (th - 90, fi, sine, cose) + 180);
+//  hsp.coasc1 = swe_degnorm(Asc1 (th - 90, fi, sine, cose) + 180);
 //  /* "co-ascendant" M. Munkasey */
 //  if (fi >= 0)
-//    hsp->coasc2 = Asc1 (th + 90, 90 - fi, sine, cose);
+//    hsp.coasc2 = Asc1 (th + 90, 90 - fi, sine, cose);
 //  else /* southern hemisphere */
-//    hsp->coasc2 = Asc1 (th + 90, -90 - fi, sine, cose);
+//    hsp.coasc2 = Asc1 (th + 90, -90 - fi, sine, cose);
 //  /* "polar ascendant" M. Munkasey */
-//  hsp->polasc = Asc1 (th - 90, fi, sine, cose);
+//  hsp.polasc = Asc1 (th - 90, fi, sine, cose);
 //  return retc;
 //} /* procedure houses */
 
@@ -1333,13 +1333,13 @@ namespace SweNet
 //  else
 //    ass = (360 - Asc2 (360- x1,  f, sine, cose));
 //  ass = swe_degnorm(ass);
-//  if (fabs(ass - 90) < VERY_SMALL)	/* rounding, e.g.: if */
+//  if (Math.Abs(ass - 90) < VERY_SMALL)	/* rounding, e.g.: if */
 //    ass = 90;				/* fi = 0 & st = 0, ac = 89.999... */
-//  if (fabs(ass - 180) < VERY_SMALL)
+//  if (Math.Abs(ass - 180) < VERY_SMALL)
 //    ass = 180;
-//  if (fabs(ass - 270) < VERY_SMALL)	/* rounding, e.g.: if */
+//  if (Math.Abs(ass - 270) < VERY_SMALL)	/* rounding, e.g.: if */
 //    ass = 270;				/* fi = 0 & st = 0, ac = 89.999... */
-//  if (fabs(ass - 360) < VERY_SMALL)
+//  if (Math.Abs(ass - 360) < VERY_SMALL)
 //    ass = 0;
 //  return ass;
 //}  /* Asc1 */
@@ -1348,10 +1348,10 @@ namespace SweNet
 //{
 //  double ass, sinx;
 //  ass = - tand(f) * sine + cose * cosd(x);
-//  if (fabs(ass) < VERY_SMALL)
+//  if (Math.Abs(ass) < VERY_SMALL)
 //    ass = 0;
 //  sinx = sind(x);
-//  if (fabs(sinx) < VERY_SMALL)
+//  if (Math.Abs(sinx) < VERY_SMALL)
 //    sinx = 0;
 //  if (sinx == 0) {
 //    if (ass < 0)
@@ -1453,14 +1453,14 @@ namespace SweNet
 //      asc = Asc1 (swe_degnorm(armc + 90), geolat, sine, cose);
 //      demc = atand(sind(armc) * tand(eps));
 //      /* mc */
-//      if (fabs(armc - 90) > VERY_SMALL
-//          && fabs(armc - 270) > VERY_SMALL) {
+//      if (Math.Abs(armc - 90) > VERY_SMALL
+//          && Math.Abs(armc - 270) > VERY_SMALL) {
 //    tant = tand(armc);
 //    mc = swe_degnorm(atand(tant / cose));
 //    if (armc > 90 && armc <= 270)
 //    mc = swe_degnorm(mc + 180);
 //      } else {
-//    if (fabs(armc - 90) <= VERY_SMALL)
+//    if (Math.Abs(armc - 90) <= VERY_SMALL)
 //      mc = 90;
 //    else
 //      mc = 270;
@@ -1521,14 +1521,14 @@ namespace SweNet
 //      break;
 //    case 'M': { /* Morinus */
 //      double a = xpin[0];
-//      if (fabs(a - 90) > VERY_SMALL
-//        && fabs(a - 270) > VERY_SMALL) {
+//      if (Math.Abs(a - 90) > VERY_SMALL
+//        && Math.Abs(a - 270) > VERY_SMALL) {
 //        tant = tand(a);
 //    hpos = atand(tant / cose);
 //        if (a > 90 && a <= 270) 
 //          hpos = swe_degnorm(hpos + 180);
 //      } else {
-//    if (fabs(a - 90) <= VERY_SMALL)
+//    if (Math.Abs(a - 90) <= VERY_SMALL)
 //          hpos = 90;
 //        else 
 //          hpos = 270;
@@ -1542,14 +1542,14 @@ namespace SweNet
 //    case 'K':
 //      demc = atand(sind(armc) * tand(eps));
 //      /* if body is within circumpolar region, error */
-//      if (90 - fabs(geolat) <= fabs(de)) {
+//      if (90 - Math.Abs(geolat) <= Math.Abs(de)) {
 //        if (serr != NULL)
-//          strcpy(serr, "no Koch house position, because planet is circumpolar.");
+//          serr= "no Koch house position, because planet is circumpolar.";
 //        xp[0] = 0;
 //    hpos = 0;	/* Error */
-//      } else if (90 - fabs(geolat) <= fabs(demc)) {
+//      } else if (90 - Math.Abs(geolat) <= Math.Abs(demc)) {
 //    if (serr != NULL)
-//      strcpy(serr, "no Koch house position, because mc is circumpolar.");
+//      serr= "no Koch house position, because mc is circumpolar.";
 //        xp[0] = 0;
 //    hpos = 0;	/* Error */
 //      } else {
@@ -1590,12 +1590,12 @@ namespace SweNet
 //    adp = asind(tand(geolat) * tand(de));
 //      }
 //#if 0
-//      if (fabs(adp) == 90)
+//      if (Math.Abs(adp) == 90)
 //        is_invalid = TRUE; /* omit this to use the above values */
 //#endif
 //      admc = tand(eps) * tand(geolat) * sind(armc);
 //      /* midheaven is circumpolar */
-//      if (fabs(admc) > 1) {
+//      if (Math.Abs(admc) > 1) {
 //#if 0
 //        is_invalid = TRUE; /* omit this line to use the below values */
 //#endif
@@ -1609,7 +1609,7 @@ namespace SweNet
 //      samc = 90 + admc;
 //      if (samc == 0)
 //        is_invalid = TRUE;
-//      if (fabs(samc) > 0) {
+//      if (Math.Abs(samc) > 0) {
 //    if (mdd >= 0) { /* east */
 //      dfac = (mdd - adp + admc) / samc;
 //      xp[0] = swe_degnorm((dfac - 1) * 90);
@@ -1630,12 +1630,12 @@ namespace SweNet
 //        xp[0] = 0;
 //    hpos = 0;
 //    if (serr != NULL)
-//          strcpy(serr, "Koch house position failed in circumpolar area");
+//          serr= "Koch house position failed in circumpolar area";
 //    break;
 //      }
 //      if (is_circumpolar) {
 //    if (serr != NULL)
-//          strcpy(serr, "Koch house position, doubtful result in circumpolar area");
+//          serr= "Koch house position, doubtful result in circumpolar area";
 //      }
 //      /* to make sure that a call with a house cusp position returns
 //       * a value within the house, 0.001" is added */
@@ -1729,18 +1729,18 @@ namespace SweNet
 //      hpos = xp[0] / 30.0 + 1;
 //      break;
 //    case 'R':
-//      if (fabs(mdd) < VERY_SMALL)
+//      if (Math.Abs(mdd) < VERY_SMALL)
 //    xp[0] = 270;
-//      else if (180 - fabs(mdd) < VERY_SMALL)
+//      else if (180 - Math.Abs(mdd) < VERY_SMALL)
 //        xp[0] = 90; 
 //      else {
-//        if (90 - fabs(geolat) < VERY_SMALL) {
+//        if (90 - Math.Abs(geolat) < VERY_SMALL) {
 //          if (geolat > 0)
 //        geolat = 90 - VERY_SMALL;
 //          else
 //        geolat = -90 + VERY_SMALL;
 //        }
-//        if (90 - fabs(de) < VERY_SMALL) {
+//        if (90 - Math.Abs(de) < VERY_SMALL) {
 //          if (de > 0)
 //            de = 90 - VERY_SMALL;
 //          else
@@ -1786,7 +1786,7 @@ namespace SweNet
 //      xp[1] = 1;
 //      xeq[1] = de;
 //      fac = 2;
-//      while (fabs(xp[1]) > 0.000001) {
+//      while (Math.Abs(xp[1]) > 0.000001) {
 //    if (xp[1] > 0) {
 //      fh = atand(tand(fh) - tanfi / fac);
 //      ra0 -= 90 / fac;
@@ -1811,13 +1811,13 @@ namespace SweNet
 //    case 'G':
 //    default:
 //       /* circumpolar region */
-//      if (90 - fabs(de) <= fabs(geolat)) {
+//      if (90 - Math.Abs(de) <= Math.Abs(geolat)) {
 //        if (de * geolat < 0)  
 //          xp[0] = swe_degnorm(90 + mdn / 2);
 //        else
 //          xp[0] = swe_degnorm(270 + mdd / 2);
 //    if (serr != NULL)
-//          strcpy(serr, "Otto Ludwig procedure within circumpolar regions.");
+//          serr= "Otto Ludwig procedure within circumpolar regions.";
 //      } else {
 //        sinad = tand(de) * tand(geolat);
 //        ad = asind(sinad);

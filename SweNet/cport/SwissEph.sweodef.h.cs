@@ -249,8 +249,8 @@ namespace SweNet
 //#endif
 
 //#ifndef OK 
-        public const int OK = (0);
-        public const int ERR = (-1);
+//        public const int OK = (0);
+//        public const int ERR = (-1);
 //#endif
 
 ///* h-ack because UCHAR is already used by mingw gcc */
@@ -339,7 +339,7 @@ namespace SweNet
 //#  define FILE_A_ACCESS "a+t"	/* create/open text file for append*/
 ///* attention, all backslashes for msdos directry names must be written as \\,
 //   because it is the C escape character */
-//#  define DIR_GLUE "\\"		/* glue string for directory/file */
+        public char DIR_GLUE = '\\';		/* glue string for directory/file */
 //# endif
 //#endif
 
