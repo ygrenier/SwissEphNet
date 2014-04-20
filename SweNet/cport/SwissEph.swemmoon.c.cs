@@ -1216,10 +1216,10 @@ namespace SweNet
                 }
             }
             /* End of code addition */
-            sscc(0, STR * D, 6);
-            sscc(1, STR * M, 4);
-            sscc(2, STR * MP, 4);
-            sscc(3, STR * NF, 4);
+            moon_sscc(0, STR * D, 6);
+            moon_sscc(1, STR * M, 4);
+            moon_sscc(2, STR * MP, 4);
+            moon_sscc(3, STR * NF, 4);
             moonpol[0] = 0.0;
             moonpol[1] = 0.0;
             moonpol[2] = 0.0;
@@ -1695,29 +1695,28 @@ namespace SweNet
             }
         }
 
-///* Prepare lookup table of sin and cos ( i*Lj )
-// * for required multiple angles
-// */
-//static void sscc(int k, double arg, int n )
-//{
-//  double cu, su, cv, sv, s;
-//  int i;
-//  su = Math.Sin(arg);
-//  cu = Math.Cos(arg);
-//  ss[k,0] = su;			/* sin(L) */
-//  cc[k,0] = cu;			/* cos(L) */
-//  sv = 2.0*su*cu;
-//  cv = cu*cu - su*su;
-//  ss[k,1] = sv;			/* sin(2L) */
-//  cc[k,1] = cv;
-//  for( i=2; i<n; i++ ) {
-//    s =  su*cv + cu*sv;
-//    cv = cu*cv - su*sv;
-//    sv = s;
-//    ss[k,i] = sv;		/* sin( i+1 L ) */
-//    cc[k,i] = cv;
-//  }
-//}
+        /* Prepare lookup table of sin and cos ( i*Lj )
+         * for required multiple angles
+         */
+        void moon_sscc(int k, double arg, int n) {
+            double cu, su, cv, sv, s;
+            int i;
+            su = Math.Sin(arg);
+            cu = Math.Cos(arg);
+            moon_ss[k, 0] = su;			/* sin(L) */
+            moon_cc[k, 0] = cu;			/* cos(L) */
+            sv = 2.0 * su * cu;
+            cv = cu * cu - su * su;
+            moon_ss[k, 1] = sv;			/* sin(2L) */
+            moon_cc[k, 1] = cv;
+            for (i = 2; i < n; i++) {
+                s = su * cv + cu * sv;
+                cv = cu * cv - su * sv;
+                sv = s;
+                moon_ss[k, i] = sv;		/* sin( i+1 L ) */
+                moon_cc[k, i] = cv;
+            }
+        }
 
         /* converts from polar coordinates of ecliptic of date
          *          to   cartesian coordinates of equator 2000

@@ -170,7 +170,7 @@ namespace SweNet
             for (i = 0; i < 9; i++) {
                 if ((j = plan.max_harmonic[i]) > 0) {
                     sr = (mods3600(freqs[i] * T) + phases[i]) * STR;
-                    sscc(i, sr, j);
+                    plan_sscc(i, sr, j);
                 }
             }
 
@@ -390,7 +390,7 @@ namespace SweNet
         /* Prepare lookup table of sin and cos ( i*Lj )
          * for required multiple angles
          */
-        void sscc(int k, double arg, int n) {
+        void plan_sscc(int k, double arg, int n) {
             double cu, su, cv, sv, s;
             int i;
 

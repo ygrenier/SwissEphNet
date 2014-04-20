@@ -126,7 +126,7 @@ namespace SweNet
          */
         double swe_degnorm(double x) {
             double y;
-            y = (x / 360.0);
+            y = (x % 360.0);
             if (Math.Abs(y) < 1e-13) y = 0;	/* Alois fix 11-dec-1999 */
             if (y < 0.0) y += 360.0;
             return (y);
