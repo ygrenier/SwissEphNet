@@ -431,7 +431,7 @@ namespace SweNet
         //#define PLAN_DATA struct plan_data
 
         /* obliquity of ecliptic */
-        struct epsilon
+        class epsilon
         {
             public double teps, eps, seps, ceps; 	/* jd, eps, sin(eps), cos(eps) */
         };
@@ -641,6 +641,8 @@ namespace SweNet
                 nut = new SwissEph.nut();
                 nut2000 = new SwissEph.nut();
                 nutv = new SwissEph.nut();
+                oec = new epsilon();
+                oec2000 = new epsilon();
             }
             public bool ephe_path_is_set;
             public bool /*short*/ jpl_file_is_open;
@@ -665,8 +667,8 @@ namespace SweNet
             public plan_data[] nddat { get; private set; }
             //#endif
             public save_positions[] savedat { get; private set; }
-            public epsilon oec;
-            public epsilon oec2000;
+            public epsilon oec { get; private set; }
+            public epsilon oec2000 { get; private set; }
             public nut nut { get; private set; }
             public nut nut2000 { get; private set; }
             public nut nutv { get; private set; }

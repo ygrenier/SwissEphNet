@@ -28,7 +28,7 @@ namespace SweNet
         public CPointer(T[] baseArray, int baseIndex)
             : this() {
             this.BaseArray = baseArray;
-            this.BaseIndex = 0;
+            this.BaseIndex = baseIndex;
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace SweNet
         /// Explicit converision of an ArrayAccess to an array
         /// </summary>
         public static explicit operator T[](CPointer<T> array) {
-            return array.BaseArray == null ? null : array.BaseArray.Slice(array.BaseIndex);
+            return array.BaseArray == null ? null : array.BaseArray.Skip(array.BaseIndex).ToArray();
         }
 
         /// <summary>

@@ -255,7 +255,7 @@ namespace SweNet
             Int32 epheflag;
             save_positions sd;
             double[] x = new double[6], /*xs,*/ x0 = new double[24], x2 = new double[24];
-            int xsi;    // This is the index to simulate *xs
+            CPointer<Double> xs;
             double dt;
             serr = null;
 #if TRACE
@@ -300,12 +300,12 @@ namespace SweNet
             trace_swe_calc(1, tjd, ipl, iflag, xx, null);
 #endif //* TRACE */
 
-#if NO_JPL
+            //#if NO_JPL
             if ((iflag & SEFLG_JPLEPH) != 0) {
                 iflag = iflag & ~SEFLG_EPHMASK;
                 iflag |= SEFLG_SWIEPH;
             }
-#endif
+            //#endif
 
             /* function calls for Pluto with asteroid number 134340
                * are treated as calls for Pluto as main body SE_PLUTO.
@@ -404,27 +404,22 @@ namespace SweNet
             }
         end_swe_calc:
             if ((iflag & SEFLG_EQUATORIAL) != 0)
-                //xs = sd.xsaves + 12;	/* equatorial coordinates */
-                xsi = 12;
+                xs = sd.xsaves.GetPointer(12);	/* equatorial coordinates */
             else
-                //xs = sd.xsaves;	/* ecliptic coordinates */
-                xsi = 0;
+                xs = sd.xsaves;	/* ecliptic coordinates */
             if ((iflag & SEFLG_XYZ) != 0)
-                //xs = xs + 6;		/* cartesian coordinates */
-                xsi = xsi + 6;
+                xs = xs + 6;		/* cartesian coordinates */
             if (ipl == SE_ECL_NUT)
                 i = 4;
             else
                 i = 3;
             for (j = 0; j < i; j++)
-                //x[j] = *(xs + j);
-                x[j] = sd.xsaves[xsi + j];
+                x[j] = xs + j;
             for (j = i; j < 6; j++)
                 x[j] = 0;
             if ((iflag & (SEFLG_SPEED3 | SEFLG_SPEED)) != 0) {
                 for (j = 3; j < 6; j++)
-                    //x[j] = *(xs + j);
-                    x[j] = sd.xsaves[xsi + j];
+                    x[j] = (xs + j);
             }
             //#if 1
             if ((iflag & SEFLG_RADIANS) != 0) {
@@ -466,7 +461,7 @@ namespace SweNet
             return swe_calc(tjd_ut + deltat, ipl, iflag, xx, out serr);
         }
 
-        Int32 swecalc(double tjd, int ipl, Int32 iflag, double[] x, out string serr) {
+        Int32 swecalc(double tjd, int ipl, Int32 iflag, CPointer<double> x, out string serr) {
             int i;
             int ipli, ipli_ast, ifno;
             int retc;
@@ -560,7 +555,7 @@ namespace SweNet
                         if (retc == ERR)
                             goto return_error;
                         /* jpl ephemeris not on disk or date beyond ephemeris range 
-                     *     or file corrupt */
+                         *     or file corrupt */
                         if (retc == NOT_AVAILABLE) {
                             iflag = (iflag & ~SEFLG_JPLEPH) | SEFLG_SWIEPH;
                             serr += " \ntrying Swiss Eph; ";
@@ -765,7 +760,7 @@ namespace SweNet
                 if (retc == ERR)
                     goto return_error;
                 /* speed (is almost constant; variation < 0.001 arcsec) */
-                retc = swi_mean_node(tjd - MEAN_NODE_SPEED_INTV, xp2.Slice(3), ref serr);
+                retc = swi_mean_node(tjd - MEAN_NODE_SPEED_INTV, xp2.GetPointer(3), ref serr);
                 if (retc == ERR)
                     goto return_error;
                 xp2[3] = swe_difrad2n(xp2[0], xp2[3]) / MEAN_NODE_SPEED_INTV;
@@ -804,7 +799,7 @@ namespace SweNet
                 if (retc == ERR)
                     goto return_error;
                 /* speed (is not constant! variation ~= several arcsec) */
-                retc = swi_mean_apog(tjd - MEAN_NODE_SPEED_INTV, xp2.Slice(3), ref serr);
+                retc = swi_mean_apog(tjd - MEAN_NODE_SPEED_INTV, xp2.GetPointer(3), ref serr);
                 if (retc == ERR)
                     goto return_error;
                 for (i = 0; i <= 1; i++)
@@ -1079,7 +1074,7 @@ namespace SweNet
             //  memset((void *) &swed.nutv, 0, sizeof(struct nut));
             //  /* close JPL file */
             //#ifndef NO_JPL
-            //  swi_close_jpl_file();
+            swi_close_jpl_file();
             //#endif
             //  swed.jpl_file_is_open = FALSE;
             //  swed.jpldenum = 0;
@@ -1320,7 +1315,7 @@ namespace SweNet
         /* calculates obliquity of ecliptic and stores it together
          * with its date, sine, and cosine
          */
-        void calc_epsilon(double tjd, Int32 iflag, ref epsilon e) {
+        void calc_epsilon(double tjd, Int32 iflag, epsilon e) {
             e.teps = tjd;
             e.eps = swi_epsiln(tjd, iflag);
             e.seps = Math.Sin(e.eps);
@@ -2649,7 +2644,7 @@ namespace SweNet
             }
             for (i = 0; i <= 5; i++)
                 xoutr[i] = x[i];
-            calc_epsilon(swed.sidd.t0, iflag, ref oectmp);
+            calc_epsilon(swed.sidd.t0, iflag, oectmp);
             swi_coortrf2(x, x, oectmp.seps, oectmp.ceps);
             if ((iflag & SEFLG_SPEED) != 0)
                 swi_coortrf2(x.GetPointer(3), x.GetPointer(3), oectmp.seps, oectmp.ceps);
@@ -4536,7 +4531,7 @@ namespace SweNet
                 sip = swed.sidd;
                 epsilon oectmp = new epsilon();
                 if ((iflag & SEFLG_SIDEREAL) != 0) {
-                    calc_epsilon(sip.t0, iflag, ref oectmp);
+                    calc_epsilon(sip.t0, iflag, oectmp);
                     oe = oectmp;
                 } else if ((iflag & SEFLG_J2000) != 0)
                     oe = swed.oec2000;
@@ -5183,7 +5178,7 @@ namespace SweNet
                     tjd = sip.t0;
                     swi_precess(xx, tjd, iflag, J2000_TO_J);
                     swi_precess(xx + 3, tjd, iflag, J2000_TO_J);
-                    calc_epsilon(tjd, iflag, ref oectmp);
+                    calc_epsilon(tjd, iflag, oectmp);
                     oe = oectmp;
                 } else if (0==(iflag & SEFLG_J2000)) {
                     swi_precess(xx, tjd, iflag, J2000_TO_J);
@@ -5194,7 +5189,7 @@ namespace SweNet
                     else if (tjd == J2000)
                         oe = swed.oec2000;
                     else {
-                        calc_epsilon(tjd, iflag, ref oectmp);
+                        calc_epsilon(tjd, iflag, oectmp);
                         oe = oectmp;
                     }
 
@@ -5210,7 +5205,7 @@ namespace SweNet
                 else if (tjd == J2000)
                     oe = swed.oec2000;
                 else {
-                    calc_epsilon(tjd, iflag, ref oectmp);
+                    calc_epsilon(tjd, iflag, oectmp);
                     oe = oectmp;
                 }
             }
@@ -5406,7 +5401,7 @@ namespace SweNet
             return m;
         }
 
-        void denormalize_positions(double[] x0, double[] x1, double[] x2) {
+        void denormalize_positions(CPointer<double> x0, CPointer<double> x1, CPointer<double> x2) {
             int i;
             /* x*[0] = ecliptic longitude, x*[12] = rectascension */
             for (i = 0; i <= 12; i += 12) {
@@ -5421,7 +5416,7 @@ namespace SweNet
             }
         }
 
-        void calc_speed(double[] x0, double[] x1, double[] x2, double dt) {
+        void calc_speed(CPointer<double> x0, CPointer<double> x1, CPointer<double> x2, double dt) {
             int i, j, k;
             double a, b;
             for (j = 0; j <= 18; j += 6) {
@@ -5436,7 +5431,7 @@ namespace SweNet
 
         void swi_check_ecliptic(double tjd, Int32 iflag) {
             if (swed.oec2000.teps != J2000) {
-                calc_epsilon(J2000, iflag, ref swed.oec2000);
+                calc_epsilon(J2000, iflag, swed.oec2000);
             }
             if (tjd == J2000) {
                 swed.oec.teps = swed.oec2000.teps;
@@ -5446,7 +5441,7 @@ namespace SweNet
                 return;
             }
             if (swed.oec.teps != tjd || tjd == 0) {
-                calc_epsilon(tjd, iflag, ref swed.oec);
+                calc_epsilon(tjd, iflag, swed.oec);
             }
         }
 
@@ -5519,10 +5514,10 @@ namespace SweNet
                 epheflag = SEFLG_JPLEPH;
             if (epheflag == 0)
                 epheflag = SEFLG_DEFAULTEPH;
-#if NO_JPL
-  if (epheflag == SEFLG_JPLEPH)
-    epheflag = SEFLG_SWIEPH;
-#endif
+//#if NO_JPL
+            if (epheflag == SEFLG_JPLEPH)
+                epheflag = SEFLG_SWIEPH;
+//#endif
             iflag = (iflag & ~SEFLG_EPHMASK) | epheflag;
             /* SEFLG_JPLHOR only with JPL and Swiss Ephemeeris */
             if ((epheflag & SEFLG_JPLEPH) == 0)
@@ -6387,7 +6382,7 @@ namespace SweNet
 //}
 
 #if TRACE
-        void trace_swe_calc(int swtch, double tjd, int ipl, Int32 iflag, double[] xx, string serr) {
+        void trace_swe_calc(int swtch, double tjd, int ipl, Int32 iflag, CPointer<double> xx, string serr) {
             //  if (swi_trace_count >= TRACE_COUNT_MAX)
             //    return;
             switch (swtch) {
@@ -6647,7 +6642,7 @@ namespace SweNet
 //  return retval;
 //}
 
-        int open_jpl_file(double[] ss, string fname, string fpath, ref string serr) {
+        int open_jpl_file(CPointer<double> ss, string fname, string fpath, ref string serr) {
             int retc;
             string serr2 = String.Empty;
             retc = swi_open_jpl_file(ss, fname, fpath, ref serr);

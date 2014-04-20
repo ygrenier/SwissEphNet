@@ -871,7 +871,7 @@ namespace SweNet
         /* Calculate geometric coordinates of Moon
          * without light time or nutation correction.
          */
-        int swi_moshmoon2(double J, double[] pol) {
+        int swi_moshmoon2(double J, CPointer<double> pol) {
             int i;
             T = (J - J2000) / 36525.0;
             T2 = T * T;
@@ -1504,7 +1504,7 @@ namespace SweNet
      * pol		return array for position and velocity
      *              (polar coordinates of ecliptic of date)
      */
-        int swi_mean_node(double J, double[] pol, ref string serr) {
+        int swi_mean_node(double J, CPointer<double> pol, ref string serr) {
             //#if 0
             //  double a, b, c;
             //#endif
@@ -1572,7 +1572,7 @@ namespace SweNet
          *              (polar coordinates of ecliptic of date)
          * serr         error return string
          */
-        int swi_mean_apog(double J, double[] pol, ref string serr) {
+        int swi_mean_apog(double J, CPointer<double> pol, ref string serr) {
             //#if 0
             //  int i;
             //  double a, b;
@@ -1724,7 +1724,7 @@ namespace SweNet
          * tjd		date
          * x 		array of position
          */
-        void ecldat_equ2000(double tjd, double[] xpm) {
+        void ecldat_equ2000(double tjd, CPointer<double> xpm) {
             /* cartesian */
             swi_polcart(xpm, xpm);
             /* equatorial */

@@ -157,7 +157,7 @@ namespace SweNet
 
         //static void sscc (int k, double arg, int n);
 
-        int swi_moshplan2(double J, int iplm, double[] pobj) {
+        int swi_moshplan2(double J, int iplm, CPointer<double> pobj) {
             int i, j, k, m, k1, ip, np, nt;
             sbyte[] p; int pidx;
             double[] plarr, pbarr, prarr; int plidx, pbidx, pridx;
@@ -417,7 +417,7 @@ namespace SweNet
          * J = Julian day number
          * xemb = rectangular equatorial coordinates of Earth
          */
-        void embofs_mosh(double tjd, double[] xemb) {
+        void embofs_mosh(double tjd, CPointer<double> xemb) {
             double T, M, a, L, B, p;
             double smp, cmp, s2mp, c2mp, s2d, c2d, sf, cf;
             double s2f, sx, cx; double[] xyz = new double[6];

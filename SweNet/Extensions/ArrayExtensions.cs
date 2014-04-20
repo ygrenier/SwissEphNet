@@ -10,6 +10,7 @@ namespace SweNet
     /// </summary>
     public static class ArrayExtensions
     {
+        /*
         /// <summary>
         /// 
         /// </summary>
@@ -41,6 +42,7 @@ namespace SweNet
             if (arr == null) return null;
             return Enumerable.Range(0, arr.GetUpperBound(1)).Skip(start).Take(count).Select(i => arr[dimension, i]).ToArray();
         }
+        */
 
         /// <summary>
         /// Make an CPointer from an array
