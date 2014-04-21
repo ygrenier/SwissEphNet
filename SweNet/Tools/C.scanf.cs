@@ -639,8 +639,10 @@ namespace SweNet
 
                 // Extract token
                 if (input.Position > start) {
-                    if (!spec.NoResult)
+                    if (!spec.NoResult) {
                         Results.Add(input.Extract(start, input.Position));
+                        input.MoveAhead();
+                    }
                     return true;
                 }
                 return false;

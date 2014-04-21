@@ -336,34 +336,55 @@ namespace SweNet.Tests
         public void TestScanf() {
             Int32 r1 = 0, r2 = 0;
             String r3 = null, r4 = null;
+            Int32 r5 = 0, r6 = 0;
+
+            String test = "Copyright 2009-2011 CompanyName (Multi-Word message) - 123 - 987";
 
             r1 = r2 = 0; r3 = r4 = null;
-            Assert.AreEqual(1, C.sscanf("Copyright 2009-2011 CompanyName (Multi-Word message)", "Copyright %d", ref r1));
+            Assert.AreEqual(1, C.sscanf(test, "Copyright %d", ref r1));
             Assert.AreEqual(2009, r1);
             Assert.AreEqual(0, r2);
             Assert.AreEqual(null, r3);
             Assert.AreEqual(null, r4);
 
             r1 = r2 = 0; r3 = r4 = null;
-            Assert.AreEqual(2, C.sscanf("Copyright 2009-2011 CompanyName (Multi-Word message)", "Copyright %d-%d", ref r1, ref r2));
+            Assert.AreEqual(2, C.sscanf(test, "Copyright %d-%d", ref r1, ref r2));
             Assert.AreEqual(2009, r1);
             Assert.AreEqual(2011, r2);
             Assert.AreEqual(null, r3);
             Assert.AreEqual(null, r4);
 
             r1 = r2 = 0; r3 = r4 = null;
-            Assert.AreEqual(3, C.sscanf("Copyright 2009-2011 CompanyName (Multi-Word message)", "Copyright %d-%d %s", ref r1, ref r2, ref r3));
+            Assert.AreEqual(3, C.sscanf(test, "Copyright %d-%d %s", ref r1, ref r2, ref r3));
             Assert.AreEqual(2009, r1);
             Assert.AreEqual(2011, r2);
             Assert.AreEqual("CompanyName", r3);
             Assert.AreEqual(null, r4);
 
             r1 = r2 = 0; r3 = r4 = null;
-            Assert.AreEqual(4, C.sscanf("Copyright 2009-2011 CompanyName (Multi-Word message)", "Copyright %d-%d %s (%[^)]", ref r1, ref r2, ref r3, ref r4));
+            Assert.AreEqual(4, C.sscanf(test, "Copyright %d-%d %s (%[^)]", ref r1, ref r2, ref r3, ref r4));
             Assert.AreEqual(2009, r1);
             Assert.AreEqual(2011, r2);
             Assert.AreEqual("CompanyName", r3);
             Assert.AreEqual("Multi-Word message", r4);
+
+            r1 = r2 = 0; r3 = r4 = null;
+            Assert.AreEqual(5, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d", ref r1, ref r2, ref r3, ref r4, ref r5));
+            Assert.AreEqual(2009, r1);
+            Assert.AreEqual(2011, r2);
+            Assert.AreEqual("CompanyName", r3);
+            Assert.AreEqual("Multi-Word message", r4);
+            Assert.AreEqual(123, r5);
+
+            r1 = r2 = r5 = 0; r3 = r4 = null;
+            Assert.AreEqual(6, C.sscanf(test, "Copyright %d-%d %s (%[^)] - %d - %d", ref r1, ref r2, ref r3, ref r4, ref r5, ref r6));
+            Assert.AreEqual(2009, r1);
+            Assert.AreEqual(2011, r2);
+            Assert.AreEqual("CompanyName", r3);
+            Assert.AreEqual("Multi-Word message", r4);
+            Assert.AreEqual(123, r5);
+            Assert.AreEqual(987, r6);
+
         }
 
     }

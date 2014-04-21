@@ -30,5 +30,7 @@ The compilation configuration use pre-processor constants. We remove lot of them
 # References
 
 The Swiss Ephemeris Programming Interface documentation : http://www.astro.com/swisseph/swephprg.htm.
+
 Last code source of Swiss Ephemeris from ftp://ftp.astro.ch/pub/swisseph/.
-The NASA JPL resouces : http://www.jpl.nasa.gov/, http://ssd.jpl.nasa.gov/
+
+The NASA JPL resouces : http://www.jpl.nasa.gov/, http://ssd.jpl.nasa.gov/.
