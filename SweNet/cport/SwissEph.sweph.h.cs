@@ -96,15 +96,15 @@ namespace SweNet
         /// <summary>
         /// 2000 January 1.5
         /// </summary>
-        const double J2000 = 2451545.0;
+        public const double J2000 = 2451545.0;
         /// <summary>
         /// 1950 January 0.923 
         /// </summary>
-        const double B1950 = 2433282.42345905;
+        public const double B1950 = 2433282.42345905;
         /// <summary>
         /// 1900 January 0.5
         /// </summary>
-        const double J1900 = 2415020.0;
+        public const double J1900 = 2415020.0;
 
         const int MPC_CERES = 1;
         const int MPC_PALLAS = 2;

@@ -91,6 +91,7 @@ namespace SweNet
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
 
@@ -2000,7 +2001,7 @@ namespace SweNet
         const int TABSIZ = (TABEND - TABSTART + 1);
         /* we make the table greater for additional values read from external file */
         const int TABSIZ_SPACE = (TABSIZ + 100);
-        static double[] dt = new double[] {
+        static double[] dt = new double[TABSIZ_SPACE] {
             /* 1620.0 thru 1659.0 */
             124.00, 119.00, 115.00, 110.00, 106.00, 102.00, 98.00, 95.00, 91.00, 88.00,
             85.00, 82.00, 79.00, 77.00, 74.00, 72.00, 70.00, 67.00, 65.00, 63.00,
@@ -2056,6 +2057,13 @@ namespace SweNet
             66.07, 66.32, 66.60, 66.907,
             /* Extrapolated values, 2014 - 2017 */
             67.267,67.90, 68.40, 69.00, 69.50, 70.00,
+
+            // Fill with 100
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         };
         /// <summary>
         /// This is public for configuration
@@ -2326,48 +2334,48 @@ namespace SweNet
         /* Read delta t values from external file.
          * record structure: year(whitespace)delta_t in 0.01 sec.
          */
-        /*static*/ int init_dt() {
-            // TODO Finalize init_dt()
-            //  FILE *fp;
-            //int year;
-            //int tab_index;
+        int init_dt() {
+            CFile fp;
+            int year;
+            int tab_index;
             int tabsiz;
-            //int i;
-            //  char s[AS_MAXCH];
-            //  char *sp;
+            int i;
+            string sdummy = null;
+            string s, sp;
             if (!init_dt_done) {
                 init_dt_done = true;
                 /* no error message if file is missing */
-                //    if ((fp = swi_fopen(-1, "swe_deltat.txt", swed.ephepath, NULL)) == NULL
-                //      && (fp = swi_fopen(-1, "sedeltat.txt", swed.ephepath, NULL)) == NULL)
-                //      return TABSIZ; 
-                //    while(fgets(s, AS_MAXCH, fp) != NULL) {
-                //      sp = s;
-                //      while (strchr(" \t", *sp) != NULL && *sp != '\0') 
-                //        sp++;	/* was *sp++  fixed by Alois 2-jul-2003 */
-                //      if (*sp == '#' || *sp == '\n')
-                //        continue;
-                //      year = atoi(s);
-                //      tab_index = year - TABSTART;
-                //      /* table space is limited. no error msg, if exceeded */
-                //      if (tab_index >= TABSIZ_SPACE)
-                //        continue; 
-                //      sp += 4;
-                //      while (strchr(" \t", *sp) != NULL && *sp != '\0')
-                //        sp++;	/* was *sp++  fixed by Alois 2-jul-2003 */
-                //      /*dt[tab_index] = (short) (atof(sp) * 100 + 0.5);*/
-                //      dt[tab_index] = atof(sp);
-                //    }
-                //    fclose(fp);
+                if ((fp = swi_fopen(-1, "swe_deltat.txt", swed.ephepath, ref sdummy)) == null
+                  && (fp = swi_fopen(-1, "sedeltat.txt", swed.ephepath, ref sdummy)) == null)
+                    return TABSIZ;
+                while ( (s=fp.ReadLine()) != null) {
+                    sp = s.TrimStart(' ', '\t');
+                    //while (strchr(" \t", *sp) != NULL && *sp != '\0')
+                    //    sp++;	/* was *sp++  fixed by Alois 2-jul-2003 */
+                    //if (*sp == '#' || *sp == '\n')
+                    if (String.IsNullOrEmpty(sp) || sp.StartsWith("#"))
+                        continue;
+                    year = int.Parse(s.Substring(0, 4));
+                    tab_index = year - TABSTART;
+                    /* table space is limited. no error msg, if exceeded */
+                    if (tab_index >= TABSIZ_SPACE)
+                        continue;
+                    sp = sp.Substring(4).TrimStart(' ', '\t');
+                    //while (strchr(" \t", *sp) != NULL && *sp != '\0')
+                    //    sp++;	/* was *sp++  fixed by Alois 2-jul-2003 */
+                    /*dt[tab_index] = (short) (atof(sp) * 100 + 0.5);*/
+                    dt[tab_index] = double.Parse(sp, CultureInfo.InvariantCulture);
+                }
+                fp.Dispose();
             }
             /* find table size */
             tabsiz = 2001 - TABSTART + 1;
-            //for (i = tabsiz - 1; i < TABSIZ_SPACE; i++) {
-            //    if (dt[i] == 0)
-            //        break;
-            //    else
-            //        tabsiz++;
-            //}
+            for (i = tabsiz - 1; i < TABSIZ_SPACE; i++) {
+                if (dt[i] == 0)
+                    break;
+                else
+                    tabsiz++;
+            }
             tabsiz--;
             return tabsiz;
         }
