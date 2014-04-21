@@ -83,30 +83,34 @@ namespace SweNet
     partial class SwissEph
     {
 
-//struct houses {
-//      double cusp[37];
-//      double ac;
-//      double mc;
-//      double vertex;
-//      double equasc;
-//      double coasc1;
-//      double coasc2;
-//      double polasc;
-//    };
+        class houses
+        {
+            public houses() {
+                cusp = new double[37];
+            }
+            public double[] cusp;
+            public double ac;
+            public double mc;
+            public double vertex;
+            public double equasc;
+            public double coasc1;
+            public double coasc2;
+            public double polasc;
+        }
 
-//#define HOUSES 	struct houses
-//#define VERY_SMALL	1E-10
+        //#define HOUSES 	struct houses;
+        const double VERY_SMALL = 1E-10;
 
-//#define degtocs(x)    (d2l((x) * DEG))
-//#define cstodeg(x)    (double)((x) * CS2DEG)
+        static double degtocs(double x) { return (d2l((x) * DEG)); }
+        static double cstodeg(double x) { return (double)((x) * CS2DEG); }
 
-//#define sind(x) sin(x * DEGTORAD)
-//#define cosd(x) cos(x * DEGTORAD)
-//#define tand(x) tan(x * DEGTORAD)
-//#define asind(x) (asin(x) * RADTODEG)
-//#define acosd(x) (acos(x) * RADTODEG)
-//#define atand(x) (atan(x) * RADTODEG)
-//#define atan2d(y, x) (atan2(y, x) * RADTODEG)
+        static double sind(double x) { return Math.Sin(x * DEGTORAD); }
+        static double cosd(double x) { return Math.Cos(x * DEGTORAD); }
+        static double tand(double x) { return Math.Tan(x * DEGTORAD); }
+        static double asind(double x) { return (Math.Asin(x) * RADTODEG); }
+        static double acosd(double x) { return (Math.Acos(x) * RADTODEG); }
+        static double atand(double x) { return (Math.Atan(x) * RADTODEG); }
+        static double atan2d(double y, double x) { return (Math.Atan2(y, x) * RADTODEG); }
 
     }
 }

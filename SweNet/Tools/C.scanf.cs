@@ -773,5 +773,47 @@ namespace SweNet
             return res;
         }
 
+        /// <summary>
+        /// sscanf with 5 results
+        /// </summary>
+        public static int sscanf<T1, T2, T3, T4, T5>(String input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5) {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            var res = parser.Results.Count;
+            if (res > 0)
+                r1 = (T1)parser.Results[0];
+            if (res > 1)
+                r2 = (T2)parser.Results[1];
+            if (res > 2)
+                r3 = (T3)parser.Results[2];
+            if (res > 3)
+                r4 = (T4)parser.Results[3];
+            if (res > 4)
+                r5 = (T5)parser.Results[4];
+            return res;
+        }
+
+        /// <summary>
+        /// sscanf with 6 results
+        /// </summary>
+        public static int sscanf<T1, T2, T3, T4, T5, T6>(String input, String format, ref T1 r1, ref T2 r2, ref T3 r3, ref T4 r4, ref T5 r5, ref T6 r6) {
+            var parser = new ScanFormatted();
+            parser.Parse(input, format);
+            var res = parser.Results.Count;
+            if (res > 0)
+                r1 = (T1)parser.Results[0];
+            if (res > 1)
+                r2 = (T2)parser.Results[1];
+            if (res > 2)
+                r3 = (T3)parser.Results[2];
+            if (res > 3)
+                r4 = (T4)parser.Results[3];
+            if (res > 4)
+                r5 = (T5)parser.Results[4];
+            if (res > 5)
+                r6 = (T6)parser.Results[5];
+            return res;
+        }
+
     }
 }

@@ -127,6 +127,7 @@ namespace SweNet
                 vc = new double[18];
                 ac = new double[18];
                 jc = new double[18];
+                do_km = false;
             }
             public string jplfname;
             public string jplfpath;

@@ -98,26 +98,26 @@ namespace SweNet
 
 //#include "swephexp.h"
 
-//#define degtocs(x)	(d2l((x) * DEG))
-//#define cstodeg(x)	(double)((x) * CS2DEG)
+        //static double degtocs(double x) { return (d2l((x) * DEG)); }
+        //static double cstodeg(double x) { return (double)((x) * CS2DEG); }
 
-///*
-// * Some functions which came in the source files csec.c and d2l.c
-// * are by default not included in the compatibility interface because
-// * they have an identical counterpart in the SwissEph library.
-// * It is very simple to adapt your code to it.
-// * If you want to adapt your source code, turn the next TRUE into FALSE
-// */
-//#if TRUE	/* replace by if FALSE to deactivate macros */
-//#  define d2l(x)	swe_d2l(x)
-//#  define difcsn(x,y)	swe_difcsn(x,y)
-//#  define difcs2n(x,y)	swe_difcs2n(x,y)
-//#  define difdegn(x,y)	swe_difdegn(x,y)
-//#  define difdeg2n(x,y)	swe_difdeg2n(x,y)
-//#  define csnorm(x)	swe_csnorm(x)
-//#  define degnorm(x)	swe_degnorm(x)
-//#  define roundsec(x)	swe_csroundsec(x)
-//#endif
+        /*
+         * Some functions which came in the source files csec.c and d2l.c
+         * are by default not included in the compatibility interface because
+         * they have an identical counterpart in the SwissEph library.
+         * It is very simple to adapt your code to it.
+         * If you want to adapt your source code, turn the next TRUE into FALSE
+         */
+        //#if TRUE	/* replace by if FALSE to deactivate macros */
+        static double d2l(double x) { return swe_d2l(x); }
+        static double difcsn(int x, int y) { return swe_difcsn(x, y); }
+        static double difcs2n(int x, int y) { return swe_difcs2n(x, y); }
+        static double difdegn(double x, double y) { return swe_difdegn(x, y); }
+        static double difdeg2n(double x, double y) { return swe_difdeg2n(x, y); }
+        static double csnorm(int x) { return swe_csnorm(x); }
+        static double degnorm(double x) { return swe_degnorm(x); }
+        static double roundsec(int x) { return swe_csroundsec(x); }
+        //#endif
 
 ///*************************************************************
 // Exported functions, originally from placalc.c
@@ -162,11 +162,11 @@ namespace SweNet
 //extern char *placalc_set_ephepath(char *new_path);	/* sets ephepath;
 //                if called with NULL, returns current path */
 
-///*
-// * because deltat() required a relative Julian date due to historical reasons,
-// * we define a function deltatjd() with absolute Juliand date argument.
-// */
-//# define deltatjd(x) deltat((x) - JUL_OFFSET)
+        /*
+         * because deltat() required a relative Julian date due to historical reasons,
+         * we define a function deltatjd() with absolute Juliand date argument.
+         */
+        double deltatjd(double x) { return deltat((x) - JUL_OFFSET); }
 
 ///*
 // * get the planet index for an AFL letter
@@ -186,135 +186,135 @@ namespace SweNet
 //    (these cannot be used by DLL clients)
 //*************************************************************/
 
-  
-///*************************************************************
-//    definitions
-//*************************************************************/
 
-///*
-// * planet index numbers, used to identify a planet in calc() and
-// * other related functions.
-// */
-//#define CALC_ONLY_ECL_NUT (-1)	/* pseudo planet index for calls to calc */
-//#define SUN	0		/* used synonymously for earth too */
-//#define EARTH	0
-//#define MOON	1
-//#define MERCURY 2
-//#define VENUS	3
-//#define MARS	4
-//#define JUPITER	5
-//#define SATURN	6
-//#define URANUS	7
-//#define NEPTUNE 8
-//#define PLUTO	9
-//#define LASTPLANET PLUTO
-//#define MEAN_NODE  10
-//#define TRUE_NODE  11
-//#define CHIRON	   12
-//#define LILITH	   13	
-//#define CALC_N	  14	/* number of planets in placalc module */
+        /*************************************************************
+            definitions
+        *************************************************************/
 
-//#define CERES     14
-//#define PALLAS    15
-//#define JUNO      16
-//#define VESTA     17
-//#define EARTHHEL  18	/* heliocentric earth */
+        /*
+         * planet index numbers, used to identify a planet in calc() and
+         * other related functions.
+         */
+        const int CALC_ONLY_ECL_NUT = (-1);	/* pseudo planet index for calls to calc */
+        const int SUN = 0;		/* used synonymously for earth too */
+        const int EARTH = 0;
+        const int MOON = 1;
+        const int MERCURY = 2;
+        const int VENUS = 3;
+        const int MARS = 4;
+        const int JUPITER = 5;
+        const int SATURN = 6;
+        const int URANUS = 7;
+        const int NEPTUNE = 8;
+        const int PLUTO = 9;
+        const int LASTPLANET = PLUTO;
+        const int MEAN_NODE = 10;
+        const int TRUE_NODE = 11;
+        const int CHIRON = 12;
+        const int LILITH = 13;
+        const int CALC_N = 14;	/* number of planets in placalc module */
 
-//#define MAXPL_NACALC	(LILITH)	/* nacalc computes SUN..LILITH */
-//# define PROG_PLANET_OFFSET  50      /* progressed sun */
+        const int CERES = 14;
+        const int PALLAS = 15;
+        const int JUNO = 16;
+        const int VESTA = 17;
+        const int EARTHHEL = 18;	/* heliocentric earth */
 
-///*
-// * houses and axes get also a 'planet' index number, but they
-// * are not used by placalc itself
-// * between chiron and AC we leave 6 places unused for some other celestial
-// * bodies or chart factors.
-// * Axes and houses cannot be computed with calls to calc(); they must
-// * be computed with the housasp module functions.
-// */
-//# define AC	   19
-//# define ASC	   19
-//# define MC	   20
-//# define CALC_N_MC  21	/* number of normal natal factors */
+        const int MAXPL_NACALC = (LILITH);	/* nacalc computes SUN..LILITH */
+        const int PROG_PLANET_OFFSET = 50;      /* progressed sun */
 
-//# define FIRST_HSNR 21
-//# define LAST_HSNR 32
-//# define NO_OF_HOUSES 12
-//#define MAX_PL_INDEX 32
-///*
-// * in a bitlist flag each planet is represented by a bit;
-// * all 14 defined planets can be called at once with
-// */
-//#define CALC_ALL_PLANET_BITS  ((1 << CALC_N) - 1)	/* bits 0..13 set */
+        /*
+         * houses and axes get also a 'planet' index number, but they
+         * are not used by placalc itself
+         * between chiron and AC we leave 6 places unused for some other celestial
+         * bodies or chart factors.
+         * Axes and houses cannot be computed with calls to calc(); they must
+         * be computed with the housasp module functions.
+         */
+        const int AC = 19;
+        const int ASC = 19;
+        const int MC = 20;
+        const int CALC_N_MC = 21;	/* number of normal natal factors */
 
-///*
-// * AFL: Astrological factor letters for use in selections strings.
-// * Each factor (planet, house cusp etc) has a typical letter which
-// * can be combined in a selection string for specifying a certain
-// * sequence of factors for a table or other kind of display.
-// * The function afl2planet() can be used to translate the AFL letters
-// * into planet indices.
-// * The function planet2afl translates a planext index into the AFL letter.
-// */
+        const int FIRST_HSNR = 21;
+        const int LAST_HSNR = 32;
+        const int NO_OF_HOUSES = 12;
+        const int MAX_PL_INDEX = 32;
+        /*
+         * in a bitlist flag each planet is represented by a bit;
+         * all 14 defined planets can be called at once with
+         */
+        const int CALC_ALL_PLANET_BITS = ((1 << CALC_N) - 1);	/* bits 0..13 set */
 
-//# define AFL_SUN	'0'
-//# define AFL_MON	'1'
-//# define AFL_MER	'2'
-//# define AFL_VEN	'3'
-//# define AFL_MAR	'4'
-//# define AFL_JUP	'5'
-//# define AFL_SAT	'6'
-//# define AFL_URA	'7'
-//# define AFL_NEP	'8'
-//# define AFL_PLU	'9'
-//# define AFL_CHI	'c'
-//# define AFL_LIL	'i'	/* mean Lilith: direction of lunar aphel */
-//# define AFL_AC		'A'
-//# define AFL_MC		'M'
-//# define AFL_TNODE	'N'	/* TRUE_NODE */
-//# define AFL_MNODE	'n'	/* MEAN_NODE */
-//# define AFL_CER	'C'	
-//# define AFL_PAL	'P'
-//# define AFL_JUN	'J'
-//# define AFL_VES	'V'
+        /*
+         * AFL: Astrological factor letters for use in selections strings.
+         * Each factor (planet, house cusp etc) has a typical letter which
+         * can be combined in a selection string for specifying a certain
+         * sequence of factors for a table or other kind of display.
+         * The function afl2planet() can be used to translate the AFL letters
+         * into planet indices.
+         * The function planet2afl translates a planext index into the AFL letter.
+         */
 
-///*
-// * other AFL definitions not recognized by afl2planet()
-// */
-//# define AFL_SIDT	's'	/* sidereal time */
-//# define AFL_WDAY	'd'	/* day of week column */
-//# define AFL_HOUSE	'H'	/* any house cusp */
+        const char AFL_SUN = '0';
+        const char AFL_MON = '1';
+        const char AFL_MER = '2';
+        const char AFL_VEN = '3';
+        const char AFL_MAR = '4';
+        const char AFL_JUP = '5';
+        const char AFL_SAT = '6';
+        const char AFL_URA = '7';
+        const char AFL_NEP = '8';
+        const char AFL_PLU = '9';
+        const char AFL_CHI = 'c';
+        const char AFL_LIL = 'i';	/* mean Lilith: direction of lunar aphel */
+        const char AFL_AC = 'A';
+        const char AFL_MC = 'M';
+        const char AFL_TNODE = 'N';	/* TRUE_NODE */
+        const char AFL_MNODE = 'n';	/* MEAN_NODE */
+        const char AFL_CER = 'C';
+        const char AFL_PAL = 'P';
+        const char AFL_JUN = 'J';
+        const char AFL_VES = 'V';
 
-//# define apl2planet	afl2planet	/* change of original name */
+        /*
+         * other AFL definitions not recognized by afl2planet()
+         */
+        const char AFL_SIDT = 's';	/* sidereal time */
+        const char AFL_WDAY = 'd';	/* day of week column */
+        const char AFL_HOUSE = 'H';	/* any house cusp */
+
+        //const int apl2planet = afl2planet;	/* change of original name */
 
 
-//# define J2000	2451545.0	/* Epoch of JPL ephemeris DE200, absolute */
-//# define J1950  2433282.423	/* Epoch of JPL ephemeris DE102 */
-//# define JUL_OFFSET 2433282.0	/* offset of Astrodienst relative Julian date */
+        //const double J2000 = 2451545.0;	/* Epoch of JPL ephemeris DE200, absolute */
+        const double J1950 = 2433282.423;	/* Epoch of JPL ephemeris DE102 */
+        const double JUL_OFFSET = 2433282.0;	/* offset of Astrodienst relative Julian date */
 
 //#ifndef GREG_CAL
 //# define GREG_CAL	SE_GREG_CAL
 //# define JUL_CAL	SE_JUL_CAL
 //#endif
 
-///*
-// * flag bits used in calc and calcserv
-// */
-//# define CALC_BIT_HELIO	1	/* geo/helio */
-//# define CALC_BIT_NOAPP	2	/* apparent/true positions */
-//# define CALC_BIT_NONUT	4	/* true eq. of date/ mean equ. of date */
-//# define CALC_BIT_EPHE	8	/* universal/ephemeris time */
-//# define CALC_BIT_SPEED	16	/* without/with speed */
-//# define CALC_BIT_BETA	32	/* without/with latitude */
-//# define CALC_BIT_RGEO	64	/* without/with relative rgeo */
-//# define CALC_BIT_RAU	128	/* without/with real radius */
-//# define CALC_BIT_MUST_USE_EPHE	256	/* epheserv may not use calc */
-//# define CALC_BIT_MAY_USE_EPHE	512	/* calcserv may use ephread */
-//# define CALC_BIT_MUST_CALC	1024	/* ephread must calc  */
+        /*
+         * flag bits used in calc and calcserv
+         */
+        const int CALC_BIT_HELIO = 1;	/* geo/helio */
+        const int CALC_BIT_NOAPP = 2;	/* apparent/true positions */
+        const int CALC_BIT_NONUT = 4;	/* true eq. of date/ mean equ. of date */
+        const int CALC_BIT_EPHE = 8;	/* universal/ephemeris time */
+        const int CALC_BIT_SPEED = 16;	/* without/with speed */
+        const int CALC_BIT_BETA = 32;	/* without/with latitude */
+        const int CALC_BIT_RGEO = 64;	/* without/with relative rgeo */
+        const int CALC_BIT_RAU = 128;	/* without/with real radius */
+        const int CALC_BIT_MUST_USE_EPHE = 256;	/* epheserv may not use calc */
+        const int CALC_BIT_MAY_USE_EPHE = 512;	/* calcserv may use ephread */
+        const int CALC_BIT_MUST_CALC = 1024;	/* ephread must calc  */
 
 
-///*
-// * stuff from astrolib.h
-// */
+        /*
+         * stuff from astrolib.h
+         */
 
 //#ifndef ADATE	/* this must be bracketed because users of swepcalc
 //           may also include astrolib.h for other reasons */

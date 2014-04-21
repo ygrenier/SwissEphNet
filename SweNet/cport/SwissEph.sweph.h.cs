@@ -352,27 +352,27 @@ namespace SweNet
 
         int[] PNOINT2JPL = new int[] { J_EARTH, J_MOON, J_MERCURY, J_VENUS, J_MARS, J_JUPITER, J_SATURN, J_URANUS, J_NEPTUNE, J_PLUTO, J_SUN, };
 
-        ///* planetary radii in meters */
-        //#define NDIAM  (SE_VESTA + 1)
-        //static const double pla_diam[NDIAM] = {1392000000.0, /* Sun */
-        //                           3476300.0, /* Moon */
-        //                           2439000.0 * 2, /* Mercury */
-        //                           6052000.0 * 2, /* Venus */
-        //                           3397200.0 * 2, /* Mars */
-        //                          71398000.0 * 2, /* Jupiter */
-        //                          60000000.0 * 2, /* Saturn */
-        //                          25400000.0 * 2, /* Uranus */
-        //                          24300000.0 * 2, /* Neptune */
-        //                           2500000.0 * 2, /* Pluto */
-        //                           0, 0, 0, 0,    /* nodes and apogees */
-        //                           6378140.0 * 2, /* Earth */
-        //                                 0.0, /* Chiron */
-        //                                 0.0, /* Pholus */
-        //                            913000.0, /* Ceres */
-        //                            523000.0, /* Pallas */
-        //                            244000.0, /* Juno */
-        //                            501000.0, /* Vesta */
-        //                        };
+        /* planetary radii in meters */
+        const int NDIAM = (SE_VESTA + 1);
+        static double[] pla_diam = new double[NDIAM]{1392000000.0, /* Sun */
+                                   3476300.0, /* Moon */
+                                   2439000.0 * 2, /* Mercury */
+                                   6052000.0 * 2, /* Venus */
+                                   3397200.0 * 2, /* Mars */
+                                  71398000.0 * 2, /* Jupiter */
+                                  60000000.0 * 2, /* Saturn */
+                                  25400000.0 * 2, /* Uranus */
+                                  24300000.0 * 2, /* Neptune */
+                                   2500000.0 * 2, /* Pluto */
+                                   0, 0, 0, 0,    /* nodes and apogees */
+                                   6378140.0 * 2, /* Earth */
+                                         0.0, /* Chiron */
+                                         0.0, /* Pholus */
+                                    913000.0, /* Ceres */
+                                    523000.0, /* Pallas */
+                                    244000.0, /* Juno */
+                                    501000.0, /* Vesta */
+        };
 
 
         /* Ayanamsas 
@@ -551,7 +551,7 @@ namespace SweNet
 
         class file_data
         {
-            public string fnam;	/* ephemeris file name */
+            public string fnam = null;	/* ephemeris file name */
             public int fversion;		/* version number of file */
             public string astnam;	/* asteroid name, if asteroid file */
             public Int32 sweph_denum;     /* DE number of JPL ephemeris, which this file
@@ -598,10 +598,10 @@ namespace SweNet
                 xreturn = new double[24];
             }
             /* result of most recent data evaluation for this body: */
-            public double teval;		/* time for which last computation was made */
-            public Int32 iephe;            /* which ephemeris was used */
+            public double teval = 0;		/* time for which last computation was made */
+            public Int32 iephe = 0;            /* which ephemeris was used */
             public double[] x { get; private set; }		/* position and speed vectors equatorial J2000 */
-            public Int32 xflgs;		/* hel., light-time, aberr., prec. flags etc. */
+            public Int32 xflgs = 0;		/* hel., light-time, aberr., prec. flags etc. */
             public double[] xreturn { get; private set; }   /* return positions: 
              * xreturn+0	ecliptic polar coordinates
              * xreturn+6	ecliptic cartesian coordinates
@@ -650,11 +650,11 @@ namespace SweNet
             public string ephepath = String.Empty;
             public string jplfnam = String.Empty;
             public short jpldenum;
-            public double eop_tjd_beg;
-            public double eop_tjd_beg_horizons;
-            public double eop_tjd_end;
-            public double eop_tjd_end_add;
-            public int eop_dpsi_loaded;
+            public double eop_tjd_beg = 0;
+            public double eop_tjd_beg_horizons = 0;
+            public double eop_tjd_end = 0;
+            public double eop_tjd_end_add = 0;
+            public int eop_dpsi_loaded = 0;
             public bool geopos_is_set;
             public bool ayana_is_set;
             public bool is_old_starfile;

@@ -1732,37 +1732,36 @@ namespace SweNet
             swi_precess(xpm, tjd, 0, J_TO_J2000);/**/
         }
 
-///* Reduce arc seconds modulo 360 degrees
-// * answer in arc seconds
-// */
-//static double mods3600(double x)
-//{
-//double lx;
-//lx = x;
-//lx = lx - 1296000.0 * floor( lx/1296000.0 );
-//return( lx );
-//}
+        /* Reduce arc seconds modulo 360 degrees
+         * answer in arc seconds
+         */
+        // TODO Already defined in SwissEph.swemplan.c.cs
+        //static double mods3600(double x) {
+        //    double lx;
+        //    lx = x;
+        //    lx = lx - 1296000.0 * Math.Floor(lx / 1296000.0);
+        //    return (lx);
+        //} 
 
-//void swi_mean_lunar_elements(double tjd, 
-//                             double *node, double *dnode, 
-//                             double *peri, double *dperi)
-//{
-//  double dcor;
-//  T = (tjd - J2000) / 36525.0;
-//  T2 = T*T;
-//  mean_elements();
-//  *node = swe_degnorm((SWELP - NF) * STR * RADTODEG);
-//  *peri = swe_degnorm((SWELP - MP) * STR * RADTODEG);
-//  T -= 1.0 / 36525;
-//  mean_elements();
-//  *dnode = swe_degnorm(*node - (SWELP - NF) * STR * RADTODEG);
-//  *dnode -= 360;
-//  *dperi = swe_degnorm(*peri - (SWELP - MP) * STR * RADTODEG);
-//  dcor = corr_mean_node(tjd);
-//  *node = swe_degnorm(*node - dcor);
-//  dcor = corr_mean_apog(tjd);
-//  *peri = swe_degnorm(*peri - dcor);
-//}
+        void swi_mean_lunar_elements(double tjd,
+                                     ref double node, ref double dnode,
+                                     ref double peri, ref double dperi) {
+            double dcor;
+            T = (tjd - J2000) / 36525.0;
+            T2 = T * T;
+            mean_elements();
+            node = swe_degnorm((SWELP - NF) * STR * RADTODEG);
+            peri = swe_degnorm((SWELP - MP) * STR * RADTODEG);
+            T -= 1.0 / 36525;
+            mean_elements();
+            dnode = swe_degnorm(node - (SWELP - NF) * STR * RADTODEG);
+            dnode -= 360;
+            dperi = swe_degnorm(peri - (SWELP - MP) * STR * RADTODEG);
+            dcor = corr_mean_node(tjd);
+            node = swe_degnorm(node - dcor);
+            dcor = corr_mean_apog(tjd);
+            peri = swe_degnorm(peri - dcor);
+        }
 
         void mean_elements() {
             double fracT = (T % 1);

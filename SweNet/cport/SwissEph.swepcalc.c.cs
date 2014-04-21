@@ -542,15 +542,15 @@ namespace SweNet
 //  return perrtx;
 //}
 
-///*****************************************************
-//deltat(t): returns delta t (in julian days) from universal time t
-//is included by users
-//ET = UT +  deltat
-//******************************************************/
-//double deltat (double jd_ad) /* Astrodienst relative julian date */
-//{ 
-//  return swe_deltat(jd_ad + JUL_OFFSET);
-//}
+        /*****************************************************
+        deltat(t): returns delta t (in julian days) from universal time t
+        is included by users
+        ET = UT +  deltat
+        ******************************************************/
+        double deltat(double jd_ad) /* Astrodienst relative julian date */
+        {
+            return swe_deltat(jd_ad + JUL_OFFSET);
+        }
 
 ///**********************************************************
 // * get fixstar positions
@@ -707,8 +707,8 @@ namespace SweNet
 //    i = 1;                  
 //    arp.index = 0;
 //    while (i <= a.NrOfAspects) {
-//      orbis = ABS4 (diff) - a.Angle [i];
-//      if (ABS4 (orbis) <= a.Maxorb [i]) {
+        //      orbis = Math.Abs (diff) - a.Angle [i];
+        //      if (Math.Abs (orbis) <= a.Maxorb [i]) {
 //        arp.index = i;
 //        arp.orb = orbis;
 //        break; 	/* out of while */
@@ -731,8 +731,8 @@ namespace SweNet
 //    i = 1;                  
 //    arp.index = 0;
 //    while (i <= a.NrOfAspects) {
-//      orbis = ABS4 (diff) - a.Angle [i];
-//      if (ABS4 (orbis) <= a.Maxorb [i]) {
+        //      orbis = Math.Abs (diff) - a.Angle [i];
+        //      if (Math.Abs (orbis) <= a.Maxorb [i]) {
 //        arp.index = i;
 //        arp.orb = orbis;
 //        break; 	/* out of while */

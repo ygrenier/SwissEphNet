@@ -112,8 +112,8 @@ namespace SweNet
         //Int32 swi_trace_count = 0;
 #endif
 
-        /*static*/ double tid_acc = SE_TIDAL_DEFAULT;
-        /*static*/ bool init_dt_done = false;
+        static double tid_acc = SE_TIDAL_DEFAULT;
+        static bool init_dt_done = false;
         //static void init_crc32(void);
         //static int init_dt(void);
         //static double adjust_for_tidacc(double ans, double Y);
@@ -124,7 +124,7 @@ namespace SweNet
 
         /* Reduce x modulo 360 degrees
          */
-        double swe_degnorm(double x) {
+        static protected double swe_degnorm(double x) {
             double y;
             y = (x % 360.0);
             if (Math.Abs(y) < 1e-13) y = 0;	/* Alois fix 11-dec-1999 */
@@ -134,7 +134,7 @@ namespace SweNet
 
         /* Reduce x modulo TWOPI degrees
          */
-        double swe_radnorm(double x) {
+        static protected double swe_radnorm(double x) {
             double y;
             y = (x % TWOPI);
             if (Math.Abs(y) < 1e-13) y = 0;	/* Alois fix 11-dec-1999 */
@@ -142,14 +142,14 @@ namespace SweNet
             return (y);
         }
 
-        double swe_deg_midp(double x1, double x0) {
+        static protected double swe_deg_midp(double x1, double x0) {
             double d, y;
             d = swe_difdeg2n(x1, x0);	/* arc from x0 to x1 */
             y = swe_degnorm(x0 + d / 2);
             return (y);
         }
 
-        double swe_rad_midp(double x1, double x0) {
+        static protected double swe_rad_midp(double x1, double x0) {
             return DEGTORAD * swe_deg_midp(x1 * RADTODEG, x0 * RADTODEG);
         }
 
@@ -232,7 +232,7 @@ namespace SweNet
          * xpo, xpn are arrays of 3 doubles containing position.
          * attention: input must be in degrees!
          */
-        void swe_cotrans(CPointer<double> xpo, CPointer<double> xpn, double eps) {
+        protected void swe_cotrans(CPointer<double> xpo, CPointer<double> xpn, double eps) {
             int i;
             double[] x = new double[6]; double e = eps * DEGTORAD;
             for (i = 0; i <= 1; i++)
@@ -2389,11 +2389,10 @@ namespace SweNet
             return ans;
         }
 
-        ///* returns tidal acceleration used in swe_deltat() */
-        //double FAR PASCAL_CONV swe_get_tid_acc()
-        //{
-        //  return tid_acc;
-        //}
+        /* returns tidal acceleration used in swe_deltat() */
+        static double swe_get_tid_acc() {
+            return tid_acc;
+        }
 
         /* function sets tidal acceleration of the Moon.
          * t_acc can be either
@@ -2645,7 +2644,7 @@ namespace SweNet
             return dadd;
         }
 
-        const bool SIDT_IERS_CONV_2010 = true;
+        bool SIDT_IERS_CONV_2010 = true;
         /* sidtime_long_term() is not used between the following two dates */
         const double SIDT_LTERM_T0 = 2396758.5;  /* 1 Jan 1850  */
         const double SIDT_LTERM_T1 = 2469807.5;  /* 1 Jan 2050  */
@@ -2738,39 +2737,39 @@ namespace SweNet
             return gmst;
         }
 
-        ///* sidereal time, without eps and nut as parameters.
-        // * tjd must be UT !!!
-        // * for more informsation, see comment with swe_sidtime0()
-        // */
-        //double FAR PASCAL_CONV swe_sidtime(double tjd_ut)
-        //{
-        //  int i;
-        //  double eps, nutlo[2], tsid;
-        //  double tjde = tjd_ut + swe_deltat(tjd_ut);
-        //  eps = swi_epsiln(tjde, 0) * RADTODEG;
-        //  swi_nutation(tjde, 0, nutlo);
-        //  for (i = 0; i < 2; i++)
-        //    nutlo[i] *= RADTODEG;
-        //  tsid = swe_sidtime0(tjd_ut, eps + nutlo[1], nutlo[0]);
-        //#ifdef TRACE
-        //  swi_open_trace(NULL);
-        //  if (swi_trace_count < TRACE_COUNT_MAX) {
-        //    if (swi_fp_trace_c != NULL) {
-        //      fputs("\n/*SWE_SIDTIME*/\n", swi_fp_trace_c);
-        //      fprintf(swi_fp_trace_c, "  tjd = %.9f;\n", tjd_ut);
-        //      fprintf(swi_fp_trace_c, "  t = swe_sidtime(tjd);\n");
-        //      fputs("  printf(\"swe_sidtime: %f\\t%f\\t\\n\", ", swi_fp_trace_c);
-        //      fputs("tjd, t);\n", swi_fp_trace_c);
-        //      fflush(swi_fp_trace_c);
-        //    }
-        //    if (swi_fp_trace_out != NULL) {
-        //      fprintf(swi_fp_trace_out, "swe_sidtime: %f\t%f\t\n", tjd_ut, tsid);
-        //      fflush(swi_fp_trace_out);
-        //    }
-        //  }
-        //#endif
-        //  return tsid;
-        //}
+        /* sidereal time, without eps and nut as parameters.
+         * tjd must be UT !!!
+         * for more informsation, see comment with swe_sidtime0()
+         */
+        protected double swe_sidtime(double tjd_ut) {
+            int i;
+            double eps, tsid; double[] nutlo = new double[2];
+            double tjde = tjd_ut + swe_deltat(tjd_ut);
+            eps = swi_epsiln(tjde, 0) * RADTODEG;
+            swi_nutation(tjde, 0, nutlo);
+            for (i = 0; i < 2; i++)
+                nutlo[i] *= RADTODEG;
+            tsid = swe_sidtime0(tjd_ut, eps + nutlo[1], nutlo[0]);
+#if TRACE
+            //swi_open_trace(NULL);
+            //if (swi_trace_count < TRACE_COUNT_MAX) {
+            //    if (swi_fp_trace_c != NULL) {
+            //        fputs("\n/*SWE_SIDTIME*/\n", swi_fp_trace_c);
+            //        fprintf(swi_fp_trace_c, "  tjd = %.9f;\n", tjd_ut);
+            //        fprintf(swi_fp_trace_c, "  t = swe_sidtime(tjd);\n");
+            //        fputs("  printf(\"swe_sidtime: %f\\t%f\\t\\n\", ", swi_fp_trace_c);
+            //        fputs("tjd, t);\n", swi_fp_trace_c);
+            //        fflush(swi_fp_trace_c);
+            //    }
+            //    if (swi_fp_trace_out != NULL) {
+            //        fprintf(swi_fp_trace_out, "swe_sidtime: %f\t%f\t\n", tjd_ut, tsid);
+            trace("swe_sidtime: %f\t%f\t\n", tjd_ut, tsid);
+            //        fflush(swi_fp_trace_out);
+            //    }
+            //}
+#endif
+            return tsid;
+        }
 
         /* SWISSEPH
          * generates name of ephemeris file
@@ -2956,7 +2955,7 @@ namespace SweNet
         /************************************
         normalize argument into interval [0..DEG360]
         *************************************/
-        Int32 swe_csnorm(Int32 p) {
+        static protected Int32 swe_csnorm(Int32 p) {
             if (p < 0)
                 do { p += DEG360; } while (p < 0);
             else if (p >= DEG360)
@@ -2968,11 +2967,11 @@ namespace SweNet
         distance in centisecs p1 - p2
         normalized to [0..360[
         **************************************/
-        Int32 swe_difcsn(Int32 p1, Int32 p2) {
+        static protected Int32 swe_difcsn(Int32 p1, Int32 p2) {
             return (swe_csnorm(p1 - p2));
         }
 
-        double swe_difdegn(double p1, double p2) {
+        static protected double swe_difdegn(double p1, double p2) {
             return (swe_degnorm(p1 - p2));
         }
 
@@ -2980,171 +2979,191 @@ namespace SweNet
         distance in centisecs p1 - p2
         normalized to [-180..180[
         **************************************/
-        Int32 swe_difcs2n(Int32 p1, Int32 p2) {
+        static protected Int32 swe_difcs2n(Int32 p1, Int32 p2) {
             Int32 dif;
             dif = swe_csnorm(p1 - p2);
             if (dif >= DEG180) return (dif - DEG360);
             return (dif);
         }
 
-        double swe_difdeg2n(double p1, double p2) {
+        static protected double swe_difdeg2n(double p1, double p2) {
             double dif;
             dif = swe_degnorm(p1 - p2);
             if (dif >= 180.0) return (dif - 360.0);
             return (dif);
         }
 
-        double swe_difrad2n(double p1, double p2) {
+        static protected double swe_difrad2n(double p1, double p2) {
             double dif;
             dif = swe_radnorm(p1 - p2);
             if (dif >= TWOPI / 2) return (dif - TWOPI);
             return (dif);
         }
 
-        ///*************************************
-        //round second, but at 29.5959 always down
-        //*************************************/ 
-        //centisec FAR PASCAL_CONV swe_csroundsec(centisec x)	
-        //{
-        //  centisec t;
-        //  t = (x + 50) / 100 *100L;	/* round to seconds */
-        //  if (t > x && t % DEG30 == 0)  /* was rounded up to next sign */
-        //    t = x / 100 * 100L;		/* round last second of sign downwards */
-        //  return (t);
-        //}
+        /*************************************
+        round second, but at 29.5959 always down
+        *************************************/
+        static protected int swe_csroundsec(int x) {
+            int t;
+            t = (x + 50) / 100 * 100;	/* round to seconds */
+            if (t > x && t % DEG30 == 0)  /* was rounded up to next sign */
+                t = x / 100 * 100;		/* round last second of sign downwards */
+            return (t);
+        }
 
-        ///*************************************
-        //double to int32 with rounding, no overflow check
-        //*************************************/ 
-        //int32 FAR PASCAL_CONV swe_d2l(double x)		
-        //{
-        //  if (x >=0)
-        //    return ((int32) (x + 0.5));
-        //  else
-        //    return (- (int32) (0.5 - x));
-        //}
+        /*************************************
+        double to int32 with rounding, no overflow check
+        *************************************/
+        static protected Int32 swe_d2l(double x) {
+            if (x >= 0)
+                return ((Int32)(x + 0.5));
+            else
+                return (-(Int32)(0.5 - x));
+        }
 
-        ///*
-        // * monday = 0, ... sunday = 6
-        // */
-        //int FAR PASCAL_CONV swe_day_of_week(double jd)
-        //{
-        //  return (((int) floor (jd - 2433282 - 1.5) %7) + 7) % 7;
-        //}
+        /*
+         * monday = 0, ... sunday = 6
+         */
+        protected int swe_day_of_week(double jd) {
+            return (((int)Math.Floor(jd - 2433282 - 1.5) % 7) + 7) % 7;
+        }
 
-        //char *FAR PASCAL_CONV swe_cs2timestr(CSEC t, int sep, AS_BOOL suppressZero, char *a)
-        ///* does not suppress zeros in hours or minutes */
-        //{
-        //  /* static char a[9];*/
-        //  centisec h,m,s;
-        //  a = "        ";
-        //  a[2] = a [5] = sep;
-        //  t = ((t + 50) / 100) % (24L *3600L); /* round to seconds */
-        //  s = t % 60L;
-        //  m = (t / 60) % 60L;
-        //  h = t / 3600 % 100L;
-        //  if (s == 0 && suppressZero)  
-        //    a[5] = '\0';
-        //  else {
-        //    a [6] = (char) (s / 10 + '0');
-        //    a [7] = (char) (s % 10 + '0');
-        //  };
-        //  a [0] = (char) (h / 10 + '0');
-        //  a [1] = (char) (h % 10 + '0');
-        //  a [3] = (char) (m / 10 + '0');
-        //  a [4] = (char) (m % 10 + '0');
-        //  return (a);
-        //  } /* swe_cs2timestr() */
+        protected string swe_cs2timestr(int t, char sep, bool suppressZero, ref string a)
+            /* does not suppress zeros in hours or minutes */
+        {
+            /* static char a[9];*/
+            int h, m, s;
+            t = ((t + 50) / 100) % (24 * 3600); /* round to seconds */
+            s = t % 60;
+            m = (t / 60) % 60;
+            h = t / 3600 % 100;
 
-        //char *FAR PASCAL_CONV swe_cs2lonlatstr(CSEC t, char pchar, char mchar, char *sp)
-        //{
-        //  char a[10];	/* must be initialized at each call */
-        //  char *aa;
-        //  centisec h,m,s;
-        //  a = "      '  ";
-        //  /* mask     dddEmm'ss" */
-        //  if (t < 0 ) pchar = mchar;
-        //  t = (ABS4 (t) + 50) / 100; /* round to seconds */
-        //  s = t % 60L;
-        //  m = t / 60 % 60L;
-        //  h = t / 3600 % 1000L;
-        //  if (s == 0)  
-        //    a[6] = '\0';   /* cut off seconds */
-        //  else {
-        //    a [7] = (char) (s / 10 + '0');
-        //    a [8] = (char) (s % 10 + '0');
-        //  }
-        //  a [3] = pchar;
-        //  if (h > 99)  a [0] = (char) (h / 100 + '0');
-        //  if (h > 9)  a [1] = (char) (h % 100 / 10 + '0');
-        //  a [2] = (char) (h % 10 + '0');
-        //  a [4] = (char) (m / 10 + '0');
-        //  a [5] = (char) (m % 10 + '0');
-        //  aa = a;
-        //  while (*aa == ' ') aa++;
-        //  sp = aa;
-        //  return (sp);
-        //} /* swe_cs2lonlatstr() */
+            StringBuilder sb = new StringBuilder();
+            sb.Append((char)(h / 10 + '0'))
+                .Append((char)(h % 10 + '0'))
+                .Append(sep)
+                .Append((char)(m / 10 + '0'))
+                .Append((char)(m % 10 + '0'))
+                ;
+            if (!(s == 0 && suppressZero)) {
+                sb.Append(sep)
+                .Append((char)(s / 10 + '0'))
+                .Append((char)(s % 10 + '0'));
+            };
+            a = sb.ToString();
+            return (a);
+        } /* swe_cs2timestr() */
 
-        //char *FAR PASCAL_CONV swe_cs2degstr(CSEC t, char *a)
-        //  /* does  suppress leading zeros in degrees */
-        //{
-        //  /* char a[9];	 must be initialized at each call */
-        //  centisec h,m,s;
-        //  t = t  / 100 % (30L*3600L); /* truncate to seconds */
-        //  s = t % 60L;
-        //  m = t / 60 % 60L;
-        //  h = t / 3600 % 100L;	/* only 0..99 degrees */ 
-        //  a=C.sprintf("%2d%s%02d'%02d", h, ODEGREE_STRING, m, s);
-        //  return (a);
-        //} /* swe_cs2degstr() */
+        protected string swe_cs2lonlatstr(int t, char pchar, char mchar, ref string sp) {
+            //char a[10];	/* must be initialized at each call */
+            //char *aa;
+            /*int h, m, s;
+            a = "      '  ";
+            /* mask     dddEmm'ss" * /
+            if (t < 0) pchar = mchar;
+            t = (Math.Abs(t) + 50) / 100; /* round to seconds * /
+            s = t % 60L;
+            m = t / 60 % 60L;
+            h = t / 3600 % 1000L;
+            if (s == 0)
+                a[6] = '\0';   /* cut off seconds * /
+            else {
+                a[7] = (char)(s / 10 + '0');
+                a[8] = (char)(s % 10 + '0');
+            }
+            a[3] = pchar;
+            if (h > 99) a[0] = (char)(h / 100 + '0');
+            if (h > 9) a[1] = (char)(h % 100 / 10 + '0');
+            a[2] = (char)(h % 10 + '0');
+            a[4] = (char)(m / 10 + '0');
+            a[5] = (char)(m % 10 + '0');
+            aa = a;
+            while (*aa == ' ') aa++;
+            sp = aa;*/
 
-        ///*********************************************************
-        // *  function for splitting centiseconds into             *
-        // *  ideg 	degrees, 
-        // *  imin 	minutes, 
-        // *  isec 	seconds, 
-        // *  dsecfr	fraction of seconds 
-        // *  isgn	zodiac sign number; 
-        // *              or +/- sign
-        // *  
-        // *********************************************************/
-        //void swe_split_deg(double ddeg, int32 roundflag, int32 *ideg, int32 *imin, int32 *isec, double *dsecfr, int32 *isgn)
-        //{
-        //  double dadd = 0;
-        //  *isgn = 1;
-        //  if (ddeg < 0) {
-        //    *isgn = -1;
-        //    ddeg = -ddeg;
-        //  }
-        //  if (roundflag & SE_SPLIT_DEG_ROUND_DEG) {
-        //    dadd = 0.5;
-        //  } else if (roundflag & SE_SPLIT_DEG_ROUND_MIN) {
-        //    dadd = 0.5 / 60;
-        //  } else if (roundflag & SE_SPLIT_DEG_ROUND_SEC) {
-        //    dadd = 0.5 / 3600;
-        //  }
-        //  if (roundflag & SE_SPLIT_DEG_KEEP_DEG) {
-        //    if ((int32) (ddeg + dadd) - (int32) ddeg > 0)
-        //      dadd = 0;
-        //  } else if (roundflag & SE_SPLIT_DEG_KEEP_SIGN) {
-        //    if (fmod(ddeg, 30) + dadd >= 30)
-        //      dadd = 0;
-        //  }
-        //  ddeg += dadd;
-        //  if (roundflag & SE_SPLIT_DEG_ZODIACAL) {
-        //    *isgn = (int32) (ddeg / 30);
-        //    ddeg = fmod(ddeg, 30);
-        //  }
-        //  *ideg = (int32) ddeg;
-        //  ddeg -= *ideg;
-        //  *imin = (int32) (ddeg * 60);
-        //  ddeg -= *imin / 60.0;
-        //  *isec = (int32) (ddeg * 3600);
-        //  if (!(roundflag & (SE_SPLIT_DEG_ROUND_DEG | SE_SPLIT_DEG_ROUND_MIN | SE_SPLIT_DEG_ROUND_SEC))) {
-        //    *dsecfr = ddeg * 3600 - *isec;
-        //  }
-        //}  /* end split_deg */
+            StringBuilder sb = new StringBuilder();
+            int h, m, s;
+            /* mask     dddEmm'ss" */
+            if (t < 0) pchar = mchar;
+            t = (Math.Abs(t) + 50) / 100; /* round to seconds */
+            s = t % 60;
+            m = t / 60 % 60;
+            h = t / 3600 % 1000;
+
+            if (h > 99) sb.Append((char)(h / 100 + '0'));
+            if (h > 9) sb.Append((char)(h % 100 / 10 + '0'));
+            sb.Append(pchar)
+                .Append((char)(h % 10 + '0'))
+                .Append((char)(m / 10 + '0'))
+                .Append((char)(m % 10 + '0'))
+                ;
+            if (s != 0) /* cut off seconds */ {
+                sb.Append(' ')
+                    .Append((char)(s / 10 + '0'))
+                    .Append((char)(s % 10 + '0'));
+            }
+            sp = sb.ToString();
+            return (sp);
+        } /* swe_cs2lonlatstr() */
+
+        string swe_cs2degstr(int t, ref string a)
+            /* does  suppress leading zeros in degrees */
+        {
+            /* char a[9];	 must be initialized at each call */
+            int h, m, s;
+            t = t / 100 % (30 * 3600); /* truncate to seconds */
+            s = t % 60;
+            m = t / 60 % 60;
+            h = t / 3600 % 100;	/* only 0..99 degrees */
+            a = C.sprintf("%2d%s%02d'%02d", h, ODEGREE_STRING, m, s);
+            return (a);
+        } /* swe_cs2degstr() */
+
+        /*********************************************************
+         *  function for splitting centiseconds into             *
+         *  ideg 	degrees, 
+         *  imin 	minutes, 
+         *  isec 	seconds, 
+         *  dsecfr	fraction of seconds 
+         *  isgn	zodiac sign number; 
+         *              or +/- sign
+         *  
+         *********************************************************/
+        void swe_split_deg(double ddeg, Int32 roundflag, out Int32 ideg, out Int32 imin, out Int32 isec, out double dsecfr, out Int32 isgn) {
+            double dadd = 0; dsecfr = 0;
+            isgn = 1;
+            if (ddeg < 0) {
+                isgn = -1;
+                ddeg = -ddeg;
+            }
+            if ((roundflag & SE_SPLIT_DEG_ROUND_DEG) != 0) {
+                dadd = 0.5;
+            } else if ((roundflag & SE_SPLIT_DEG_ROUND_MIN) != 0) {
+                dadd = 0.5 / 60;
+            } else if ((roundflag & SE_SPLIT_DEG_ROUND_SEC) != 0) {
+                dadd = 0.5 / 3600;
+            }
+            if ((roundflag & SE_SPLIT_DEG_KEEP_DEG) != 0) {
+                if ((Int32)(ddeg + dadd) - (Int32)ddeg > 0)
+                    dadd = 0;
+            } else if ((roundflag & SE_SPLIT_DEG_KEEP_SIGN) != 0) {
+                if ((ddeg % 30.0) + dadd >= 30)
+                    dadd = 0;
+            }
+            ddeg += dadd;
+            if ((roundflag & SE_SPLIT_DEG_ZODIACAL) != 0) {
+                isgn = (Int32)(ddeg / 30);
+                ddeg = (ddeg % 30.0);
+            }
+            ideg = (Int32)ddeg;
+            ddeg -= ideg;
+            imin = (Int32)(ddeg * 60);
+            ddeg -= imin / 60.0;
+            isec = (Int32)(ddeg * 3600);
+            if (0 == (roundflag & (SE_SPLIT_DEG_ROUND_DEG | SE_SPLIT_DEG_ROUND_MIN | SE_SPLIT_DEG_ROUND_SEC))) {
+                dsecfr = ddeg * 3600 - isec;
+            }
+        }  /* end split_deg */
 
         double swi_kepler(double E, double M, double ecce) {
             double dE = 1, E0;

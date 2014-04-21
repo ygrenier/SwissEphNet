@@ -432,7 +432,7 @@ namespace SweNet
         public const int SE_HELFLAG_AVKIND_MIN9 = (1 << 18);
         public const int SE_HELFLAG_AVKIND = (SE_HELFLAG_AVKIND_VR | SE_HELFLAG_AVKIND_PTO | SE_HELFLAG_AVKIND_MIN7 | SE_HELFLAG_AVKIND_MIN9);
         public const double TJD_INVALID = 99999999.0;
-        public const int SIMULATE_VICTORVB = 1;
+        public const bool SIMULATE_VICTORVB = true;
 
         public const int SE_HELIACAL_LONG_SEARCH = 128;
         public const int SE_HELIACAL_HIGH_PRECISION = 256;

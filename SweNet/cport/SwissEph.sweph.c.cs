@@ -225,11 +225,10 @@ namespace SweNet
 //static void trace_swe_get_planet_name(int swtch, int ipl, char *s);
 //#endif
 
-//char *FAR PASCAL_CONV swe_version(char *s)
-//{
-//  s= SE_VERSION;
-//  return s;
-//}
+        protected string swe_version(ref string s) {
+            s = SE_VERSION;
+            return s;
+        }
 
         #region swe_calc static variables
         Int32 epheflag_sv = 0;
@@ -455,7 +454,7 @@ namespace SweNet
             return ERR;
         }
 
-        Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag,
+        protected Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag,
             double[] xx, out string serr) {
             double deltat = swe_deltat(tjd_ut);
             return swe_calc(tjd_ut + deltat, ipl, iflag, xx, out serr);
@@ -1176,141 +1175,142 @@ namespace SweNet
 #endif
         }
 
-//void load_dpsi_deps(void)
-//{
-//  FILE *fp;
-//  char s[AS_MAXCH];
-//  char *cpos[20];
-//  int n = 0, np, iyear, mjd = 0, mjdsv = 0;
-//  double dpsi, deps, TJDOFS = 2400000.5;
-//  if (swed.eop_dpsi_loaded > 0) 
-//    return;
-//  fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_EOPC04, swed.ephepath, NULL);
-//  if (fp == NULL) {
-//    swed.eop_dpsi_loaded = ERR;
-//    return;
-//  }
-//  swed.eop_tjd_beg_horizons = DPSI_DEPS_IAU1980_TJD0_HORIZONS;
-//  while (fgets(s, AS_MAXCH, fp) != NULL) {
-//    np = swi_cutstr(s, " ", cpos, 16);
-//    if ((iyear = atoi(cpos[0])) == 0) 
-//      continue;
-//    mjd = atoi(cpos[3]);
-//    /* is file in one-day steps? */
-//    if (mjdsv > 0 && mjd - mjdsv != 1) {
-//      /* we cannot return error but we note it as follows: */
-//      swed.eop_dpsi_loaded = -2;
-//      fclose(fp);
-//      return;
-//    }
-//    if (n == 0)
-//      swed.eop_tjd_beg = mjd + TJDOFS;
-//    swed.dpsi[n] = atof(cpos[8]);
-//    swed.deps[n] = atof(cpos[9]);
-///*    fprintf(stderr, "tjd=%f, dpsi=%f, deps=%f\n", mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);exit(0);*/
-//    n++;
-//    mjdsv = mjd;
-//  }
-//  swed.eop_tjd_end = mjd + TJDOFS;
-//  swed.eop_dpsi_loaded = 1;
-//  fclose(fp);
-//  /* file finals.all may have some more data, and especially estimations 
-//   * for the near future */
-//  fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_FINALS, swed.ephepath, NULL);
-//  if (fp == NULL) 
-//    return; /* return without error as existence of file is not mandatory */
-//  while (fgets(s, AS_MAXCH, fp) != NULL) {
-//    mjd = atoi(s + 7);
-//    if (mjd + TJDOFS <= swed.eop_tjd_end)
-//      continue;
-//    /* are data in one-day steps? */
-//    if (mjdsv > 0 && mjd - mjdsv != 1) {
-//      /* no error, as we do have data; however, if this file is usefull,
-//       * then swed.eop_dpsi_loaded will be set to 2 */
-//      swed.eop_dpsi_loaded = -3;
-//      fclose(fp);
-//      return;
-//    }
-//    /* dpsi, deps Bulletin B */
-//    dpsi = atof(s + 168);
-//    deps = atof(s + 178);
-//    if (dpsi == 0) {
-//      /* try dpsi, deps Bulletin A */
-//      dpsi = atof(s + 99);
-//      deps = atof(s + 118);
-//    }
-//    if (dpsi == 0) {
-//      swed.eop_dpsi_loaded = 2;
-//      /*printf("dpsi from %f to %f \n", swed.eop_tjd_beg, swed.eop_tjd_end);*/
-//      fclose(fp);
-//      return;
-//    }
-//    swed.eop_tjd_end = mjd + TJDOFS;
-//    swed.dpsi[n] = dpsi / 1000.0;
-//    swed.deps[n] = deps / 1000.0;
-//    /*fprintf(stderr, "tjd=%f, dpsi=%f, deps=%f\n", mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);*/
-//    n++;
-//    mjdsv = mjd;
-//  }
-//  swed.eop_dpsi_loaded = 2;
-//  fclose(fp);
-//}
+        void load_dpsi_deps() {
+            CFile fp;
+            string s, sdummy = String.Empty;
+            string[] cpos;
+            int n = 0, np, iyear, mjd = 0, mjdsv = 0;
+            double dpsi, deps, TJDOFS = 2400000.5;
+            if (swed.eop_dpsi_loaded > 0)
+                return;
+            fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_EOPC04, swed.ephepath, ref sdummy);
+            if (fp == null) {
+                swed.eop_dpsi_loaded = ERR;
+                return;
+            }
+            swed.eop_tjd_beg_horizons = DPSI_DEPS_IAU1980_TJD0_HORIZONS;
+            while ((s = fp.ReadLine()) != null) {
+                cpos = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                np = cpos.Length;
+                if ((iyear = int.Parse(cpos[0])) == 0)
+                    continue;
+                mjd = int.Parse(cpos[3]);
+                /* is file in one-day steps? */
+                if (mjdsv > 0 && mjd - mjdsv != 1) {
+                    /* we cannot return error but we note it as follows: */
+                    swed.eop_dpsi_loaded = -2;
+                    fp.Dispose();
+                    return;
+                }
+                if (n == 0)
+                    swed.eop_tjd_beg = mjd + TJDOFS;
+                swed.dpsi[n] = double.Parse(cpos[8]);
+                swed.deps[n] = double.Parse(cpos[9]);
+                /*    fprintf(stderr, "tjd=%f, dpsi=%f, deps=%f\n", mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);exit(0);*/
+                n++;
+                mjdsv = mjd;
+            }
+            swed.eop_tjd_end = mjd + TJDOFS;
+            swed.eop_dpsi_loaded = 1;
+            fp.Dispose();
+            /* file finals.all may have some more data, and especially estimations 
+             * for the near future */
+            fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_FINALS, swed.ephepath, ref sdummy);
+            if (fp == null)
+                return; /* return without error as existence of file is not mandatory */
+            while ((s = fp.ReadLine()) != null) {
+                mjd = int.Parse(s.Substring(7));
+                if (mjd + TJDOFS <= swed.eop_tjd_end)
+                    continue;
+                /* are data in one-day steps? */
+                if (mjdsv > 0 && mjd - mjdsv != 1) {
+                    /* no error, as we do have data; however, if this file is usefull,
+                     * then swed.eop_dpsi_loaded will be set to 2 */
+                    swed.eop_dpsi_loaded = -3;
+                    fp.Dispose();
+                    return;
+                }
+                /* dpsi, deps Bulletin B */
+                dpsi = double.Parse(s.Substring(168));
+                deps = double.Parse(s.Substring(178));
+                if (dpsi == 0) {
+                    /* try dpsi, deps Bulletin A */
+                    dpsi = double.Parse(s.Substring(99));
+                    deps = double.Parse(s.Substring(118));
+                }
+                if (dpsi == 0) {
+                    swed.eop_dpsi_loaded = 2;
+                    /*printf("dpsi from %f to %f \n", swed.eop_tjd_beg, swed.eop_tjd_end);*/
+                    fp.Dispose();
+                    return;
+                }
+                swed.eop_tjd_end = mjd + TJDOFS;
+                swed.dpsi[n] = dpsi / 1000.0;
+                swed.deps[n] = deps / 1000.0;
+                /*fprintf(stderr, "tjd=%f, dpsi=%f, deps=%f\n", mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);*/
+                n++;
+                mjdsv = mjd;
+            }
+            swed.eop_dpsi_loaded = 2;
+            fp.Dispose();
+        }
 
-///* sets jpl file name.
-// * also calls swe_close(). this makes sure that swe_calc()
-// * won't return planet positions previously computed from other
-// * ephemerides
-// */
-//void FAR PASCAL_CONV swe_set_jpl_file(char *fname)
-//{
-//  char *sp;
-//  int retc;
-//  double ss[3];
-//  /* close all open files and delete all planetary data */
-//  swe_close();
-//  /* if path is contained in fnam, it is filled into the path variable */
-//  sp = strrchr(fname, (int) *DIR_GLUE);
-//  if (sp == NULL)
-//    sp = fname;
-//  else 
-//    sp = sp + 1;
-//  if (strlen(sp) >= AS_MAXCH)
-//    sp[AS_MAXCH] = '\0';
-//  swed.jplfnam= sp;
-//  /* open ephemeris, if still closed */
-//  if (!swed.jpl_file_is_open) {
-//    retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, NULL);
-//    if (retc == OK) {
-//      if (swed.jpldenum >= 403) {
-//#if INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980
-//    load_dpsi_deps();
-//#endif
-//      }
-//    }
-//  }
-//#ifdef TRACE
-//  swi_open_trace(NULL);
-//  if (swi_trace_count < TRACE_COUNT_MAX) {
-//    if (swi_fp_trace_c != NULL) {
-//      fputs("\n/*SWE_SET_JPL_FILE*/\n", swi_fp_trace_c);
-//      fprintf(swi_fp_trace_c, "  strcpy(s, \"%s\");\n", fname);
-//      fputs("  swe_set_jpl_file(s);\n", swi_fp_trace_c);
-//      fputs("  printf(\"swe_set_jpl_file: fname_in = \");", swi_fp_trace_c);
-//      fputs("  printf(s);\n", swi_fp_trace_c);
-//      fputs("  printf(\"\\tfname_set = unknown to swetrace\\n\");  /* unknown to swetrace */\n", swi_fp_trace_c);
-//      fflush(swi_fp_trace_c);
-//    }
-//    if (swi_fp_trace_out != NULL) {
-//      fputs("swe_set_jpl_file: fname_in = ", swi_fp_trace_out);
-//      fputs(fname, swi_fp_trace_out);
-//      fputs("\tfname_set = ", swi_fp_trace_out);
-//      fputs(sp, swi_fp_trace_out);
-//      fputs("\n", swi_fp_trace_out);
-//      fflush(swi_fp_trace_out);
-//    }
-//  }
-//#endif
-//}
+        /* sets jpl file name.
+         * also calls swe_close(). this makes sure that swe_calc()
+         * won't return planet positions previously computed from other
+         * ephemerides
+         */
+        protected void swe_set_jpl_file(string fname) {
+            string sp, sdummy = String.Empty;
+            int retc, spi;
+            double[] ss = new double[3];
+            /* close all open files and delete all planetary data */
+            swe_close();
+            /* if path is contained in fnam, it is filled into the path variable */
+            //sp = strrchr(fname, (int)*DIR_GLUE);
+            //if (sp == NULL)
+            //    sp = fname;
+            //else
+            //    sp = sp + 1;
+            //if (strlen(sp) >= AS_MAXCH)
+            //    sp[AS_MAXCH] = '\0';
+            spi = fname.LastIndexOf(DIR_GLUE);
+            sp = spi < 0 ? fname : fname.Substring(spi + 1);
+            swed.jplfnam = sp;
+            /* open ephemeris, if still closed */
+            if (!swed.jpl_file_is_open) {
+                retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref sdummy);
+                if (retc == OK) {
+                    if (swed.jpldenum >= 403) {
+                        if (INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980) {
+                            load_dpsi_deps();
+                        }
+                    }
+                }
+            }
+#if TRACE
+            //swi_open_trace(NULL);
+            //if (swi_trace_count < TRACE_COUNT_MAX) {
+            //  if (swi_fp_trace_c != NULL) {
+            //    fputs("\n/*SWE_SET_JPL_FILE*/\n", swi_fp_trace_c);
+            //    fprintf(swi_fp_trace_c, "  strcpy(s, \"%s\");\n", fname);
+            //    fputs("  swe_set_jpl_file(s);\n", swi_fp_trace_c);
+            //    fputs("  printf(\"swe_set_jpl_file: fname_in = \");", swi_fp_trace_c);
+            //    fputs("  printf(s);\n", swi_fp_trace_c);
+            //    fputs("  printf(\"\\tfname_set = unknown to swetrace\\n\");  /* unknown to swetrace */\n", swi_fp_trace_c);
+            //    fflush(swi_fp_trace_c);
+            //  }
+            //  if (swi_fp_trace_out != NULL) {
+            trace("swe_set_jpl_file: fname_in = ");
+            trace(fname);
+            trace("\tfname_set = ");
+            trace(sp);
+            trace("\n");
+            //    fflush(swi_fp_trace_out);
+            //  }
+            //}
+#endif
+        }
 
         /* calculates obliquity of ecliptic and stores it together
          * with its date, sine, and cosine
@@ -1898,7 +1898,7 @@ namespace SweNet
          */
         int sweph(double tjd, int ipli, int ifno, Int32 iflag, CPointer<double> xsunb, bool do_save, CPointer<double> xpret, ref string serr) {
             int i, ipl, retc, subdirlen;
-            string s = String.Empty, subdirnam = String.Empty, fname = String.Empty, sp;
+            string s = String.Empty, subdirnam = String.Empty, fname = String.Empty/*, sp*/;
             int spi;
             double t, tsv;
             double[] xemb = new double[6], xx = new double[6], xp;
@@ -2111,7 +2111,7 @@ namespace SweNet
          * Alois 2.12.98: inserted error message generation for file not found 
          */
         CFile swi_fopen(int ifno, string fname, string ephepath, ref string serr) {
-            int np, i, j;
+            int np, i/*, j*/;
             CFile fp = null;
             string fnamp, fn = String.Empty;
             string[] cpos;
@@ -2585,7 +2585,7 @@ namespace SweNet
          * longitude of the vernal point of t referred to the
          * ecliptic of t0.
          */
-        double swe_get_ayanamsa(double tjd_et) {
+        protected double swe_get_ayanamsa(double tjd_et) {
             double[] x = new double[6]; double eps;
             sid_data sip = swed.sidd;
             string star = string.Empty; string sdummy = null;
@@ -3808,8 +3808,8 @@ namespace SweNet
          * serr         error string
          */
         int read_const(int ifno, ref string serr) {
-            string c, sp;
-            char c2;
+            string /*c,*/ sp;
+            //char c2;
             string s = String.Empty, s2 = String.Empty;
             string sastnam = String.Empty;
             int i, ipli, kpl, spi;
@@ -4961,6 +4961,17 @@ namespace SweNet
             }
             return result;
         }
+        static T[][] CreateArray<T>(T[,] fromArray) {
+            int dim1 = fromArray.GetLength(0), dim2 = fromArray.GetLength(1);
+            T[][] result = CreateArray<T>(dim1, dim2);
+            for (int i = 0; i < dim1; i++) {
+                //result[i] = new T[dim2];
+                for (int j = 0; j < dim2; j++) {
+                    result[i][j] = fromArray[i, j];
+                }
+            }
+            return result;
+        }
 
         /* lunar osculating elements, i.e.
          */
@@ -5575,8 +5586,8 @@ namespace SweNet
           string slast_stardata=String.Empty;
           string slast_starname=String.Empty;
           string sdummy = null;
-          Int32 swe_fixstar(string star, double tjd, Int32 iflag,
-            CPointer<double> xx, ref string serr) {
+          protected Int32 swe_fixstar(string star, double tjd, Int32 iflag,
+            double[] xx, ref string serr) {
               int i;
               int star_nr = 0;
               bool isnomclat = false;
@@ -5585,7 +5596,7 @@ namespace SweNet
               string[] cpos;
               string sstar = String.Empty;
               string fstar = String.Empty;
-              string s = String.Empty; string sp=String.Empty, sp2;	/* 20 byte for SE_STARFILE */
+              string s = String.Empty; string sp=String.Empty/*, sp2*/;	/* 20 byte for SE_STARFILE */
               double ra_s, ra_pm, de_pm, ra, de, t, cosra, cosde, sinra, sinde;
               double ra_h, ra_m, de_d, de_m, de_s;
               string sde_d;
@@ -5927,10 +5938,10 @@ namespace SweNet
                ************************************************/
               if (0 == (iflag & SEFLG_NONUT))
                   swi_nutate(x, 0, false);
-              if (false) {
-                  double r = Math.Sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
-                  printf("%.17f %.17f %f\n", x[0] / r, x[1] / r, x[2] / r);
-              }
+              //if (false) {
+              //    double r = Math.Sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
+              //    printf("%.17f %.17f %f\n", x[0] / r, x[1] / r, x[2] / r);
+              //}
               /************************************************
                * unit vector (distance = 1)                   *
                ************************************************/
@@ -6018,146 +6029,126 @@ namespace SweNet
               return retc;
           }
 
-          Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag,
-            CPointer<double> xx, ref string serr) {
+          protected Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag,
+            double[] xx, ref string serr) {
               return swe_fixstar(star, tjd_ut + swe_deltat(tjd_ut), iflag, xx, ref serr);
           }
 
-///**********************************************************
-// * get fixstar magnitude
-// * parameters:
-// * star 	name of star or line number in star file 
-// *		(start from 1, don't count comment).
-// *    		If no error occurs, the name of the star is returned
-// *	        in the format trad_name, nomeclat_name
-// *
-// * mag 		pointer to a double, for star magnitude
-// * serr		error return string
-//**********************************************************/
-//int32 FAR PASCAL_CONV swe_fixstar_mag(char *star, double *mag, char *serr)
-//{
-//  int i;
-//  int star_nr = 0;
-//  AS_BOOL  isnomclat = FALSE;
-//  size_t cmplen;
-//  char *cpos[20];
-//  char sstar[SE_MAX_STNAME + 1];
-//  char fstar[SE_MAX_STNAME + 1];
-//  char s[AS_MAXCH + 20], *sp, *sp2;	/* 20 byte for SE_STARFILE */
-//  int line = 0;
-//  int fline = 0;
-//  int retc;
-//  if (serr != NULL)
-//    *serr = '\0';
-//  /******************************************************
-//   * Star file
-//   * close to the beginning, a few stars selected by Astrodienst.
-//   * These can be accessed by giving their number instead of a name.
-//   * All other stars can be accessed by name.
-//   * Comment lines start with # and are ignored.
-//   ******************************************************/
-//  if (swed.fixfp == NULL) {
-//    if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE, swed.ephepath, serr)) == NULL) {
-//      swed.is_old_starfile = TRUE;
-//      if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE_OLD, swed.ephepath, NULL)) == NULL) {
-//    retc = ERR;
-//    goto return_err;
-//      }
-//    }
-//  }
-//  rewind(swed.fixfp);
-//  strncpy(sstar, star, SE_MAX_STNAME);
-//  sstar[SE_MAX_STNAME] = '\0';
-//  if (*sstar == ',') {
-//    isnomclat = TRUE;
-//  } else if (isdigit((int) *sstar)) {
-//    star_nr = atoi(sstar);
-//  } else {
-//    /* traditional name of star to lower case */
-//    for (sp = sstar; *sp != '\0'; sp++) 
-//      *sp = tolower((int) *sp);
-//    if ((sp = strchr(sstar, ',')) != NULL)
-//      *sp = '\0';
-//  }
-//  swi_right_trim(sstar);
-//  cmplen = strlen(sstar);
-//  if (cmplen == 0) {
-//    if (serr != NULL)
-        //      serr=C.sprintf("swe_fixstar_mag(): star name empty");
-//    retc = ERR;
-//    goto return_err;
-//  }
-//  while (fgets(s, AS_MAXCH, swed.fixfp) != NULL) {
-//    fline++;	
-//    if (*s == '#') continue;
-//    line++;
-//    if (star_nr == line)
-//      goto found;
-//    else if (star_nr > 0)
-//      continue;
-//    if ((sp = strchr(s, ',')) == NULL) {
-//      if (serr != NULL) {
-        //    serr=C.sprintf("star file %s damaged at line %d", SE_STARFILE, fline);
-//      }
-//      retc = ERR;
-//      goto return_err;
-//    } 
-//    if (isnomclat) {
-//      if (strncmp(sp, sstar, cmplen) == 0)
-//        goto found;
-//      else
-//        continue;
-//    }
-//    *sp = '\0';	/* cut off first field */
-//    strncpy(fstar, s, SE_MAX_STNAME);
-//    *sp = ',';
-//    fstar[SE_MAX_STNAME] = '\0';	/* force termination */
-//    swi_right_trim(fstar);
-//    i = strlen(fstar);
-//    if (i < (int) cmplen)
-//      continue;
-//    for (sp2 = fstar; *sp2 != '\0'; sp2++) {
-//      *sp2 = tolower((int) *sp2);
-//    }
-//    if (strncmp(fstar, sstar, cmplen) == 0) 
-//      goto found;
-//  }
-//  if (serr != NULL) {
-//    serr= "star  not found";
-//    if (strlen(serr) + strlen(star) < AS_MAXCH) {
-        //      serr=C.sprintf("star %s not found", star);
-//    }
-//  }
-//  retc = ERR;
-//  goto return_err;
-//  found:
-//  i = swi_cutstr(s, ",", cpos, 20);
-//  swi_right_trim(cpos[0]);
-//  swi_right_trim(cpos[1]);
-//  if (i < 13) {
-//    if (serr != NULL) {
-//      serr= "data of star incomplete";
-//      if (strlen(serr) + strlen(cpos[0]) + strlen(cpos[1]) + 2 < AS_MAXCH) {
-        //    serr=C.sprintf("data of star '%s,%s' incomplete", cpos[0], cpos[1]);
-//      }
-//    }
-//    retc = ERR;
-//    goto return_err;
-//  }
-//  *mag = atof(cpos[13]);
-//  /* return trad. name, nomeclature name */
-//  if (strlen(cpos[0]) > SE_MAX_STNAME)
-//    cpos[0,SE_MAX_STNAME] = '\0';
-//  if (strlen(cpos[1]) > SE_MAX_STNAME-1)
-//    cpos[1,SE_MAX_STNAME-1] = '\0';
-//  star= cpos[0];
-//  if (strlen(cpos[0]) + strlen(cpos[1]) + 1 < SE_MAX_STNAME - 1)
-        //    star + strlen(star)=C.sprintf(",%s", cpos[1]);
-//  return OK;
-//  return_err:
-//  *mag = 0;
-//  return retc;
-//}
+        /**********************************************************
+         * get fixstar magnitude
+         * parameters:
+         * star 	name of star or line number in star file 
+         *		(start from 1, don't count comment).
+         *    		If no error occurs, the name of the star is returned
+         *	        in the format trad_name, nomeclat_name
+         *
+         * mag 		pointer to a double, for star magnitude
+         * serr		error return string
+        **********************************************************/
+          Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr) {
+              int i;
+              int star_nr = 0;
+              bool isnomclat = false;
+              int cmplen;
+              string[] cpos = new string[20];
+              string sstar; string sdummy = null;
+              string fstar;
+              string s = String.Empty/*, sp, sp2*/;	/* 20 byte for SE_STARFILE */
+              int line = 0;
+              int fline = 0;
+              int retc; int spi;
+              serr = String.Empty;
+              /******************************************************
+               * Star file
+               * close to the beginning, a few stars selected by Astrodienst.
+               * These can be accessed by giving their number instead of a name.
+               * All other stars can be accessed by name.
+               * Comment lines start with # and are ignored.
+               ******************************************************/
+              if (swed.fixfp == null) {
+                  if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE, swed.ephepath, ref serr)) == null) {
+                      swed.is_old_starfile = true;
+                      if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null) {
+                          retc = ERR;
+                          goto return_err;
+                      }
+                  }
+              }
+              swed.fixfp.Seek(0, SeekOrigin.Begin);
+              sstar = star;
+              if (sstar.StartsWith(",")) {
+                  isnomclat = true;
+              } else if (sstar.Length > 1 && Char.IsDigit(sstar[0])) {
+                  star_nr = int.Parse(sstar);
+              } else {
+                  /* traditional name of star to lower case */
+                  sstar = sstar.ToLower();
+                  spi = sstar.IndexOf(',');
+                  if (spi >= 0)
+                      sstar = sstar.Substring(0, spi);
+              }
+              sstar = sstar.TrimEnd();
+              cmplen = sstar.Length;
+              if (cmplen == 0) {
+                  serr = C.sprintf("swe_fixstar_mag(): star name empty");
+                  retc = ERR;
+                  goto return_err;
+              }
+              while ((s = swed.fixfp.ReadLine()) != null) {
+                  fline++;
+                  if (s.StartsWith("#")) continue;
+                  line++;
+                  if (star_nr == line)
+                      goto found;
+                  else if (star_nr > 0)
+                      continue;
+                  if ((spi = s.IndexOf(",")) == 0) {
+                      serr = C.sprintf("star file %s damaged at line %d", SE_STARFILE, fline);
+                      retc = ERR;
+                      goto return_err;
+                  }
+                  if (isnomclat) {
+                      if (s.StartsWith(sstar))
+                          goto found;
+                      else
+                          continue;
+                  }
+                  //sp = '\0';	/* cut off first field */
+                  //strncpy(fstar, s, SE_MAX_STNAME);
+                  //*sp = ',';
+                  //fstar[SE_MAX_STNAME] = '\0';	/* force termination */
+                  fstar = s.Substring(0, spi).TrimEnd();
+                  i = fstar.Length;
+                  if (i < (int)cmplen)
+                      continue;
+                  //for (sp2 = fstar; *sp2 != '\0'; sp2++) {
+                  //    *sp2 = tolower((int)*sp2);
+                  //}
+                  fstar = fstar.ToLower();
+                  if (fstar.StartsWith(sstar))
+                      goto found;
+              }
+              serr = C.sprintf("star %s not found", star);
+              retc = ERR;
+              goto return_err;
+          found:
+              cpos = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+              i = cpos.Length;
+              cpos[0] = cpos[0].TrimEnd();
+              cpos[1] = cpos[1].TrimEnd();
+              if (i < 13) {
+                  serr = C.sprintf("data of star '%s,%s' incomplete", cpos[0], cpos[1]);
+                  retc = ERR;
+                  goto return_err;
+              }
+              mag = double.Parse(cpos[13]);
+              /* return trad. name, nomeclature name */
+              star = String.Format("{0},{1}", cpos[0], cpos[1]);
+              return OK;
+          return_err:
+              mag = 0;
+              return retc;
+          }
 
 //#if 0
 //int swe_fixstar(char *star, double tjd, int32 iflag, double *xx, char *serr)
@@ -6200,8 +6191,8 @@ namespace SweNet
 
 
         protected string swe_get_planet_name(int ipl) {
-            int i;
-            Int32 retc;
+            //int i;
+            //Int32 retc;
             double[] xp = new double[6];
             string s = String.Empty;
 #if TRACE
@@ -6590,57 +6581,54 @@ namespace SweNet
             return OK;
         }
 
-///* Equation of Time
-// *
-// * The function returns the difference between 
-// * local apparent and local mean time in days.
-// * E = LAT - LMT
-// * Input variable tjd is UT.
-// */
-//int FAR PASCAL_CONV swe_time_equ(double tjd_ut, double *E, char *serr)
-//{
-//  int32 retval;
-//  double t, dt, x[6];
-//  double sidt = swe_sidtime(tjd_ut);
-//  int32 iflag = SEFLG_EQUATORIAL;
-//  if (swed.jpl_file_is_open)
-//    iflag |= SEFLG_JPLEPH;
-//  t = tjd_ut + 0.5;
-//  dt = t - floor(t);
-//  sidt -= dt * 24;
-//  sidt *= 15;
-//  if ((retval = swe_calc_ut(tjd_ut, SE_SUN, iflag, x, serr)) == ERR)
-//    return ERR;
-//  dt = swe_degnorm(sidt - x[0] - 180);
-//  if (dt > 180)
-//    dt -= 360;
-//  dt *= 4;
-//  *E = dt / 1440.0;
-//  return OK;
-//}
+        /* Equation of Time
+         *
+         * The function returns the difference between 
+         * local apparent and local mean time in days.
+         * E = LAT - LMT
+         * Input variable tjd is UT.
+         */
+        protected int swe_time_equ(double tjd_ut, out double E, ref string serr) {
+            Int32 retval; E = 0;
+            double t, dt; double[] x = new double[6];
+            double sidt = swe_sidtime(tjd_ut);
+            Int32 iflag = SEFLG_EQUATORIAL;
+            if (swed.jpl_file_is_open)
+                iflag |= SEFLG_JPLEPH;
+            t = tjd_ut + 0.5;
+            dt = t - Math.Floor(t);
+            sidt -= dt * 24;
+            sidt *= 15;
+            if ((retval = swe_calc_ut(tjd_ut, SE_SUN, iflag, x, out serr)) == ERR)
+                return ERR;
+            dt = swe_degnorm(sidt - x[0] - 180);
+            if (dt > 180)
+                dt -= 360;
+            dt *= 4;
+            E = dt / 1440.0;
+            return OK;
+        }
 
-//int32 FAR PASCAL_CONV swe_lmt_to_lat(double tjd_lmt, double geolon, double *tjd_lat, char *serr)
-//{
-//  int32 retval;
-//  double E, tjd_lmt0;
-//  tjd_lmt0 = tjd_lmt - geolon / 360.0;
-//  retval = swe_time_equ(tjd_lmt0, &E, serr);
-//  *tjd_lat = tjd_lmt + E;
-//  return retval;
-//}
+        protected Int32 swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, out string serr) {
+            Int32 retval; serr = null;
+            double E, tjd_lmt0;
+            tjd_lmt0 = tjd_lmt - geolon / 360.0;
+            retval = swe_time_equ(tjd_lmt0, out E, ref serr);
+            tjd_lat = tjd_lmt + E;
+            return retval;
+        }
 
-//int32 FAR PASCAL_CONV swe_lat_to_lmt(double tjd_lat, double geolon, double *tjd_lmt, char *serr)
-//{
-//  int32 retval;
-//  double E, tjd_lmt0;
-//  tjd_lmt0 = tjd_lat - geolon / 360.0;
-//  retval = swe_time_equ(tjd_lmt0, &E, serr);
-//  /* iteration */
-//  retval = swe_time_equ(tjd_lmt0 - E, &E, serr);
-//  retval = swe_time_equ(tjd_lmt0 - E, &E, serr);
-//  *tjd_lmt = tjd_lat - E;
-//  return retval;
-//}
+        protected Int32 swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, out string serr) {
+            Int32 retval; serr = null;
+            double E, tjd_lmt0;
+            tjd_lmt0 = tjd_lat - geolon / 360.0;
+            retval = swe_time_equ(tjd_lmt0, out E, ref serr);
+            /* iteration */
+            retval = swe_time_equ(tjd_lmt0 - E, out E, ref serr);
+            retval = swe_time_equ(tjd_lmt0 - E, out E, ref serr);
+            tjd_lmt = tjd_lat - E;
+            return retval;
+        }
 
         int open_jpl_file(CPointer<double> ss, string fname, string fpath, ref string serr) {
             int retc;

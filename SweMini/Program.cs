@@ -106,7 +106,7 @@ namespace SweMini
                     /*gets(sdate);*/
                     //    if( !fgets(sdate, sizeof(sdate)-1, stdin) ) return OK;
                     sdate = Console.ReadLine();
-                    if (String.IsNullOrWhiteSpace(sdate)) return SwissEph.OK;
+                    if (String.IsNullOrWhiteSpace(sdate)) break;
                     /*
                      * stop if a period . is entered
                      */

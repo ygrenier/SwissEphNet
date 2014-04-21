@@ -324,7 +324,7 @@ namespace SweNet
 //#  define BFILE_RW_ACCESS "r+b"	/* open binary file for writing and reading */
 //#  define BFILE_W_CREATE "wb"	/* create/open binary file for write*/
 //#  define BFILE_A_ACCESS "a+b"	/* create/open binary file for append*/
-        public char PATH_SEPARATOR = ';';	/* semicolon as PATH separator */
+        public static char PATH_SEPARATOR = ';';	/* semicolon as PATH separator */
 //#  define OPEN_MODE 0666	/* default file creation mode */
 //# ifdef MACOS
 //#  define FILE_R_ACCESS "r"	/* open text file for reading */
@@ -339,7 +339,7 @@ namespace SweNet
 //#  define FILE_A_ACCESS "a+t"	/* create/open text file for append*/
 ///* attention, all backslashes for msdos directry names must be written as \\,
 //   because it is the C escape character */
-        public char DIR_GLUE = '\\';		/* glue string for directory/file */
+        public static char DIR_GLUE = '\\';		/* glue string for directory/file */
 //# endif
 //#endif
 

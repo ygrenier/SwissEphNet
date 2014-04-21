@@ -115,7 +115,7 @@ namespace SweNet
         bool NUT_IAU_2000B = true;  /* fast, but precision of milli-arcsec */
         /* Set TRUE, to include Herring's (1987) corrections to IAU 1980 
          * nutation series. AA (1996) neglects them.  */
-        bool NUT_CORR_1987 = false;
+        //bool NUT_CORR_1987 = false;
 
         /* frame bias */
         bool FRAME_BIAS_IAU2006 = true;  /* if false, frame bias iau2000 will be used
