@@ -27,6 +27,8 @@ The other elements are declared as private.
 
 The compilation configuration use pre-processor constants. We remove lot of them in our case. The other are converted as constants, not pre-processor.
 
-## SwissEphemeris configuration
+# References
 
-We don't use 
+The Swiss Ephemeris Programming Interface documentation : http://www.astro.com/swisseph/swephprg.htm.
+Last code source of Swiss Ephemeris from ftp://ftp.astro.ch/pub/swisseph/.
+The NASA JPL resouces : http://www.jpl.nasa.gov/, http://ssd.jpl.nasa.gov/
