@@ -3948,7 +3948,7 @@ namespace SweNet
             /************************************* 
              * one int32 for test of byte order   * 
              *************************************/
-            if (fp.Read(ref testendian) != 1)
+            if (!fp.Read(ref testendian))
                 goto file_damage;
             /* is byte order correct?            */
             if (testendian == SEI_FILE_TEST_ENDIAN)
