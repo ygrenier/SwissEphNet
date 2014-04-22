@@ -2337,8 +2337,8 @@ namespace SweNet
                     break; /* use initial tjd */
                 } else if (i == nstartpos - 1) {
                     for (j = 0; j < nstartpos; j++)
-                        printf("%f ", dc[j]);
-                    printf("swe_lun_occult_when_loc(): problem planet\n");
+                        trace("%f ", dc[j]);
+                    serr = "swe_lun_occult_when_loc(): problem planet\n";
                     return ERR;
                 }
             }

@@ -35,7 +35,6 @@
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
     <Compile Include="Extensions\ArrayExtensions.cs" />
-    <Compile Include="SwissEph.printf.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="cport\SwissEph.swecl.c.cs" />

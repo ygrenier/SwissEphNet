@@ -1435,15 +1435,15 @@ namespace SweNet
                 {
                     int ii;
                     for (ii = 0; i < 6; ii++)
-                        printf("dobs[%d] = %f\n", ii, dobs[ii]);
-                    printf("AltO = %.10f, AziO = %.10f\n", AltO, AziO);
-                    printf("AltM = %.10f, AziM = %.10f\n", AltM, AziM);
-                    printf("AltS = %.10f, AziS = %.10f\n", AltS, AziS);
-                    printf("JD = %.10f\n", tjdut);
-                    printf("lat = %f, eyeh = %f\n", dgeo[1], dgeo[2]);
+                        trace("dobs[%d] = %f\n", ii, dobs[ii]);
+                    trace("AltO = %.10f, AziO = %.10f\n", AltO, AziO);
+                    trace("AltM = %.10f, AziM = %.10f\n", AltM, AziM);
+                    trace("AltS = %.10f, AziS = %.10f\n", AltS, AziS);
+                    trace("JD = %.10f\n", tjdut);
+                    trace("lat = %f, eyeh = %f\n", dgeo[1], dgeo[2]);
                     for (ii = 0; i < 4; ii++)
-                        printf("datm[%d] = %f\n", i, datm[ii]);
-                    printf("helflag = %d\n", helflag);
+                        trace("datm[%d] = %f\n", i, datm[ii]);
+                    trace("helflag = %d\n", helflag);
                 }
 #endif
                 dret[0] = VisLimMagn(dobs, AltO, AziO, AltM, AziM, tjdut, AltS, AziS, sunra, dgeo[1], dgeo[2], datm, helflag, ref scotopic_flag, ref serr);

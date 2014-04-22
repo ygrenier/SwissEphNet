@@ -27,24 +27,6 @@ namespace SweNet
     }
 
     /// <summary>
-    /// Arguments for print event
-    /// </summary>
-    public class PrintEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Create new arguments
-        /// </summary>
-        public PrintEventArgs(String line) {
-            this.Line = line;
-        }
-
-        /// <summary>
-        /// Line printed
-        /// </summary>
-        public String Line { get; private set; }
-    }
-
-    /// <summary>
     /// Arguments for load file event
     /// </summary>
     public class LoadFileEventArgs : EventArgs
