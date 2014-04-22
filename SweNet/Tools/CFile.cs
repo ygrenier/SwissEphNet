@@ -112,15 +112,21 @@ namespace SweNet
         public string ReadLine() {
             if (_Stream == null) return null;
             List<byte> buff = new List<byte>();
-            int rb;
-            while ((rb = ReadNextByte()) > 0) {
+            int rb, read = 0;
+            while ((rb = ReadNextByte()) >= 0) {
                 byte c = (byte)rb;
+                read++;
                 // Check if end of line
                 bool endOfLine = false;
                 if (c == '\r') {
                     endOfLine = true;
                     rb = ReadNextByte();
-                    c = (byte)rb;
+                    if (rb >= 0) {
+                        c = (byte)rb;
+                        read++;
+                    } else {
+                        break;
+                    }
                 }
                 if (c == '\n') {
                     endOfLine = true;
@@ -131,7 +137,7 @@ namespace SweNet
                 //
                 buff.Add(c);
             }
-            if (EOF && buff.Count == 0) return null;
+            if (EOF && read == 0) return null;
             return _Encoding.GetString(buff.ToArray(), 0, buff.Count);
         }
 
@@ -187,6 +193,13 @@ namespace SweNet
             var buff = BitConverter.GetBytes((Int32)0);
             if (ReadBytes(buff, buff.Length) != buff.Length) throw new EndOfStreamException();
             return BitConverter.ToInt32(buff, 0);
+        }
+
+        /// <summary>
+        /// Read a char or return -1 if end of file
+        /// </summary>
+        public int Read() {
+            return ReadNextByte();
         }
 
         /// <summary>

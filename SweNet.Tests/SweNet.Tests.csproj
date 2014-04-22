@@ -59,6 +59,7 @@
     <Compile Include="CScanfTest.cs" />
     <Compile Include="SwissEphTest.Planets.cs" />
     <Compile Include="SwissEphTest.Date.cs" />
+    <Compile Include="CFileTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SweNet\SweNet.csproj">
