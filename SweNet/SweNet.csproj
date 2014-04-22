@@ -60,6 +60,8 @@
     <Compile Include="cport\SwissEph.swephlib.c.cs" />
     <Compile Include="cport\SwissEph.swephlib.h.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Latitude.cs" />
+    <Compile Include="Longitude.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwissEph.cs" />
     <Compile Include="SwissEph.trace.cs" />
