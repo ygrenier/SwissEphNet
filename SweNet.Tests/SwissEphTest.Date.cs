@@ -162,7 +162,7 @@ namespace SweNet.Tests
         public void TestDeltaT_without_ESPENAK_MEEUS_2006() {
             using (var swe = new SwissEph()) {
                 swe.ESPENAK_MEEUS_2006 = false;
-                double deltaPrec = 0.00000000000001;
+                double deltaPrec = 0.000000000001;
 
                 Assert.AreEqual(1.5716511059188, swe.DeltaT(0.0), deltaPrec);
 
@@ -171,6 +171,10 @@ namespace SweNet.Tests
                 Assert.AreEqual(0.0375609656805818, swe.DeltaT(2000000.5), deltaPrec);
                 Assert.AreEqual(0.0375608986525707, swe.DeltaT(2000000.75), deltaPrec);
                 Assert.AreEqual(0.000848297829347124, swe.DeltaT(2317746.13090277789), deltaPrec);
+
+                var tjd = SwissEph.J2000 + (365.25 * (1610 - 2000.0));
+                Assert.AreEqual(0.00138947083317893, swe.DeltaT(tjd), deltaPrec);
+                
 
                 Assert.AreEqual(0.101230433035332, swe.DeltaT(3000000), deltaPrec);
                 Assert.AreEqual(0.101230598229371, swe.DeltaT(3000000.5), deltaPrec);
