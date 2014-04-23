@@ -103,5 +103,23 @@ namespace SweNet.Tests
             new Longitude(98, 7, -24, LongitudePolarity.East);
         }
 
+        [TestMethod]
+        public void TestExplicitCast() {
+            Double value = 278.123456789;
+
+            Longitude l = value;
+
+            Assert.AreEqual(98, l.Degrees);
+            Assert.AreEqual(7, l.Minutes);
+            Assert.AreEqual(24, l.Seconds);
+            Assert.AreEqual(LongitudePolarity.East, l.Polarity);
+            Assert.AreEqual(98.1233333333333, l.Value, 0.00000000001);
+            Assert.AreEqual("98E07'24\"", l.ToString());
+
+            value = l;
+            Assert.AreEqual(98.1233333333333, value, 0.00000000001);
+
+        }
+
     }
 }

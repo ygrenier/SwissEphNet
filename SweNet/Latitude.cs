@@ -75,6 +75,20 @@ namespace SweNet
         }
 
         /// <summary>
+        /// Implicit conversion of Latitude to Double
+        /// </summary>
+        public static implicit operator Double(Latitude lat) {
+            return lat.Value;
+        }
+
+        /// <summary>
+        /// Implicit conversion of Double to Latitude
+        /// </summary>
+        public static implicit operator Latitude(Double val) {
+            return new Latitude(val);
+        }
+
+        /// <summary>
         /// Degrees
         /// </summary>
         public int Degrees { get; private set; }

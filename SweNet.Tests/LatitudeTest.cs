@@ -103,5 +103,23 @@ namespace SweNet.Tests
             new Latitude(98, 7, -24, LatitudePolarity.North);
         }
 
+        [TestMethod]
+        public void TestExplicitCast() {
+            Double value = 278.123456789;
+
+            Latitude l = value;
+
+            Assert.AreEqual(98, l.Degrees);
+            Assert.AreEqual(7, l.Minutes);
+            Assert.AreEqual(24, l.Seconds);
+            Assert.AreEqual(LatitudePolarity.North, l.Polarity);
+            Assert.AreEqual(98.1233333333333, l.Value, 0.00000000001);
+            Assert.AreEqual("98N07'24\"", l.ToString());
+
+            value = l;
+            Assert.AreEqual(98.1233333333333, value, 0.00000000001);
+
+        }
+
     }
 }
