@@ -59,6 +59,14 @@ namespace SweNet
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="geopos"></param>
+        public void SetTopo(GeoPosition geopos) {
+            SetTopo(geopos.Longitude, geopos.Latitude, geopos.Altitude);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="geolong"></param>
         /// <param name="geolat"></param>
         /// <param name="geoalt"></param>
