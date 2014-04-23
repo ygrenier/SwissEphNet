@@ -17,13 +17,15 @@ namespace SweNet
         /// <param name="value"></param>
         public Latitude(Double value)
             : this() {
+            var sig = Math.Sign(value);
+            value = Math.Abs(value);
             Degrees = (int)value;
             Minutes = ((int)(value * 60.0)) % 60;
-            Seconds = ((int)(value * 3600.0)) % 3600;
-            while (Degrees <= -180) Degrees += 180;
+            Seconds = ((int)(value * 3600.0)) % 60;
             while (Degrees >= 180) Degrees -= 180;
             Value = Degrees + (Minutes / 60.0) + (Seconds / 3600.0);
-            Polarity = Degrees < 0 ? LatitudePolarity.South : LatitudePolarity.North;
+            if (sig < 0) Value = -Value;
+            Polarity = sig < 0 ? LatitudePolarity.South : LatitudePolarity.North;
         }
 
         /// <summary>
@@ -32,16 +34,17 @@ namespace SweNet
         /// <param name="degrees"></param>
         /// <param name="minutes"></param>
         /// <param name="seconds"></param>
-        public Latitude(int degrees, uint minutes, double seconds)
+        public Latitude(int degrees, int minutes, int seconds)
             : this() {
             if (degrees <= -180 || degrees >= 180) throw new ArgumentOutOfRangeException("degrees");
             if (minutes < 0 || minutes >= 60) throw new ArgumentOutOfRangeException("minutes");
             if (seconds < 0.0 || seconds >= 60.0) throw new ArgumentOutOfRangeException("seconds");
-            Degrees = degrees;
-            Minutes = (int)minutes;
+            Degrees = Math.Abs(degrees);
+            Minutes = minutes;
             Seconds = seconds;
             Value = Degrees + (Minutes / 60.0) + (Seconds / 3600.0);
-            Polarity = Degrees < 0 ? LatitudePolarity.South : LatitudePolarity.North;
+            if (degrees < 0) Value = -Value;
+            Polarity = degrees < 0 ? LatitudePolarity.South : LatitudePolarity.North;
         }
 
         /// <summary>
@@ -51,16 +54,24 @@ namespace SweNet
         /// <param name="minutes"></param>
         /// <param name="seconds"></param>
         /// <param name="polarity"></param>
-        public Latitude(uint degrees, int minutes, double seconds, LatitudePolarity polarity)
+        public Latitude(int degrees, int minutes, int seconds, LatitudePolarity polarity)
             : this() {
-            if (degrees >= 180) throw new ArgumentOutOfRangeException("degrees");
+            if (degrees < 0 || degrees >= 180) throw new ArgumentOutOfRangeException("degrees");
             if (minutes < 0 || minutes >= 60) throw new ArgumentOutOfRangeException("minutes");
             if (seconds < 0.0 || seconds >= 60.0) throw new ArgumentOutOfRangeException("seconds");
-            Degrees = (int)degrees * (polarity == LatitudePolarity.South ? -1 : 1);
+            Degrees = degrees;
             Minutes = minutes;
             Seconds = seconds;
             Value = Degrees + (Minutes / 60.0) + (Seconds / 3600.0);
+            if (polarity == LatitudePolarity.South) Value = -Value;
             Polarity = polarity;
+        }
+
+        /// <summary>
+        /// Convert to string
+        /// </summary>
+        public override string ToString() {
+            return String.Format("{0}{3}{1:D2}'{2:D2}\"", Degrees, Minutes, Seconds, Polarity.ToString()[0]);
         }
 
         /// <summary>
@@ -76,7 +87,7 @@ namespace SweNet
         /// <summary>
         /// Seconds
         /// </summary>
-        public Double Seconds { get; private set; }
+        public int Seconds { get; private set; }
 
         /// <summary>
         /// Polarity
