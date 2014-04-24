@@ -59,11 +59,14 @@
     <Compile Include="cport\SwissEph.swephexp.h.cs" />
     <Compile Include="cport\SwissEph.swephlib.c.cs" />
     <Compile Include="cport\SwissEph.swephlib.h.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="GeoPosition.cs" />
     <Compile Include="Latitude.cs" />
     <Compile Include="Longitude.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SweConst.cs" />
+    <Compile Include="SweDate.cs" />
     <Compile Include="SwissEph.cs" />
     <Compile Include="SwissEph.trace.cs" />
     <Compile Include="Tools\CFile.cs" />
@@ -71,6 +74,7 @@
     <Compile Include="Tools\C.cs" />
     <Compile Include="Tools\C.printf.cs" />
     <Compile Include="Tools\C.scanf.cs" />
+    <Compile Include="[Enums].cs" />
     <Compile Include="[events].cs" />
   </ItemGroup>
   <ItemGroup>
