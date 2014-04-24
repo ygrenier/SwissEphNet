@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <Compile Include="EphemerisTime.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +63,7 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="GeoPosition.cs" />
+    <Compile Include="JulianDay.cs" />
     <Compile Include="Latitude.cs" />
     <Compile Include="Longitude.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -62,7 +62,7 @@ namespace SweNet
         /// <param name="date">Date to convert</param>
         /// <param name="calendar">Calendar of conversion</param>
         /// <returns>The julian day value as Universal Time</returns>
-        public double DateTimeToJulianDay(DateTime date, DateCalendar calendar) {
+        public static double DateTimeToJulianDay(DateTime date, DateCalendar calendar) {
             double jd;
             double u, u0, u1, u2;
             u = date.Year;
@@ -109,7 +109,7 @@ namespace SweNet
         /// <param name="jd"></param>
         /// <param name="calendar"></param>
         /// <returns></returns>
-        public DateTime JulianDayToDateTime(double jd, DateCalendar calendar) {
+        public static DateTime JulianDayToDateTime(double jd, DateCalendar calendar) {
             double u0, u1, u2, u3, u4;
             u0 = jd + 32082.5;
             if (calendar == DateCalendar.Gregorian) {
@@ -129,80 +129,6 @@ namespace SweNet
             var jmin = (int)((jut * 60.0) % 60.0);
             var jsec = (int)((jut * 3600.0) % 60.0);
             return new DateTime(jyear, jmon, jday, jhour, jmin, jsec);
-        }
-
-        /// <summary>
-        /// Returns the Ephemeris Time of a DateTime
-        /// </summary>
-        /// <remarks>
-        /// The Ephemeris Time (UT) is the Julian Day + DeltaT.
-        /// </remarks>
-        /// <param name="date">Date to convert</param>
-        /// <param name="calendar">Calendar of conversion</param>
-        /// <returns>The julian day value as Ephemeris Time</returns>
-        public double DateTimeToEphemerisTime(DateTime date, DateCalendar calendar) {
-            var jdut = DateTimeToJulianDay(date, calendar);
-            return jdut + DeltaT(jdut);
-        } 
-
-        /// <summary>
-        /// Returns DeltaT (ET - UT) in days
-        /// </summary>
-        /// <param name="jd">Julian Day in UT</param>
-        /// <returns></returns>
-        public Double DeltaT(double jd) {
-            throw new NotImplementedException("SweDate.DeltaT");
-//            double ans = 0;
-//            double B, Y, Ygreg, dd;
-//            int iy;
-//            /* read additional values from swedelta.txt */
-//            bool use_espenak_meeus = ESPENAK_MEEUS_2006;
-//            Y = 2000.0 + (jd - SweConst.J2000) / 365.25;
-//            Ygreg = 2000.0 + (jd - SweConst.J2000) / 365.2425;
-//            /* Before 1633 AD, if the macro ESPENAK_MEEUS_2006 is TRUE: 
-//             * Polynomials by Espenak & Meeus 2006, derived from Stephenson & Morrison 
-//             * 2004. 
-//             * Note, Espenak & Meeus use their formulae only from 2000 BC on.
-//             * However, they use the long-term formula of Morrison & Stephenson,
-//             * which can be used even for the remoter past.
-//             */
-//            if (use_espenak_meeus && jd < 2317746.13090277789) {
-//                return deltat_espenak_meeus_1620(tjd);
-//            }
-//            /* If the macro ESPENAK_MEEUS_2006 is FALSE:
-//             * Before 1620, we follow Stephenson & Morrsion 2004. For the tabulated 
-//             * values 1000 BC through 1600 AD, we use linear interpolation.
-//             */
-//            if (Y < TABSTART) {
-//                if (Y < TAB2_END) {
-//                    return deltat_stephenson_morrison_1600(jd);
-//                } else {
-//                    /* between 1600 and 1620:
-//                     * linear interpolation between 
-//                     * end of table dt2 and start of table dt */
-//                    if (Y >= TAB2_END) {
-//                        B = TABSTART - TAB2_END;
-//                        iy = (TAB2_END - TAB2_START) / TAB2_STEP;
-//                        dd = (Y - TAB2_END) / B;
-//                        /*ans = dt2[iy] + dd * (dt[0] / 100.0 - dt2[iy]);*/
-//                        ans = dt2[iy] + dd * (dt[0] - dt2[iy]);
-//                        ans = adjust_for_tidacc(ans, Ygreg);
-//                        return ans / 86400.0;
-//                    }
-//                }
-//            }
-//            /* 1620 - today + a few years (tabend):
-//             * Besselian interpolation from tabulated values in table dt.
-//             * See AA page K11.
-//             */
-//            if (Y >= TABSTART) {
-//                return deltat_aa(jd);
-//            }
-//#if TRACE
-//            System.Diagnostics.Debug.WriteLine("DeltaT(): {0}\t{0}\t", jd, ans);
-//#endif
-//            return ans / 86400.0;
-
         }
 
     }
