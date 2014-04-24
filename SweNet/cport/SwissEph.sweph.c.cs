@@ -2113,21 +2113,25 @@ namespace SweNet
         CFile swi_fopen(int ifno, string fname, string ephepath, ref string serr) {
             int np, i/*, j*/;
             CFile fp = null;
-            string fnamp, fn = String.Empty;
+            string fnamp;
             string[] cpos;
             //  char s[2 * AS_MAXCH], *s1 = s + AS_MAXCH;	/* a little trick */
             string s = String.Empty, s1 = String.Empty;
-            if (ifno >= 0) {
-                fnamp = swed.fidat[ifno].fnam;
-            } else {
-                fnamp = fn;
-            }
+            //if (ifno >= 0) {
+            //    fnamp = swed.fidat[ifno].fnam;
+            //} else {
+            //    fnamp = fn;
+            //}
             s1 = ephepath;
             cpos = s1.Split(new char[] { PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
             np = cpos.Length;
             for (i = 0; i < np; i++) {
                 s = cpos[i];
-                fp = LoadFile(fnamp, ephepath);
+                fnamp = s.TrimEnd('\\', '/') + "\\" + fname;
+                if (ifno >= 0) {
+                    swed.fidat[ifno].fnam = fnamp;
+                }
+                fp = LoadFile(fnamp);
                 if (fp != null) return fp;
                 //    if (strcmp(s, ".") == 0) { /* current directory */
                 //      *s = '\0';

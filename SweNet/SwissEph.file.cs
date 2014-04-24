@@ -17,12 +17,11 @@ namespace SweNet
 		/// Load a file
 		/// </summary>
 		/// <param name="filename">File name</param>
-		/// <param name="path">Path where to load the file</param>
 		/// <returns>File loaded or null if file not found</returns>
-        protected CFile LoadFile(String filename, String path) {
+        protected CFile LoadFile(String filename) {
             var h = OnLoadFile;
             if (h != null) {
-                var e = new LoadFileEventArgs(filename, path);
+                var e = new LoadFileEventArgs(filename);
                 h(this, e);
                 return e.File;
             }

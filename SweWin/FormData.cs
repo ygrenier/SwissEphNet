@@ -91,12 +91,25 @@ namespace SweWin
             InitializeComponent();
             this.Disposed += FormData_Disposed;
             sweph = new SwissEph();
+            sweph.OnLoadFile += sweph_OnLoadFile;
             init_data();
             string argv0 = Environment.GetCommandLineArgs()[0];
             if (make_ephemeris_path(SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_SPEED, ref argv0) == SwissEph.ERR) {
                 MessageBox.Show("error in make_ephemeris_path()", progname);
                 Environment.Exit(1);
             }
+        }
+
+        void sweph_OnLoadFile(object sender, LoadFileEventArgs e) {
+            String f;
+            if (e.FileName.StartsWith("[ephe]")) {
+                f = e.FileName.Replace("[ephe]", System.IO.Path.Combine(Application.StartupPath, "Datas"));
+            } else
+                f = e.FileName;
+            if (System.IO.File.Exists(f))
+                e.File = new CFile(new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read));
+            else
+                e.File = null;
         }
 
         void FormData_Disposed(object sender, EventArgs e) {

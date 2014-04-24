@@ -34,9 +34,8 @@ namespace SweNet
         /// <summary>
         /// Create new arguments
         /// </summary>
-        public LoadFileEventArgs(String file, String path) {
-            this.FileName = file;
-            this.Path = path;
+        public LoadFileEventArgs(String fileName) {
+            this.FileName = fileName;
             this.File = null;
         }
 
@@ -44,11 +43,6 @@ namespace SweNet
         /// File to load
         /// </summary>
         public String FileName { get; private set; }
-
-        /// <summary>
-        /// Path where search file
-        /// </summary>
-        public String Path { get; private set; }
 
         /// <summary>
         /// C File
