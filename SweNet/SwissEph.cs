@@ -6,7 +6,7 @@ using System.Text;
 namespace SweNet
 {
     /// <summary>
-    /// Swiss Ephemeris context
+    /// Swiss Ephemeris C conversion
     /// </summary>
     public partial class SwissEph : IDisposable
     {
