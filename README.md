@@ -21,7 +21,7 @@ All C files are included in the partial class 'SwissEph' each in a specific file
 
 All exported constants are defined as public in the class.
 
-All exported methods are defined as protected in the class. Each of this methods are converts in public method in the class.
+All exported methods are defined as public in the class.
 
 The other elements are declared as private.
 

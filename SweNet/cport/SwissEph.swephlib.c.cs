@@ -125,7 +125,7 @@ namespace SweNet
 
         /* Reduce x modulo 360 degrees
          */
-        static protected double swe_degnorm(double x) {
+        public double swe_degnorm(double x) {
             double y;
             y = (x % 360.0);
             if (Math.Abs(y) < 1e-13) y = 0;	/* Alois fix 11-dec-1999 */
@@ -135,7 +135,7 @@ namespace SweNet
 
         /* Reduce x modulo TWOPI degrees
          */
-        static protected double swe_radnorm(double x) {
+        public double swe_radnorm(double x) {
             double y;
             y = (x % TWOPI);
             if (Math.Abs(y) < 1e-13) y = 0;	/* Alois fix 11-dec-1999 */
@@ -143,14 +143,14 @@ namespace SweNet
             return (y);
         }
 
-        static protected double swe_deg_midp(double x1, double x0) {
+        public double swe_deg_midp(double x1, double x0) {
             double d, y;
             d = swe_difdeg2n(x1, x0);	/* arc from x0 to x1 */
             y = swe_degnorm(x0 + d / 2);
             return (y);
         }
 
-        static protected double swe_rad_midp(double x1, double x0) {
+        public double swe_rad_midp(double x1, double x0) {
             return DEGTORAD * swe_deg_midp(x1 * RADTODEG, x0 * RADTODEG);
         }
 
@@ -233,7 +233,7 @@ namespace SweNet
          * xpo, xpn are arrays of 3 doubles containing position.
          * attention: input must be in degrees!
          */
-        protected void swe_cotrans(CPointer<double> xpo, CPointer<double> xpn, double eps) {
+        public void swe_cotrans(CPointer<double> xpo, CPointer<double> xpn, double eps) {
             int i;
             double[] x = new double[6]; double e = eps * DEGTORAD;
             for (i = 0; i <= 1; i++)
@@ -260,7 +260,7 @@ namespace SweNet
          * xpo, xpn are arrays of 6 doubles containing position and speed.
          * attention: input must be in degrees!
          */
-        void swe_cotrans_sp(CPointer<double> xpo, CPointer<double> xpn, double eps) {
+        public void swe_cotrans_sp(CPointer<double> xpo, CPointer<double> xpn, double eps) {
             int i;
             double[] x = new double[6]; double e = eps * DEGTORAD;
             for (i = 0; i <= 5; i++)
@@ -2088,7 +2088,7 @@ namespace SweNet
          * double tjd 	= 	julian day in UT
          */
         //#define DEMO 0
-        protected double swe_deltat(double tjd) {
+        public double swe_deltat(double tjd) {
             double ans = 0;
             double B, Y, Ygreg, dd;
             int iy;
@@ -2398,7 +2398,7 @@ namespace SweNet
         }
 
         /* returns tidal acceleration used in swe_deltat() */
-        static double swe_get_tid_acc() {
+        public static double swe_get_tid_acc() {
             return tid_acc;
         }
 
@@ -2412,7 +2412,7 @@ namespace SweNet
          *   used with that ephemeris flag and will set the tidal acceleration
          *   accordingly.
          */
-        protected void swe_set_tid_acc(double t_acc) {
+        public void swe_set_tid_acc(double t_acc) {
             int denum = 0;
             int iflag; string sdummy = null;
             double[] xx = new double[6];
@@ -2426,7 +2426,7 @@ namespace SweNet
                 /* if lunar ephemeris with SEFLG_SWIEPH is not open yet, try to open it */
                 if (swed.fidat[SEI_FILE_MOON].fptr == null) {
                     iflag = SEFLG_SWIEPH | SEFLG_J2000 | SEFLG_TRUEPOS | SEFLG_ICRS;
-                    swe_calc(J2000, SE_MOON, iflag, xx, out sdummy);
+                    swe_calc(J2000, SE_MOON, iflag, xx, ref sdummy);
                 }
                 if (swed.fidat[SEI_FILE_MOON].fptr != null) {
                     denum = swed.fidat[SEI_FILE_MOON].sweph_denum;
@@ -2505,13 +2505,13 @@ namespace SweNet
             dlon = swe_degnorm(dlon - dlt * 360.0 / 365.2425);
             xs[0] = dlon * DEGTORAD; xs[1] = 0; xs[2] = 1;
             /* to mean equator J2000, cartesian */
-            swe_calc_ut(J2000, SE_ECL_NUT, 0, xobl, out sdummy); /* fehler behandeln */
+            swe_calc_ut(J2000, SE_ECL_NUT, 0, xobl, ref sdummy); /* fehler behandeln */
             swi_polcart(xs, xs);
             swi_coortrf(xs, xs, -xobl[1] * DEGTORAD);
             /* precess to mean equinox of date */
             swi_precess(xs, tjd_et, 0, -1);
             /* to mean equinox of date */
-            swe_calc_ut(tjd_ut, SE_ECL_NUT, 0, xobl, out sdummy); /* fehler behandeln */
+            swe_calc_ut(tjd_ut, SE_ECL_NUT, 0, xobl, ref sdummy); /* fehler behandeln */
             swi_coortrf(xs, xs, xobl[1] * DEGTORAD);
             swi_cartpol(xs, xs);
             xs[0] *= RADTODEG;
@@ -2658,7 +2658,7 @@ namespace SweNet
         const double SIDT_LTERM_T1 = 2469807.5;  /* 1 Jan 2050  */
         const double SIDT_LTERM_OFS0 = (0.09081674334 / 3600);
         const double SIDT_LTERM_OFS1 = (0.337962821868 / 3600);
-        double swe_sidtime0(double tjd, double eps, double nut) {
+        public double swe_sidtime0(double tjd, double eps, double nut) {
             double jd0;    	/* Julian day at midnight Universal Time */
             double secs;   	/* Time of day, UT seconds since UT midnight */
             double eqeq, jd, tu, tt, msday, jdrel;
@@ -2749,7 +2749,7 @@ namespace SweNet
          * tjd must be UT !!!
          * for more informsation, see comment with swe_sidtime0()
          */
-        protected double swe_sidtime(double tjd_ut) {
+        public double swe_sidtime(double tjd_ut) {
             int i;
             double eps, tsid; double[] nutlo = new double[2];
             double tjde = tjd_ut + swe_deltat(tjd_ut);
@@ -2963,7 +2963,7 @@ namespace SweNet
         /************************************
         normalize argument into interval [0..DEG360]
         *************************************/
-        static protected Int32 swe_csnorm(Int32 p) {
+        public Int32 swe_csnorm(Int32 p) {
             if (p < 0)
                 do { p += DEG360; } while (p < 0);
             else if (p >= DEG360)
@@ -2975,11 +2975,11 @@ namespace SweNet
         distance in centisecs p1 - p2
         normalized to [0..360[
         **************************************/
-        static protected Int32 swe_difcsn(Int32 p1, Int32 p2) {
+        public Int32 swe_difcsn(Int32 p1, Int32 p2) {
             return (swe_csnorm(p1 - p2));
         }
 
-        static protected double swe_difdegn(double p1, double p2) {
+        public double swe_difdegn(double p1, double p2) {
             return (swe_degnorm(p1 - p2));
         }
 
@@ -2987,21 +2987,21 @@ namespace SweNet
         distance in centisecs p1 - p2
         normalized to [-180..180[
         **************************************/
-        static protected Int32 swe_difcs2n(Int32 p1, Int32 p2) {
+        public Int32 swe_difcs2n(Int32 p1, Int32 p2) {
             Int32 dif;
             dif = swe_csnorm(p1 - p2);
             if (dif >= DEG180) return (dif - DEG360);
             return (dif);
         }
 
-        static protected double swe_difdeg2n(double p1, double p2) {
+        public double swe_difdeg2n(double p1, double p2) {
             double dif;
             dif = swe_degnorm(p1 - p2);
             if (dif >= 180.0) return (dif - 360.0);
             return (dif);
         }
 
-        static protected double swe_difrad2n(double p1, double p2) {
+        public double swe_difrad2n(double p1, double p2) {
             double dif;
             dif = swe_radnorm(p1 - p2);
             if (dif >= TWOPI / 2) return (dif - TWOPI);
@@ -3011,7 +3011,7 @@ namespace SweNet
         /*************************************
         round second, but at 29.5959 always down
         *************************************/
-        static protected int swe_csroundsec(int x) {
+        public int swe_csroundsec(int x) {
             int t;
             t = (x + 50) / 100 * 100;	/* round to seconds */
             if (t > x && t % DEG30 == 0)  /* was rounded up to next sign */
@@ -3022,7 +3022,7 @@ namespace SweNet
         /*************************************
         double to int32 with rounding, no overflow check
         *************************************/
-        static protected Int32 swe_d2l(double x) {
+        public Int32 swe_d2l(double x) {
             if (x >= 0)
                 return ((Int32)(x + 0.5));
             else
@@ -3032,11 +3032,11 @@ namespace SweNet
         /*
          * monday = 0, ... sunday = 6
          */
-        protected int swe_day_of_week(double jd) {
+        public int swe_day_of_week(double jd) {
             return (((int)Math.Floor(jd - 2433282 - 1.5) % 7) + 7) % 7;
         }
 
-        protected string swe_cs2timestr(int t, char sep, bool suppressZero, ref string a)
+        public string swe_cs2timestr(int t, char sep, bool suppressZero, ref string a)
             /* does not suppress zeros in hours or minutes */
         {
             /* static char a[9];*/
@@ -3062,7 +3062,7 @@ namespace SweNet
             return (a);
         } /* swe_cs2timestr() */
 
-        protected string swe_cs2lonlatstr(int t, char pchar, char mchar, ref string sp) {
+        public string swe_cs2lonlatstr(int t, char pchar, char mchar, ref string sp) {
             //char a[10];	/* must be initialized at each call */
             //char *aa;
             /*int h, m, s;
@@ -3114,7 +3114,7 @@ namespace SweNet
             return (sp);
         } /* swe_cs2lonlatstr() */
 
-        string swe_cs2degstr(int t, ref string a)
+        public string swe_cs2degstr(int t, ref string a)
             /* does  suppress leading zeros in degrees */
         {
             /* char a[9];	 must be initialized at each call */
@@ -3137,7 +3137,7 @@ namespace SweNet
          *              or +/- sign
          *  
          *********************************************************/
-        void swe_split_deg(double ddeg, Int32 roundflag, out Int32 ideg, out Int32 imin, out Int32 isec, out double dsecfr, out Int32 isgn) {
+        public void swe_split_deg(double ddeg, Int32 roundflag, out Int32 ideg, out Int32 imin, out Int32 isec, out double dsecfr, out Int32 isgn) {
             double dadd = 0; dsecfr = 0;
             isgn = 1;
             if (ddeg < 0) {

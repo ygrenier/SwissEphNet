@@ -467,7 +467,7 @@ namespace SweWin
 
 
         int swisseph(StringBuilder buf) {
-            string serr, serr_save = String.Empty, serr_warn = String.Empty;
+            string serr = String.Empty, serr_save = String.Empty, serr_warn = String.Empty;
             string s, s1, s2;
             string star = String.Empty;
             //  char *sp, *sp2;
@@ -535,10 +535,10 @@ namespace SweWin
                 iflag |= SwissEph.SEFLG_BARYCTR;
             } else if (String.Compare(pd.ctr, ctr[4]) == 0) {
                 iflag |= SwissEph.SEFLG_SIDEREAL;
-                sweph.SetSidMode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
+                sweph.swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
             } else if (String.Compare(pd.ctr, ctr[5]) == 0) {
                 iflag |= SwissEph.SEFLG_SIDEREAL;
-                sweph.SetSidMode(SwissEph.SE_SIDM_LAHIRI, 0, 0);
+                sweph.swe_set_sid_mode(SwissEph.SE_SIDM_LAHIRI, 0, 0);
                 //#if 0
                 //  } else {
                 //    iflag &= ~(SEFLG_HELCTR | SEFLG_BARYCTR | SEFLG_TOPOCTR);
@@ -552,7 +552,7 @@ namespace SweWin
                 lat = -lat;
             do_print(buf, C.sprintf("Planet Positions from %s \n\n", pd.ephe));
             if ((whicheph & SwissEph.SEFLG_JPLEPH) != 0)
-                sweph.SetJplFile(fname);
+                sweph.swe_set_jpl_file(fname);
             iflag = (iflag & ~SwissEph.SEFLG_EPHMASK) | whicheph;
             iflag |= SwissEph.SEFLG_SPEED;
             //#if 0
@@ -569,8 +569,8 @@ namespace SweWin
             jmin = (int)pd.min;
             jsec = (int)pd.sec;
             jut = jhour + (jmin / 60.0) + (jsec / 3600.0);
-            tjd_ut = sweph.JulDay(jyear, jmon, jday, jut, gregflag);
-            sweph.RevJul(tjd_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+            tjd_ut = sweph.swe_julday(jyear, jmon, jday, jut, gregflag);
+            sweph.swe_revjul(tjd_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
             jut += 0.5 / 3600;
             jhour = (int)jut;
             jmin = (int)((jut * 60.0) % 60.0);
@@ -587,13 +587,13 @@ namespace SweWin
                 jhour, jmin, jsec, pd.etut));
             jut = jhour + jmin / 60.0 + jsec / 3600.0;
             if (universal_time) {
-                delt = sweph.DeltaT(tjd_ut);
+                delt = sweph.swe_deltat(tjd_ut);
                 do_print(buf, C.sprintf(" delta t: %f sec", delt * 86400.0));
                 tjd_et = tjd_ut + delt;
             } else
                 tjd_et = tjd_ut;
             do_print(buf, C.sprintf(" jd (ET) = %f\n", tjd_et));
-            iflgret = sweph.Calc(tjd_et, SwissEph.SE_ECL_NUT, iflag, x, out serr);
+            iflgret = sweph.swe_calc(tjd_et, SwissEph.SE_ECL_NUT, iflag, x, ref serr);
             eps_true = x[0];
             eps_mean = x[1];
             s1 = dms(eps_true, round_flag);
@@ -611,8 +611,8 @@ namespace SweWin
                 do_print(buf, "          house");
             do_print(buf, "\n");
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
-                sweph.SetTopo(lon, lat, pd.alt);
-            sidt = sweph.SidTime(tjd_ut) + lon / 15;
+                sweph.swe_set_topo(lon, lat, pd.alt);
+            sidt = sweph.swe_sidtime(tjd_ut) + lon / 15;
             if (sidt >= 24)
                 sidt -= 24;
             if (sidt < 0)
@@ -651,11 +651,11 @@ namespace SweWin
                         continue;
                 /* ecliptic position */
                 if (ipl == SwissEph.SE_FIXSTAR) {
-                    iflgret = sweph.Fixstar(star, tjd_et, iflag, x, out serr);
+                    iflgret = sweph.swe_fixstar(star, tjd_et, iflag, x, ref serr);
                     se_pname = star;
                 } else {
-                    iflgret = sweph.Calc(tjd_et, ipl, iflag, x, out serr);
-                    se_pname = sweph.GetPlanetName(ipl);
+                    iflgret = sweph.swe_calc(tjd_et, ipl, iflag, x, ref serr);
+                    se_pname = sweph.swe_get_planet_name(ipl);
                     if (ipl > SwissEph.SE_AST_OFFSET) {
                         s = C.sprintf("#%d", (int)astno[iast - 1]);
                         se_pname += new String(' ', 11 - s.Length) + s;
@@ -663,7 +663,7 @@ namespace SweWin
                 }
                 if (iflgret >= 0) {
                     if (calc_house_pos) {
-                        hpos = sweph.HousePos(armc, lat, eps_true, hsys, x, out serr);
+                        hpos = sweph.swe_house_pos(armc, lat, eps_true, hsys, x, ref serr);
                         if (hpos == 0)
                             iflgret = SwissEph.ERR;
                     }
@@ -681,25 +681,25 @@ namespace SweWin
                 if (fmt.IndexOfAny("aADdQ".ToCharArray()) >= 0) {
                     iflag2 = iflag | SwissEph.SEFLG_EQUATORIAL;
                     if (ipl == SwissEph.SE_FIXSTAR)
-                        iflgret = sweph.Fixstar(star, tjd_et, iflag2, xequ, out serr);
+                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xequ, ref serr);
                     else
-                        iflgret = sweph.Calc(tjd_et, ipl, iflag2, xequ, out serr);
+                        iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xequ, ref serr);
                 }
                 /* ecliptic cartesian position */
                 if (fmt.IndexOfAny("XU".ToCharArray()) >= 0) {
                     iflag2 = iflag | SwissEph.SEFLG_XYZ;
                     if (ipl == SwissEph.SE_FIXSTAR)
-                        iflgret = sweph.Fixstar(star, tjd_et, iflag2, xcart, out serr);
+                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xcart, ref serr);
                     else
-                        iflgret = sweph.Calc(tjd_et, ipl, iflag2, xcart, out serr);
+                        iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xcart, ref serr);
                 }
                 /* equator cartesian position */
                 if (fmt.IndexOfAny("xu".ToCharArray()) >= 0) {
                     iflag2 = iflag | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_EQUATORIAL;
                     if (ipl == SwissEph.SE_FIXSTAR)
-                        iflgret = sweph.Fixstar(star, tjd_et, iflag2, xcartq, out serr);
+                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xcartq, ref serr);
                     else
-                        iflgret = sweph.Calc(tjd_et, ipl, iflag2, xcartq, out serr);
+                        iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xcartq, ref serr);
                 }
                 spnam = se_pname;
                 /*
@@ -718,7 +718,7 @@ namespace SweWin
                             break;
                         case 'Y':
                             jut = 0;
-                            t2 = sweph.JulDay(jyear, 1, 1, jut, gregflag);
+                            t2 = sweph.swe_julday(jyear, 1, 1, jut, gregflag);
                             y_frac = (tjd_ut - t2) / 365.0;
                             do_print(buf, "%.2lf", jyear + y_frac);
                             break;
@@ -917,7 +917,7 @@ namespace SweWin
                   pd.lat_deg, pd.lat_n_s[0], pd.lat_min, pd.lat_sec);
             do_print(buf, "geo. long.: %4d%c%#02d'%#02d\"\n\n",
                   pd.lon_deg, pd.lon_e_w[0], pd.lon_min, pd.lon_sec);
-            sweph.HousesEx(tjd_ut, iflag, lat, lon, hsys, cusp, ascmc);
+            sweph.swe_houses_ex(tjd_ut, iflag, lat, lon, hsys, cusp, ascmc);
             round_flag |= BIT_ROUND_SEC;
             //#if FALSE
             //  sprintf(s, "AC        : %s\n", dms(ascmc[0], round_flag));

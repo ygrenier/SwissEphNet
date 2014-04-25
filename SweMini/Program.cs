@@ -105,9 +105,9 @@ namespace SweMini
                     jmin = 41,
                     jsec = 23;
                 double jut = jhour + (jmin / 60.0) + (jsec / 3600.0);
-                double tjd = sweph.JulDay(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
-                double deltat = sweph.DeltaT(tjd);
-                double te = tjd + sweph.DeltaT(tjd);
+                double tjd = sweph.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
+                double deltat = sweph.swe_deltat(tjd);
+                double te = tjd + sweph.swe_deltat(tjd);
                 printf("date: %02d.%02d.%d at %02d:%02d:%02d\nDeltat : %f\nJulian Day : %f\nEphemeris Time : %f\n", jday, jmon, jyear, jhour, jmin, jsec, deltat, tjd, te);
 
                 Console.ReadKey();
@@ -140,11 +140,11 @@ namespace SweMini
                     /*
                      * we have day, month and year and convert to Julian day number
                      */
-                    tjd = swe.JulDay(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);        
+                    tjd = swe.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);        
                     /*
                      * compute Ephemeris time from Universal time by adding delta_t
                      */
-                    te = tjd + swe.DeltaT(tjd);
+                    te = tjd + swe.swe_deltat(tjd);
                     printf("date: %02d.%02d.%d at 0:00 Universal time\n", jday, jmon, jyear);
                     printf("planet     \tlongitude\tlatitude\tdistance\tspeed long.\n");
                     /*
@@ -155,7 +155,7 @@ namespace SweMini
                         /*
                          * do the coordinate calculation for this planet p
                          */
-                        iflgret = swe.Calc(te, p, iflag, x2, out serr);
+                        iflgret = swe.swe_calc(te, p, iflag, x2, ref serr);
                         /*
                          * if there is a problem, a negative value is returned and an 
                          * errpr message is in serr.
@@ -167,7 +167,7 @@ namespace SweMini
                         /*
                          * get the name of the planet p
                          */
-                        snam = swe.GetPlanetName(p);
+                        snam = swe.swe_get_planet_name(p);
                         /*
                          * print the coordinates
                          */

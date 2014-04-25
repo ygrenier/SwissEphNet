@@ -706,26 +706,26 @@ static string infoexamp = @"\n\
                     } else if (argv[i].StartsWith("-ay")) {
                         do_ayanamsa = true;
                         sid_mode = int.Parse(argv[i] + 3);
-                        sweph.SetSidMode(sid_mode, 0, 0);
+                        sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (argv[i].StartsWith("-sidt0")) {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 6);
                         if (sid_mode == 0)
                             sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                         sid_mode |= SwissEph.SE_SIDBIT_ECL_T0;
-                        sweph.SetSidMode(sid_mode, 0, 0);
+                        sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (argv[i].StartsWith("-sidsp")) {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 6);
                         if (sid_mode == 0)
                             sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                         sid_mode |= SwissEph.SE_SIDBIT_SSY_PLANE;
-                        sweph.SetSidMode(sid_mode, 0, 0);
+                        sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (argv[i].StartsWith("-sid")) {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 4);
                         if (sid_mode > 0)
-                            sweph.SetSidMode(sid_mode, 0, 0);
+                            sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (String.Compare(argv[i], "-jplhora") == 0) {
                         iflag |= SwissEph.SEFLG_JPLHOR_APPROX;
                     } else if (String.Compare(argv[i], "-jplhor") == 0) {
@@ -913,7 +913,7 @@ static string infoexamp = @"\n\
                         sp = argv[i].Substring(2);
                         ipldiff = letter_to_ipl(String.IsNullOrEmpty(sp) ? '\0' : sp[0]);
                         if (ipldiff < 0) ipldiff = SwissEph.SE_SUN;
-                        spnam2 = sweph.GetPlanetName(ipldiff);
+                        spnam2 = sweph.swe_get_planet_name(ipldiff);
                     } else if (String.Compare(argv[i], "-roundsec") == 0) {
                         round_flag |= BIT_ROUND_SEC;
                     } else if (String.Compare(argv[i], "-roundmin") == 0) {
@@ -980,7 +980,7 @@ static string infoexamp = @"\n\
                 geopos[0] = top_long;
                 geopos[1] = top_lat;
                 geopos[2] = top_elev;
-                sweph.SetTopo(top_long, top_lat, top_elev);
+                sweph.swe_set_topo(top_long, top_lat, top_elev);
                 //#if HPUNIX
                 //  gethostname (hostname, 80);
                 //  if (strstr(hostname, "as10") != NULL) 
@@ -1001,9 +1001,9 @@ static string infoexamp = @"\n\
                         whicheph = SwissEph.SEFLG_MOSEPH;
                     }
                 }
-                sweph.SetEphePath(ephepath);
+                sweph.swe_set_ephe_path(ephepath);
                 if ((whicheph & SwissEph.SEFLG_JPLEPH) != 0)
-                    sweph.SetJplFile(fname);
+                    sweph.swe_set_jpl_file(fname);
                 while (true) {
                     serr = serr_save = serr_warn = String.Empty;
                     if (begindate == null) {
@@ -1071,17 +1071,17 @@ static string infoexamp = @"\n\
                             gregflag = SwissEph.SE_JUL_CAL;
                         else if (sp.Contains("greg"))
                             gregflag = SwissEph.SE_GREG_CAL;
-                        sweph.RevJul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     } else if (sp.StartsWith("+")) {
                         n = int.Parse(sp);
                         if (n == 0) n = 1;
                         tjd += n;
-                        sweph.RevJul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     } else if (sp.StartsWith("-")) {
                         n = int.Parse(sp);
                         if (n == 0) n = -1;
                         tjd += n;
-                        sweph.RevJul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     } else {
                         if (C.sscanf(sp, "%d%*c%d%*c%d", ref jday, ref jmon, ref jyear) < 1) return 1;
                         if ((Int32)jyear * 10000L + (Int32)jmon * 100L + (Int32)jday < 15821015L)
@@ -1093,7 +1093,7 @@ static string infoexamp = @"\n\
                         else if (sp.Contains("greg"))
                             gregflag = SwissEph.SE_GREG_CAL;
                         jut = 0;
-                        tjd = sweph.JulDay(jyear, jmon, jday, jut, gregflag);
+                        tjd = sweph.swe_julday(jyear, jmon, jday, jut, gregflag);
                         tjd += thour / 24.0;
                     }
                     if (special_event > 0) {
@@ -1112,7 +1112,7 @@ static string infoexamp = @"\n\
                         else if (sdate.Contains("greg"))
                             gregflag = SwissEph.SE_GREG_CAL;
                         t2 = t;
-                        sweph.RevJul(t2, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(t2, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         if (with_header) {
                             printf("\ndate (dmy) %d.%d.%d", jday, jmon, jyear);
                             if (gregflag != 0)
@@ -1129,9 +1129,9 @@ static string infoexamp = @"\n\
                                 Console.Write(" UT");
                             else
                                 Console.Write(" ET");
-                            printf("\t\tversion %s", sweph.Version());
+                            printf("\t\tversion %s", sweph.swe_version());
                         }
-                        delt = sweph.DeltaT(t);
+                        delt = sweph.swe_deltat(t);
                         if (universal_time) {
                             if (with_header) {
                                 printf("\nUT: %.11f", t);
@@ -1145,11 +1145,11 @@ static string infoexamp = @"\n\
                             te = t;
                             tut = t - delt;
                         }
-                        iflgret = sweph.Calc(te, SwissEph.SE_ECL_NUT, iflag, xobl, out serr);
+                        iflgret = sweph.swe_calc(te, SwissEph.SE_ECL_NUT, iflag, xobl, ref serr);
                         if (with_header) {
                             printf("\nET: %.11f", te);
                             if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
-                                daya = sweph.GetAyanamsa(te);
+                                daya = sweph.swe_get_ayanamsa(te);
                                 printf("   ayanamsa = %s", dms(daya, round_flag));
                             }
                             if (have_geopos) {
@@ -1168,7 +1168,7 @@ static string infoexamp = @"\n\
                             }
                             printf("\n");
                             if (do_houses) {
-                                var shsy = sweph.HouseName(ihsy);
+                                var shsy = sweph.swe_house_name(ihsy);
                                 if (!universal_time) {
                                     do_houses = false;
                                     printf("option -house requires option -ut for Universal Time\n");
@@ -1182,7 +1182,7 @@ static string infoexamp = @"\n\
                         if (with_header && !with_header_always)
                             with_header = false;
                         if (do_ayanamsa) {
-                            daya = sweph.GetAyanamsa(te);
+                            daya = sweph.swe_get_ayanamsa(te);
                             Console.Write("Ayanamsa");
                             Console.Write(gap);
                             Console.Write(dms(daya, round_flag));
@@ -1222,23 +1222,23 @@ static string infoexamp = @"\n\
                             if (iflag_f >= 0)
                                 iflag = iflag_f;
                             if (ipl == SwissEph.SE_FIXSTAR) {
-                                iflgret = sweph.Fixstar(star, te, iflag, x, out serr);
+                                iflgret = sweph.swe_fixstar(star, te, iflag, x, ref serr);
                                 /* magnitude, etc. */
                                 if (iflgret != SwissEph.ERR && fmt.IndexOf('=') >= 0) {
                                     double mag = 0;
-                                    iflgret = sweph.FixstarMag(ref star, ref mag, out serr);
+                                    iflgret = sweph.swe_fixstar_mag(ref star, ref mag, ref serr);
                                     attr[4] = mag;
                                 }
                                 se_pname = star;
                             } else {
-                                iflgret = sweph.Calc(te, ipl, iflag, x, out serr);
+                                iflgret = sweph.swe_calc(te, ipl, iflag, x, ref serr);
                                 /* phase, magnitude, etc. */
                                 if (iflgret != SwissEph.ERR && fmt.IndexOfAny("+-*/=".ToCharArray()) >= 0)
-                                    iflgret = sweph.Pheno(te, ipl, iflag, attr, out serr);
-                                se_pname = sweph.GetPlanetName(ipl);
+                                    iflgret = sweph.swe_pheno(te, ipl, iflag, attr, ref serr);
+                                se_pname = sweph.swe_get_planet_name(ipl);
                             }
                             if (psp == 'q') {/* delta t */
-                                x[0] = sweph.DeltaT(te) * 86400;
+                                x[0] = sweph.swe_deltat(te) * 86400;
                                 x[1] = x[2] = x[3] = 0;
                                 se_pname = "Delta T";
                             }
@@ -1253,7 +1253,7 @@ static string infoexamp = @"\n\
                                 se_pname = "Nutation";
                             }
                             if (psp == 'y') {/* time equation */
-                                iflgret = sweph.TimeEqu(tut, ref (x[0]), out serr);
+                                iflgret = sweph.swe_time_equ(tut, out (x[0]), ref serr);
                                 x[0] *= 86400; /* in seconds */;
                                 x[1] = x[2] = x[3] = 0;
                                 se_pname = "Time Equ.";
@@ -1274,7 +1274,7 @@ static string infoexamp = @"\n\
                                     serr_warn = serr;
                             }
                             if (diff_mode != 0) {
-                                iflgret = sweph.Calc(te, ipldiff, iflag, x2, out serr);
+                                iflgret = sweph.swe_calc(te, ipldiff, iflag, x2, ref serr);
                                 if (iflgret < 0) {
                                     Console.Write("error: ");
                                     Console.Write(serr);
@@ -1284,41 +1284,41 @@ static string infoexamp = @"\n\
                                     for (i = 1; i < 6; i++)
                                         x[i] -= x2[i];
                                     if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                        x[0] = sweph.DifDeg2n(x[0], x2[0]);
+                                        x[0] = sweph.swe_difdeg2n(x[0], x2[0]);
                                     else
-                                        x[0] = sweph.DifRad2n(x[0], x2[0]);
+                                        x[0] = sweph.swe_difrad2n(x[0], x2[0]);
                                 } else {	/* DIFF_MIDP */
                                     for (i = 1; i < 6; i++)
                                         x[i] = (x[i] + x2[i]) / 2;
                                     if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                        x[0] = sweph.DegMidP(x[0], x2[0]);
+                                        x[0] = sweph.swe_deg_midp(x[0], x2[0]);
                                     else
-                                        x[0] = sweph.RadMidP(x[0], x2[0]);
+                                        x[0] = sweph.swe_rad_midp(x[0], x2[0]);
                                 }
                             }
                             /* equator position */
                             if (fmt.IndexOfAny("aADdQ".ToCharArray()) >= 0) {
                                 iflag2 = iflag | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.Fixstar(star, te, iflag2, xequ, out serr);
+                                    iflgret = sweph.swe_fixstar(star, te, iflag2, xequ, ref serr);
                                 else
-                                    iflgret = sweph.Calc(te, ipl, iflag2, xequ, out serr);
+                                    iflgret = sweph.swe_calc(te, ipl, iflag2, xequ, ref serr);
                                 if (diff_mode != 0) {
-                                    iflgret = sweph.Calc(te, ipldiff, iflag2, x2, out serr);
+                                    iflgret = sweph.swe_calc(te, ipldiff, iflag2, x2, ref serr);
                                     if (diff_mode == DIFF_DIFF) {
                                         for (i = 1; i < 6; i++)
                                             xequ[i] -= x2[i];
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                            xequ[0] = sweph.DifDeg2n(xequ[0], x2[0]);
+                                            xequ[0] = sweph.swe_difdeg2n(xequ[0], x2[0]);
                                         else
-                                            xequ[0] = sweph.DifRad2n(xequ[0], x2[0]);
+                                            xequ[0] = sweph.swe_difrad2n(xequ[0], x2[0]);
                                     } else {	/* DIFF_MIDP */
                                         for (i = 1; i < 6; i++)
                                             xequ[i] = (xequ[i] + x2[i]) / 2;
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                            xequ[0] = sweph.DegMidP(xequ[0], x2[0]);
+                                            xequ[0] = sweph.swe_deg_midp(xequ[0], x2[0]);
                                         else
-                                            xequ[0] = sweph.RadMidP(xequ[0], x2[0]);
+                                            xequ[0] = sweph.swe_rad_midp(xequ[0], x2[0]);
                                     }
                                 }
                             }
@@ -1327,32 +1327,32 @@ static string infoexamp = @"\n\
                                 /* first, get topocentric equatorial positions */
                                 iflgt = whicheph | SwissEph.SEFLG_EQUATORIAL | SwissEph.SEFLG_TOPOCTR;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.Fixstar(star, te, iflgt, xt, out serr);
+                                    iflgret = sweph.swe_fixstar(star, te, iflgt, xt, ref serr);
                                 else
-                                    iflgret = sweph.Calc(te, ipl, iflgt, xt, out serr);
+                                    iflgret = sweph.swe_calc(te, ipl, iflgt, xt, ref serr);
                                 /* to azimuth/height */
                                 /* atmospheric pressure "0" has the effect that a value
                                  * of 1013.25 mbar is assumed at 0 m above sea level.
                                  * If the altitude of the observer is given (in geopos[2])
                                  * pressure is estimated according to that */
-                                sweph.Azalt(tut, SwissEph.SE_EQU2HOR, geopos, 0, 10, xt, xaz);
+                                sweph.swe_azalt(tut, SwissEph.SE_EQU2HOR, geopos, 0, 10, xt, xaz);
                                 if (diff_mode != 0) {
-                                    iflgret = sweph.Calc(te, ipldiff, iflgt, xt, out serr);
-                                    sweph.Azalt(tut, SwissEph.SE_EQU2HOR, geopos, 0, 10, xt, x2);
+                                    iflgret = sweph.swe_calc(te, ipldiff, iflgt, xt, ref serr);
+                                    sweph.swe_azalt(tut, SwissEph.SE_EQU2HOR, geopos, 0, 10, xt, x2);
                                     if (diff_mode == DIFF_DIFF) {
                                         for (i = 1; i < 3; i++)
                                             xaz[i] -= x2[i];
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                            xaz[0] = sweph.DifDeg2n(xaz[0], x2[0]);
+                                            xaz[0] = sweph.swe_difdeg2n(xaz[0], x2[0]);
                                         else
-                                            xaz[0] = sweph.DifRad2n(xaz[0], x2[0]);
+                                            xaz[0] = sweph.swe_difrad2n(xaz[0], x2[0]);
                                     } else {	/* DIFF_MIDP */
                                         for (i = 1; i < 3; i++)
                                             xaz[i] = (xaz[i] + x2[i]) / 2;
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                            xaz[0] = sweph.DegMidP(xaz[0], x2[0]);
+                                            xaz[0] = sweph.swe_deg_midp(xaz[0], x2[0]);
                                         else
-                                            xaz[0] = sweph.RadMidP(xaz[0], x2[0]);
+                                            xaz[0] = sweph.swe_rad_midp(xaz[0], x2[0]);
                                     }
                                 }
                             }
@@ -1360,11 +1360,11 @@ static string infoexamp = @"\n\
                             if (fmt.IndexOfAny("XU".ToCharArray()) >= 0) {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.Fixstar(star, te, iflag2, xcart, out serr);
+                                    iflgret = sweph.swe_fixstar(star, te, iflag2, xcart, ref serr);
                                 else
-                                    iflgret = sweph.Calc(te, ipl, iflag2, xcart, out serr);
+                                    iflgret = sweph.swe_calc(te, ipl, iflag2, xcart, ref serr);
                                 if (diff_mode != 0) {
-                                    iflgret = sweph.Calc(te, ipldiff, iflag2, x2, out serr);
+                                    iflgret = sweph.swe_calc(te, ipldiff, iflag2, x2, ref serr);
                                     if (diff_mode == DIFF_DIFF) {
                                         for (i = 0; i < 6; i++)
                                             xcart[i] -= x2[i];
@@ -1377,11 +1377,11 @@ static string infoexamp = @"\n\
                             if (fmt.IndexOfAny("xu".ToCharArray()) >= 0) {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.Fixstar(star, te, iflag2, xcartq, out serr);
+                                    iflgret = sweph.swe_fixstar(star, te, iflag2, xcartq, ref serr);
                                 else
-                                    iflgret = sweph.Calc(te, ipl, iflag2, xcartq, out serr);
+                                    iflgret = sweph.swe_calc(te, ipl, iflag2, xcartq, ref serr);
                                 if (diff_mode != 0) {
-                                    iflgret = sweph.Calc(te, ipldiff, iflag2, x2, out serr);
+                                    iflgret = sweph.swe_calc(te, ipldiff, iflag2, x2, ref serr);
                                     if (diff_mode == DIFF_DIFF) {
                                         for (i = 0; i < 6; i++)
                                             xcartq[i] -= x2[i];
@@ -1392,7 +1392,7 @@ static string infoexamp = @"\n\
                             }
                             /* house position */
                             if (fmt.IndexOfAny("gGj".ToCharArray()) >= 0) {
-                                armc = sweph.DegNorm(sweph.SidTime(tut) * 15 + geopos[0]);
+                                armc = sweph.swe_degnorm(sweph.swe_sidtime(tut) * 15 + geopos[0]);
                                 for (i = 0; i < 6; i++)
                                     xsv[i] = x[i];
                                 if (hpos_meth == 1)
@@ -1402,9 +1402,9 @@ static string infoexamp = @"\n\
                                 else
                                     star2 = String.Empty;
                                 if (hpos_meth >= 2 && char.ToLower(ihsy) == 'g') {
-                                    sweph.GauquelinSector(tut, ipl, star2, iflag, hpos_meth, geopos, 0, 0, ref hposj, out serr);
+                                    sweph.swe_gauquelin_sector(tut, ipl, star2, iflag, hpos_meth, geopos, 0, 0, ref hposj, ref serr);
                                 } else {
-                                    hposj = sweph.HousePos(armc, geopos[1], xobl[0], ihsy, xsv, out serr);
+                                    hposj = sweph.swe_house_pos(armc, geopos[1], xobl[0], ihsy, xsv, ref serr);
                                 }
                                 if (char.ToLower(ihsy) == 'g')
                                     hpos = (hposj - 1) * 10;
@@ -1415,21 +1415,21 @@ static string infoexamp = @"\n\
                                         xsv[i] = x2[i];
                                     if (hpos_meth == 1)
                                         xsv[1] = 0;
-                                    hpos2 = sweph.HousePos(armc, geopos[1], xobl[0], ihsy, xsv, out serr);
+                                    hpos2 = sweph.swe_house_pos(armc, geopos[1], xobl[0], ihsy, xsv, ref serr);
                                     if (Char.ToLower(ihsy) == 'g')
                                         hpos2 = (hpos2 - 1) * 10;
                                     else
                                         hpos2 = (hpos2 - 1) * 30;
                                     if (diff_mode == DIFF_DIFF) {
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                            hpos = sweph.DifDeg2n(hpos, hpos2);
+                                            hpos = sweph.swe_difdeg2n(hpos, hpos2);
                                         else
-                                            hpos = sweph.DifRad2n(hpos, hpos2);
+                                            hpos = sweph.swe_difrad2n(hpos, hpos2);
                                     } else {	/* DIFF_MIDP */
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
-                                            hpos = sweph.DegMidP(hpos, hpos2);
+                                            hpos = sweph.swe_deg_midp(hpos, hpos2);
                                         else
-                                            hpos = sweph.RadMidP(hpos, hpos2);
+                                            hpos = sweph.swe_rad_midp(hpos, hpos2);
                                     }
                                 }
                             }
@@ -1447,7 +1447,7 @@ static string infoexamp = @"\n\
                             if (char.ToLower(ihsy) == 'g')
                                 nhouses = 36;
                             iofs = nhouses + 1;
-                            iflgret = sweph.HousesEx(t, iflag, top_lat, top_long, ihsy, cusp, cusp.GetPointer(iofs));
+                            iflgret = sweph.swe_houses_ex(t, iflag, top_lat, top_long, ihsy, cusp, cusp.GetPointer(iofs));
                             if (iflgret < 0) {
                                 if (String.Compare(serr, serr_save) != 0) {
                                     Console.Write("error: ");
@@ -1461,7 +1461,7 @@ static string infoexamp = @"\n\
                                     x[1] = 0;	/* latitude */
                                     x[2] = 1.0;	/* pseudo radius vector */
                                     if (fmt.IndexOfAny("aADdQ".ToCharArray()) >= 0) {
-                                        sweph.CoTrans(x, xequ, -xobl[0]);
+                                        sweph.swe_cotrans(x, xequ, -xobl[0]);
                                     }
                                     print_line(MODE_HOUSE);
                                     line_count++;
@@ -1513,7 +1513,7 @@ static string infoexamp = @"\n\
                         break;
                     case 'Y':
                         if (is_label) { printf("year"); break; }
-                        t2 = sweph.JulDay(jyear, 1, 1, ju2, gregflag);
+                        t2 = sweph.swe_julday(jyear, 1, 1, ju2, gregflag);
                         y_frac = (t - t2) / 365.0;
                         printf("%.2f", jyear + y_frac);
                         break;
@@ -1763,7 +1763,7 @@ static string infoexamp = @"\n\
                             //    /* the factor is 1 / (3600^2 * (180/pi)^2 * 6) */
                             //    printf("%# 13.5f\" %# 13.5f'", ar, ar / 60.0);
                             //}
-                            sweph.Pheno(te, ipl, iflag, dret, out serr);
+                            sweph.swe_pheno(te, ipl, iflag, dret, ref serr);
                             printf("%# 13.5f\"", dret[5] * 3600);
                         } else {
                             printf("%# 14.9f", x[2]);
@@ -1819,7 +1819,7 @@ static string infoexamp = @"\n\
                     case 'n': {
                             double[] xasc = new double[6], xdsc = new double[6];
                             int imeth = (sp == char.ToLower(sp)) ? SwissEph.SE_NODBIT_MEAN : SwissEph.SE_NODBIT_OSCU;
-                            iflgret = sweph.NodAps(te, ipl, iflag, imeth, xasc, xdsc, null, null, out serr);
+                            iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, xasc, xdsc, null, null, ref serr);
                             if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'N')) {
                                 if (is_label) {
                                     Console.Write("nodAsc");
@@ -1838,7 +1838,7 @@ static string infoexamp = @"\n\
                         if (!is_house) {
                             double[] xfoc = new double[6], xaph = new double[6], xper = new double[6];
                             int imeth = (sp == char.ToLower(sp)) ? SwissEph.SE_NODBIT_MEAN : SwissEph.SE_NODBIT_OSCU;
-                            iflgret = sweph.NodAps(te, ipl, iflag, imeth, null, null, xper, xaph, out serr);
+                            iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, null, null, xper, xaph, ref serr);
                             if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F')) {
                                 if (is_label) {
                                     Console.Write("peri");
@@ -1851,7 +1851,7 @@ static string infoexamp = @"\n\
                                 printf("%# 11.7f", xaph[0]);
                             }
                             imeth |= SwissEph.SE_NODBIT_FOPOINT;
-                            iflgret = sweph.NodAps(te, ipl, iflag, imeth, null, null, xper, xfoc, out serr);
+                            iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, null, null, xper, xfoc, ref serr);
                             if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F')) {
                                 if (is_label) {
                                     Console.Write(gap);
@@ -1895,13 +1895,13 @@ static string infoexamp = @"\n\
                             int[] hexa = new int[64] { 1, 43, 14, 34, 9, 5, 26, 11, 10, 58, 38, 54, 61, 60, 41, 19, 13, 49, 30, 55, 37, 63, 22, 36, 25, 17, 21, 51, 42, 3, 27, 24, 2, 23, 8, 20, 16, 35, 45, 12, 15, 52, 39, 53, 62, 56, 31, 33, 7, 4, 29, 59, 40, 64, 47, 6, 46, 18, 48, 57, 32, 50, 28, 44 };
                             if (is_label) { printf("hds"); break; }
                             if (is_house) break;
-                            xhds = sweph.DegNorm(x[0] - 223.25);
+                            xhds = sweph.swe_degnorm(x[0] - 223.25);
                             ihex = (int)Math.Floor(xhds / 5.625);
                             iline = ((int)(Math.Floor(xhds / 0.9375))) % 6 + 1;
                             igate = hexa[ihex];
                             printf("%2d.%d", igate, iline);
                             if (sp == 'V')
-                                printf(" %2d%%", sweph.D2l(100 * ((xhds / 0.9375) % 1.0)));
+                                printf(" %2d%%", sweph.swe_d2l(100 * ((xhds / 0.9375) % 1.0)));
                             break;
                         }
                 }     /* switch */
@@ -1929,9 +1929,9 @@ static string infoexamp = @"\n\
             } else
                 sgn = 1;
             if ((iflg & BIT_ROUND_MIN) != 0)
-                xv = sweph.DegNorm(xv + 0.5 / 60);
+                xv = sweph.swe_degnorm(xv + 0.5 / 60);
             if ((iflg & BIT_ROUND_SEC) != 0)
-                xv = sweph.DegNorm(xv + 0.5 / 3600);
+                xv = sweph.swe_degnorm(xv + 0.5 / 3600);
             if ((iflg & BIT_ZODIAC) != 0) {
                 izod = (int)(xv / 30);
                 xv = (xv % 30.0);
@@ -2020,7 +2020,7 @@ static string infoexamp = @"\n\
             if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
                 t_ut += geopos[0] / 360.0;
                 if ((time_flag & BIT_TIME_LAT) != 0) {
-                    iflgret = sweph.LmtToLat(t_ut, geopos[0], out t_ut, out serr);
+                    iflgret = sweph.swe_lmt_to_lat(t_ut, geopos[0], out t_ut, ref serr);
                 }
             }
             t_ret = t_ut;
@@ -2033,7 +2033,7 @@ static string infoexamp = @"\n\
             double[] tret = new double[10];
             double t0, t1;
             Int32 retc = SwissEph.OK;
-            sweph.SetTopo(geopos[0], geopos[1], geopos[2]);
+            sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
             /* loop over days */
             for (ii = 0; ii < nstep; ii++, t_ut = tret[1] + 0.1) {
@@ -2045,7 +2045,7 @@ static string infoexamp = @"\n\
                     rsmi = SwissEph.SE_CALC_RISE;
                     if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
                     if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                    if (sweph.RiseTrans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[0]), out serr) != SwissEph.OK) {
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[0]), ref serr) != SwissEph.OK) {
                         do_printf(serr);
                         Environment.Exit(0);
                     }
@@ -2053,7 +2053,7 @@ static string infoexamp = @"\n\
                     rsmi = SwissEph.SE_CALC_SET;
                     if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
                     if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                    if (sweph.RiseTrans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[1]), out serr) != SwissEph.OK) {
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[1]), ref serr) != SwissEph.OK) {
                         do_printf(serr);
                         Environment.Exit(0);
                     }
@@ -2067,7 +2067,7 @@ static string infoexamp = @"\n\
                         sout = "         -                     ";
                     } else {
                         t0 = tret[0];
-                        sweph.RevJul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout +=C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
                     sout += "set      ";
@@ -2075,7 +2075,7 @@ static string infoexamp = @"\n\
                         sout += "         -                     \n";
                     } else {
                         t1 = tret[1];
-                        sweph.RevJul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
                     if (t0 != 0 && t1 != 0) {
@@ -2090,12 +2090,12 @@ static string infoexamp = @"\n\
                  * midheaven */
                 if (special_event == SP_MERIDIAN_TRANSIT) {
                     /* transit over midheaven */
-                    if (sweph.RiseTrans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_MTRANSIT, geopos, 1013.25, 10, ref (tret[0]), out serr) != SwissEph.OK) {
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_MTRANSIT, geopos, 1013.25, 10, ref (tret[0]), ref serr) != SwissEph.OK) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
                     /* transit over lower midheaven */
-                    if (sweph.RiseTrans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_ITRANSIT, geopos, 1013.25, 10, ref (tret[1]), out serr) != SwissEph.OK) {
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_ITRANSIT, geopos, 1013.25, 10, ref (tret[1]), ref serr) != SwissEph.OK) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -2106,13 +2106,13 @@ static string infoexamp = @"\n\
                     sout = "mtransit ";
                     if (tret[0] == 0) sout += "         -                     ";
                     else {
-                        sweph.RevJul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
                     sout += "itransit ";
                     if (tret[1] == 0) sout += "         -                     \n";
                     else {
-                        sweph.RevJul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                        sweph.swe_revjul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s\n", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
                     do_printf(sout);
@@ -2135,7 +2135,7 @@ static string infoexamp = @"\n\
                 /* swetest -lunecl -how 
                  * type of lunar eclipse and percentage for a given time: */
                 if ((special_mode & SP_MODE_HOW) != 0) {
-                    if ((eclflag = sweph.LunEclipseHow(t_ut, whicheph, geopos, attr, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     } else {
@@ -2163,7 +2163,7 @@ static string infoexamp = @"\n\
                  * find next lunar eclipse: */
                 /* locally visible lunar eclipse */
                 if ((special_mode & SP_MODE_LOCAL) != 0) {
-                    if ((eclflag = sweph.LunEclipseWhenLoc(t_ut, whicheph, geopos, tret, attr, direction_flag, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_eclipse_when_loc(t_ut, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -2187,7 +2187,7 @@ static string infoexamp = @"\n\
                         ecl_type = ECL_LUN_PARTIAL;
                     }
                     sout = "lunar eclipse\t";
-                    sweph.RevJul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                    sweph.swe_revjul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     /*if ((eclflag = swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, serr)) == ERR) {
                       do_printf(serr);
                       return ERR;
@@ -2227,7 +2227,7 @@ static string infoexamp = @"\n\
                     sout += ("\n");
                     /* global lunar eclipse */
                 } else {
-                    if ((eclflag = sweph.LunEclipseWhen(t_ut, whicheph, search_flag, tret, direction_flag, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_eclipse_when(t_ut, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -2245,7 +2245,7 @@ static string infoexamp = @"\n\
                         ecl_type = ECL_LUN_PARTIAL;
                     }
                     sout += ("lunar eclipse\t");
-                    if ((eclflag = sweph.LunEclipseHow(t_ut, whicheph, geopos, attr, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -2256,7 +2256,7 @@ static string infoexamp = @"\n\
                         }
                     }
                     t_ut = tret[0];
-                    sweph.RevJul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                    sweph.swe_revjul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     dt = (tret[3] - tret[2]) * 24 * 60;
                     s1 = C.sprintf("%d min %4.2f sec", (int)dt, (dt % 1.0) * 60);
                     /* short output: 
@@ -2284,7 +2284,7 @@ static string infoexamp = @"\n\
                         sout += ("   -         ");
                     sout = C.sprintf("%s\n", hms_from_tjd(tret[7]));
                     if ((special_mode & SP_MODE_HOCAL) != 0) {
-                        sweph.SplitDeg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
+                        sweph.swe_split_deg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
                         sout = C.sprintf("\"%04d %02d %02d %02d.%02d %d\",\n", jyear, jmon, jday, ihou, imin, ecl_type);
                     }
                 }
@@ -2306,14 +2306,14 @@ static string infoexamp = @"\n\
                 search_flag |= SwissEph.SE_ECL_ALLTYPES_SOLAR;
             /* for local eclipses: set geographic position of observer */
             if ((special_mode & SP_MODE_LOCAL) != 0)
-                sweph.SetTopo(geopos[0], geopos[1], geopos[2]);
+                sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
             for (ii = 0; ii < nstep; ii++, t_ut += direction) {
                 sout = String.Empty;
                 /* swetest -solecl -local -geopos...
                  * find next solar eclipse observable from a given geographic position */
                 if ((special_mode & SP_MODE_LOCAL) != 0) {
-                    if ((eclflag = sweph.SolEclipseWhenLoc(t_ut, whicheph, geopos, tret, attr, direction_flag, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_sol_eclipse_when_loc(t_ut, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     } else {
@@ -2337,7 +2337,7 @@ static string infoexamp = @"\n\
                         if (!has_found) {
                             ii--;
                         } else {
-                            sweph.Calc(t_ut + sweph.DeltaT(t_ut), SwissEph.SE_ECL_NUT, 0, x, out serr);
+                            sweph.swe_calc(t_ut + sweph.swe_deltat(t_ut), SwissEph.SE_ECL_NUT, 0, x, ref serr);
                             if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
                                 for (i = 0; i < 10; i++) {
                                     if (tret[i] != 0)
@@ -2345,7 +2345,7 @@ static string infoexamp = @"\n\
                                 }
                             }
                             t_ut = tret[0];
-                            sweph.RevJul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                            sweph.swe_revjul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                             dt = (tret[3] - tret[2]) * 24 * 60;
                             sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[8], attr[0], attr[2], (int)attr[9], (int)attr[10], t_ut);
                             sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, (dt % 1.0) * 60);
@@ -2381,7 +2381,7 @@ static string infoexamp = @"\n\
                 /* swetest -solecl
                  * find next solar eclipse observable from anywhere on earth */
                 if (0 == (special_mode & SP_MODE_LOCAL)) {
-                    if ((eclflag = sweph.SolEclipseWhenGlob(t_ut, whicheph, search_flag, tret, direction_flag, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_sol_eclipse_when_glob(t_ut, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -2404,14 +2404,14 @@ static string infoexamp = @"\n\
                     }
                     if ((eclflag & SwissEph.SE_ECL_NONCENTRAL) != 0 && 0 == (eclflag & SwissEph.SE_ECL_PARTIAL))
                         sout += ("non-central ");
-                    sweph.SolEclipseWhere(t_ut, whicheph, geopos_max, attr, out serr);
+                    sweph.swe_sol_eclipse_where(t_ut, whicheph, geopos_max, attr, ref serr);
                     if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
                         for (i = 0; i < 10; i++) {
                             if (tret[i] != 0)
                                 retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                         }
                     }
-                    sweph.RevJul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                    sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     sout_short = C.sprintf("%s\t%2d.%2d.%4d\t%s\t%.3f", sout, jday, jmon, jyear, hms(jut, 0), attr[8]);
                     sout += C.sprintf("%2d.%02d.%04d\t%s\t%f km\t%.4f/%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, 0), attr[3], attr[8], attr[0], attr[2], (int)attr[9], (int)attr[10], tret[0]);
                     sout += C.sprintf("\t%s ", hms_from_tjd(tret[2]));
@@ -2432,7 +2432,7 @@ static string infoexamp = @"\n\
                     sout += ("\t");
                     sout_short += ("\t");
                     if (0 == (eclflag & SwissEph.SE_ECL_PARTIAL) && 0 == (eclflag & SwissEph.SE_ECL_NONCENTRAL)) {
-                        if ((eclflag = sweph.SolEclipseWhenLoc(t_ut - 10, whicheph, geopos_max, tret, attr, false, out serr)) == SwissEph.ERR) {
+                        if ((eclflag = sweph.swe_sol_eclipse_when_loc(t_ut - 10, whicheph, geopos_max, tret, attr, false, ref serr)) == SwissEph.ERR) {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
@@ -2449,7 +2449,7 @@ static string infoexamp = @"\n\
                     if ((special_mode & SP_MODE_HOCAL) != 0) {
                         int ihou, imin, isec, isgn;
                         double dfrc;
-                        sweph.SplitDeg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
+                        sweph.swe_split_deg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
                         sout = C.sprintf("\"%04d %02d %02d %02d.%02d %d\",\n", jyear, jmon, jday, ihou, imin, ecl_type);
                     }
                     /*printf("len=%ld\n", strlen(sout));*/
@@ -2472,12 +2472,12 @@ static string infoexamp = @"\n\
                 search_flag |= SwissEph.SE_ECL_ALLTYPES_SOLAR;
             /* for local occultations: set geographic position of observer */
             if ((special_mode & SP_MODE_LOCAL) != 0)
-                sweph.SetTopo(geopos[0], geopos[1], geopos[2]);
+                sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
             for (ii = 0; ii < nstep; ii++) {
                 sout = String.Empty;
                 if ((special_mode & SP_MODE_LOCAL) != 0) {
-                    if ((eclflag = sweph.LunOccultWhenLoc(t_ut, ipl, star, whicheph, geopos, tret, attr, direction_flag, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_occult_when_loc(t_ut, ipl, star, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     } else {
@@ -2518,8 +2518,8 @@ static string infoexamp = @"\n\
                         if (!has_found) {
                             ii--;
                         } else {
-                            sweph.CalcUt(t_ut, SwissEph.SE_ECL_NUT, 0, x, out serr);
-                            sweph.RevJul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                            sweph.swe_calc_ut(t_ut, SwissEph.SE_ECL_NUT, 0, x, ref serr);
+                            sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                             dt = (tret[3] - tret[2]) * 24 * 60;
                             sout += C.sprintf("%2d.%02d.%04d\t%s\t%fo/o\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[0]);
                             sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, (dt % 1.0) * 60);
@@ -2554,7 +2554,7 @@ static string infoexamp = @"\n\
                 }   /* endif search_local */
                 if (0 == (special_mode & SP_MODE_LOCAL)) {
                     /* * global search for occultations */
-                    if ((eclflag = sweph.LunOccultWhenGlob(t_ut, ipl, star, whicheph, search_flag, tret, direction_flag, out serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_occult_when_glob(t_ut, ipl, star, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -2577,14 +2577,14 @@ static string infoexamp = @"\n\
                     if ((eclflag & SwissEph.SE_ECL_NONCENTRAL) != 0 && 0 == (eclflag & SwissEph.SE_ECL_PARTIAL))
                         sout += ("non-central ");
                     t_ut = tret[0];
-                    sweph.LunOccultWhere(t_ut, ipl, star, whicheph, geopos_max, attr, out serr);
+                    sweph.swe_lun_occult_where(t_ut, ipl, star, whicheph, geopos_max, attr, ref serr);
                     if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
                         for (i = 0; i < 10; i++) {
                             if (tret[i] != 0)
                                 retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                         }
                     }
-                    sweph.RevJul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                    sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     sout += C.sprintf("%2d.%02d.%04d\t%s\t%f km\t%f o/o\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[3], attr[0]);
                     sout += C.sprintf("\t%s ", hms_from_tjd(tret[2]));
                     if (tret[4] != 0)
@@ -2600,7 +2600,7 @@ static string infoexamp = @"\n\
                     s2 = (dms(geopos_max[1], BIT_ROUND_MIN));
                     sout += C.sprintf("\t%s\t%s", s1, s2);
                     if (0==(eclflag & SwissEph.SE_ECL_PARTIAL) && 0==(eclflag & SwissEph.SE_ECL_NONCENTRAL)) {
-                        if ((eclflag = sweph.LunOccultWhenLoc(t_ut - 10, ipl, star, whicheph, geopos_max, tret, attr, false, out serr)) == SwissEph.ERR) {
+                        if ((eclflag = sweph.swe_lun_occult_when_loc(t_ut - 10, ipl, star, whicheph, geopos_max, tret, attr, false, ref serr)) == SwissEph.ERR) {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
@@ -2613,7 +2613,7 @@ static string infoexamp = @"\n\
                     if ((special_mode & SP_MODE_HOCAL) != 0) {
                         int ihou, imin, isec, isgn;
                         double dfrc;
-                        sweph.SplitDeg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
+                        sweph.swe_split_deg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
                         sout = C.sprintf("\"%04d %02d %02d %02d.%02d %d\",\n", jyear, jmon, jday, ihou, imin, ecl_type);
                     }
                     do_printf(sout);
@@ -2638,7 +2638,7 @@ static string infoexamp = @"\n\
             if ((time_flag & BIT_TIME_LAT) != 0)
                 stz = "LAT";
             sout = String.Empty;
-            sweph.RevJul(dret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
+            sweph.swe_revjul(dret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
             if (event_type <= 4) {
                 if (hel_using_AV) {
                     stim0 = (hms_from_tjd(dret[0]));
@@ -2679,7 +2679,7 @@ static string infoexamp = @"\n\
             if (ipl == SwissEph.SE_FIXSTAR)
                 obj_name = star;
             else
-                obj_name = sweph.GetPlanetName(ipl);
+                obj_name = sweph.swe_get_planet_name(ipl);
             do_printf("\n");
             for (ii = 0; ii < nstep; ii++, t_ut = dret[0] + 1) {
                 sout = String.Empty;
@@ -2689,7 +2689,7 @@ static string infoexamp = @"\n\
                     event_type = SwissEph.SE_EVENING_FIRST;
                 else
                     event_type = SwissEph.SE_HELIACAL_RISING;
-                retflag = sweph.HeliacalUt(t_ut, geopos, datm, dobs, obj_name, event_type, helflag, dret, out serr);
+                retflag = sweph.swe_heliacal_ut(t_ut, geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
                 if (retflag == SwissEph.ERR) {
                     do_printf(serr);
                     return SwissEph.ERR;
@@ -2705,7 +2705,7 @@ static string infoexamp = @"\n\
                     if (ipl == SwissEph.SE_VENUS || ipl == SwissEph.SE_MERCURY) {
                         /* we have heliacal rising (morning first), now find morning last */
                         event_type = SwissEph.SE_MORNING_LAST;
-                        retflag = sweph.HeliacalUt(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, out  serr);
+                        retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref  serr);
                         if (retflag == SwissEph.ERR) {
                             do_printf(serr);
                             return SwissEph.ERR;
@@ -2723,7 +2723,7 @@ static string infoexamp = @"\n\
                          * that take place before that */
                         if (ipl == SwissEph.SE_MERCURY) {
                             event_type = SwissEph.SE_HELIACAL_RISING;
-                            retflag = sweph.HeliacalUt(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, out serr);
+                            retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
                             if (retflag == SwissEph.ERR) {
                                 do_printf(serr);
                                 return SwissEph.ERR;
@@ -2733,7 +2733,7 @@ static string infoexamp = @"\n\
                     //repeat_mercury:
                         /* evening first */
                         event_type = SwissEph.SE_EVENING_FIRST;
-                        retflag = sweph.HeliacalUt(tsave1, geopos, datm, dobs, obj_name, event_type, helflag, dret, out serr);
+                        retflag = sweph.swe_heliacal_ut(tsave1, geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
                         if (retflag == SwissEph.ERR) {
                             do_printf(serr);
                             return SwissEph.ERR;
@@ -2750,7 +2750,7 @@ static string infoexamp = @"\n\
                     if (ipl == SwissEph.SE_MOON) {
                         /* morning last */
                         event_type = SwissEph.SE_MORNING_LAST;
-                        retflag = sweph.HeliacalUt(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, out serr);
+                        retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
                         if (retflag == SwissEph.ERR) {
                             do_printf(serr);
                             return SwissEph.ERR;
@@ -2764,7 +2764,7 @@ static string infoexamp = @"\n\
                     } else {
                         /* heliacal setting (evening last) */
                         event_type = SwissEph.SE_HELIACAL_SETTING;
-                        retflag = sweph.HeliacalUt(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, out serr);
+                        retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
                         if (retflag == SwissEph.ERR) {
                             do_printf(serr);
                             return SwissEph.ERR;

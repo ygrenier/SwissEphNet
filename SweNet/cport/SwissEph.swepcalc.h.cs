@@ -109,14 +109,14 @@ namespace SweNet
          * If you want to adapt your source code, turn the next TRUE into FALSE
          */
         //#if TRUE	/* replace by if FALSE to deactivate macros */
-        static double d2l(double x) { return swe_d2l(x); }
-        static double difcsn(int x, int y) { return swe_difcsn(x, y); }
-        static double difcs2n(int x, int y) { return swe_difcs2n(x, y); }
-        static double difdegn(double x, double y) { return swe_difdegn(x, y); }
-        static double difdeg2n(double x, double y) { return swe_difdeg2n(x, y); }
-        static double csnorm(int x) { return swe_csnorm(x); }
-        static double degnorm(double x) { return swe_degnorm(x); }
-        static double roundsec(int x) { return swe_csroundsec(x); }
+        double d2l(double x) { return swe_d2l(x); }
+        double difcsn(int x, int y) { return swe_difcsn(x, y); }
+        double difcs2n(int x, int y) { return swe_difcs2n(x, y); }
+        double difdegn(double x, double y) { return swe_difdegn(x, y); }
+        double difdeg2n(double x, double y) { return swe_difdeg2n(x, y); }
+        double csnorm(int x) { return swe_csnorm(x); }
+        double degnorm(double x) { return swe_degnorm(x); }
+        double roundsec(int x) { return swe_csroundsec(x); }
         //#endif
 
 ///*************************************************************

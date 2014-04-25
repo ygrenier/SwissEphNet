@@ -577,7 +577,7 @@ namespace SweNet
          * attr[7]	angular distance of moon from sun in degrees
          *         declare as attr[20] at least !
          */
-        protected Int32 swe_sol_eclipse_where(
+        public Int32 swe_sol_eclipse_where(
                 double tjd_ut,
                 Int32 ifl,
                 double[] geopos,
@@ -594,7 +594,7 @@ namespace SweNet
             return retflag;
         }
 
-        protected Int32 swe_lun_occult_where(
+        public Int32 swe_lun_occult_where(
                 double tjd_ut,
                 Int32 ipl,
                 string starname,
@@ -657,10 +657,10 @@ namespace SweNet
             deltat = swe_deltat(tjd_ut);
             tjd = tjd_ut + deltat;
             /* moon in cartesian coordinates */
-            if ((retc = swe_calc(tjd, SE_MOON, iflag, rm, out serr)) == ERR)
+            if ((retc = swe_calc(tjd, SE_MOON, iflag, rm, ref serr)) == ERR)
                 return retc;
             /* moon in polar coordinates */
-            if ((retc = swe_calc(tjd, SE_MOON, iflag2, lm, out serr)) == ERR)
+            if ((retc = swe_calc(tjd, SE_MOON, iflag2, lm, ref serr)) == ERR)
                 return retc;
             /* sun in cartesian coordinates */
             if ((retc = calc_planet_star(tjd, ipl, starname, iflag, rs, ref serr)) == ERR)
@@ -875,7 +875,7 @@ namespace SweNet
             int i;
             int retc = OK;
             if (!String.IsNullOrEmpty(starname)) {
-                retc = swe_calc(tjd_et, ipl, iflag, x, out serr);
+                retc = swe_calc(tjd_et, ipl, iflag, x, ref serr);
             } else {
                 if ((retc = swe_fixstar(starname, tjd_et, iflag, x, ref serr)) == OK) {
                     /* fixstars have the standard distance 1. 
@@ -934,7 +934,7 @@ namespace SweNet
                 retflag |= (retflag2 & (SE_ECL_CENTRAL | SE_ECL_NONCENTRAL));
             attr[3] = dcore[0];
             swe_set_topo(geopos[0], geopos[1], geopos[2]);
-            if (swe_calc_ut(tjd_ut, SE_SUN, ifl | SEFLG_TOPOCTR | SEFLG_EQUATORIAL, ls, out serr) == ERR)
+            if (swe_calc_ut(tjd_ut, SE_SUN, ifl | SEFLG_TOPOCTR | SEFLG_EQUATORIAL, ls, ref serr) == ERR)
                 return ERR;
             swe_azalt(tjd_ut, SE_EQU2HOR, geopos, 0, 10, ls, xaz);
             attr[4] = xaz[0];
@@ -973,11 +973,11 @@ namespace SweNet
             swe_set_topo(geolon, geolat, geohgt);
             if (calc_planet_star(te, ipl, starname, iflag, ls, ref serr) == ERR)
                 return ERR;
-            if (swe_calc(te, SE_MOON, iflag, lm, out serr) == ERR)
+            if (swe_calc(te, SE_MOON, iflag, lm, ref serr) == ERR)
                 return ERR;
             if (calc_planet_star(te, ipl, starname, iflagcart, xs, ref serr) == ERR)
                 return ERR;
-            if (swe_calc(te, SE_MOON, iflagcart, xm, out serr) == ERR)
+            if (swe_calc(te, SE_MOON, iflagcart, xm, ref serr) == ERR)
                 return ERR;
             /*
              * radius of planet disk in AU
@@ -1159,8 +1159,8 @@ namespace SweNet
          *         declare as tret[10] at least!
          *
          */
-        Int32 swe_sol_eclipse_when_glob(double tjd_start, Int32 ifl, Int32 ifltype,
-             double[] tret, Int32 backward, ref string serr) {
+        public Int32 swe_sol_eclipse_when_glob(double tjd_start, Int32 ifl, Int32 ifltype,
+             double[] tret, bool backward, ref string serr) {
             int i, j, k, m, n, o, i1 = 0, i2 = 0;
             Int32 retflag = 0, retflag2 = 0;
             double de = 6378.140, a;
@@ -1189,7 +1189,7 @@ namespace SweNet
             if (ifltype == 0)
                 ifltype = SE_ECL_TOTAL | SE_ECL_ANNULAR | SE_ECL_PARTIAL
                        | SE_ECL_ANNULAR_TOTAL | SE_ECL_NONCENTRAL | SE_ECL_CENTRAL;
-            if (backward != 0)
+            if (backward)
                 direction = -1;
             K = (int)((tjd_start - J2000) / 365.2425 * 12.3685);
             K -= direction;
@@ -1243,13 +1243,13 @@ namespace SweNet
                  dt > 0.0001;
                  dt /= dtdiv) {
                 for (i = 0, t = tjd - dt; i <= 2; i++, t += dt) {
-                    if (swe_calc(t, SE_SUN, iflag, ls, out serr) == ERR)
+                    if (swe_calc(t, SE_SUN, iflag, ls, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflag, lm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflag, lm, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_SUN, iflagcart, xs, out  serr) == ERR)
+                    if (swe_calc(t, SE_SUN, iflagcart, xs, ref  serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                         return ERR;
                     for (m = 0; m < 3; m++) {
                         xa[m] = xs[m] / ls[2];
@@ -1277,8 +1277,8 @@ namespace SweNet
                 goto next_try;
             }
             tret[0] = tjd;
-            if ((backward != 0 && tret[0] >= tjd_start - 0.0001)
-              || (0 == backward && tret[0] <= tjd_start + 0.0001)) {
+            if ((backward && tret[0] >= tjd_start - 0.0001)
+              || (!backward && tret[0] <= tjd_start + 0.0001)) {
                 K += direction;
                 goto next_try;
             }
@@ -1420,9 +1420,9 @@ namespace SweNet
             for (i = 0; i < 2; i++) {
                 j = i + k;
                 tt = tret[j] + swe_deltat(tret[j]);
-                if (swe_calc(tt, SE_SUN, iflag, ls, out serr) == ERR)
+                if (swe_calc(tt, SE_SUN, iflag, ls, ref serr) == ERR)
                     return ERR;
-                if (swe_calc(tt, SE_MOON, iflag, lm, out serr) == ERR)
+                if (swe_calc(tt, SE_MOON, iflag, lm, ref serr) == ERR)
                     return ERR;
                 dc[i] = swe_degnorm(ls[0] - lm[0]);
                 if (dc[i] > 180)
@@ -1441,9 +1441,9 @@ namespace SweNet
                     j++, dt /= 3) {
                     for (i = 0, t = tjd; i <= 1; i++, t -= dt) {
                         tt = t + swe_deltat(t);
-                        if (swe_calc(tt, SE_SUN, iflag, ls, out  serr) == ERR)
+                        if (swe_calc(tt, SE_SUN, iflag, ls, ref  serr) == ERR)
                             return ERR;
-                        if (swe_calc(tt, SE_MOON, iflag, lm, out  serr) == ERR)
+                        if (swe_calc(tt, SE_MOON, iflag, lm, ref  serr) == ERR)
                             return ERR;
                         dc[i] = swe_degnorm(ls[0] - lm[0]);
                         if (dc[i] > 180)
@@ -1532,9 +1532,9 @@ namespace SweNet
          *         declare as tret[10] at least!
          *
          */
-        Int32 swe_lun_occult_when_glob(
+        public Int32 swe_lun_occult_when_glob(
              double tjd_start, Int32 ipl, string starname, Int32 ifl, Int32 ifltype,
-             double[] tret, Int32 backward, ref string serr) {
+             double[] tret, bool b_backward, ref string serr) {
                  int i, j, k, m, n, o, i1 = 0, i2 = 0;
             Int32 retflag = 0, retflag2 = 0;
             double de = 6378.140, a;
@@ -1553,6 +1553,7 @@ namespace SweNet
             string s;
             Int32 iflag, iflagcart;
             bool dont_times = false;
+            int backward = b_backward ? 1 : 0;
             Int32 one_try = backward & SE_ECL_ONE_TRY;
             /*if (backward & SEI_OCC_FAST)
                 dont_times = TRUE; */
@@ -1586,7 +1587,7 @@ namespace SweNet
             for (i = 0; i < nstartpos; i++, t += direction * dadd2) {
                 if (calc_planet_star(t, ipl, starname, iflagcart, xs, ref serr) == ERR)
                     return ERR;
-                if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                     return ERR;
                 dc[i] = Math.Acos(swi_dot_prod_unit(xs, xm)) * RADTODEG;
                 if (i > 1 && dc[i] > dc[i - 1] && dc[i - 2] > dc[i - 1]) {
@@ -1633,11 +1634,11 @@ namespace SweNet
                 for (i = 0, t = tjd - dt; i <= 2; i++, t += dt) {
                     if (calc_planet_star(t, ipl, starname, iflag, ls, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflag, lm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflag, lm, ref serr) == ERR)
                         return ERR;
                     if (calc_planet_star(t, ipl, starname, iflagcart, xs, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                         return ERR;
                     dc[i] = Math.Acos(swi_dot_prod_unit(xs, xm)) * RADTODEG;
                     rmoon = Math.Asin(RMOON / lm[2]) * RADTODEG;
@@ -1830,7 +1831,7 @@ namespace SweNet
                 tt = tret[j] + swe_deltat(tret[j]);
                 if (calc_planet_star(tt, ipl, starname, iflag, ls, ref serr) == ERR)
                     return ERR;
-                if (swe_calc(tt, SE_MOON, iflag, lm, out serr) == ERR)
+                if (swe_calc(tt, SE_MOON, iflag, lm, ref serr) == ERR)
                     return ERR;
                 dc[i] = swe_degnorm(ls[0] - lm[0]);
                 if (dc[i] > 180)
@@ -1851,7 +1852,7 @@ namespace SweNet
                         tt = t + swe_deltat(t);
                         if (calc_planet_star(tt, ipl, starname, iflag, ls, ref serr) == ERR)
                             return ERR;
-                        if (swe_calc(tt, SE_MOON, iflag, lm, out serr) == ERR)
+                        if (swe_calc(tt, SE_MOON, iflag, lm, ref serr) == ERR)
                             return ERR;
                         dc[i] = swe_degnorm(ls[0] - lm[0]);
                         if (dc[i] > 180)
@@ -1918,8 +1919,8 @@ namespace SweNet
          * attr[10]	saros series member number
          *         declare as attr[20] at least !
          */
-        Int32 swe_sol_eclipse_when_loc(double tjd_start, Int32 ifl,
-             double[] geopos, double[] tret, double[] attr, Int32 backward, ref string serr) {
+        public Int32 swe_sol_eclipse_when_loc(double tjd_start, Int32 ifl,
+             double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
             Int32 retflag = 0, retflag2 = 0;
             double[] geopos2 = new double[20], dcore = new double[10];
             ifl &= SEFLG_EPHMASK;
@@ -1963,8 +1964,8 @@ namespace SweNet
          *
          * for all other parameters, see function swe_sol_eclipse_when_loc().
          */
-        Int32 swe_lun_occult_when_loc(double tjd_start, Int32 ipl, string starname, Int32 ifl,
-             double[] geopos, double[] tret, double[] attr, Int32 backward, ref string serr) {
+        public Int32 swe_lun_occult_when_loc(double tjd_start, Int32 ipl, string starname, Int32 ifl,
+             double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
             Int32 retflag = 0, retflag2 = 0;
             double[] geopos2 = new double[20], dcore = new double[10];
             /* function calls for Pluto with asteroid number 134340
@@ -1972,7 +1973,7 @@ namespace SweNet
             if (ipl == SE_AST_OFFSET + 134340)
                 ipl = SE_PLUTO;
             ifl &= SEFLG_EPHMASK;
-            if ((retflag = occult_when_loc(tjd_start, ipl, starname, ifl, geopos, tret, attr, backward, ref serr)) <= 0)
+            if ((retflag = occult_when_loc(tjd_start, ipl, starname, ifl, geopos, tret, attr, backward ? 1 : 0, ref serr)) <= 0)
                 return retflag;
             /* 
              * diameter of core shadow
@@ -1984,7 +1985,7 @@ namespace SweNet
             return retflag;
         }
 
-        Int32 eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, Int32 backward, ref string serr) {
+        Int32 eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
             int i, j, k, m;
             Int32 retflag = 0, retc;
             double t, tjd, dt, dtint, K, T, T2, T3, T4, F, M, Mm;
@@ -2002,7 +2003,7 @@ namespace SweNet
             Int32 iflagcart = iflag | SEFLG_XYZ;
             swe_set_topo(geopos[0], geopos[1], geopos[2]);
             K = (int)((tjd_start - J2000) / 365.2425 * 12.3685);
-            if (backward != 0)
+            if (backward)
                 K++;
             else
                 K--;
@@ -2016,7 +2017,7 @@ namespace SweNet
             if (Ff > 180)
                 Ff -= 180;
             if (Ff > 21 && Ff < 159) { 	/* no eclipse possible */
-                if (backward != 0)
+                if (backward)
                     K--;
                 else
                     K++;
@@ -2060,13 +2061,13 @@ namespace SweNet
                 for (i = 0, t = tjd - dt; i <= 2; i++, t += dt) {
                     /* this takes some time, but is necessary to avoid
                      * missing an eclipse */
-                    if (swe_calc(t, SE_SUN, iflagcart, xs, out serr) == ERR)
+                    if (swe_calc(t, SE_SUN, iflagcart, xs, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_SUN, iflag, ls, out serr) == ERR)
+                    if (swe_calc(t, SE_SUN, iflag, ls, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflag, lm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflag, lm, ref serr) == ERR)
                         return ERR;
                     dm = Math.Sqrt(square_sum(xm));
                     ds = Math.Sqrt(square_sum(xs));
@@ -2079,13 +2080,13 @@ namespace SweNet
                 find_maximum(dc[0], dc[1], dc[2], dt, out dtint, out dctr);
                 tjd += dtint + dt;
             }
-            if (swe_calc(tjd, SE_SUN, iflagcart, xs, out serr) == ERR)
+            if (swe_calc(tjd, SE_SUN, iflagcart, xs, ref serr) == ERR)
                 return ERR;
-            if (swe_calc(tjd, SE_SUN, iflag, ls, out serr) == ERR)
+            if (swe_calc(tjd, SE_SUN, iflag, ls, ref serr) == ERR)
                 return ERR;
-            if (swe_calc(tjd, SE_MOON, iflagcart, xm, out serr) == ERR)
+            if (swe_calc(tjd, SE_MOON, iflagcart, xm, ref serr) == ERR)
                 return ERR;
-            if (swe_calc(tjd, SE_MOON, iflag, lm, out serr) == ERR)
+            if (swe_calc(tjd, SE_MOON, iflag, lm, ref serr) == ERR)
                 return ERR;
             dctr = Math.Acos(swi_dot_prod_unit(xs, xm)) * RADTODEG;
             rmoon = Math.Asin(RMOON / lm[2]) * RADTODEG;
@@ -2093,16 +2094,16 @@ namespace SweNet
             rsplusrm = rsun + rmoon;
             rsminusrm = rsun - rmoon;
             if (dctr > rsplusrm) {
-                if (backward != 0)
+                if (backward)
                     K--;
                 else
                     K++;
                 goto next_try;
             }
             tret[0] = tjd - swe_deltat(tjd);
-            if ((backward != 0 && tret[0] >= tjd_start - 0.0001)
-              || (0 == backward && tret[0] <= tjd_start + 0.0001)) {
-                if (backward != 0)
+            if ((backward && tret[0] >= tjd_start - 0.0001)
+              || (!backward && tret[0] <= tjd_start + 0.0001)) {
+                if (backward)
                     K--;
                 else
                     K++;
@@ -2121,9 +2122,9 @@ namespace SweNet
             else {
                 dc[1] = Math.Abs(rsminusrm) - dctrmin;
                 for (i = 0, t = tjd - twomin; i <= 2; i += 2, t = tjd + twomin) {
-                    if (swe_calc(t, SE_SUN, iflagcart, xs, out serr) == ERR)
+                    if (swe_calc(t, SE_SUN, iflagcart, xs, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                         return ERR;
                     dm = Math.Sqrt(square_sum(xm));
                     ds = Math.Sqrt(square_sum(xs));
@@ -2143,9 +2144,9 @@ namespace SweNet
                 tret[3] = tjd + dt2 + twomin;
                 for (m = 0, dt = tensec; m < 2; m++, dt /= 10) {
                     for (j = 2; j <= 3; j++) {
-                        if (swe_calc(tret[j], SE_SUN, iflagcart | SEFLG_SPEED, xs, out serr) == ERR)
+                        if (swe_calc(tret[j], SE_SUN, iflagcart | SEFLG_SPEED, xs, ref serr) == ERR)
                             return ERR;
-                        if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, out serr) == ERR)
+                        if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, ref serr) == ERR)
                             return ERR;
                         for (i = 0; i < 2; i++) {
                             if (i == 1) {
@@ -2177,9 +2178,9 @@ namespace SweNet
             /* contacts 1 and 4 */
             dc[1] = rsplusrm - dctrmin;
             for (i = 0, t = tjd - twohr; i <= 2; i += 2, t = tjd + twohr) {
-                if (swe_calc(t, SE_SUN, iflagcart, xs, out serr) == ERR)
+                if (swe_calc(t, SE_SUN, iflagcart, xs, ref serr) == ERR)
                     return ERR;
-                if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                     return ERR;
                 dm = Math.Sqrt(square_sum(xm));
                 ds = Math.Sqrt(square_sum(xs));
@@ -2198,9 +2199,9 @@ namespace SweNet
             tret[4] = tjd + dt2 + twohr;
             for (m = 0, dt = tenmin; m < 3; m++, dt /= 10) {
                 for (j = 1; j <= 4; j += 3) {
-                    if (swe_calc(tret[j], SE_SUN, iflagcart | SEFLG_SPEED, xs, out serr) == ERR)
+                    if (swe_calc(tret[j], SE_SUN, iflagcart | SEFLG_SPEED, xs, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, out serr) == ERR)
+                    if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, ref serr) == ERR)
                         return ERR;
                     for (i = 0; i < 2; i++) {
                         if (i == 1) {
@@ -2251,7 +2252,7 @@ namespace SweNet
             }
             //#if 1
             if (0 == (retflag & SE_ECL_VISIBLE)) {
-                if (backward != 0)
+                if (backward)
                     K--;
                 else
                     K++;
@@ -2288,7 +2289,7 @@ namespace SweNet
         Int32 occult_when_loc(
              double tjd_start, Int32 ipl, string starname,
              Int32 ifl, double[] geopos, double[] tret, double[] attr,
-             Int32 backward, ref string serr) {
+             int backward, ref string serr) {
             int i, j, k, m;
             Int32 retflag = 0;
             double t, tjd, dt, dtint;
@@ -2325,7 +2326,7 @@ namespace SweNet
             for (i = 0; i < nstartpos; i++, t += direction * dadd2) {
                 if (calc_planet_star(t, ipl, starname, iflagcartgeo, xs, ref serr) == ERR)
                     return ERR;
-                if (swe_calc(t, SE_MOON, iflagcartgeo, xm, out serr) == ERR)
+                if (swe_calc(t, SE_MOON, iflagcartgeo, xm, ref serr) == ERR)
                     return ERR;
                 dc[i] = Math.Acos(swi_dot_prod_unit(xs, xm)) * RADTODEG;
                 if (i > 1 && dc[i] > dc[i - 1] && dc[i - 2] > dc[i - 1]) {
@@ -2368,9 +2369,9 @@ namespace SweNet
                         return ERR;
                     if (calc_planet_star(t, ipl, starname, iflag, ls, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflag, lm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflag, lm, ref serr) == ERR)
                         return ERR;
                     if (dt < 1 && Math.Abs(ls[1] - lm[1]) > 2) {
                         if (one_try != 0) {
@@ -2398,9 +2399,9 @@ namespace SweNet
                 return ERR;
             if (calc_planet_star(tjd, ipl, starname, iflag, ls, ref serr) == ERR)
                 return ERR;
-            if (swe_calc(tjd, SE_MOON, iflagcart, xm, out serr) == ERR)
+            if (swe_calc(tjd, SE_MOON, iflagcart, xm, ref serr) == ERR)
                 return ERR;
-            if (swe_calc(tjd, SE_MOON, iflag, lm, out serr) == ERR)
+            if (swe_calc(tjd, SE_MOON, iflag, lm, ref serr) == ERR)
                 return ERR;
             dctr = Math.Acos(swi_dot_prod_unit(xs, xm)) * RADTODEG;
             rmoon = Math.Asin(RMOON / lm[2]) * RADTODEG;
@@ -2440,7 +2441,7 @@ namespace SweNet
                 for (i = 0, t = tjd - twomin; i <= 2; i += 2, t = tjd + twomin) {
                     if (calc_planet_star(t, ipl, starname, iflagcart, xs, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                         return ERR;
                     dm = Math.Sqrt(square_sum(xm));
                     ds = Math.Sqrt(square_sum(xs));
@@ -2462,7 +2463,7 @@ namespace SweNet
                     for (j = 2; j <= 3; j++) {
                         if (calc_planet_star(tret[j], ipl, starname, iflagcart | SEFLG_SPEED, xs, ref serr) == ERR)
                             return ERR;
-                        if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, out serr) == ERR)
+                        if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, ref serr) == ERR)
                             return ERR;
                         for (i = 0; i < 2; i++) {
                             if (i == 1) {
@@ -2496,7 +2497,7 @@ namespace SweNet
             for (i = 0, t = tjd - twohr; i <= 2; i += 2, t = tjd + twohr) {
                 if (calc_planet_star(t, ipl, starname, iflagcart, xs, ref serr) == ERR)
                     return ERR;
-                if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                     return ERR;
                 dm = Math.Sqrt(square_sum(xm));
                 ds = Math.Sqrt(square_sum(xs));
@@ -2517,7 +2518,7 @@ namespace SweNet
                 for (j = 1; j <= 4; j += 3) {
                     if (calc_planet_star(tret[j], ipl, starname, iflagcart | SEFLG_SPEED, xs, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, out serr) == ERR)
+                    if (swe_calc(tret[j], SE_MOON, iflagcart | SEFLG_SPEED, xm, ref serr) == ERR)
                         return ERR;
                     for (i = 0; i < 2; i++) {
                         if (i == 1) {
@@ -2619,7 +2620,7 @@ namespace SweNet
          * if a non-zero height above sea is given, atpress is estimated.
          *   geohgt	  height of observer above sea (optional)
          */
-        void swe_azalt(
+        public void swe_azalt(
               double tjd_ut,
               Int32 calc_flag,
               double[] geopos,
@@ -2627,7 +2628,7 @@ namespace SweNet
               double attemp,
               double[] xin,
               double[] xaz) {
-            int i; string sdummy;
+            int i; string sdummy = String.Empty;
             double[] x = new double[6], xra = new double[3];
             double armc = swe_degnorm(swe_sidtime(tjd_ut) * 15 + geopos[0]);
             double mdd, eps_true, tjd_et;
@@ -2636,7 +2637,7 @@ namespace SweNet
             xra[2] = 1;
             if (calc_flag == SE_ECL2HOR) {
                 tjd_et = tjd_ut + swe_deltat(tjd_ut);
-                swe_calc(tjd_et, SE_ECL_NUT, 0, x, out sdummy);
+                swe_calc(tjd_et, SE_ECL_NUT, 0, x, ref sdummy);
                 eps_true = x[0];
                 swe_cotrans(xra, xra, -eps_true);
             }
@@ -2676,7 +2677,7 @@ namespace SweNet
               double[] geopos,
               double[] xin,
               double[] xout) {
-            int i; string sdummy;
+            int i; string sdummy = String.Empty;
             double[] x = new double[6], xaz = new double[3];
             double geolon = geopos[0];
             double geolat = geopos[1];
@@ -2698,7 +2699,7 @@ namespace SweNet
             /* ecliptic positions */
             if (calc_flag == SE_HOR2ECL) {
                 tjd_et = tjd_ut + swe_deltat(tjd_ut);
-                swe_calc(tjd_et, SE_ECL_NUT, 0, x, out sdummy);
+                swe_calc(tjd_et, SE_ECL_NUT, 0, x, ref sdummy);
                 eps_true = x[0];
                 swe_cotrans(xaz, x, eps_true);
                 xout[0] = x[0];
@@ -3009,7 +3010,7 @@ namespace SweNet
          *         declare as attr[20] at least !
          * 
          */
-        Int32 swe_lun_eclipse_how(
+        public Int32 swe_lun_eclipse_how(
                   double tjd_ut,
                   Int32 ifl,
                   double[] geopos,
@@ -3030,7 +3031,7 @@ namespace SweNet
              * azimuth and altitude of moon
              */
             swe_set_topo(geopos[0], geopos[1], geopos[2]);
-            if (swe_calc_ut(tjd_ut, SE_MOON, ifl | SEFLG_TOPOCTR | SEFLG_EQUATORIAL, lm, out serr) == ERR)
+            if (swe_calc_ut(tjd_ut, SE_MOON, ifl | SEFLG_TOPOCTR | SEFLG_EQUATORIAL, lm, ref serr) == ERR)
                 return ERR;
             swe_azalt(tjd_ut, SE_EQU2HOR, geopos, 0, 10, lm, xaz);
             attr[4] = xaz[0];
@@ -3076,12 +3077,12 @@ namespace SweNet
             deltat = swe_deltat(tjd_ut);
             tjd = tjd_ut + deltat;
             /* moon in cartesian coordinates */
-            if (swe_calc(tjd, SE_MOON, iflag, rm, out serr) == ERR)
+            if (swe_calc(tjd, SE_MOON, iflag, rm, ref serr) == ERR)
                 return ERR;
             /* distance of moon from geocenter */
             dm = Math.Sqrt(square_sum(rm));
             /* sun in cartesian coordinates */
-            if (swe_calc(tjd, SE_SUN, iflag, rs, out serr) == ERR)
+            if (swe_calc(tjd, SE_SUN, iflag, rs, ref serr) == ERR)
                 return ERR;
             /* distance of sun from geocenter */
             ds = Math.Sqrt(square_sum(rs));
@@ -3186,8 +3187,8 @@ namespace SweNet
          * tret[6]	time of penumbral phase begin
          * tret[7]	time of penumbral phase end
          */
-        Int32 swe_lun_eclipse_when(double tjd_start, Int32 ifl, Int32 ifltype,
-             double[] tret, Int32 backward, ref string serr) {
+        public Int32 swe_lun_eclipse_when(double tjd_start, Int32 ifl, Int32 ifltype,
+             double[] tret, bool backward, ref string serr) {
             int i, j, m, n, o, i1 = 0, i2 = 0;
             Int32 retflag = 0, retflag2 = 0;
             double t, tjd, dt, dtint, dta, dtb;
@@ -3211,7 +3212,7 @@ namespace SweNet
             iflagcart = iflag | SEFLG_XYZ;
             if (ifltype == 0)
                 ifltype = SE_ECL_TOTAL | SE_ECL_PENUMBRAL | SE_ECL_PARTIAL;
-            if (backward != 0)
+            if (backward)
                 direction = -1;
             K = (int)((tjd_start - J2000) / 365.2425 * 12.3685);
             K -= direction;
@@ -3288,9 +3289,9 @@ namespace SweNet
                  dt > 0.001;
                  j++, dt /= dtdiv) {
                 for (i = 0, t = tjd - dt; i <= 2; i++, t += dt) {
-                    if (swe_calc(t, SE_SUN, iflagcart, xs, out serr) == ERR)
+                    if (swe_calc(t, SE_SUN, iflagcart, xs, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(t, SE_MOON, iflagcart, xm, out serr) == ERR)
+                    if (swe_calc(t, SE_MOON, iflagcart, xm, ref serr) == ERR)
                         return ERR;
                     for (m = 0; m < 3; m++) {
                         xs[m] -= xm[m];	/* selenocentric sun */
@@ -3318,8 +3319,8 @@ namespace SweNet
                 goto next_try;
             }
             tret[0] = tjd;
-            if ((backward != 0 && tret[0] >= tjd_start - 0.0001)
-              || (0 == backward && tret[0] <= tjd_start + 0.0001)) {
+            if ((backward && tret[0] >= tjd_start - 0.0001)
+              || (!backward && tret[0] <= tjd_start + 0.0001)) {
                 K += direction;
                 goto next_try;
             }
@@ -3427,8 +3428,8 @@ namespace SweNet
          * attr[10]     saros series member number
          *         declare as attr[20] at least !
          */
-        Int32 swe_lun_eclipse_when_loc(double tjd_start, Int32 ifl,
-             double[] geopos, double[] tret, double[] attr, Int32 backward, ref string serr) {
+        public Int32 swe_lun_eclipse_when_loc(double tjd_start, Int32 ifl,
+             double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
             Int32 retflag = 0, retflag2 = 0;
             double tjdr = 0, tjds = 0, tjd_max = 0;
             int i;
@@ -3461,7 +3462,7 @@ namespace SweNet
                 }
             }
             if (0 == (retflag & SE_ECL_VISIBLE)) {
-                if (backward != 0)
+                if (backward)
                     tjd_start = tret[0] - 25;
                 else
                     tjd_start = tret[0] + 25;
@@ -3547,7 +3548,7 @@ namespace SweNet
                 {5.33, 0.32, 0, 0},     /* Juno */
                 {3.20, 0.32, 0, 0},     /* Vesta */
                 };
-        Int32 swe_pheno(double tjd, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
+        public Int32 swe_pheno(double tjd, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
             int i;
             double[] xx = new double[6], xx2 = new double[6], xxs = new double[6], lbr = new double[6], lbr2 = new double[6]; double dt = 0, dd;
             double fac;
@@ -3581,15 +3582,15 @@ namespace SweNet
             /*  
              * geocentric planet
              */
-            if (swe_calc(tjd, (int)ipl, iflag | SEFLG_XYZ, xx, out serr) == ERR)
+            if (swe_calc(tjd, (int)ipl, iflag | SEFLG_XYZ, xx, ref serr) == ERR)
                 /* int cast can be removed when swe_calc() gets int32 ipl definition */
                 return ERR;
-            if (swe_calc(tjd, (int)ipl, iflag, lbr, out serr) == ERR)
+            if (swe_calc(tjd, (int)ipl, iflag, lbr, ref serr) == ERR)
                 /* int cast can be removed when swe_calc() gets int32 ipl definition */
                 return ERR;
             /* if moon, we need sun as well, for magnitude */
             if (ipl == SE_MOON)
-                if (swe_calc(tjd, SE_SUN, iflag | SEFLG_XYZ, xxs, out serr) == ERR)
+                if (swe_calc(tjd, SE_SUN, iflag | SEFLG_XYZ, xxs, ref serr) == ERR)
                     return ERR;
             if (ipl != SE_SUN && ipl != SE_EARTH &&
               ipl != SE_MEAN_NODE && ipl != SE_TRUE_NODE &&
@@ -3603,10 +3604,10 @@ namespace SweNet
                 /* 
                  * heliocentric planet at tjd - dt
                  */
-                if (swe_calc(tjd - dt, (int)ipl, iflagp | SEFLG_XYZ, xx2, out  serr) == ERR)
+                if (swe_calc(tjd - dt, (int)ipl, iflagp | SEFLG_XYZ, xx2, ref  serr) == ERR)
                     /* int cast can be removed when swe_calc() gets int32 ipl definition */
                     return ERR;
-                if (swe_calc(tjd - dt, (int)ipl, iflagp, lbr2, out  serr) == ERR)
+                if (swe_calc(tjd - dt, (int)ipl, iflagp, lbr2, ref  serr) == ERR)
                     /* int cast can be removed when swe_calc() gets int32 ipl definition */
                     return ERR;
                 /*
@@ -3711,9 +3712,9 @@ namespace SweNet
                 /* 
                  * elongation of planet
                  */
-                if (swe_calc(tjd, SE_SUN, iflag | SEFLG_XYZ, xx2, out serr) == ERR)
+                if (swe_calc(tjd, SE_SUN, iflag | SEFLG_XYZ, xx2, ref serr) == ERR)
                     return ERR;
-                if (swe_calc(tjd, SE_SUN, iflag, lbr2, out serr) == ERR)
+                if (swe_calc(tjd, SE_SUN, iflag, lbr2, ref serr) == ERR)
                     return ERR;
                 attr[2] = Math.Acos(swi_dot_prod_unit(xx, xx2)) * RADTODEG;
             }
@@ -3722,16 +3723,16 @@ namespace SweNet
                 double sinhp; double[] xm = new double[6];
                 /* geocentric horizontal parallax */
                 /* Expl.Suppl. to the AA 1984, p.400 */
-                if (swe_calc(tjd, (int)ipl, epheflag | SEFLG_TRUEPOS | SEFLG_EQUATORIAL | SEFLG_RADIANS, xm, out serr) == ERR)
+                if (swe_calc(tjd, (int)ipl, epheflag | SEFLG_TRUEPOS | SEFLG_EQUATORIAL | SEFLG_RADIANS, xm, ref serr) == ERR)
                     /* int cast can be removed when swe_calc() gets int32 ipl definition */
                     return ERR;
                 sinhp = EARTH_RADIUS / xm[2] / AUNIT;
                 attr[5] = Math.Asin(sinhp) / DEGTORAD;
                 /* topocentric horizontal parallax */
                 if ((iflag & SEFLG_TOPOCTR) != 0) {
-                    if (swe_calc(tjd, (int)ipl, epheflag | SEFLG_XYZ | SEFLG_TOPOCTR, xm, out serr) == ERR)
+                    if (swe_calc(tjd, (int)ipl, epheflag | SEFLG_XYZ | SEFLG_TOPOCTR, xm, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(tjd, (int)ipl, epheflag | SEFLG_XYZ, xx, out serr) == ERR)
+                    if (swe_calc(tjd, (int)ipl, epheflag | SEFLG_XYZ, xx, ref serr) == ERR)
                         return ERR;
                     attr[5] = Math.Acos(swi_dot_prod_unit(xm, xx)) / DEGTORAD;
                     //#if 0
@@ -3826,7 +3827,7 @@ namespace SweNet
             * serr[256]	error string
             * function return value -2 means that the body does not rise or set */
         //#define SEFLG_EPHMASK	(SEFLG_JPLEPH|SEFLG_SWIEPH|SEFLG_MOSEPH)
-        Int32 swe_rise_trans(
+        public Int32 swe_rise_trans(
                        double tjd_ut, Int32 ipl, string starname,
                    Int32 epheflag, Int32 rsmi,
                        double[] geopos,
@@ -3838,7 +3839,7 @@ namespace SweNet
 
         /* same as swe_rise_trans(), but allows to define the height of the horizon
          * at the point of the rising or setting (horhgt) */
-        Int32 swe_rise_trans_true_hor(
+        public Int32 swe_rise_trans_true_hor(
                        double tjd_ut, Int32 ipl, string starname,
                    Int32 epheflag, Int32 rsmi,
                        double[] geopos,
@@ -3895,7 +3896,7 @@ namespace SweNet
                 tc[ii] = t;
                 if (!do_fixstar) {
                     te = t + swe_deltat(t);
-                    if (swe_calc(te, ipl, iflag, xc, out serr) == ERR)
+                    if (swe_calc(te, ipl, iflag, xc, ref serr) == ERR)
                         return ERR;
                 }
                 /* diameter of object in km */
@@ -3961,7 +3962,7 @@ namespace SweNet
                         for (i = 0, tt = tcu - dt; i < 3; tt += dt, i++) {
                             te = tt + swe_deltat(tt);
                             if (!do_fixstar)
-                                if (swe_calc(te, ipl, iflag, xc, out serr) == ERR)
+                                if (swe_calc(te, ipl, iflag, xc, ref serr) == ERR)
                                     return ERR;
                             swe_azalt(tt, SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
                             ah[1] -= horhgt;
@@ -3988,7 +3989,7 @@ namespace SweNet
                         tc[j] = tculm[i];
                         if (!do_fixstar) {
                             te = tc[j] + swe_deltat(tc[j]);
-                            if (swe_calc(te, ipl, iflag, xc, out serr) == ERR)
+                            if (swe_calc(te, ipl, iflag, xc, ref serr) == ERR)
                                 return ERR;
                         }
                         curdist = xc[2];
@@ -4044,7 +4045,7 @@ namespace SweNet
                     t = (t2[0] + t2[1]) / 2;
                     if (!do_fixstar) {
                         te = t + swe_deltat(t);
-                        if (swe_calc(te, ipl, iflag, xc, out serr) == ERR)
+                        if (swe_calc(te, ipl, iflag, xc, ref serr) == ERR)
                             return ERR;
                     }
                     curdist = xc[2];
@@ -4119,7 +4120,7 @@ namespace SweNet
                 if (swe_fixstar(starname, tjd_et, iflag, x0, ref serr) == ERR)
                     return ERR;
             } else {
-                if (swe_calc(tjd_et, ipl, iflag, x0, out serr) == ERR)
+                if (swe_calc(tjd_et, ipl, iflag, x0, ref serr) == ERR)
                     return ERR;
             }
             /*
@@ -4147,7 +4148,7 @@ namespace SweNet
                     arxc = swe_degnorm(arxc + 180);
                 if (!do_fixstar) {
                     te = t + swe_deltat(t);
-                    if (swe_calc(te, ipl, iflag, x, out serr) == ERR)
+                    if (swe_calc(te, ipl, iflag, x, ref serr) == ERR)
                         return ERR;
                 }
             }
@@ -4469,7 +4470,7 @@ namespace SweNet
           130000000,        /* Pluto */
         };
         static int[] ipl_to_elem = new int[15] { 2, 0, 0, 1, 3, 4, 5, 6, 7, 0, 0, 0, 0, 0, 2, };
-        Int32 swe_nod_aps(double tjd_et, Int32 ipl, Int32 iflag,
+        public Int32 swe_nod_aps(double tjd_et, Int32 ipl, Int32 iflag,
                               Int32 method,
                               double[] xnasc, double[] xndsc,
                               double[] xperi, double[] xaphe,
@@ -4644,7 +4645,7 @@ namespace SweNet
                  ***************************************/
             } else {
                 /* first, we need a heliocentric distance of the planet */
-                if (swe_calc(tjd_et, ipli, iflg0, x, out serr) == ERR)
+                if (swe_calc(tjd_et, ipli, iflg0, x, ref serr) == ERR)
                     return ERR;
                 iflJ2000 = (iflag & SEFLG_EPHMASK) | SEFLG_J2000 | SEFLG_EQUATORIAL | SEFLG_XYZ | SEFLG_TRUEPOS | SEFLG_NONUT | SEFLG_SPEED;
                 ellipse_is_bary = false;
@@ -4682,11 +4683,11 @@ namespace SweNet
                 for (i = istart, t = tjd_et - dt; i <= iend; i++, t += dt) {
                     if (istart == iend)
                         t = tjd_et;
-                    if (swe_calc(t, ipli, iflJ2000, xpos[i], out serr) == ERR)
+                    if (swe_calc(t, ipli, iflJ2000, xpos[i], ref serr) == ERR)
                         return ERR;
                     /* the EMB is used instead of the earth */
                     if (ipli == SE_EARTH) {
-                        if (swe_calc(t, SE_MOON, iflJ2000 & ~(SEFLG_BARYCTR | SEFLG_HELCTR), xposm, out serr) == ERR)
+                        if (swe_calc(t, SE_MOON, iflJ2000 & ~(SEFLG_BARYCTR | SEFLG_HELCTR), xposm, ref serr) == ERR)
                             return ERR;
                         for (j = 0; j <= 2; j++)
                             xpos[i][j] += xposm[j] / (EARTH_MOON_MRAT + 1.0);
@@ -4799,10 +4800,10 @@ namespace SweNet
              * we compute the planet */
             if (ipli == SE_MOON && (iflag & (SEFLG_HELCTR | SEFLG_BARYCTR)) != 0) {
                 swi_force_app_pos_etc();
-                if (swe_calc(tjd_et, SE_SUN, iflg0, x, out serr) == ERR)
+                if (swe_calc(tjd_et, SE_SUN, iflg0, x, ref serr) == ERR)
                     return ERR;
             } else {
-                if (swe_calc(tjd_et, ipli, iflg0 | (iflag & SEFLG_TOPOCTR), x, out serr) == ERR)
+                if (swe_calc(tjd_et, ipli, iflg0 | (iflag & SEFLG_TOPOCTR), x, ref serr) == ERR)
                     return ERR;
             }
             /***********************
@@ -4906,7 +4907,7 @@ namespace SweNet
                      */
                     if ((iflag & SEFLG_SPEED) != 0) {
                         /* get barycentric sun and earth for t-dt into save area */
-                        if (swe_calc(tjd_et - dt, ipli, iflg0 | (iflag & SEFLG_TOPOCTR), x2, out serr) == ERR)
+                        if (swe_calc(tjd_et - dt, ipli, iflg0 | (iflag & SEFLG_TOPOCTR), x2, ref serr) == ERR)
                             return ERR;
                         if ((iflag & SEFLG_TOPOCTR) != 0) {
                             /* geocentric position of observer */
@@ -4937,7 +4938,7 @@ namespace SweNet
                          * (i.e. bary sun, earth nutation matrix!). 
                          * to restore it:
                          */
-                        if (swe_calc(tjd_et, SE_SUN, iflg0 | (iflag & SEFLG_TOPOCTR), x2, out serr) == ERR)
+                        if (swe_calc(tjd_et, SE_SUN, iflg0 | (iflag & SEFLG_TOPOCTR), x2, ref serr) == ERR)
                             return ERR;
                     }
                 }
@@ -5073,7 +5074,7 @@ namespace SweNet
          * dgsect is return area (pointer to a double)
          * serr is pointer to error string, may be NULL
          */
-        Int32 swe_gauquelin_sector(double t_ut, Int32 ipl, string starname, Int32 iflag, Int32 imeth, double[] geopos, double atpress, double attemp, ref double dgsect, ref string serr) {
+        public Int32 swe_gauquelin_sector(double t_ut, Int32 ipl, string starname, Int32 iflag, Int32 imeth, double[] geopos, double atpress, double attemp, ref double dgsect, ref string serr) {
             bool rise_found = true;
             bool set_found = true;
             Int32 retval;
@@ -5107,7 +5108,7 @@ namespace SweNet
                     if (swe_fixstar(starname, t_et, iflag, x0, ref serr) == ERR)
                         return ERR;
                 } else {
-                    if (swe_calc(t_et, ipl, iflag, x0, out serr) == ERR)
+                    if (swe_calc(t_et, ipl, iflag, x0, ref serr) == ERR)
                         return ERR;
                 }
                 if (imeth == 1)

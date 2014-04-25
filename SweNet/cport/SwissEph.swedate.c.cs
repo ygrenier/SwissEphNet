@@ -184,7 +184,7 @@ namespace SweNet
                         date_conversion() includes test for legal date values
                     and notifies errors like 32 January.
          ****************************************************************/
-        protected static double swe_julday(int year, int month, int day, double hour, int gregflag) {
+        public double swe_julday(int year, int month, int day, double hour, int gregflag) {
             double jd;
             double u, u0, u1, u2;
             u = year;
@@ -224,7 +224,7 @@ namespace SweNet
           Original author Mark Pottenger, Los Angeles.
           with bug fix for year < -4711 16-aug-88 Alois Treindl
         *************************************************************************/
-        protected static void swe_revjul(double jd, int gregflag,
+        public void swe_revjul(double jd, int gregflag,
                  ref int jyear, ref int jmon, ref int jday, ref double jut) {
             double u0, u1, u2, u3, u4;
             u0 = jd + 32082.5;

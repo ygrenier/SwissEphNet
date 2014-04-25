@@ -416,11 +416,11 @@ namespace SweNet
                 iflag |= SEFLG_EQUATORIAL;
                 if (0 == (helflag & SE_HELFLAG_HIGH_PRECISION))
                     iflag |= SEFLG_NONUT | SEFLG_TRUEPOS;
-                if (swe_calc_ut(tjd0, SE_SUN, iflag, xs, out serr) == 0) {
+                if (swe_calc_ut(tjd0, SE_SUN, iflag, xs, ref serr) == 0) {
                     serr = "error in calc_rise_and_set(): calc(sun) failed ";
                     return ERR;
                 }
-                if (swe_calc_ut(tjd0, ipl, iflag, xx, out serr) == 0) {
+                if (swe_calc_ut(tjd0, ipl, iflag, xx, ref serr) == 0) {
                     serr = "error in calc_rise_and_set(): calc(sun) failed ";
                     return ERR;
                 }
@@ -445,7 +445,7 @@ namespace SweNet
                     }
                 }
                 /* position of planet */
-                if (swe_calc_ut(tjdnoon, ipl, iflag, xx, out serr) == ERR) {
+                if (swe_calc_ut(tjdnoon, ipl, iflag, xx, ref serr) == ERR) {
                     serr = "error in calc_rise_and_set(): calc(sun) failed ";
                     return ERR;
                 }
@@ -474,7 +474,7 @@ namespace SweNet
                 if (0 == (helflag & SE_HELFLAG_HIGH_PRECISION))
                     iflag |= SEFLG_NONUT | SEFLG_TRUEPOS;
                 for (i = 0; i < 2; i++) {
-                    if (swe_calc_ut(tjdrise, ipl, iflag, xx, out serr) == ERR)
+                    if (swe_calc_ut(tjdrise, ipl, iflag, xx, ref serr) == ERR)
                         return ERR;
                     swe_azalt(tjdrise, SE_EQU2HOR, dgeo, datm[0], datm[1], xx, xaz);
                     xx[0] -= xx[3] * dfac;
@@ -545,7 +545,7 @@ namespace SweNet
                         Int32 iflag = epheflag | SEFLG_EQUATORIAL;
                         iflag |= SEFLG_NONUT | SEFLG_TRUEPOS;
                         tjd_tt = JDNDaysUT + swe_deltat(JDNDaysUT);
-                        if (swe_calc(tjd_tt, SE_SUN, iflag, x, out serr) != ERR) {
+                        if (swe_calc(tjd_tt, SE_SUN, iflag, x, ref serr) != ERR) {
                             SunRA_ralast = x[0];
                             SunRA_tjdlast = JDNDaysUT;
                             return SunRA_ralast;
@@ -668,7 +668,7 @@ namespace SweNet
             ' COD [msec/cy]
             ' DeltaTVR [Sec]
             */
-            static double DeltaTVR(double JDNDays, int COD) {
+            double DeltaTVR(double JDNDays, int COD) {
                 /* Determined by V. Reijs */
                 double DeltaTVR;
                 int gregflag = SE_GREG_CAL;
@@ -718,7 +718,7 @@ namespace SweNet
                 tjd_tt = JDNDaysUT + DeltaT(JDNDaysUT, 0) / D2S;
                 Planet = DeterObject(ObjectName);
                 if (Planet != -1) {
-                    if (swe_calc(tjd_tt, Planet, iflag, x, out serr) == ERR)
+                    if (swe_calc(tjd_tt, Planet, iflag, x, ref serr) == ERR)
                         return ERR;
                 } else {
                     if (call_swe_fixstar(ObjectName, tjd_tt, iflag, x, ref serr) == ERR)
@@ -770,7 +770,7 @@ namespace SweNet
                 tjd_tt = JDNDaysUT + DeltaT(JDNDaysUT, 0) / D2S;
                 Planet = DeterObject(ObjectName);
                 if (Planet != -1) {
-                    if (swe_calc(tjd_tt, Planet, iflag, x, out serr) == ERR)
+                    if (swe_calc(tjd_tt, Planet, iflag, x, ref serr) == ERR)
                         return ERR;
                 } else {
                     if (call_swe_fixstar(ObjectName, tjd_tt, iflag, x, ref serr) == ERR)
@@ -1067,7 +1067,7 @@ namespace SweNet
             ' VR [km]
             ' Bn [nL]
             */
-            static double Bn(double AltO, double JDNDayUT, double AltS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+            double Bn(double AltO, double JDNDayUT, double AltS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
                 double PresE = PresEfromPresS(datm[1], datm[0], HeightEye);
                 double TempE = TempEfromTempS(datm[1], HeightEye, LapseSA);
                 double AppAltO = AppAltfromTopoAlt(AltO, TempE, PresE, helflag);
@@ -1248,7 +1248,7 @@ namespace SweNet
             /*###################################################################
             ' Pressure [mbar]
             */
-            static double Bsky(double AltO, double AziO, double AltM, double AziM, double JDNDaysUT, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+            double Bsky(double AltO, double AziO, double AltM, double AziM, double JDNDaysUT, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
                 double Bsky = 0;
                 if (AltS < -3) {
                     Bsky += Btwi(AltO, AziO, AltS, AziS, sunra, Lat, HeightEye, datm, helflag, ref serr);
@@ -2183,7 +2183,7 @@ namespace SweNet
                                 goto swe_heliacal_err;
                             /* determine time compensation to get Sun's altitude at heliacal rise */
                             tjd_tt = tret + DeltaT(tret, 0) / D2S;
-                            if ((retval = swe_calc(tjd_tt, SE_SUN, iflag, x, out serr)) == ERR)
+                            if ((retval = swe_calc(tjd_tt, SE_SUN, iflag, x, ref serr)) == ERR)
                                 goto swe_heliacal_err;
                             xin[0] = x[0];
                             xin[1] = x[1];
@@ -2199,7 +2199,7 @@ namespace SweNet
                             JDNarcvisUT = tret - Tdelta / 24;
                             tjd_tt = JDNarcvisUT + DeltaT(JDNarcvisUT, 0) / D2S;
                             /* determine Sun's position */
-                            if ((retval = swe_calc(tjd_tt, SE_SUN, iflag, x, out serr)) == ERR)
+                            if ((retval = swe_calc(tjd_tt, SE_SUN, iflag, x, ref serr)) == ERR)
                                 goto swe_heliacal_err;
                             xin[0] = x[0];
                             xin[1] = x[1];
@@ -2221,7 +2221,7 @@ namespace SweNet
                             //#endif
                             /* determine object's position */
                             if (Planet != -1) {
-                                if ((retval = swe_calc(tjd_tt, Planet, iflag, x, out serr)) == ERR)
+                                if ((retval = swe_calc(tjd_tt, Planet, iflag, x, ref serr)) == ERR)
                                     goto swe_heliacal_err;
                                 /* determine magnitude of Planet */
                                 if ((retval = Magnitude(JDNarcvisUT, dgeo, ObjectName, helflag, ref objectmagn, ref serr)) == ERR)
@@ -2311,7 +2311,7 @@ namespace SweNet
                         JDNarcvisUT = JDNarcvisUT - direct;
                         tjd_tt = JDNarcvisUT + DeltaT(JDNarcvisUT, 0) / D2S;
                         if (Planet != -1) {
-                            if ((retval = swe_calc(tjd_tt, Planet, iflag, x, out serr)) == ERR)
+                            if ((retval = swe_calc(tjd_tt, Planet, iflag, x, ref serr)) == ERR)
                                 goto swe_heliacal_err;
                         } else {
                             if ((retval = call_swe_fixstar(ObjectName, tjd_tt, iflag, x, ref  serr)) == ERR)
@@ -2348,7 +2348,7 @@ namespace SweNet
                     if ((retval = swe_fixstar(star2, tjd, epheflag | SEFLG_EQUATORIAL, x, ref serr)) == ERR)
                         return ERR;
                 } else {
-                    if ((retval = swe_calc(tjd, ipl, epheflag | SEFLG_EQUATORIAL, x, out serr)) == ERR)
+                    if ((retval = swe_calc(tjd, ipl, epheflag | SEFLG_EQUATORIAL, x, ref serr)) == ERR)
                         return ERR;
                 }
                 adp = Math.Tan(dgeo[1] * DEGTORAD) * Math.Tan(x[1] * DEGTORAD);
@@ -2472,9 +2472,9 @@ namespace SweNet
                 tjdcon = tjd0 + (Math.Floor((tjd_start - tjd0) / dsynperiod) + 1) * dsynperiod;
                 ds = 100;
                 while (ds > 0.5) {
-                    if (swe_calc(tjdcon, ipl, epheflag | SEFLG_SPEED, x, out serr) == ERR)
+                    if (swe_calc(tjdcon, ipl, epheflag | SEFLG_SPEED, x, ref serr) == ERR)
                         return ERR;
-                    if (swe_calc(tjdcon, SE_SUN, epheflag | SEFLG_SPEED, xs, out serr) == ERR)
+                    if (swe_calc(tjdcon, SE_SUN, epheflag | SEFLG_SPEED, xs, ref serr) == ERR)
                         return ERR;
                     ds = swe_degnorm(x[0] - xs[0] - daspect);
                     if (ds > 180) ds -= 360;
@@ -3256,7 +3256,7 @@ namespace SweNet
             '                   dret[2]: end of visibility (Julian day number; 0 if SE_HELFLAG_AV)
             ' see http://www.iol.ie/~geniet/eng/atmoastroextinction.htm
             */
-            protected Int32 swe_heliacal_ut(double JDNDaysUTStart, double[] dgeo, double[] datm, double[] dobs, string ObjectNameIn, Int32 TypeEvent, Int32 helflag, double[] dret, out string serr_ret) {
+            public Int32 swe_heliacal_ut(double JDNDaysUTStart, double[] dgeo, double[] datm, double[] dobs, string ObjectNameIn, Int32 TypeEvent, Int32 helflag, double[] dret, ref string serr_ret) {
                 Int32 retval, Planet, itry;
                 string ObjectName = string.Empty, serr = string.Empty, s = string.Empty;
                 double tjd0 = JDNDaysUTStart, tjd, dsynperiod, tjdmax, tadd;

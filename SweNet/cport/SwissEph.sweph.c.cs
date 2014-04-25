@@ -225,9 +225,8 @@ namespace SweNet
 //static void trace_swe_get_planet_name(int swtch, int ipl, char *s);
 //#endif
 
-        protected string swe_version(ref string s) {
-            s = SE_VERSION;
-            return s;
+        public string swe_version() {
+            return SE_VERSION;
         }
 
         #region swe_calc static variables
@@ -246,8 +245,8 @@ namespace SweNet
          * program tests only.
          * -> If no speed flag has been specified, no speed will be returned.
          */
-        protected Int32 swe_calc(double tjd, int ipl, Int32 iflag,
-            double[] xx, out string serr) {
+        public Int32 swe_calc(double tjd, int ipl, Int32 iflag,
+            double[] xx, ref string serr) {
             int i, j;
             Int32 iflgcoor;
             Int32 iflgsave = iflag;
@@ -454,10 +453,10 @@ namespace SweNet
             return ERR;
         }
 
-        protected Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag,
-            double[] xx, out string serr) {
+        public Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag,
+            double[] xx, ref string serr) {
             double deltat = swe_deltat(tjd_ut);
-            return swe_calc(tjd_ut + deltat, ipl, iflag, xx, out serr);
+            return swe_calc(tjd_ut + deltat, ipl, iflag, xx, ref serr);
         }
 
         Int32 swecalc(double tjd, int ipl, Int32 iflag, CPointer<double> x, out string serr) {
@@ -1113,7 +1112,7 @@ namespace SweNet
          * won't return planet positions previously computed from other
          * ephemerides
          */
-        protected void swe_set_ephe_path(string path) {
+        public void swe_set_ephe_path(string path) {
             int i, iflag;
             string s; string sdummy = null;
             //string sp;
@@ -1142,7 +1141,7 @@ namespace SweNet
             /* try to open lunar ephemeris, in order to get DE number and set
              * tidal acceleration of the Moon */
             iflag = SEFLG_SWIEPH | SEFLG_J2000 | SEFLG_TRUEPOS | SEFLG_ICRS;
-            swe_calc(J2000, SE_MOON, iflag, xx, out sdummy);
+            swe_calc(J2000, SE_MOON, iflag, xx, ref sdummy);
             if (swed.fidat[SEI_FILE_MOON].fptr != null) {
                 swe_set_tid_acc((double)swed.fidat[SEI_FILE_MOON].sweph_denum);
             }
@@ -1260,7 +1259,7 @@ namespace SweNet
          * won't return planet positions previously computed from other
          * ephemerides
          */
-        protected void swe_set_jpl_file(string fname) {
+        public void swe_set_jpl_file(string fname) {
             string sp, sdummy = String.Empty;
             int retc, spi;
             double[] ss = new double[3];
@@ -2550,7 +2549,7 @@ namespace SweNet
             return OK;
         }
 
-        void swe_set_sid_mode(Int32 sid_mode, double t0, double ayan_t0) {
+        public void swe_set_sid_mode(Int32 sid_mode, double t0, double ayan_t0) {
             sid_data sip = swed.sidd;
             try {
                 if (sid_mode < 0)
@@ -2589,7 +2588,7 @@ namespace SweNet
          * longitude of the vernal point of t referred to the
          * ecliptic of t0.
          */
-        protected double swe_get_ayanamsa(double tjd_et) {
+        public double swe_get_ayanamsa(double tjd_et) {
             double[] x = new double[6]; double eps;
             sid_data sip = swed.sidd;
             string star = string.Empty; string sdummy = null;
@@ -2625,7 +2624,7 @@ namespace SweNet
             return swe_degnorm(-x[0]);
         }
 
-        double swe_get_ayanamsa_ut(double tjd_ut) {
+        public double swe_get_ayanamsa_ut(double tjd_ut) {
             return swe_get_ayanamsa(tjd_ut + swe_deltat(tjd_ut));
         }
 
@@ -5590,7 +5589,7 @@ namespace SweNet
           string slast_stardata=String.Empty;
           string slast_starname=String.Empty;
           string sdummy = null;
-          protected Int32 swe_fixstar(string star, double tjd, Int32 iflag,
+          public Int32 swe_fixstar(string star, double tjd, Int32 iflag,
             double[] xx, ref string serr) {
               int i;
               int star_nr = 0;
@@ -6033,7 +6032,7 @@ namespace SweNet
               return retc;
           }
 
-          protected Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag,
+          public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag,
             double[] xx, ref string serr) {
               return swe_fixstar(star, tjd_ut + swe_deltat(tjd_ut), iflag, xx, ref serr);
           }
@@ -6049,7 +6048,7 @@ namespace SweNet
          * mag 		pointer to a double, for star magnitude
          * serr		error return string
         **********************************************************/
-          Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr) {
+         public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr) {
               int i;
               int star_nr = 0;
               bool isnomclat = false;
@@ -6194,7 +6193,7 @@ namespace SweNet
 //#endif
 
 
-        protected string swe_get_planet_name(int ipl) {
+        public string swe_get_planet_name(int ipl) {
             //int i;
             //Int32 retc;
             double[] xp = new double[6];
@@ -6466,7 +6465,7 @@ namespace SweNet
 #endif
 
         /* set geographic position and altitude of observer */
-        protected void swe_set_topo(double geolon, double geolat, double geoalt) {
+        public void swe_set_topo(double geolon, double geolat, double geoalt) {
             swed.topd.geolon = geolon;
             swed.topd.geolat = geolat;
             swed.topd.geoalt = geoalt;
@@ -6592,7 +6591,7 @@ namespace SweNet
          * E = LAT - LMT
          * Input variable tjd is UT.
          */
-        protected int swe_time_equ(double tjd_ut, out double E, ref string serr) {
+        public int swe_time_equ(double tjd_ut, out double E, ref string serr) {
             Int32 retval; E = 0;
             double t, dt; double[] x = new double[6];
             double sidt = swe_sidtime(tjd_ut);
@@ -6603,7 +6602,7 @@ namespace SweNet
             dt = t - Math.Floor(t);
             sidt -= dt * 24;
             sidt *= 15;
-            if ((retval = swe_calc_ut(tjd_ut, SE_SUN, iflag, x, out serr)) == ERR)
+            if ((retval = swe_calc_ut(tjd_ut, SE_SUN, iflag, x, ref serr)) == ERR)
                 return ERR;
             dt = swe_degnorm(sidt - x[0] - 180);
             if (dt > 180)
@@ -6613,7 +6612,7 @@ namespace SweNet
             return OK;
         }
 
-        protected Int32 swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, out string serr) {
+        public Int32 swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, ref string serr) {
             Int32 retval; serr = null;
             double E, tjd_lmt0;
             tjd_lmt0 = tjd_lmt - geolon / 360.0;
@@ -6622,7 +6621,7 @@ namespace SweNet
             return retval;
         }
 
-        protected Int32 swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, out string serr) {
+        public Int32 swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, ref string serr) {
             Int32 retval; serr = null;
             double E, tjd_lmt0;
             tjd_lmt0 = tjd_lat - geolon / 360.0;

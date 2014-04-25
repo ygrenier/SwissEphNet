@@ -10,17 +10,17 @@ namespace SweNet.Tests
         [TestMethod]
         public void TestJulDay() {
             using (var swe = new SwissEph()) {
-                Assert.AreEqual(0.0, swe.JulDay(-4713, 11, 24, 12.0, SwissEph.SE_GREG_CAL));
+                Assert.AreEqual(0.0, swe.swe_julday(-4713, 11, 24, 12.0, SwissEph.SE_GREG_CAL));
 
-                Assert.AreEqual(0.0, swe.JulDay(-4712, 1, 1, 12.0, SwissEph.SE_JUL_CAL));
+                Assert.AreEqual(0.0, swe.swe_julday(-4712, 1, 1, 12.0, SwissEph.SE_JUL_CAL));
 
-                Assert.AreEqual(2000000.0, swe.JulDay(763, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
+                Assert.AreEqual(2000000.0, swe.swe_julday(763, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
 
-                Assert.AreEqual(2000000.0, swe.JulDay(763, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
+                Assert.AreEqual(2000000.0, swe.swe_julday(763, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
 
-                Assert.AreEqual(1063884, swe.JulDay(-1800, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
+                Assert.AreEqual(1063884, swe.swe_julday(-1800, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
 
-                Assert.AreEqual(1063865, swe.JulDay(-1800, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
+                Assert.AreEqual(1063865, swe.swe_julday(-1800, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
             }
         }
 
@@ -29,25 +29,25 @@ namespace SweNet.Tests
             using (var swe = new SwissEph()) {
                 int y = 0, m = 0, d = 0; double ut = 0;
 
-                swe.RevJul(0, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
+                swe.swe_revjul(0, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
                 Assert.AreEqual(-4713, y);
                 Assert.AreEqual(11, m);
                 Assert.AreEqual(24, d);
                 Assert.AreEqual(12.0, ut);
 
-                swe.RevJul(0, SwissEph.SE_JUL_CAL, ref y, ref m, ref d, ref ut);
+                swe.swe_revjul(0, SwissEph.SE_JUL_CAL, ref y, ref m, ref d, ref ut);
                 Assert.AreEqual(-4712, y);
                 Assert.AreEqual(1, m);
                 Assert.AreEqual(1, d);
                 Assert.AreEqual(12.0, ut);
 
-                swe.RevJul(2000000, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
+                swe.swe_revjul(2000000, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
                 Assert.AreEqual(763, y);
                 Assert.AreEqual(9, m);
                 Assert.AreEqual(18, d);
                 Assert.AreEqual(12.0, ut);
 
-                swe.RevJul(2000000, SwissEph.SE_JUL_CAL, ref y, ref m, ref d, ref ut);
+                swe.swe_revjul(2000000, SwissEph.SE_JUL_CAL, ref y, ref m, ref d, ref ut);
                 Assert.AreEqual(763, y);
                 Assert.AreEqual(9, m);
                 Assert.AreEqual(14, d);
@@ -61,13 +61,13 @@ namespace SweNet.Tests
                 swe.ESPENAK_MEEUS_2006 = true;
                 double deltaPrec = 0.00000000000001;
 
-                Assert.AreEqual(1.5716511059188, swe.DeltaT(0.0), deltaPrec);
-                
-                Assert.AreEqual(0.0374254553961889, swe.DeltaT(2000000.0), deltaPrec);
-                Assert.AreEqual(0.0374253886123893, swe.DeltaT(2000000.25), deltaPrec);
-                Assert.AreEqual(0.0374253218286385, swe.DeltaT(2000000.5), deltaPrec);
-                Assert.AreEqual(0.0374252550449363, swe.DeltaT(2000000.75), deltaPrec);
-                Assert.AreEqual(0.000848297829347124, swe.DeltaT(2317746.13090277789), deltaPrec);
+                Assert.AreEqual(1.5716511059188, swe.swe_deltat(0.0), deltaPrec);
+
+                Assert.AreEqual(0.0374254553961889, swe.swe_deltat(2000000.0), deltaPrec);
+                Assert.AreEqual(0.0374253886123893, swe.swe_deltat(2000000.25), deltaPrec);
+                Assert.AreEqual(0.0374253218286385, swe.swe_deltat(2000000.5), deltaPrec);
+                Assert.AreEqual(0.0374252550449363, swe.swe_deltat(2000000.75), deltaPrec);
+                Assert.AreEqual(0.000848297829347124, swe.swe_deltat(2317746.13090277789), deltaPrec);
 
                 // 2415020.0
                 var vals = new Dictionary<double, double>() {
@@ -148,12 +148,12 @@ namespace SweNet.Tests
 
                 };
                 foreach (var kvp in vals) {
-                    Assert.AreEqual(kvp.Value, swe.DeltaT(kvp.Key), deltaPrec, String.Format("deltat({0})", kvp.Key));
+                    Assert.AreEqual(kvp.Value, swe.swe_deltat(kvp.Key), deltaPrec, String.Format("deltat({0})", kvp.Key));
                 }
 
-                Assert.AreEqual(0.101230433035332, swe.DeltaT(3000000), deltaPrec);
-                Assert.AreEqual(0.101230598229371, swe.DeltaT(3000000.5), deltaPrec);
-                Assert.AreEqual(0.101230680826441, swe.DeltaT(3000000.75), deltaPrec);
+                Assert.AreEqual(0.101230433035332, swe.swe_deltat(3000000), deltaPrec);
+                Assert.AreEqual(0.101230598229371, swe.swe_deltat(3000000.5), deltaPrec);
+                Assert.AreEqual(0.101230680826441, swe.swe_deltat(3000000.75), deltaPrec);
 
             }
         }
@@ -164,21 +164,21 @@ namespace SweNet.Tests
                 swe.ESPENAK_MEEUS_2006 = false;
                 double deltaPrec = 0.000000000001;
 
-                Assert.AreEqual(1.5716511059188, swe.DeltaT(0.0), deltaPrec);
+                Assert.AreEqual(1.5716511059188, swe.swe_deltat(0.0), deltaPrec);
 
-                Assert.AreEqual(0.0375610997366034, swe.DeltaT(2000000.0), deltaPrec);
-                Assert.AreEqual(0.0375610327085927, swe.DeltaT(2000000.25), deltaPrec);
-                Assert.AreEqual(0.0375609656805818, swe.DeltaT(2000000.5), deltaPrec);
-                Assert.AreEqual(0.0375608986525707, swe.DeltaT(2000000.75), deltaPrec);
-                Assert.AreEqual(0.000848297829347124, swe.DeltaT(2317746.13090277789), deltaPrec);
+                Assert.AreEqual(0.0375610997366034, swe.swe_deltat(2000000.0), deltaPrec);
+                Assert.AreEqual(0.0375610327085927, swe.swe_deltat(2000000.25), deltaPrec);
+                Assert.AreEqual(0.0375609656805818, swe.swe_deltat(2000000.5), deltaPrec);
+                Assert.AreEqual(0.0375608986525707, swe.swe_deltat(2000000.75), deltaPrec);
+                Assert.AreEqual(0.000848297829347124, swe.swe_deltat(2317746.13090277789), deltaPrec);
 
                 var tjd = SwissEph.J2000 + (365.25 * (1610 - 2000.0));
-                Assert.AreEqual(0.00138947083317893, swe.DeltaT(tjd), deltaPrec);
-                
+                Assert.AreEqual(0.00138947083317893, swe.swe_deltat(tjd), deltaPrec);
 
-                Assert.AreEqual(0.101230433035332, swe.DeltaT(3000000), deltaPrec);
-                Assert.AreEqual(0.101230598229371, swe.DeltaT(3000000.5), deltaPrec);
-                Assert.AreEqual(0.101230680826441, swe.DeltaT(3000000.75), deltaPrec);
+
+                Assert.AreEqual(0.101230433035332, swe.swe_deltat(3000000), deltaPrec);
+                Assert.AreEqual(0.101230598229371, swe.swe_deltat(3000000.5), deltaPrec);
+                Assert.AreEqual(0.101230680826441, swe.swe_deltat(3000000.75), deltaPrec);
 
             }
         }

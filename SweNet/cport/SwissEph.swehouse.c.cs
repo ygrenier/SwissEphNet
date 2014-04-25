@@ -184,7 +184,7 @@ namespace SweNet
          * ascmc[6] = coasc2		* "co-ascendant" (M. Munkasey) *
          * ascmc[7] = polasc		* "polar ascendant" (M. Munkasey) *
          */
-        int swe_houses_ex(double tjd_ut,
+        public int swe_houses_ex(double tjd_ut,
                                         Int32 iflag,
                         double geolat,
                         double geolon,
@@ -633,7 +633,7 @@ namespace SweNet
             return dret;
         }
 
-        protected string swe_house_name(char hsys) {
+        public string swe_house_name(char hsys) {
             switch (Char.ToUpper(hsys)) {
                 case 'A': return "equal";
                 case 'E': return "equal";
@@ -1337,7 +1337,7 @@ namespace SweNet
             return ass;
         }  /* Asc1 */
 
-        static double Asc2(double x, double f, double sine, double cose) {
+        double Asc2(double x, double f, double sine, double cose) {
             double ass, sinx;
             ass = -tand(f) * sine + cose * cosd(x);
             if (Math.Abs(ass) < VERY_SMALL)
@@ -1391,7 +1391,7 @@ namespace SweNet
          *   equal, Porphyry, Alcabitius, Koch, Krusinski (all others should work).
          * The Swiss Ephemeris currently does not handle these cases.
          */
-        double swe_house_pos(
+        public double swe_house_pos(
             double armc, double geolat, double eps, char hsys, double[] xpin, ref string serr) {
             double[] xp = new double[6], xeq = new double[6]; double ra, de, mdd, mdn, sad, san;
             double hpos, sinad, ad, a, admc, adp, samc, demc, asc, mc, acmc, tant;

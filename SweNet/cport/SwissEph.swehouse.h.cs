@@ -101,16 +101,16 @@ namespace SweNet
         //#define HOUSES 	struct houses;
         const double VERY_SMALL = 1E-10;
 
-        static double degtocs(double x) { return (d2l((x) * DEG)); }
-        static double cstodeg(double x) { return (double)((x) * CS2DEG); }
+        double degtocs(double x) { return (d2l((x) * DEG)); }
+        double cstodeg(double x) { return (double)((x) * CS2DEG); }
 
-        static double sind(double x) { return Math.Sin(x * DEGTORAD); }
-        static double cosd(double x) { return Math.Cos(x * DEGTORAD); }
-        static double tand(double x) { return Math.Tan(x * DEGTORAD); }
-        static double asind(double x) { return (Math.Asin(x) * RADTODEG); }
-        static double acosd(double x) { return (Math.Acos(x) * RADTODEG); }
-        static double atand(double x) { return (Math.Atan(x) * RADTODEG); }
-        static double atan2d(double y, double x) { return (Math.Atan2(y, x) * RADTODEG); }
+        double sind(double x) { return Math.Sin(x * DEGTORAD); }
+        double cosd(double x) { return Math.Cos(x * DEGTORAD); }
+        double tand(double x) { return Math.Tan(x * DEGTORAD); }
+        double asind(double x) { return (Math.Asin(x) * RADTODEG); }
+        double acosd(double x) { return (Math.Acos(x) * RADTODEG); }
+        double atand(double x) { return (Math.Atan(x) * RADTODEG); }
+        double atan2d(double y, double x) { return (Math.Atan2(y, x) * RADTODEG); }
 
     }
 }
