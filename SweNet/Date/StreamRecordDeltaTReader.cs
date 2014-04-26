@@ -11,7 +11,7 @@ namespace SweNet.Date
     /// <summary>
     /// Record DeltaT reader from Stream
     /// </summary>
-    public class StreamRecordDeltaTReader : Persitent.StreamDataReader, IRecordDeltaTReader
+    public class StreamRecordDeltaTReader : Persit.StreamDataReader, IRecordDeltaTReader
     {
         /// <summary>
         /// Create new reader from stream

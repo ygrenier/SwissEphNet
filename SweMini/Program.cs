@@ -92,8 +92,8 @@ namespace SweMini
     class Program
     {
         static int Main(string[] args) {
-            //return Main_Mini(args);
-            return Main_TestValues(args);
+            return Main_Mini(args);
+            //return Main_TestValues(args);
         }
 
         static int Main_TestValues(string[] args) {
@@ -136,9 +136,7 @@ namespace SweMini
             iflag = SwissEph.SEFLG_SPEED;
             using (var swe = new SwissEph()) {
                 while (true) {
-                    printf("\nDate (d.m.y) ?");
-                    /*gets(sdate);*/
-                    //    if( !fgets(sdate, sizeof(sdate)-1, stdin) ) return OK;
+                    Console.Write("\nDate (d.m.y) ? ");
                     sdate = Console.ReadLine();
                     if (String.IsNullOrWhiteSpace(sdate)) break;
                     /*
@@ -150,7 +148,7 @@ namespace SweMini
                     /*
                      * we have day, month and year and convert to Julian day number
                      */
-                    tjd = swe.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);        
+                    tjd = swe.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
                     /*
                      * compute Ephemeris time from Universal time by adding delta_t
                      */

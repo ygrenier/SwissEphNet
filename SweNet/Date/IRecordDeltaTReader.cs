@@ -8,7 +8,7 @@ namespace SweNet.Date
     /// <summary>
     /// Interface for read DeltaT records
     /// </summary>
-    public interface IRecordDeltaTReader : Persitent.IDataReader
+    public interface IRecordDeltaTReader : Persit.IDataReader
     {
         /// <summary>
         /// Read the next RecordDeltaT

@@ -13,7 +13,7 @@ namespace SweNet
     {
         bool _Initialized = false;
         SweDate _Date;
-        Persitent.IDataProvider _DataProvider;
+        Persit.IDataProvider _DataProvider;
 
         #region Public constants
 
@@ -99,8 +99,8 @@ namespace SweNet
         /// Create a new data provider
         /// </summary>
         /// <returns></returns>
-        protected virtual Persitent.IDataProvider CreateDataProvider() {
-            return new Persitent.EmptyDataProvider();
+        protected virtual Persit.IDataProvider CreateDataProvider() {
+            return new Persit.EmptyDataProvider();
         }
 
         #endregion
@@ -164,7 +164,7 @@ namespace SweNet
         /// <summary>
         /// Current data provider
         /// </summary>
-        public Persitent.IDataProvider DataProvider { get { CheckInitialized(); return _DataProvider; } }
+        public Persit.IDataProvider DataProvider { get { CheckInitialized(); return _DataProvider; } }
 
         #endregion
 
