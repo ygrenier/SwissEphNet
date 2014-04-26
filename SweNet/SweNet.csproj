@@ -34,7 +34,11 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <Compile Include="EphemerisTime.cs" />
+    <Compile Include="Date\DateUT.cs" />
+    <Compile Include="Date\EphemerisTime.cs" />
+    <Compile Include="Date\IRecordDeltaTReader.cs" />
+    <Compile Include="Date\RecordDeltaT.cs" />
+    <Compile Include="Date\StreamRecordDeltaTReader.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,12 +66,18 @@
     <Compile Include="cport\SwissEph.swephlib.h.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="GeoPosition.cs" />
-    <Compile Include="JulianDay.cs" />
-    <Compile Include="Latitude.cs" />
-    <Compile Include="Longitude.cs" />
+    <Compile Include="Geo\GeoPosition.cs" />
+    <Compile Include="Date\JulianDay.cs" />
+    <Compile Include="Geo\Latitude.cs" />
+    <Compile Include="Geo\Longitude.cs" />
+    <Compile Include="Persitent\EmptyDataProvider.cs" />
+    <Compile Include="Persitent\IDataProvider.cs" />
+    <Compile Include="Persitent\IDataReader.cs" />
+    <Compile Include="Persitent\StreamDataReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SweDate.cs" />
+    <Compile Include="Date\SweDate.cs" />
+    <Compile Include="SweConfig.cs" />
+    <Compile Include="SweConst.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="SwissEph.cs" />
     <Compile Include="SwissEph.trace.cs" />

@@ -24,21 +24,28 @@ namespace SweNet
         }
 
         /// <summary>
-        /// Create a new Julian Day from a DateTime
+        /// Create a new Julian Day from a DateUT
         /// </summary>
         /// <param name="date">Date source</param>
         /// <param name="calendar">Calendar source</param>
-        public JulianDay(DateTime date, DateCalendar calendar)
+        public JulianDay(DateUT date, DateCalendar calendar)
             : this() {
             this.Calendar = calendar;
-            this.Value = SweDate.DateTimeToJulianDay(date, calendar);
+            this.Value = SweDate.DateToJulianDay(date, calendar);
         }
 
         /// <summary>
-        /// Returns the DateTime of this Julian Day
+        /// Returns the DateUT of this Julian Day
         /// </summary>
-        public DateTime ToDateTime() {
-            return SweDate.JulianDayToDateTime(Value, Calendar);
+        public DateUT ToDateTime() {
+            return SweDate.JulianDayToDate(Value, Calendar);
+        }
+
+        /// <summary>
+        /// Implicit cast between Julian Day and double
+        /// </summary>
+        public static implicit operator Double(JulianDay jd) {
+            return jd.Value;
         }
 
         /// <summary>
