@@ -30,6 +30,17 @@ namespace SweNet
             return false;
         }
 
+        /// <summary>
+        /// Search index of first char that is not in chars
+        /// </summary>
+        public static int IndexOfFirstNot(this String s, params char[] chars) {
+            if (String.IsNullOrEmpty(s) || chars == null || chars.Length == 0) return -1;
+            for (int i = 0; i < s.Length; i++) {
+                if (!chars.Contains(s[i])) return i;
+            }
+            return -1;
+        }
+
     }
 
 }
