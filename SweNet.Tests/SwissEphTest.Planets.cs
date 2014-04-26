@@ -66,10 +66,10 @@ namespace SweNet.Tests
             }
         }
 
-        [TestMethod, ExpectedException(typeof(NotImplementedException))]
+        [TestMethod]
         public void TestGetPlanetName_Asteroid() {
             using (var swe = new SwissEph()) {
-                Assert.AreEqual("Sun", swe.swe_get_planet_name(SwissEph.SE_AST_OFFSET));
+                Assert.AreEqual("10000", swe.swe_get_planet_name(SwissEph.SE_AST_OFFSET));
             }
         }
 

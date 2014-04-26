@@ -19,6 +19,13 @@ namespace SweNet.Persit
             return null;
         }
 
+        /// <summary>
+        /// Open a new asteroid name reader
+        /// </summary>
+        public Planets.IAsteroidNameReader OpenAsteroidNameReader() {
+            return null;
+        }
+
     }
 
 }

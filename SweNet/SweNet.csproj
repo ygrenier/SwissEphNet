@@ -74,12 +74,14 @@
     <Compile Include="Persit\IDataProvider.cs" />
     <Compile Include="Persit\IDataReader.cs" />
     <Compile Include="Persit\StreamDataReader.cs" />
+    <Compile Include="Planets\IAsteroidNameReader.cs" />
+    <Compile Include="Planets\SwePlanet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Date\SweDate.cs" />
     <Compile Include="SweConfig.cs" />
     <Compile Include="SweConst.cs" />
     <Compile Include="Sweph.cs" />
-    <Compile Include="Planet.cs" />
+    <Compile Include="Planets\Planet.cs" />
     <Compile Include="SwissEph.cs" />
     <Compile Include="SwissEph.trace.cs" />
     <Compile Include="Tools\CFile.cs" />
@@ -93,9 +95,7 @@
   <ItemGroup>
     <Compile Include="SwissEph.file.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Planet\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="DateUTTest.cs" />
     <Compile Include="LatitudeTest.cs" />
+    <Compile Include="SwePlanetTest.cs" />
     <Compile Include="SweDateTest.cs" />
     <Compile Include="SwissEphTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

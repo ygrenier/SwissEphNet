@@ -14,6 +14,7 @@ namespace SweNet
         bool _Initialized = false;
         SweDate _Date;
         Persit.IDataProvider _DataProvider;
+        SwePlanet _Planets;
 
         #region Public constants
 
@@ -74,6 +75,7 @@ namespace SweNet
         protected virtual void Initialize(){
             _Date = CreateDateEngine();
             _DataProvider = CreateDataProvider();
+            _Planets = CreatePlanetsEngine();
         }
 
         /// <summary>
@@ -158,6 +160,26 @@ namespace SweNet
 
         #endregion
 
+        #region Planets management
+
+        /// <summary>
+        /// Create a new planets envgine
+        /// </summary>
+        protected virtual SwePlanet CreatePlanetsEngine(){
+            return new SwePlanet(this);
+        }
+
+        /// <summary>
+        /// Get a planet name
+        /// </summary>
+        /// <param name="planetId">Id of planet</param>
+        /// <returns>Name</returns>
+        public String PlanetName(Planet planetId) {
+            return Planets.GetPlanetName(planetId);
+        }
+
+        #endregion
+
         #region Trace
 
         /// <summary>
@@ -193,6 +215,11 @@ namespace SweNet
         /// Current data provider
         /// </summary>
         public Persit.IDataProvider DataProvider { get { CheckInitialized(); return _DataProvider; } }
+
+        /// <summary>
+        /// Current planets engine
+        /// </summary>
+        public SwePlanet Planets { get { CheckInitialized(); return _Planets; } }
 
         #endregion
 

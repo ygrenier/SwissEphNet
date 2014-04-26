@@ -17,6 +17,11 @@ namespace SweNet.Persit
         /// </summary>
         Date.IRecordDeltaTReader OpenRecordDeltaTReader();
 
+        /// <summary>
+        /// Open a new asteroid name reader
+        /// </summary>
+        Planets.IAsteroidNameReader OpenAsteroidNameReader();
+
     }
 
 }

@@ -176,7 +176,7 @@ namespace SweMini
                         /*
                          * get the name of the planet p
                          */
-                        snam = swe.swe_get_planet_name(p);
+                        snam = swe.PlanetName(p);
                         /*
                          * print the coordinates
                          */
