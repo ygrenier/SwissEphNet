@@ -15,7 +15,7 @@ namespace SweNet.Persit
         /// <summary>
         /// Open a record DeltaT reader
         /// </summary>
-        public Date.IRecordDeltaTReader OpenRecordDeltaTReader() {
+        public Date.IDeltaTReader OpenDeltaTReader() {
             return null;
         }
 

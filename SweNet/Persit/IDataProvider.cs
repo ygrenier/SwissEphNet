@@ -13,9 +13,9 @@ namespace SweNet.Persit
     {
 
         /// <summary>
-        /// Open a new record DeltaT reader
+        /// Open a new DeltaT reader
         /// </summary>
-        Date.IRecordDeltaTReader OpenRecordDeltaTReader();
+        Date.IDeltaTReader OpenDeltaTReader();
 
         /// <summary>
         /// Open a new asteroid name reader

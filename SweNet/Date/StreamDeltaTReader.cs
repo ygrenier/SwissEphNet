@@ -9,16 +9,16 @@ namespace SweNet.Date
 {
 
     /// <summary>
-    /// Record DeltaT reader from Stream
+    /// DeltaT reader from Stream
     /// </summary>
-    public class StreamRecordDeltaTReader : Persit.StreamDataReader, IRecordDeltaTReader
+    public class StreamDeltaTReader : Persit.StreamDataReader, IDeltaTReader
     {
         /// <summary>
         /// Create new reader from stream
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="encoding"></param>
-        public StreamRecordDeltaTReader(Stream stream, Encoding encoding = null)
+        public StreamDeltaTReader(Stream stream, Encoding encoding = null)
             : this(new StreamReader(stream, Sweph.CheckEncoding(encoding))) {
         }
 
@@ -26,7 +26,7 @@ namespace SweNet.Date
         /// Create new reader from text reader
         /// </summary>
         /// <param name="reader"></param>
-        public StreamRecordDeltaTReader(TextReader reader)
+        public StreamDeltaTReader(TextReader reader)
             : base(null) {
             if (reader == null) throw new ArgumentNullException("reader");
             BaseReader = reader;
@@ -42,11 +42,11 @@ namespace SweNet.Date
                 BaseReader = null;
             }
         }
-        
+
         /// <summary>
         /// Read new record
         /// </summary>
-        public RecordDeltaT Read() {
+        public Tuple<int, double> Read() {
             if (BaseReader == null) return null;
             // 
             String line;
@@ -63,10 +63,7 @@ namespace SweNet.Date
                 double v;
                 if (!double.TryParse(match.Groups[2].Value, out v))
                     continue;
-                return new RecordDeltaT() {
-                    Year = y,
-                    DeltaT = v
-                };
+                return new Tuple<int, double>(y, v);
             }
             return null;
         }

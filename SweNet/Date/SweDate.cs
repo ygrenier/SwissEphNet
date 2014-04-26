@@ -427,9 +427,9 @@ namespace SweNet
 
         #region Delta T 
 
-        IEnumerable<Date.RecordDeltaT> EnumerateRecords(Date.IRecordDeltaTReader reader) {
+        IEnumerable<Tuple<int,double>> EnumerateRecords(Date.IDeltaTReader reader) {
             if (reader != null) {
-                Date.RecordDeltaT r;
+                Tuple<int, double> r;
                 while ((r = reader.Read()) != null)
                     yield return r;
             }
@@ -444,16 +444,16 @@ namespace SweNet
             if (_InitializedDT) return TableDT.Length;
             _InitializedDT = true;
             // Get data reader
-            var dataReader = _Sweph.DataProvider.OpenRecordDeltaTReader();
+            var dataReader = _Sweph.DataProvider.OpenDeltaTReader();
             if (dataReader != null) {
                 var records = EnumerateRecords(dataReader)
-                    .Where(r => r.Year >= StartDT && r.Year < 2050) // We limit the tab to 2050
-                    .OrderBy(r => r.Year)
+                    .Where(r => r.Item1 >= StartDT && r.Item1 < 2050) // We limit the tab to 2050
+                    .OrderBy(r => r.Item1)
                     .ToList()
                     ;
                 if (records.Count > 0) {
                     // Calculate the new tab size
-                    int lastYear = records[records.Count - 1].Year;
+                    int lastYear = records[records.Count - 1].Item1;
                     int newSize = lastYear - StartDT + 1;
                     // Resize the table
                     if (newSize > TableDT.Length) {
@@ -463,8 +463,8 @@ namespace SweNet
                     }
                     // Update the table
                     foreach (var rec in records) {
-                        int tabIndex = rec.Year - StartDT;
-                        TableDT[tabIndex] = rec.DeltaT;
+                        int tabIndex = rec.Item1 - StartDT;
+                        TableDT[tabIndex] = rec.Item2;
                     }
                 }
             }

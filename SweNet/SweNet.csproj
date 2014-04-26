@@ -36,9 +36,7 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
     <Compile Include="Date\DateUT.cs" />
     <Compile Include="Date\EphemerisTime.cs" />
-    <Compile Include="Date\IRecordDeltaTReader.cs" />
-    <Compile Include="Date\RecordDeltaT.cs" />
-    <Compile Include="Date\StreamRecordDeltaTReader.cs" />
+    <Compile Include="Date\StreamDeltaTReader.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +68,7 @@
     <Compile Include="Date\JulianDay.cs" />
     <Compile Include="Geo\Latitude.cs" />
     <Compile Include="Geo\Longitude.cs" />
+    <Compile Include="Date\IDeltaTReader.cs" />
     <Compile Include="Persit\EmptyDataProvider.cs" />
     <Compile Include="Persit\IDataProvider.cs" />
     <Compile Include="Persit\IDataReader.cs" />
