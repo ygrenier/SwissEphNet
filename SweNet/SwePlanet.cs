@@ -140,6 +140,13 @@ namespace SweNet
 
         #region Asteroids
 
+        public static readonly SwePlanet AsteroidCeres = FirstAsteroid + 1;
+        public static readonly SwePlanet AsteroidPallas = FirstAsteroid + 2;
+        public static readonly SwePlanet AsteroidJuno = FirstAsteroid + 3;
+        public static readonly SwePlanet AsteroidVesta = FirstAsteroid + 4;
+        public static readonly SwePlanet AsteroidChiron = FirstAsteroid + 2060;
+        public static readonly SwePlanet AsteroidPholus = FirstAsteroid + 5145;
+
         /// <summary>
         /// Pluto as Asteroid
         /// </summary>
