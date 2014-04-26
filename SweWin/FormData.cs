@@ -107,7 +107,7 @@ namespace SweWin
             } else
                 f = e.FileName;
             if (System.IO.File.Exists(f))
-                e.File = new CFile(new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read));
+                e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             else
                 e.File = null;
         }

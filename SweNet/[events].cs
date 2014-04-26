@@ -45,9 +45,9 @@ namespace SweNet
         public String FileName { get; private set; }
 
         /// <summary>
-        /// C File
+        /// Stream
         /// </summary>
-        public CFile File { get; set; }
+        public Stream File { get; set; }
 
     }
 

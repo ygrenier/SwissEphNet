@@ -12,6 +12,10 @@ namespace SweNet
 {
     partial class SwissEph
     {
+        /// <summary>
+        /// Default encoding
+        /// </summary>
+        public static Encoding DefaultEncoding = Encoding.GetEncoding("Windows-1252");
 
 		/// <summary>
 		/// Load a file
@@ -23,7 +27,7 @@ namespace SweNet
             if (h != null) {
                 var e = new LoadFileEventArgs(filename);
                 h(this, e);
-                return e.File;
+                return new CFile(e.File, DefaultEncoding);
             }
             return null;
         }
