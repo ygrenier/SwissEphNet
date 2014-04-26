@@ -129,7 +129,7 @@ namespace SweMini
             double jut = 0.0;
             double[] x2 = new double[6];
             Int32 iflag, iflgret;
-            int p;
+            //int p;
             iflag = SwissEph.SEFLG_SPEED;
             using (var swe = new SwissEph()) {
                 while (true) {
@@ -154,13 +154,13 @@ namespace SweMini
                      * compute Ephemeris time from Universal time by adding delta_t
                      */
                     var et = swe.EphemerisTime(jd);
-                    printf("date: %02d.%02d.%d at 0:00 Universal time\n", jday, jmon, jyear);
-                    printf("planet     \tlongitude\tlatitude\tdistance\tspeed long.\n");
+                    Console.WriteLine("date: {0:00}.{1:00}.{2:D4} at 0:00 Universal time", jday, jmon, jyear);
+                    Console.WriteLine("planet     \tlongitude\tlatitude\tdistance\tspeed long.");
                     /*
                      * a loop over all planets
                      */
-                    for (p = SwissEph.SE_SUN; p <= SwissEph.SE_CHIRON; p++) {
-                        if (p == SwissEph.SE_EARTH) continue;
+                    for (var p = SwePlanet.Sun; p <= SwePlanet.Chiron; p++) {
+                        if (p == SwePlanet.Earth) continue;
                         /*
                          * do the coordinate calculation for this planet p
                          */

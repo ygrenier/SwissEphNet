@@ -12,7 +12,8 @@ namespace SweNet
     public struct SwePlanet
     {
 
-        #region Default planets
+        #region Planets
+
         /// <summary>
         /// Sun
         /// </summary>
@@ -105,7 +106,66 @@ namespace SweNet
         /// IntpPerg
         /// </summary>
         public static readonly SwePlanet IntpPerg = 22;
+
         #endregion
+
+        #region Fictitious
+
+        #region Hamburger or Uranian "planets"
+        public static readonly SwePlanet Cupido = 40;
+        public static readonly SwePlanet Hades = 41;
+        public static readonly SwePlanet Zeus = 42;
+        public static readonly SwePlanet Kronos = 43;
+        public static readonly SwePlanet Apollon = 44;
+        public static readonly SwePlanet Admetos = 45;
+        public static readonly SwePlanet Vulkanus = 46;
+        public static readonly SwePlanet Poseidon = 47;
+        #endregion
+
+        #region Other fictitious bodies
+        public static readonly SwePlanet Isis = 48;
+        public static readonly SwePlanet Nibiru = 49;
+        public static readonly SwePlanet Harrington = 50;
+        public static readonly SwePlanet NeptuneLeverrier = 51;
+        public static readonly SwePlanet NeptuneAdams = 52;
+        public static readonly SwePlanet PlutoLowell = 53;
+        public static readonly SwePlanet PlutoPickering = 54;
+        public static readonly SwePlanet Vulcan = 55;
+        public static readonly SwePlanet WhiteMoon = 56;
+        public static readonly SwePlanet Proserpina = 57;
+        public static readonly SwePlanet Waldemath = 58;
+        #endregion
+
+        #endregion
+
+        #region Asteroids
+
+        /// <summary>
+        /// Pluto as Asteroid
+        /// </summary>
+        public static readonly SwePlanet AsteroidPluto = 134340;
+
+        #endregion
+
+        /// <summary>
+        /// Last id of 'planet'
+        /// </summary>
+        public const int LastPlanet = 23;
+
+        /// <summary>
+        /// First id of fictitious
+        /// </summary>
+        public const int FirstFictitious = 40;
+
+        /// <summary>
+        /// First id of comets
+        /// </summary>
+        public const int FirstComet = 1000;
+
+        /// <summary>
+        /// First id of asteroid
+        /// </summary>
+        public const int FirstAsteroid = 10000;
 
         /// <summary>
         /// New planet
@@ -129,6 +189,26 @@ namespace SweNet
         /// Planet id
         /// </summary>
         public int Id { get; private set; }
+
+        /// <summary>
+        /// This id is a planet ?
+        /// </summary>
+        public bool IsPlanet { get { return Id >= 0 && Id <= LastPlanet; } }
+
+        /// <summary>
+        /// This id is a fictitious ?
+        /// </summary>
+        public bool IsFictitious { get { return Id >= FirstFictitious && Id < FirstComet; } }
+
+        /// <summary>
+        /// This id is a comet ?
+        /// </summary>
+        public bool IsComet { get { return Id >= FirstComet && Id < FirstAsteroid; } }
+
+        /// <summary>
+        /// This id is an asteroid ?
+        /// </summary>
+        public bool IsAsteroid { get { return Id >= FirstAsteroid; } }
 
     }
 
