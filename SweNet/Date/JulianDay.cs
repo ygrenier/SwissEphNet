@@ -37,8 +37,16 @@ namespace SweNet
         /// <summary>
         /// Returns the DateUT of this Julian Day
         /// </summary>
-        public DateUT ToDateTime() {
+        public DateUT ToDateUT() {
             return SweDate.JulianDayToDate(Value, Calendar);
+        }
+
+        /// <summary>
+        /// Retourne the DateTime of this JulianDay
+        /// </summary>
+        /// <returns></returns>
+        public DateTime ToDateTime() {
+            return ToDateUT().ToDateTime();
         }
 
         /// <summary>
