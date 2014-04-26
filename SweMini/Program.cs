@@ -85,6 +85,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SweNet;
+using System.Text.RegularExpressions;
 
 namespace SweMini
 {
@@ -110,9 +111,6 @@ namespace SweMini
                 double te = tjd + deltat;
                 printf("date: %02d.%02d.%d at %02d:%02d:%02d\nDeltat : %f\nJulian Day : %f\nEphemeris Time : %f\n", jday, jmon, jyear, jhour, jmin, jsec, deltat, tjd, te);
 
-            }
-
-            using (var sweph = new Sweph()) {
                 var date = new DateUT(jyear, jmon, jday, jhour, jmin, jsec);
                 var jd = sweph.JulianDay(date, DateCalendar.Gregorian);
                 var et = sweph.EphemerisTime(jd);
@@ -129,7 +127,6 @@ namespace SweMini
             string sdate = String.Empty, snam = String.Empty, serr = String.Empty;
             int jday = 1, jmon = 1, jyear = 2000;
             double jut = 0.0;
-            double tjd, te;
             double[] x2 = new double[6];
             Int32 iflag, iflgret;
             int p;
@@ -144,15 +141,19 @@ namespace SweMini
                      */
                     if (sdate == ".")
                         return SwissEph.OK;
-                    if (C.sscanf(sdate, "%d%*c%d%*c%d", ref jday, ref jmon, ref jyear) < 1) return 1;
+                    var match = Regex.Match(sdate, @"(\d+)\.(\d+)\.(\d+)");
+                    if (!match.Success) continue;
+                    jday = int.Parse(match.Groups[1].Value);
+                    jmon = int.Parse(match.Groups[2].Value);
+                    jyear = int.Parse(match.Groups[3].Value);
                     /*
                      * we have day, month and year and convert to Julian day number
                      */
-                    tjd = swe.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
+                    var jd = swe.JulianDay(jyear, jmon, jday, jut, DateCalendar.Gregorian);
                     /*
                      * compute Ephemeris time from Universal time by adding delta_t
                      */
-                    te = tjd + swe.swe_deltat(tjd);
+                    var et = swe.EphemerisTime(jd);
                     printf("date: %02d.%02d.%d at 0:00 Universal time\n", jday, jmon, jyear);
                     printf("planet     \tlongitude\tlatitude\tdistance\tspeed long.\n");
                     /*
@@ -163,7 +164,7 @@ namespace SweMini
                         /*
                          * do the coordinate calculation for this planet p
                          */
-                        iflgret = swe.swe_calc(te, p, iflag, x2, ref serr);
+                        iflgret = swe.swe_calc(et, p, iflag, x2, ref serr);
                         /*
                          * if there is a problem, a negative value is returned and an 
                          * errpr message is in serr.

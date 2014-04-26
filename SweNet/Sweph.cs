@@ -117,6 +117,20 @@ namespace SweNet
         /// <summary>
         /// Create a Julian Day
         /// </summary>
+        public JulianDay JulianDay(int year, int month, int day, double hour, DateCalendar calendar) {
+            return JulianDay(new DateUT(year, month, day, hour), calendar);
+        }
+
+        /// <summary>
+        /// Create a Julian Day
+        /// </summary>
+        public JulianDay JulianDay(int year, int month, int day, int hour, int minute, int second, DateCalendar calendar) {
+            return JulianDay(new DateUT(year, month, day, hour, minute, second), calendar);
+        }
+
+        /// <summary>
+        /// Create a Julian Day
+        /// </summary>
         public JulianDay JulianDay(DateUT date, DateCalendar calendar) {
             return new JulianDay(date, calendar);
         }
@@ -126,6 +140,20 @@ namespace SweNet
         /// </summary>
         public EphemerisTime EphemerisTime(JulianDay day) {
             return new EphemerisTime(day, Date.DeltaT(day));
+        }
+
+        /// <summary>
+        /// Get Date UT from Julian Day
+        /// </summary>
+        public DateUT DateUT(JulianDay jd) {
+            return SweDate.JulianDayToDate(jd.Value, jd.Calendar);
+        }
+
+        /// <summary>
+        /// Get Date UT from Ephemeris Time
+        /// </summary>
+        public DateUT DateUT(EphemerisTime et) {
+            return SweDate.JulianDayToDate(et.JulianDay.Value, et.JulianDay.Calendar);
         }
 
         #endregion

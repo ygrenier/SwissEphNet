@@ -23,6 +23,15 @@ namespace SweNet
         }
 
         /// <summary>
+        /// New date from components
+        /// </summary>
+        public DateUT(int year, int month, int day, double hour)
+            : this() {
+            var jd = SweDate.DateToJulianDay(year, month, day, hour, DateCalendar.Julian);
+            SweDate.JulianDayToDate(jd, DateCalendar.Julian, out _Year, out _Month, out _Day, out _Hours, out _Minutes, out _Seconds);
+        }
+
+        /// <summary>
         /// New date from DateTime
         /// </summary>
         public DateUT(DateTime date)

@@ -58,10 +58,10 @@ namespace SweNet.Date
                 var match = reg.Match(line);
                 if (!match.Success) continue;
                 int y;
-                if (!int.TryParse(match.Groups[0].Value, out y))
+                if (!int.TryParse(match.Groups[1].Value, out y))
                     continue;
                 double v;
-                if (!double.TryParse(match.Groups[1].Value, out v))
+                if (!double.TryParse(match.Groups[2].Value, out v))
                     continue;
                 return new RecordDeltaT() {
                     Year = y,

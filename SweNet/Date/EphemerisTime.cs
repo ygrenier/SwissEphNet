@@ -24,6 +24,11 @@ namespace SweNet
         }
 
         /// <summary>
+        /// Implicit cast a Ephemeris Time to double
+        /// </summary>
+        public static implicit operator double(EphemerisTime et) { return et.Value; }
+
+        /// <summary>
         /// The Julian Day
         /// </summary>
         public JulianDay JulianDay { get; private set; }

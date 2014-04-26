@@ -254,6 +254,25 @@ namespace SweNet
         /// This function returns the absolute Julian day number (JD) 
         /// for a given date. 
         /// </summary>
+        /// <param name="year">Year</param>
+        /// <param name="month">Month</param>
+        /// <param name="day">Day</param>
+        /// <param name="hour">Hour</param>
+        /// <param name="minute">Minute</param>
+        /// <param name="second">Second</param>
+        /// <param name="calendar">Calendar of conversion</param>
+        /// <returns>The julian day value as Universal Time</returns>
+        public static double DateToJulianDay(
+            int year, int month, int day,
+            int hour, int minute, int second,
+            DateCalendar calendar) {
+            return DateToJulianDay(year, month, day, GetHourValue(hour, minute, second), calendar);
+        }
+
+        /// <summary>
+        /// This function returns the absolute Julian day number (JD) 
+        /// for a given date. 
+        /// </summary>
         /// <remarks>
         /// <para>Base on swe_julday()</para>
         /// <para>
@@ -301,15 +320,12 @@ namespace SweNet
         /// <param name="year">Year</param>
         /// <param name="month">Month</param>
         /// <param name="day">Day</param>
-        /// <param name="hour">Hour</param>
-        /// <param name="minute">Minute</param>
-        /// <param name="second">Second</param>
+        /// <param name="hour">Hour in decimal</param>
         /// <param name="calendar">Calendar of conversion</param>
         /// <returns>The julian day value as Universal Time</returns>
         public static double DateToJulianDay(
             int year, int month, int day,
-            int hour, int minute, int second,
-            DateCalendar calendar) {
+            double hour, DateCalendar calendar) {
             double jd;
             double u, u0, u1, u2;
             u = year;
@@ -319,7 +335,7 @@ namespace SweNet
             if (u1 < 4) u1 += 12.0;
             jd = Math.Floor(u0 * 365.25)
                + Math.Floor(30.6 * u1 + 0.000001)
-               + day + GetHourValue(hour, minute, second) / 24.0 - 63.5;
+               + day + hour / 24.0 - 63.5;
             if (calendar == DateCalendar.Gregorian) {
                 u2 = Math.Floor(Math.Abs(u) / 100) - Math.Floor(Math.Abs(u) / 400);
                 if (u < 0.0) u2 = -u2;
@@ -455,121 +471,135 @@ namespace SweNet
             return TableDT.Length;
         }
 
-        protected double DeltatLongtermMorrisonStephenson(double tjd, double asYGreg) {
-            double u = (asYGreg - 1820) / 100.0;
+        protected double DeltatLongtermMorrisonStephenson(double tjd) {
+            double Ygreg = 2000.0 + (tjd - SweConst.J2000) / 365.2425;
+            double u = (Ygreg - 1820) / 100.0;
             return (-20 + 32 * u * u);
         }
 
-        protected double DeltatMorrisonStephenson1600(double tjd, double asY, double asYGreg) {
+        protected double DeltatMorrisonStephenson1600(double tjd) {
             double ans = 0, ans2, ans3;
             double p, B, dd;
             double tjd0;
             int iy;
+            /* read additional values from swedelta.txt */
+            double Y = 2000.0 + (tjd - SweConst.J2000) / 365.2425;
+            /* double Y = 2000.0 + (tjd - J2000)/365.25;*/
             /* before -1000:
              * formula by Stephenson&Morrison (2004; p. 335) but adjusted to fit the 
              * starting point of table dt2. */
-            if (asY < StartDT2) {
-                ans = DeltatLongtermMorrisonStephenson(tjd, asYGreg);
-                ans = AdjustForTidacc(ans, asY);
+            if (Y < StartDT2) {
+                /*B = (Y - LTERM_EQUATION_YSTART) * 0.01;
+                ans = -20 + LTERM_EQUATION_COEFF * B * B;*/
+                ans = DeltatLongtermMorrisonStephenson(tjd);
+                ans = AdjustForTidacc(ans, Y);
                 /* transition from formula to table over 100 years */
-                if (asY >= StartDT2 - 100) {
+                if (Y >= StartDT2 - 100) {
                     /* starting value of table dt2: */
                     ans2 = AdjustForTidacc(TableDT2[0], StartDT2);
                     /* value of formula at epoch TAB2_START */
                     /* B = (TAB2_START - LTERM_EQUATION_YSTART) * 0.01;
                     ans3 = -20 + LTERM_EQUATION_COEFF * B * B;*/
                     tjd0 = (StartDT2 - 2000) * 365.2425 + SweConst.J2000;
-                    ans3 = DeltatLongtermMorrisonStephenson(tjd0, asYGreg);
-                    ans3 = AdjustForTidacc(ans3, asY);
+                    ans3 = DeltatLongtermMorrisonStephenson(tjd0);
+                    ans3 = AdjustForTidacc(ans3, Y);
                     dd = ans3 - ans2;
-                    B = (asY - (StartDT2 - 100)) * 0.01;
+                    B = (Y - (StartDT2 - 100)) * 0.01;
                     /* fit to starting point of table dt2. */
                     ans = ans - dd * B;
                 }
             }
             /* between -1000 and 1600: 
              * linear interpolation between values of table dt2 (Stephenson&Morrison 2004) */
-            if (asY >= StartDT2 && asY < EndDT2) {
+            if (Y >= StartDT2 && Y < EndDT2) {
                 double Yjul = 2000 + (tjd - 2451557.5) / 365.25;
                 p = Math.Floor(Yjul);
                 iy = (int)((p - StartDT2) / StepDT2);
                 dd = (Yjul - (StartDT2 + StepDT2 * iy)) / StepDT2;
                 ans = TableDT2[iy] + (TableDT2[iy + 1] - TableDT2[iy]) * dd;
                 /* correction for tidal acceleration used by our ephemeris */
-                ans = AdjustForTidacc(ans, asY);
+                ans = AdjustForTidacc(ans, Y);
             }
             ans /= 86400.0;
             return ans;
         }
 
-        protected double DeltatEspenakMeeus1620(double jd, double asY, double asYGreg) {
+        protected double DeltatEspenakMeeus1620(double tjd) {
             double ans = 0;
+            double Ygreg;
             double u;
-            if (asYGreg < -500) {
-                ans = DeltatLongtermMorrisonStephenson(jd, asYGreg);
-            } else if (asYGreg < 500) {
-                u = asYGreg / 100.0;
+            /* double Y = 2000.0 + (tjd - J2000)/365.25;*/
+            Ygreg = 2000.0 + (tjd - SweConst.J2000) / 365.2425;
+            if (Ygreg < -500) {
+                ans = DeltatLongtermMorrisonStephenson(tjd);
+            } else if (Ygreg < 500) {
+                u = Ygreg / 100.0;
                 ans = (((((0.0090316521 * u + 0.022174192) * u - 0.1798452) * u - 5.952053) * u + 33.78311) * u - 1014.41) * u + 10583.6;
-            } else if (asYGreg < 1600) {
-                u = (asYGreg - 1000) / 100.0;
+            } else if (Ygreg < 1600) {
+                u = (Ygreg - 1000) / 100.0;
                 ans = (((((0.0083572073 * u - 0.005050998) * u - 0.8503463) * u + 0.319781) * u + 71.23472) * u - 556.01) * u + 1574.2;
-            } else if (asYGreg < 1700) {
-                u = asYGreg - 1600;
+            } else if (Ygreg < 1700) {
+                u = Ygreg - 1600;
                 ans = 120 - 0.9808 * u - 0.01532 * u * u + u * u * u / 7129.0;
-            } else if (asYGreg < 1800) {
-                u = asYGreg - 1700;
+            } else if (Ygreg < 1800) {
+                u = Ygreg - 1700;
                 ans = (((-u / 1174000.0 + 0.00013336) * u - 0.0059285) * u + 0.1603) * u + 8.83;
-            } else if (asYGreg < 1860) {
-                u = asYGreg - 1800;
+            } else if (Ygreg < 1860) {
+                u = Ygreg - 1800;
                 ans = ((((((0.000000000875 * u - 0.0000001699) * u + 0.0000121272) * u - 0.00037436) * u + 0.0041116) * u + 0.0068612) * u - 0.332447) * u + 13.72;
-            } else if (asYGreg < 1900) {
-                u = asYGreg - 1860;
+            } else if (Ygreg < 1900) {
+                u = Ygreg - 1860;
                 ans = ((((u / 233174.0 - 0.0004473624) * u + 0.01680668) * u - 0.251754) * u + 0.5737) * u + 7.62;
-            } else if (asYGreg < 1920) {
-                u = asYGreg - 1900;
+            } else if (Ygreg < 1920) {
+                u = Ygreg - 1900;
                 ans = (((-0.000197 * u + 0.0061966) * u - 0.0598939) * u + 1.494119) * u - 2.79;
-            } else if (asYGreg < 1941) {
-                u = asYGreg - 1920;
+            } else if (Ygreg < 1941) {
+                u = Ygreg - 1920;
                 ans = 21.20 + 0.84493 * u - 0.076100 * u * u + 0.0020936 * u * u * u;
-            } else if (asYGreg < 1961) {
-                u = asYGreg - 1950;
+            } else if (Ygreg < 1961) {
+                u = Ygreg - 1950;
                 ans = 29.07 + 0.407 * u - u * u / 233.0 + u * u * u / 2547.0;
-            } else if (asYGreg < 1986) {
-                u = asYGreg - 1975;
+            } else if (Ygreg < 1986) {
+                u = Ygreg - 1975;
                 ans = 45.45 + 1.067 * u - u * u / 260.0 - u * u * u / 718.0;
-            } else if (asYGreg < 2005) {
-                u = asYGreg - 2000;
+            } else if (Ygreg < 2005) {
+                u = Ygreg - 2000;
                 ans = ((((0.00002373599 * u + 0.000651814) * u + 0.0017275) * u - 0.060374) * u + 0.3345) * u + 63.86;
             }
-            ans = AdjustForTidacc(ans, asYGreg);
+            ans = AdjustForTidacc(ans, Ygreg);
             ans /= 86400.0;
             return ans;
         }
 
-        protected double DeltatAA(double jd, double asY) {
-            double ans = 0, B = 0;
+        protected double DeltatAA(double tjd) {
+            double ans = 0, ans2, ans3;
+            double p, B, B2, Y, dd;
             double[] d = new double[6];
-            // Initialise Delta T
+            int i, iy, k;
+            /* read additional values from swedelta.txt */
             int tabsiz = InitDeltaT();
             int tabend = StartDT + tabsiz - 1;
-            if (asY <= tabend) {
-                // Index into the table
-                var p = Math.Floor(asY);
-                var iy = (int)(p - StartDT);
-                // Zeroth order estimate is value at start of year
+            /*Y = 2000.0 + (tjd - J2000)/365.25;*/
+            Y = 2000.0 + (tjd - SweConst.J2000) / 365.2425;
+            if (Y <= tabend) {
+                /* Index into the table.
+                 */
+                p = Math.Floor(Y);
+                iy = (int)(p - StartDT);
+                /* Zeroth order estimate is value at start of year */
                 ans = TableDT[iy];
-                var k = iy + 1;
+                k = iy + 1;
                 if (k >= tabsiz)
                     goto done; /* No data, can't go on. */
                 /* The fraction of tabulation interval */
-                p = asY - p;
+                p = Y - p;
                 /* First order interpolated value */
                 ans += p * (TableDT[k] - TableDT[iy]);
                 if ((iy - 1 < 0) || (iy + 2 >= tabsiz))
                     goto done; /* can't do second differences */
                 /* Make table of first differences */
                 k = iy - 2;
-                for (int i = 0; i < 5; i++) {
+                for (i = 0; i < 5; i++) {
                     if ((k < 0) || (k + 1 >= tabsiz))
                         d[i] = 0;
                     else
@@ -577,26 +607,26 @@ namespace SweNet
                     k += 1;
                 }
                 /* Compute second differences */
-                for (int i = 0; i < 4; i++)
+                for (i = 0; i < 4; i++)
                     d[i] = d[i + 1] - d[i];
                 B = 0.25 * p * (p - 1.0);
                 ans += B * (d[1] + d[2]);
                 if (iy + 2 >= tabsiz)
                     goto done;
                 /* Compute third differences */
-                for (int i = 0; i < 3; i++)
+                for (i = 0; i < 3; i++)
                     d[i] = d[i + 1] - d[i];
                 B = 2.0 * B / 3.0;
                 ans += (p - 0.5) * B * d[1];
                 if ((iy - 2 < 0) || (iy + 3 > tabsiz))
                     goto done;
                 /* Compute fourth differences */
-                for (int i = 0; i < 2; i++)
+                for (i = 0; i < 2; i++)
                     d[i] = d[i + 1] - d[i];
                 B = 0.125 * B * (p + 1.0) * (p - 2.0);
                 ans += B * (d[0] + d[1]);
             done:
-                ans = AdjustForTidacc(ans, asY);
+                ans = AdjustForTidacc(ans, Y);
                 return ans / 86400.0;
             }
             /* today - : 
@@ -605,23 +635,27 @@ namespace SweNet
              * similar to what Meeus 1998 had suggested.
              * Slow transition within 100 years.
              */
-            B = 0.01 * (asY - 1820);
+            B = 0.01 * (Y - 1820);
             ans = -20 + 31 * B * B;
             /* slow transition from tabulated values to Stephenson formula: */
-            if (asY <= tabend + 100) {
-                var B2 = 0.01 * (tabend - 1820);
-                var ans2 = -20 + 31 * B2 * B2;
-                var ans3 = TableDT[tabsiz - 1];
-                var dd = (ans2 - ans3);
-                ans += dd * (asY - (tabend + 100)) * 0.01;
+            if (Y <= tabend + 100) {
+                B2 = 0.01 * (tabend - 1820);
+                ans2 = -20 + 31 * B2 * B2;
+                ans3 = TableDT[tabsiz - 1];
+                dd = (ans2 - ans3);
+                ans += dd * (Y - (tabend + 100)) * 0.01;
             }
             return ans / 86400.0;
         }
 
         /// <summary>
-        /// Internal DeltaT calculation
+        /// Returns DeltaT (ET - UT) in days
         /// </summary>
-        protected virtual double InternalDeltaT(double jd, double asY, double asYGreg) {
+        /// <param name="jd">Julian Day in UT</param>
+        /// <returns></returns>
+        public double DeltaT(double jd) {
+            double asY = 2000.0 + (jd - SweConst.J2000) / 365.25;
+            double asYGreg = 2000.0 + (jd - SweConst.J2000) / 365.2425;
             double ans = 0;
             /* Before 1633 AD and using UseEspenakMeeus2006
              * Polynomials by Espenak & Meeus 2006, derived from Stephenson & Morrison 
@@ -631,7 +665,7 @@ namespace SweNet
              * which can be used even for the remoter past.
              */
             if (UseEspenakMeeus2006 && jd < 2317746.13090277789) {
-                return DeltatEspenakMeeus1620(jd, asY, asYGreg);
+                return DeltatEspenakMeeus1620(jd);
             }
             /* If the macro ESPENAK_MEEUS_2006 is FALSE:
              * Before 1620, we follow Stephenson & Morrsion 2004. For the tabulated 
@@ -639,7 +673,7 @@ namespace SweNet
              */
             if (asY < StartDT) {
                 if (asY < EndDT2) {
-                    return DeltatMorrisonStephenson1600(jd, asY, asYGreg);
+                    return DeltatMorrisonStephenson1600(jd);
                 } else {
                     /* between 1600 and 1620:
                      * linear interpolation between 
@@ -659,23 +693,12 @@ namespace SweNet
              * See AA page K11.
              */
             if (asY >= StartDT) {
-                return DeltatAA(jd, asY);
+                return DeltatAA(jd);
             }
 #if TRACE
             _Sweph.Trace("swe_deltat: {0}, {1}", jd, ans);
 #endif
             return ans / 86400.0;
-        }
-
-        /// <summary>
-        /// Returns DeltaT (ET - UT) in days
-        /// </summary>
-        /// <param name="jd">Julian Day in UT</param>
-        /// <returns></returns>
-        public double DeltaT(double jd) {
-            double Y = 2000.0 + (jd - SweConst.J2000) / 365.25;
-            double Ygreg = 2000.0 + (jd - SweConst.J2000) / 365.2425;
-            return InternalDeltaT(jd, Y, Ygreg);
         }
 
         #endregion
