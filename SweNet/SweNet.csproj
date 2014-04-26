@@ -79,6 +79,7 @@
     <Compile Include="SweConfig.cs" />
     <Compile Include="SweConst.cs" />
     <Compile Include="Sweph.cs" />
+    <Compile Include="SwePlanet.cs" />
     <Compile Include="SwissEph.cs" />
     <Compile Include="SwissEph.trace.cs" />
     <Compile Include="Tools\CFile.cs" />
