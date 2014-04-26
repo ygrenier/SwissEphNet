@@ -9,7 +9,7 @@ namespace SweNet
     /// <summary>
     /// Planet number
     /// </summary>
-    public struct SwePlanet
+    public struct Planet
     {
 
         #region Planets
@@ -17,140 +17,140 @@ namespace SweNet
         /// <summary>
         /// Sun
         /// </summary>
-        public static readonly SwePlanet Sun = 0;
+        public static readonly Planet Sun = 0;
         /// <summary>
         /// Moon
         /// </summary>
-        public static readonly SwePlanet Moon = 1;
+        public static readonly Planet Moon = 1;
         /// <summary>
         /// Mercury
         /// </summary>
-        public static readonly SwePlanet Mercury = 2;
+        public static readonly Planet Mercury = 2;
         /// <summary>
         /// Venus
         /// </summary>
-        public static readonly SwePlanet Venus = 3;
+        public static readonly Planet Venus = 3;
         /// <summary>
         /// Mars
         /// </summary>
-        public static readonly SwePlanet Mars = 4;
+        public static readonly Planet Mars = 4;
         /// <summary>
         /// Jupiter
         /// </summary>
-        public static readonly SwePlanet Jupiter = 5;
+        public static readonly Planet Jupiter = 5;
         /// <summary>
         /// Saturn
         /// </summary>
-        public static readonly SwePlanet Saturn = 6;
+        public static readonly Planet Saturn = 6;
         /// <summary>
         /// Uranus
         /// </summary>
-        public static readonly SwePlanet Uranus = 7;
+        public static readonly Planet Uranus = 7;
         /// <summary>
         /// Neptune
         /// </summary>
-        public static readonly SwePlanet Neptune = 8;
+        public static readonly Planet Neptune = 8;
         /// <summary>
         /// Pluto
         /// </summary>
-        public static readonly SwePlanet Pluto = 9;
+        public static readonly Planet Pluto = 9;
         /// <summary>
         /// MeanNode
         /// </summary>
-        public static readonly SwePlanet MeanNode = 10;
+        public static readonly Planet MeanNode = 10;
         /// <summary>
         /// TrueNode
         /// </summary>
-        public static readonly SwePlanet TrueNode = 11;
+        public static readonly Planet TrueNode = 11;
         /// <summary>
         /// MeanApog
         /// </summary>
-        public static readonly SwePlanet MeanApog = 12;
+        public static readonly Planet MeanApog = 12;
         /// <summary>
         /// OscuApog
         /// </summary>
-        public static readonly SwePlanet OscuApog = 13;
+        public static readonly Planet OscuApog = 13;
         /// <summary>
         /// Earth
         /// </summary>
-        public static readonly SwePlanet Earth = 14;
+        public static readonly Planet Earth = 14;
         /// <summary>
         /// Chiron
         /// </summary>
-        public static readonly SwePlanet Chiron = 15;
+        public static readonly Planet Chiron = 15;
         /// <summary>
         /// Pholus
         /// </summary>
-        public static readonly SwePlanet Pholus = 16;
+        public static readonly Planet Pholus = 16;
         /// <summary>
         /// Ceres
         /// </summary>
-        public static readonly SwePlanet Ceres = 17;
+        public static readonly Planet Ceres = 17;
         /// <summary>
         /// Pallas
         /// </summary>
-        public static readonly SwePlanet Pallas = 18;
+        public static readonly Planet Pallas = 18;
         /// <summary>
         /// Juno
         /// </summary>
-        public static readonly SwePlanet Juno = 19;
+        public static readonly Planet Juno = 19;
         /// <summary>
         /// Vesta
         /// </summary>
-        public static readonly SwePlanet Vesta = 20;
+        public static readonly Planet Vesta = 20;
         /// <summary>
         /// IntpApog
         /// </summary>
-        public static readonly SwePlanet IntpApog = 21;
+        public static readonly Planet IntpApog = 21;
         /// <summary>
         /// IntpPerg
         /// </summary>
-        public static readonly SwePlanet IntpPerg = 22;
+        public static readonly Planet IntpPerg = 22;
 
         #endregion
 
         #region Fictitious
 
         #region Hamburger or Uranian "planets"
-        public static readonly SwePlanet Cupido = 40;
-        public static readonly SwePlanet Hades = 41;
-        public static readonly SwePlanet Zeus = 42;
-        public static readonly SwePlanet Kronos = 43;
-        public static readonly SwePlanet Apollon = 44;
-        public static readonly SwePlanet Admetos = 45;
-        public static readonly SwePlanet Vulkanus = 46;
-        public static readonly SwePlanet Poseidon = 47;
+        public static readonly Planet Cupido = 40;
+        public static readonly Planet Hades = 41;
+        public static readonly Planet Zeus = 42;
+        public static readonly Planet Kronos = 43;
+        public static readonly Planet Apollon = 44;
+        public static readonly Planet Admetos = 45;
+        public static readonly Planet Vulkanus = 46;
+        public static readonly Planet Poseidon = 47;
         #endregion
 
         #region Other fictitious bodies
-        public static readonly SwePlanet Isis = 48;
-        public static readonly SwePlanet Nibiru = 49;
-        public static readonly SwePlanet Harrington = 50;
-        public static readonly SwePlanet NeptuneLeverrier = 51;
-        public static readonly SwePlanet NeptuneAdams = 52;
-        public static readonly SwePlanet PlutoLowell = 53;
-        public static readonly SwePlanet PlutoPickering = 54;
-        public static readonly SwePlanet Vulcan = 55;
-        public static readonly SwePlanet WhiteMoon = 56;
-        public static readonly SwePlanet Proserpina = 57;
-        public static readonly SwePlanet Waldemath = 58;
+        public static readonly Planet Isis = 48;
+        public static readonly Planet Nibiru = 49;
+        public static readonly Planet Harrington = 50;
+        public static readonly Planet NeptuneLeverrier = 51;
+        public static readonly Planet NeptuneAdams = 52;
+        public static readonly Planet PlutoLowell = 53;
+        public static readonly Planet PlutoPickering = 54;
+        public static readonly Planet Vulcan = 55;
+        public static readonly Planet WhiteMoon = 56;
+        public static readonly Planet Proserpina = 57;
+        public static readonly Planet Waldemath = 58;
         #endregion
 
         #endregion
 
         #region Asteroids
 
-        public static readonly SwePlanet AsteroidCeres = FirstAsteroid + 1;
-        public static readonly SwePlanet AsteroidPallas = FirstAsteroid + 2;
-        public static readonly SwePlanet AsteroidJuno = FirstAsteroid + 3;
-        public static readonly SwePlanet AsteroidVesta = FirstAsteroid + 4;
-        public static readonly SwePlanet AsteroidChiron = FirstAsteroid + 2060;
-        public static readonly SwePlanet AsteroidPholus = FirstAsteroid + 5145;
+        public static readonly Planet AsteroidCeres = FirstAsteroid + 1;
+        public static readonly Planet AsteroidPallas = FirstAsteroid + 2;
+        public static readonly Planet AsteroidJuno = FirstAsteroid + 3;
+        public static readonly Planet AsteroidVesta = FirstAsteroid + 4;
+        public static readonly Planet AsteroidChiron = FirstAsteroid + 2060;
+        public static readonly Planet AsteroidPholus = FirstAsteroid + 5145;
 
         /// <summary>
         /// Pluto as Asteroid
         /// </summary>
-        public static readonly SwePlanet AsteroidPluto = 134340;
+        public static readonly Planet AsteroidPluto = 134340;
 
         #endregion
 
@@ -177,7 +177,7 @@ namespace SweNet
         /// <summary>
         /// New planet
         /// </summary>
-        public SwePlanet(Int32 id)
+        public Planet(Int32 id)
             : this() {
             this.Id = id;
         }
@@ -185,12 +185,12 @@ namespace SweNet
         /// <summary>
         /// Implicit casting SwePlanet to Int32
         /// </summary>
-        public static implicit operator Int32(SwePlanet planet) { return planet.Id; }
+        public static implicit operator Int32(Planet planet) { return planet.Id; }
 
         /// <summary>
         /// Implicit casting Int32 to SwePlanet 
         /// </summary>
-        public static implicit operator SwePlanet(Int32 id) { return new SwePlanet(id); }
+        public static implicit operator Planet(Int32 id) { return new Planet(id); }
 
         /// <summary>
         /// Planet id

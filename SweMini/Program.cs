@@ -159,8 +159,8 @@ namespace SweMini
                     /*
                      * a loop over all planets
                      */
-                    for (var p = SwePlanet.Sun; p <= SwePlanet.Chiron; p++) {
-                        if (p == SwePlanet.Earth) continue;
+                    for (var p = Planet.Sun; p <= Planet.Chiron; p++) {
+                        if (p == Planet.Earth) continue;
                         /*
                          * do the coordinate calculation for this planet p
                          */
