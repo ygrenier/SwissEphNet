@@ -80,6 +80,7 @@
     <Compile Include="Date\SweDate.cs" />
     <Compile Include="SweConfig.cs" />
     <Compile Include="SweConst.cs" />
+    <Compile Include="SweFormat.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Planets\Planet.cs" />
     <Compile Include="SwissEph.cs" />

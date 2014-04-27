@@ -50,10 +50,16 @@ namespace SweWPF.ViewModels
         public void DoCalculation(InputViewModel input) {
             CalculationResultViewModel result = new CalculationResultViewModel();
 
-            // Dates
+            // Initialize engine
+            Sweph.swe_set_topo(input.Longitude, input.Latitude, input.Altitude);
+
+            // Dates and Times
             result.JulianDay = Sweph.JulianDay(input.DateUTC);
             result.DateUTC = Sweph.DateUT(result.JulianDay);
             result.EphemerisTime = Sweph.EphemerisTime(result.JulianDay);
+            result.SideralTime = Sweph.swe_sidtime(result.JulianDay) + (input.Longitude / 15.0);
+            if (result.SideralTime >= 24.0) result.SideralTime -= 24.0;
+            if (result.SideralTime < 0.0) result.SideralTime += 24.0;
 
             // Calculation
             String serr = null;
@@ -64,6 +70,7 @@ namespace SweWPF.ViewModels
             result.MeanEclipticObliquity = x[1];
             result.NutationLongitude = x[2];
             result.NutationObliquity = x[3];
+
 
             NavigateTo(result);
         }

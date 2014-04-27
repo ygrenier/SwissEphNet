@@ -16,7 +16,10 @@ namespace SweWPF.ViewModels
         public InputViewModel() {
             TimeZones = TimeZoneInfo.GetSystemTimeZones().ToList();
             TimeZone = TimeZoneInfo.Local;
-            Date = new DateUT(DateTime.Now);
+            //Date = new DateUT(DateTime.Now);
+            Date = new DateUT(1974, 8, 16, 0, 30, 0);
+            Longitude = new SweNet.Longitude(5, 20, 0, LongitudePolarity.East);
+            Latitude = new SweNet.Latitude(47, 52, 0, LatitudePolarity.North);
             HouseSystems = new string[] { "Placidus", "Campanus", "Regiomontanus", "Koch", "Equal", "Vehlow equal", "Horizon", "B=Alcabitus" };
             HouseSystem = HouseSystems[0];
             DoCalculationCommand = new RelayCommand(() => {

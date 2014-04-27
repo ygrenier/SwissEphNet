@@ -21,6 +21,8 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -34,24 +36,26 @@
                     <Label Grid.Row="3" Content="{Binding JulianDay}" />
 
                     <Label Grid.Row="4" >Delta T</Label>
-                    <Label Grid.Row="5" Content="{Binding EphemerisTime.DeltaT}" />
+                    <Label Grid.Row="5" Content="{Binding DeltaTSec}" />
 
                     <Label Grid.Row="6" >Ephemeris Time</Label>
                     <Label Grid.Row="7" Content="{Binding EphemerisTime}" />
 
-                    
-                    
+                    <Label Grid.Row="8" >Sideral Time</Label>
+                    <Label Grid.Row="9" Content="{Binding SideralTime, ConverterParameter=hour, Converter={StaticResource DoubleToTimeFormatConverter}}" />
+
+
                     <Label Grid.Row="0" Grid.Column="1">Mean Ecliptic Obliquity</Label>
-                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding MeanEclipticObliquity}" />
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding MeanEclipticObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
 
                     <Label Grid.Row="2" Grid.Column="1" >True Ecliptic Obliquity</Label>
-                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding TrueEclipticObliquity}" />
+                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding TrueEclipticObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
 
                     <Label Grid.Row="4" Grid.Column="1" >Nutation in Longitude</Label>
-                    <Label Grid.Row="5" Grid.Column="1" Content="{Binding NutationLongitude}" />
+                    <Label Grid.Row="5" Grid.Column="1" Content="{Binding NutationLongitude, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
 
                     <Label Grid.Row="6" Grid.Column="1" >Nutation Obliquity</Label>
-                    <Label Grid.Row="7" Grid.Column="1" Content="{Binding NutationObliquity}" />
+                    <Label Grid.Row="7" Grid.Column="1" Content="{Binding NutationObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
                     
                 </Grid>
             </TabItem>

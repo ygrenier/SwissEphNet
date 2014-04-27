@@ -63,6 +63,8 @@
     <Compile Include="Controls\LongitudeInput.xaml.cs">
       <DependentUpon>LongitudeInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\DoubleToTimeFormatConverter.cs" />
+    <Compile Include="Converters\DoubleToDegreesFormatConverter.cs" />
     <Compile Include="ViewModels\CalculationResultViewModel.cs" />
     <Compile Include="ViewModels\ChildViewModel.cs" />
     <Compile Include="ViewModels\InputViewModel.cs" />

@@ -30,6 +30,16 @@ namespace SweWPF.ViewModels
         public EphemerisTime EphemerisTime { get; set; }
 
         /// <summary>
+        /// Delat T in seconds
+        /// </summary>
+        public Double DeltaTSec { get { return EphemerisTime.DeltaT * 86400.0; } }
+
+        /// <summary>
+        /// Sideral time
+        /// </summary>
+        public double SideralTime { get; set; }
+
+        /// <summary>
         /// Mean ecliptic obliquity
         /// </summary>
         public Double MeanEclipticObliquity { get; set; }
@@ -48,6 +58,7 @@ namespace SweWPF.ViewModels
         /// Nutation in obliquity
         /// </summary>
         public Double NutationObliquity { get; set; }
+
     }
 
 }
