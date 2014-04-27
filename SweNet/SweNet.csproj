@@ -36,6 +36,7 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
     <Compile Include="Date\DateUT.cs" />
     <Compile Include="Date\EphemerisTime.cs" />
+    <Compile Include="Date\SideralTime.cs" />
     <Compile Include="Date\StreamDeltaTReader.cs" />
     <Compile Include="Date\WeekDay.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
