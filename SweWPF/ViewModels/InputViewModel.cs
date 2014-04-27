@@ -17,6 +17,8 @@ namespace SweWPF.ViewModels
             TimeZones = TimeZoneInfo.GetSystemTimeZones().ToList();
             TimeZone = TimeZoneInfo.Local;
             Date = new DateUT(DateTime.Now);
+            HouseSystems = new string[] { "Placidus", "Campanus", "Regiomontanus", "Koch", "Equal", "Vehlow equal", "Horizon", "B=Alcabitus" };
+            HouseSystem = HouseSystems[0];
         }
 
         private TimeZoneInfo _TimeZone;
@@ -47,7 +49,10 @@ namespace SweWPF.ViewModels
 
         public DateUT DateUTC {
             get {
-                return Date - TimeZone.BaseUtcOffset;
+                TimeSpan daylight = TimeSpan.Zero;
+                if (Date.Year > 0 && TimeZone.SupportsDaylightSavingTime && TimeZone.IsDaylightSavingTime(Date.ToDateTime()))
+                    daylight = TimeSpan.FromHours(1);
+                return Date - (TimeZone.BaseUtcOffset + daylight);
             }
         }
 
@@ -56,5 +61,61 @@ namespace SweWPF.ViewModels
         /// </summary>
         public List<TimeZoneInfo> TimeZones { get; private set; }
 
+        private Latitude _Latitude;
+
+        /// <summary>
+        /// Latitude
+        /// </summary>
+        public Latitude Latitude {
+            get { return _Latitude; }
+            set {
+                _Latitude = value;
+                RaisePropertyChanged("Latitude");
+            }
+        }
+
+        private Longitude _Longitude;
+
+        /// <summary>
+        /// Longitude
+        /// </summary>
+        public Longitude Longitude {
+            get { return _Longitude; }
+            set { 
+                _Longitude = value;
+                RaisePropertyChanged("Longitude");
+            }
+        }
+
+        private int _Altitude;
+
+        /// <summary>
+        /// Altitude
+        /// </summary>
+        public int Altitude {
+            get { return _Altitude; }
+            set {
+                _Altitude = value;
+                RaisePropertyChanged("Altitude");
+            }
+        }
+
+        private String _HouseSystem;
+
+        /// <summary>
+        /// House system
+        /// </summary>
+        public String HouseSystem {
+            get { return _HouseSystem; }
+            set {
+                _HouseSystem = value;
+                RaisePropertyChanged("HouseSystem");
+            }
+        }
+
+        /// <summary>
+        /// House systems
+        /// </summary>
+        public String[] HouseSystems { get; private set; }
     }
 }

@@ -57,6 +57,12 @@
     <Compile Include="Controls\DateTimeInput.xaml.cs">
       <DependentUpon>DateTimeInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LatitudeInput.xaml.cs">
+      <DependentUpon>LatitudeInput.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LongitudeInput.xaml.cs">
+      <DependentUpon>LongitudeInput.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\ChildViewModel.cs" />
     <Compile Include="ViewModels\InputViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -65,6 +71,14 @@
       <DependentUpon>InputView.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\DateTimeInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\LatitudeInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\LongitudeInput.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -27,6 +27,7 @@ namespace SweNet
             if (h != null) {
                 var e = new LoadFileEventArgs(filename);
                 h(this, e);
+                if (e.File == null) return null;
                 return new CFile(e.File, DefaultEncoding);
             }
             return null;

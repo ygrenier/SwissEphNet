@@ -243,54 +243,53 @@ namespace SweNet
             jut = (jd - Math.Floor(jd + 0.5) + 0.5) * 24.0;
         }
 
-///* transform local time to UTC or UTC to local time
-// *
-// * input 
-// *   iyear ... dsec     date and time
-// *   d_timezone		timezone offset
-// * output
-// *   iyear_out ... dsec_out
-// * 
-// * For time zones east of Greenwich, d_timezone is positive.
-// * For time zones west of Greenwich, d_timezone is negative.
-// * 
-// * For conversion from local time to utc, use +d_timezone.
-// * For conversion from utc to local time, use -d_timezone.
-// */
-//void FAR PASCAL_CONV swe_utc_time_zone(
-//        int32 iyear, int32 imonth, int32 iday,
-//        int32 ihour, int32 imin, double dsec,
-//        double d_timezone,
-//        int32 *iyear_out, int32 *imonth_out, int32 *iday_out,
-//        int32 *ihour_out, int32 *imin_out, double *dsec_out
-//        )
-//{
-//  double tjd, d;
-//  AS_BOOL have_leapsec = FALSE;
-//  double dhour;
-//  if (dsec >= 60.0) {
-//    have_leapsec = TRUE;
-//    dsec -= 1.0;
-//  }
-//  dhour = ((double) ihour) + ((double) imin) / 60.0 + dsec / 3600.0;
-//  tjd = swe_julday(iyear, imonth, iday, 0, SE_GREG_CAL);
-//  dhour -= d_timezone;
-//  if (dhour < 0.0) {
-//    tjd -= 1.0;
-//    dhour += 24.0;
-//  }
-//  if (dhour >= 24.0) {
-//    tjd += 1.0;
-//    dhour -= 24.0;
-//  }
-//  swe_revjul(tjd + 0.001, SE_GREG_CAL, iyear_out, imonth_out, iday_out, &d);
-//  *ihour_out = (int) dhour;
-//  d = (dhour - (double) *ihour_out) * 60;
-//  *imin_out = (int) d;
-//  *dsec_out = (d - (double) *imin_out) * 60;
-//  if (have_leapsec)
-//    *dsec_out += 1.0;
-//}
+        /* transform local time to UTC or UTC to local time
+         *
+         * input 
+         *   iyear ... dsec     date and time
+         *   d_timezone		timezone offset
+         * output
+         *   iyear_out ... dsec_out
+         * 
+         * For time zones east of Greenwich, d_timezone is positive.
+         * For time zones west of Greenwich, d_timezone is negative.
+         * 
+         * For conversion from local time to utc, use +d_timezone.
+         * For conversion from utc to local time, use -d_timezone.
+         */
+        public void swe_utc_time_zone(
+                Int32 iyear, Int32 imonth, Int32 iday,
+                Int32 ihour, Int32 imin, double dsec,
+                double d_timezone,
+                ref Int32 iyear_out, ref Int32 imonth_out, ref Int32 iday_out,
+                ref Int32 ihour_out, ref Int32 imin_out, ref double dsec_out
+                ) {
+            double tjd, d = 0;
+            bool have_leapsec = false;
+            double dhour;
+            if (dsec >= 60.0) {
+                have_leapsec = true;
+                dsec -= 1.0;
+            }
+            dhour = ((double)ihour) + ((double)imin) / 60.0 + dsec / 3600.0;
+            tjd = swe_julday(iyear, imonth, iday, 0, SE_GREG_CAL);
+            dhour -= d_timezone;
+            if (dhour < 0.0) {
+                tjd -= 1.0;
+                dhour += 24.0;
+            }
+            if (dhour >= 24.0) {
+                tjd += 1.0;
+                dhour -= 24.0;
+            }
+            swe_revjul(tjd + 0.001, SE_GREG_CAL, ref iyear_out, ref imonth_out, ref iday_out, ref d);
+            ihour_out = (int)dhour;
+            d = (dhour - (double)ihour_out) * 60;
+            imin_out = (int)d;
+            dsec_out = (d - (double)imin_out) * 60;
+            if (have_leapsec)
+                dsec_out += 1.0;
+        }
 
 ///*
 // * functions for the handling of UTC
