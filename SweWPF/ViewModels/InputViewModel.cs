@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SweNet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace SweWPF.ViewModels
         public InputViewModel() {
             TimeZones = TimeZoneInfo.GetSystemTimeZones().ToList();
             TimeZone = TimeZoneInfo.Local;
-            Date = DateTime.Now;
+            Date = new DateUT(DateTime.Now);
         }
 
         private TimeZoneInfo _TimeZone;
@@ -31,9 +32,9 @@ namespace SweWPF.ViewModels
             }
         }
 
-        private DateTime _Date;
+        private DateUT _Date;
 
-        public DateTime Date {
+        public DateUT Date {
             get { return _Date; }
             set {
                 if (_Date != value) {
@@ -44,9 +45,9 @@ namespace SweWPF.ViewModels
             }
         }
 
-        public DateTime DateUTC {
+        public DateUT DateUTC {
             get {
-                return Date - TimeZone.GetUtcOffset(Date);
+                return Date - TimeZone.BaseUtcOffset;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SweNet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,7 @@ namespace SweWPF.Controls
     {
         public DateTimeInput() {
             InitializeComponent();
-            Date = DateTime.Now;
+            Date = new DateUT(DateTime.Now);
         }
 
         bool _Updating = false;
@@ -33,9 +34,9 @@ namespace SweWPF.Controls
             Day = Date.Day;
             Month = Date.Month;
             Year = Date.Year;
-            Hours = Date.Hour;
-            Minutes = Date.Minute;
-            Seconds = Date.Second;
+            Hours = Date.Hours;
+            Minutes = Date.Minutes;
+            Seconds = Date.Seconds;
             _Updating = false;
         }
 
@@ -43,7 +44,7 @@ namespace SweWPF.Controls
             if (_Updating) return;
             try {
                 _Updating = true;
-                Date = new DateTime(Year, Month, Day, Hours, Minutes, Seconds);
+                Date = new DateUT(Year, Month, Day, Hours, Minutes, Seconds);
                 _Updating = false;
             }
             catch {
@@ -52,13 +53,13 @@ namespace SweWPF.Controls
             }
         }
 
-        public DateTime Date {
-            get { return (DateTime)GetValue(DateProperty); }
+        public DateUT Date {
+            get { return (DateUT)GetValue(DateProperty); }
             set { SetValue(DateProperty, value); }
         }
 
         public static readonly DependencyProperty DateProperty =
-            DependencyProperty.Register("Date", typeof(DateTime), typeof(DateTimeInput), new PropertyMetadata(DateTime.MinValue, DatePropertyChanged));
+            DependencyProperty.Register("Date", typeof(DateUT), typeof(DateTimeInput), new PropertyMetadata(new DateUT(), DatePropertyChanged));
 
         private static void DatePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             var dti = d as DateTimeInput;

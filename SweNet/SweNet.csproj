@@ -37,6 +37,7 @@
     <Compile Include="Date\DateUT.cs" />
     <Compile Include="Date\EphemerisTime.cs" />
     <Compile Include="Date\StreamDeltaTReader.cs" />
+    <Compile Include="Date\WeekDay.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

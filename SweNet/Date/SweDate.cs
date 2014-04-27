@@ -251,6 +251,27 @@ namespace SweNet
         }
 
         /// <summary>
+        /// Get default calendar from a Julian Day
+        /// </summary>
+        /// <remarks>
+        /// Gregorian calendar start at October 15, 1582
+        /// </remarks>
+        public static DateCalendar GetCalendar(double jd) {
+            return jd >= SweConst.GregorianFirstJD ? DateCalendar.Gregorian : DateCalendar.Julian;
+        }
+
+        /// <summary>
+        /// Get default calendar from a date
+        /// </summary>
+        /// <remarks>
+        /// Gregorian calendar start at October 15, 1582
+        /// </remarks>
+        public static DateCalendar GetCalendar(int year, int month, int day) {
+            int date = (year * 10000) + (month * 100) + day;
+            return date >= 15821115 ? DateCalendar.Gregorian : DateCalendar.Julian;
+        }
+
+        /// <summary>
         /// This function returns the absolute Julian day number (JD) 
         /// for a given date. 
         /// </summary>
@@ -412,6 +433,19 @@ namespace SweNet
         }
 
         /// <summary>
+        /// Convert a DateUT to a Julian Day
+        /// </summary>
+        /// <param name="date">Date to convert</param>
+        /// <returns>The Julian Day</returns>
+        public static double DateToJulianDay(DateUT date) {
+            return DateToJulianDay(
+                date.Year, date.Month, date.Day, 
+                date.Hours, date.Minutes, date.Seconds, 
+                GetCalendar(date.Year, date.Month, date.Day)
+                );
+        }
+
+        /// <summary>
         /// Convert a Julian Day to a DateUT
         /// </summary>
         /// <param name="jd">The Julian Day to convert</param>
@@ -423,9 +457,31 @@ namespace SweNet
             return new DateUT(year, month, day, hour, minute, second);
         }
 
+        /// <summary>
+        /// Convert a Julian Day to a DateUT
+        /// </summary>
+        /// <param name="jd">The Julian Day to convert</param>
+        /// <returns>The DateTime</returns>
+        public static DateUT JulianDayToDate(double jd) {
+            int year, month, day, hour, minute, second;
+            JulianDayToDate(jd, GetCalendar(jd), out year, out month, out day, out hour, out minute, out second);
+            return new DateUT(year, month, day, hour, minute, second);
+        }
+
         #endregion
 
-        #region Delta T 
+        #region Date informations
+
+        /// <summary>
+        /// Get the day of week of a Julian Day
+        /// </summary>
+        public static WeekDay DayOfWeek(double jd) {
+            return (WeekDay)((((int)Math.Floor(jd - 2433282 - 1.5) % 7) + 7) % 7);
+        }
+
+        #endregion
+
+        #region Delta T
 
         IEnumerable<Tuple<int,double>> EnumerateRecords(Date.IDeltaTReader reader) {
             if (reader != null) {

@@ -9,9 +9,10 @@ namespace SweNet
     /// <summary>
     /// Date Universal Time
     /// </summary>
-    public struct DateUT
+    public struct DateUT : IComparable, IComparable<DateUT>, IEquatable<DateUT>, IFormattable
     {
         private int _Year, _Month, _Day, _Hours, _Minutes, _Seconds;
+        const String DefaultFormat = "dd/MM/yyyy HH:mm:ss";
 
         /// <summary>
         /// New date from components
@@ -47,6 +48,167 @@ namespace SweNet
         }
 
         /// <summary>
+        /// Compare with an object
+        /// </summary>
+        public int CompareTo(object obj) {
+            if (obj is DateUT) return CompareTo((DateUT)obj);
+            if (obj is DateTime) return DateTime.Compare(this.ToDateTime(), (DateTime)obj);
+            if (obj is DateTimeOffset) return DateTimeOffset.Compare(this.ToDateTime(), (DateTimeOffset)obj);
+            return -1;
+        }
+
+        /// <summary>
+        /// Compare with another DateUT
+        /// </summary>
+        public int CompareTo(DateUT other) {
+            int result;
+            if ((result = this.Year - other.Year) != 0) return result;
+            if ((result = this.Month - other.Month) != 0) return result;
+            if ((result = this.Day - other.Day) != 0) return result;
+            if ((result = this.Hours - other.Hours) != 0) return result;
+            if ((result = this.Minutes - other.Minutes) != 0) return result;
+            if ((result = this.Seconds - other.Seconds) != 0) return result;
+            return result;
+        }
+
+        /// <summary>
+        /// Compare two dates
+        /// </summary>
+        public static int Compare(DateUT date1, DateUT date2) {
+            return date1.CompareTo(date2);
+        }
+
+        /// <summary>
+        /// Test equality
+        /// </summary>
+        public bool Equals(DateUT other) {
+            return CompareTo(other) == 0;
+        }
+
+        /// <summary>
+        /// Test equality with another object
+        /// </summary>
+        public override bool Equals(object obj) {
+            if (obj is DateUT) return Equals((DateUT)obj);
+            return base.Equals(obj);
+        }
+
+        /// <summary>
+        /// Get HashCode
+        /// </summary>
+        public override int GetHashCode() {
+            return this.Year.GetHashCode()
+                ^ this.Month.GetHashCode()
+                ^ this.Day.GetHashCode()
+                ^ this.Hours.GetHashCode()
+                ^ this.Minutes.GetHashCode()
+                ^ this.Seconds.GetHashCode()
+                ;
+        }
+
+        /// <summary>
+        /// To string
+        /// </summary>
+        public override string ToString() {
+            return this.ToString(DefaultFormat);
+        }
+
+        /// <summary>
+        /// To string with format
+        /// </summary>
+        public string ToString(string format) {
+            return ToString(format, null);
+        }
+
+        /// <summary>
+        /// To string with format
+        /// </summary>
+        public string ToString(string format, IFormatProvider formatProvider) {
+            if (String.IsNullOrWhiteSpace(format)) format = DefaultFormat;
+            System.Globalization.DateTimeFormatInfo dfi = (formatProvider ?? System.Globalization.CultureInfo.CurrentCulture).GetFormat(typeof(DateTime)) as System.Globalization.DateTimeFormatInfo;
+            dfi = dfi ?? System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat;
+            StringBuilder result = new StringBuilder();
+            int cnt = 0, fl = format.Length;
+            for (int i = 0; i < fl; i++) {
+                char c = format[i];
+                switch (c) {
+                    case '\\':
+                        i++;
+                        if (i < format.Length) {
+                            result.Append(format[i]);
+                        } else {
+                            result.Append('\\');
+                        }
+                        break;
+                    case 'd':
+                        cnt = 0;
+                        while (i < fl && format[i] == 'd') { cnt++; i++; }i--;
+                        var jd = SweDate.DateToJulianDay(this);
+                        int nd = ((int)SweDate.DayOfWeek(jd)) + 1;
+                        if (nd >= 7) nd -= 7;
+                        if (cnt == 1) result.Append(this.Day);
+                        else if (cnt == 2) result.Append(this.Day.ToString("D2"));
+                        else if (cnt == 3) result.Append(dfi.AbbreviatedDayNames[nd]);
+                        else result.Append(dfi.DayNames[nd]);
+                        break;
+                    case 'M':
+                        cnt = 0;
+                        while (i < fl && format[i] == 'M') { cnt++; i++; }i--;
+                        if (cnt == 1) result.Append(this.Month);
+                        else if (cnt == 2) result.Append(this.Month.ToString("D2"));
+                        else if (cnt == 3) result.Append(dfi.AbbreviatedMonthNames[this.Month - 1]);
+                        else result.Append(dfi.MonthNames[this.Month - 1]);
+                        break;
+                    case 'y':
+                        cnt = 0;
+                        while (i < fl && format[i] == 'y') { cnt++; i++; }i--;
+                        if (cnt == 1) result.Append(this.Year % 100);
+                        else if (cnt == 2) result.Append((this.Year % 100).ToString("D2"));
+                        else result.Append(this.Year);
+                        break;
+                    case 'h':
+                        cnt = 0;
+                        while (i < fl && format[i] == 'h') { cnt++; i++; }i--;
+                        if (cnt == 1) result.Append(this.Hours % 12);
+                        else result.Append((this.Hours % 12).ToString("D2"));
+                        break;
+                    case 'H':
+                        cnt = 0;
+                        while (i < fl && format[i] == 'H') { cnt++; i++; }i--;
+                        if (cnt == 1) result.Append(this.Hours);
+                        else result.Append(this.Hours.ToString("D2"));
+                        break;
+                    case 'm':
+                        cnt = 0;
+                        while (i < fl && format[i] == 'm') { cnt++; i++; }i--;
+                        if (cnt == 1) result.Append(this.Minutes);
+                        else result.Append(this.Minutes.ToString("D2"));
+                        break;
+                    case 's':
+                        cnt = 0;
+                        while (i < fl && format[i] == 's') { cnt++; i++; }i--;
+                        if (cnt == 1) result.Append(this.Seconds);
+                        else result.Append(this.Seconds.ToString("D2"));
+                        break;
+                    case 't':
+                        cnt = 0;
+                        while (i < fl && format[i] == 't') { cnt++; i++; }i--;
+                        String des = this.Hours < 12 ? dfi.AMDesignator : dfi.PMDesignator;
+                        if (cnt == 1) result.Append(des[0]);
+                        else result.Append(des);
+                        break;
+                    //case '/':
+                    //    result.Append(DateTime.MinValue.ToString("/"));
+                    //    break;
+                    default:
+                        result.Append(c);
+                        break;
+                }
+            }
+            return result.ToString();
+        }
+
+        /// <summary>
         /// Convert to a DateTime
         /// </summary>
         public DateTime ToDateTime() {
@@ -58,6 +220,66 @@ namespace SweNet
         /// </summary>
         public DateTimeOffset ToDateTimeOffset() {
             return new DateTimeOffset(Year, Month, Day, Hours, Minutes, Seconds, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// Operator ==
+        /// </summary>
+        public static bool operator ==(DateUT date1, DateUT date2) {
+            return Compare(date1, date2) == 0;
+        }
+
+        /// <summary>
+        /// Operator !=
+        /// </summary>
+        public static bool operator !=(DateUT date1, DateUT date2) {
+            return Compare(date1, date2) != 0;
+        }
+
+        /// <summary>
+        /// Operator &lt;
+        /// </summary>
+        public static bool operator <(DateUT date1, DateUT date2) {
+            return Compare(date1, date2) < 0;
+        }
+
+        /// <summary>
+        /// Operator &gt;
+        /// </summary>
+        public static bool operator >(DateUT date1, DateUT date2) {
+            return Compare(date1, date2) > 0;
+        }
+
+        /// <summary>
+        /// Operator &lt;=
+        /// </summary>
+        public static bool operator <=(DateUT date1, DateUT date2) {
+            return Compare(date1, date2) <= 0;
+        }
+
+        /// <summary>
+        /// Operator &gt;=
+        /// </summary>
+        public static bool operator >=(DateUT date1, DateUT date2) {
+            return Compare(date1, date2) >= 0;
+        }
+
+        /// <summary>
+        /// Add offset
+        /// </summary>
+        public static DateUT operator +(DateUT date, TimeSpan offset) {
+            var jd = SweDate.DateToJulianDay(date, DateCalendar.Gregorian);
+            jd += offset.TotalDays;
+            return SweDate.JulianDayToDate(jd, DateCalendar.Gregorian);
+        }
+
+        /// <summary>
+        /// Sub offset
+        /// </summary>
+        public static DateUT operator -(DateUT date, TimeSpan offset) {
+            var jd = SweDate.DateToJulianDay(date, DateCalendar.Gregorian);
+            jd -= offset.TotalDays;
+            return SweDate.JulianDayToDate(jd, DateCalendar.Gregorian);
         }
 
         /// <summary>
@@ -89,6 +311,7 @@ namespace SweNet
         /// Seconds
         /// </summary>
         public int Seconds { get { return _Seconds; } }
+
     }
 
 }
