@@ -417,9 +417,10 @@ namespace SweNet
             day = (int)(u2 - Math.Floor(365.25 * u3) - Math.Floor(30.6001 * u4));
             year = (int)(u3 + Math.Floor((u4 - 2.0) / 12.0) - 4800);
             var jut = (jd - Math.Floor(jd + 0.5) + 0.5) * 24.0;
+            jut += 0.5 / 3600.0;
             hour = (int)jut;
-            minute = (int)Math.Floor(((jut * 60.0) % 60.0));
-            second = (int)Math.Round(((jut * 3600.0) % 60.0));
+            minute = (int)Math.Floor(((jut * 60.0)) % 60);
+            second = (int)Math.Floor(((jut * 3600.0)) % 60);
         }
 
         /// <summary>

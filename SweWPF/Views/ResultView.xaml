@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="SweWPF.Views.ResultView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:SweWPF.ViewModels"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=vm:CalculationResultViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="328" d:DesignWidth="571">
+    <Grid>
+        <TabControl>
+            <TabItem Header="Calculations">
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0">Date UTC</Label>
+                    <Label Grid.Row="1" Content="{Binding DateUTC}" />
+
+                    <Label Grid.Row="2" >Julian Day</Label>
+                    <Label Grid.Row="3" Content="{Binding JulianDay}" />
+
+                    <Label Grid.Row="4" >Delta T</Label>
+                    <Label Grid.Row="5" Content="{Binding EphemerisTime.DeltaT}" />
+
+                    <Label Grid.Row="6" >Ephemeris Time</Label>
+                    <Label Grid.Row="7" Content="{Binding EphemerisTime}" />
+
+                    
+                    
+                    <Label Grid.Row="0" Grid.Column="1">Mean Ecliptic Obliquity</Label>
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding MeanEclipticObliquity}" />
+
+                    <Label Grid.Row="2" Grid.Column="1" >True Ecliptic Obliquity</Label>
+                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding TrueEclipticObliquity}" />
+
+                    <Label Grid.Row="4" Grid.Column="1" >Nutation in Longitude</Label>
+                    <Label Grid.Row="5" Grid.Column="1" Content="{Binding NutationLongitude}" />
+
+                    <Label Grid.Row="6" Grid.Column="1" >Nutation Obliquity</Label>
+                    <Label Grid.Row="7" Grid.Column="1" Content="{Binding NutationObliquity}" />
+                    
+                </Grid>
+            </TabItem>
+            <TabItem Header="Planets">
+                
+            </TabItem>
+            <TabItem Header="House">
+
+            </TabItem>
+        </TabControl>
+        
+    </Grid>
+</UserControl>

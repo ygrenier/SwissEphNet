@@ -21,6 +21,9 @@ namespace SweNet.Tests
                 Assert.AreEqual(1063884, swe.swe_julday(-1800, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
 
                 Assert.AreEqual(1063865, swe.swe_julday(-1800, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
+
+                Assert.AreEqual(2442275.47916667, swe.swe_julday(1974, 8, 15, 23 + 30 / 60.0 + 0 / 3600.0, SwissEph.SE_GREG_CAL), 0.00000001);
+                Assert.AreEqual(2456774.20375, swe.swe_julday(2014, 4, 26, SweDate.GetHourValue(16, 53, 24), SwissEph.SE_GREG_CAL));
             }
         }
 
@@ -52,6 +55,30 @@ namespace SweNet.Tests
                 Assert.AreEqual(9, m);
                 Assert.AreEqual(14, d);
                 Assert.AreEqual(12.0, ut);
+
+                swe.swe_revjul(2456774.20375, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
+                Assert.AreEqual(2014, y);
+                Assert.AreEqual(4, m);
+                Assert.AreEqual(26, d);
+                Assert.AreEqual(16.8899999968708, ut, 0.0000000000001);
+                Assert.AreEqual(16.0, Math.Floor(ut));
+                Assert.AreEqual(1013, Math.Floor(ut * 60.0));
+                Assert.AreEqual(53.0, (Math.Floor(ut * 60.0)) % 60.0);
+                Assert.AreEqual(60803, Math.Floor(ut * 3600.0));
+                Assert.AreEqual(23.9999887347221, (ut * 3600.0) % 60.0, 0.0000000000001);
+                Assert.AreEqual(23, Math.Floor(ut * 3600.0) % 60.0);
+                
+
+                swe.swe_revjul(2442275.47916667, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
+                Assert.AreEqual(1974, y);
+                Assert.AreEqual(8, m);
+                Assert.AreEqual(15, d);
+                Assert.AreEqual(23.5000000745058, ut, 0.0000000000001);
+                Assert.AreEqual(23.0, Math.Floor(ut));
+                Assert.AreEqual(1410.0, Math.Floor(ut * 60.0));
+                Assert.AreEqual(30.0, (Math.Floor(ut * 60.0)) % 60.0);
+                Assert.AreEqual(84600, Math.Floor(ut * 3600.0));
+                Assert.AreEqual(0, Math.Floor(ut * 3600.0) % 60.0);
             }
         }
 

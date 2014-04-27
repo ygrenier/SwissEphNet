@@ -119,21 +119,21 @@ namespace SweNet
         /// <summary>
         /// Create a Julian Day
         /// </summary>
-        public JulianDay JulianDay(int year, int month, int day, double hour, DateCalendar calendar) {
+        public JulianDay JulianDay(int year, int month, int day, double hour, DateCalendar? calendar = null) {
             return JulianDay(new DateUT(year, month, day, hour), calendar);
         }
 
         /// <summary>
         /// Create a Julian Day
         /// </summary>
-        public JulianDay JulianDay(int year, int month, int day, int hour, int minute, int second, DateCalendar calendar) {
+        public JulianDay JulianDay(int year, int month, int day, int hour, int minute, int second, DateCalendar? calendar = null) {
             return JulianDay(new DateUT(year, month, day, hour, minute, second), calendar);
         }
 
         /// <summary>
         /// Create a Julian Day
         /// </summary>
-        public JulianDay JulianDay(DateUT date, DateCalendar calendar) {
+        public JulianDay JulianDay(DateUT date, DateCalendar? calendar = null) {
             return new JulianDay(date, calendar);
         }
 

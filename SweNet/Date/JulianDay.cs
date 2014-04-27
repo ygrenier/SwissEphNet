@@ -16,10 +16,9 @@ namespace SweNet
         /// Create a new Julian Day from his value
         /// </summary>
         /// <param name="val">The Julian Day value</param>
-        /// <param name="calendar">The calendar source</param>
-        public JulianDay(double val, DateCalendar calendar = DateCalendar.Gregorian)
+        public JulianDay(double val, DateCalendar? calendar = null)
             : this() {
-            this.Calendar = calendar;
+            this.Calendar = calendar ?? SweDate.GetCalendar(val);
             this.Value = val;
         }
 
@@ -28,10 +27,10 @@ namespace SweNet
         /// </summary>
         /// <param name="date">Date source</param>
         /// <param name="calendar">Calendar source</param>
-        public JulianDay(DateUT date, DateCalendar calendar)
+        public JulianDay(DateUT date, DateCalendar? calendar = null)
             : this() {
-            this.Calendar = calendar;
-            this.Value = SweDate.DateToJulianDay(date, calendar);
+            this.Calendar = calendar ?? SweDate.GetCalendar(date.Year, date.Month, date.Day);
+            this.Value = SweDate.DateToJulianDay(date, this.Calendar);
         }
 
         /// <summary>
@@ -47,6 +46,13 @@ namespace SweNet
         /// <returns></returns>
         public DateTime ToDateTime() {
             return ToDateUT().ToDateTime();
+        }
+
+        /// <summary>
+        /// Convert to string
+        /// </summary>
+        public override string ToString() {
+            return Value.ToString();
         }
 
         /// <summary>

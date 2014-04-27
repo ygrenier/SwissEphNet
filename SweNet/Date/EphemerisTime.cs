@@ -29,6 +29,13 @@ namespace SweNet
         public static implicit operator double(EphemerisTime et) { return et.Value; }
 
         /// <summary>
+        /// Convert to string
+        /// </summary>
+        public override string ToString() {
+            return Value.ToString();
+        }
+
+        /// <summary>
         /// The Julian Day
         /// </summary>
         public JulianDay JulianDay { get; private set; }

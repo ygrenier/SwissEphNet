@@ -24,6 +24,11 @@ namespace SweNet.Tests
             jd = new JulianDay(date, DateCalendar.Julian);
             Assert.AreEqual(2456787.20375, jd.Value);
             Assert.AreEqual(DateCalendar.Julian, jd.Calendar);
+
+            date = new DateUT(1974, 8, 15, 23, 30, 00);
+            jd = new JulianDay(date, DateCalendar.Gregorian);
+            Assert.AreEqual(2442275.47916667, jd.Value, 0.00000001);
+
         }
 
         [TestMethod]

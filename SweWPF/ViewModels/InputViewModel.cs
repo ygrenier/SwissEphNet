@@ -19,6 +19,9 @@ namespace SweWPF.ViewModels
             Date = new DateUT(DateTime.Now);
             HouseSystems = new string[] { "Placidus", "Campanus", "Regiomontanus", "Koch", "Equal", "Vehlow equal", "Horizon", "B=Alcabitus" };
             HouseSystem = HouseSystems[0];
+            DoCalculationCommand = new RelayCommand(() => {
+                MainModel.DoCalculation(this);
+            });
         }
 
         private TimeZoneInfo _TimeZone;
@@ -117,5 +120,11 @@ namespace SweWPF.ViewModels
         /// House systems
         /// </summary>
         public String[] HouseSystems { get; private set; }
+
+        /// <summary>
+        /// Command to calculation
+        /// </summary>
+        public RelayCommand DoCalculationCommand { get; private set; }
+
     }
 }
