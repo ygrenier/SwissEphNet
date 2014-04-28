@@ -65,5 +65,12 @@ namespace SweNet.Tests
             Assert.AreEqual(cd, jd.Value);
         }
 
+        [TestMethod]
+        public void TestToString() {
+            var date = new DateUT(2014, 4, 26, 16, 53, 24);
+            var jd = new JulianDay(date, DateCalendar.Gregorian);
+            Assert.AreEqual("2456774,20375", jd.ToString());
+        }
+
     }
 }
