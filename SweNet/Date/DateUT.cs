@@ -52,8 +52,8 @@ namespace SweNet
         /// </summary>
         public int CompareTo(object obj) {
             if (obj is DateUT) return CompareTo((DateUT)obj);
-            if (obj is DateTime) return DateTime.Compare(this.ToDateTime(), (DateTime)obj);
-            if (obj is DateTimeOffset) return DateTimeOffset.Compare(this.ToDateTime(), (DateTimeOffset)obj);
+            if (obj is DateTime) return CompareTo(new DateUT((DateTime)obj));
+            if (obj is DateTimeOffset) return CompareTo(new DateUT((DateTimeOffset)obj));
             return -1;
         }
 
@@ -125,7 +125,8 @@ namespace SweNet
         /// </summary>
         public string ToString(string format, IFormatProvider formatProvider) {
             if (String.IsNullOrWhiteSpace(format)) format = DefaultFormat;
-            System.Globalization.DateTimeFormatInfo dfi = (formatProvider ?? System.Globalization.CultureInfo.CurrentCulture).GetFormat(typeof(DateTime)) as System.Globalization.DateTimeFormatInfo;
+            System.Globalization.DateTimeFormatInfo dfi = (formatProvider ?? System.Globalization.CultureInfo.CurrentCulture)
+                .GetFormat(typeof(System.Globalization.DateTimeFormatInfo)) as System.Globalization.DateTimeFormatInfo;
             dfi = dfi ?? System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat;
             StringBuilder result = new StringBuilder();
             int cnt = 0, fl = format.Length;
