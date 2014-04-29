@@ -788,25 +788,6 @@ namespace SweNet
 
         #endregion
 
-        /*
-        #region Sideral time
-        
-        public double JulianDayToSideralTime(double jd) {
-            //int i;
-            //double eps, tsid; double[] nutlo = new double[2];
-            double tjde = jd + DeltaT(jd);
-            eps = swi_epsiln(tjde, 0) * RADTODEG;
-            swi_nutation(tjde, 0, nutlo);
-            for (i = 0; i < 2; i++)
-                nutlo[i] *= RADTODEG;
-            tsid = swe_sidtime0(tjd_ut, eps + nutlo[1], nutlo[0]);
-            _Sweph.Trace("SideralTime : {0}\t{0}", jd, result);
-            return tsid;
-        }
-
-        #endregion
-        */
-
         /// <summary>
         /// Indicate if DeltaT calculation use Espenak Meeus calculation
         /// </summary>
