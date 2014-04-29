@@ -60,6 +60,7 @@ namespace SweWPF.ViewModels
             result.SideralTime = Sweph.swe_sidtime(result.JulianDay) + (input.Longitude / 15.0);
             if (result.SideralTime >= 24.0) result.SideralTime -= 24.0;
             if (result.SideralTime < 0.0) result.SideralTime += 24.0;
+            //var armc = sidt * 15;
 
             // Calculation
             String serr = null;
@@ -71,6 +72,7 @@ namespace SweWPF.ViewModels
             result.NutationLongitude = x[2];
             result.NutationObliquity = x[3];
 
+            // Planets
 
             NavigateTo(result);
         }
