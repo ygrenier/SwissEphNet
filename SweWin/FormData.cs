@@ -507,7 +507,7 @@ namespace SweWin
             string jul;
             char hsys = pd.hsysname[0];
             //  *serr = *serr_save = *serr_warn = '\0';
-            ephepath = SwissEph.SE_EPHE_PATH;
+            ephepath = ".;sweph";
             if (String.Compare(pd.ephe, ephe[1]) == 0) {
                 whicheph = SwissEph.SEFLG_JPLEPH;
                 fname = SwissEph.SE_FNAME_DE406;
@@ -1065,12 +1065,12 @@ namespace SweWin
             if ((iflag & SwissEph.SEFLG_MOSEPH) != 0)
                 return SwissEph.OK;
             /* current working directory */
-            path = C.sprintf(".%c", SwissEph.PATH_SEPARATOR);
+            path = C.sprintf(".%c", ';');
             /* program directory */
             spi = argv0.LastIndexOf(dirglue);
             if (spi >= 0) {
                 pathlen = spi;
-                path = argv0.Substring(0, pathlen) + SwissEph.PATH_SEPARATOR;
+                path = argv0.Substring(0, pathlen) + ';';
             }
 
             //#if MSDOS
@@ -1080,8 +1080,8 @@ namespace SweWin
             string s1;
             string[] sp = new string[3];
             int i, j, np;
-            s1 = SwissEph.SE_EPHE_PATH;
-            cpos = s1.Split(new char[] { SwissEph.PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
+            s1 = ".;sweph";
+            cpos = s1.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             np = cpos.Length;
             /* 
              * default path from swephexp.h
@@ -1113,7 +1113,7 @@ namespace SweWin
                     continue;
                 for (j = 0; j < 3; j++) {
                     if (sp[j] != null)
-                        path += C.sprintf("%c:%s%c", sp[j][0], s, SwissEph.PATH_SEPARATOR);
+                        path += C.sprintf("%c:%s%c", sp[j][0], s, ';');
                 }
             }
             //}

@@ -644,10 +644,10 @@ namespace SweNet
                 oec = new epsilon();
                 oec2000 = new epsilon();
             }
-            public bool ephe_path_is_set;
+            //public bool ephe_path_is_set;
             public bool /*short*/ jpl_file_is_open;
             public CFile fixfp;/* fixed stars file pointer */
-            public string ephepath = String.Empty;
+            //public string ephepath = String.Empty;
             public string jplfnam = String.Empty;
             public short jpldenum;
             public double eop_tjd_beg = 0;

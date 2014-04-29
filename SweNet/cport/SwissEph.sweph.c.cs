@@ -127,10 +127,10 @@ namespace SweNet
 //                FALSE,	/* is_old_starfile, fixstars.cat is used (default is sefstars.txt) */
 //                };
         swe_data swed = new swe_data() {
-            ephe_path_is_set = false,
+            //ephe_path_is_set = false,
             jpl_file_is_open = false,
             fixfp = null,
-            ephepath = SE_EPHE_PATH,
+            //ephepath = SE_EPHE_PATH,
             jplfnam = SE_FNAME_DFT,
             jpldenum = 0,
             geopos_is_set = false,
@@ -511,8 +511,8 @@ namespace SweNet
                 serr = "barycentric Moshier positions are not supported.";
                 return ERR;
             }
-            if (epheflag != SEFLG_MOSEPH && !swed.ephe_path_is_set && !swed.jpl_file_is_open)
-                swe_set_ephe_path(null);
+            //if (epheflag != SEFLG_MOSEPH && !swed.ephe_path_is_set && !swed.jpl_file_is_open)
+            //    swe_set_ephe_path(null);
             if ((iflag & SEFLG_SIDEREAL) != 0 && !swed.ayana_is_set)
                 swe_set_sid_mode(SE_SIDM_FAGAN_BRADLEY, 0, 0);
             /****************************************** 
@@ -635,7 +635,8 @@ namespace SweNet
                     case SEFLG_JPLEPH:
                         /* open ephemeris, if still closed */
                         if (!swed.jpl_file_is_open) {
-                            retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref serr);
+                            //retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref serr);
+                            retc = open_jpl_file(ss, swed.jplfnam, ref serr);
                             if (retc != OK)
                                 goto sweph_sbar;
                         }
@@ -1107,72 +1108,72 @@ namespace SweNet
 #endif  //* TRACE */
         }
 
-        /* sets ephemeris file path. 
-         * also calls swe_close(). this makes sure that swe_calc()
-         * won't return planet positions previously computed from other
-         * ephemerides
-         */
-        public void swe_set_ephe_path(string path) {
-            int i, iflag;
-            string s; string sdummy = null;
-            //string sp;
-            double[] xx = new double[6];
-            swed.ephe_path_is_set = true;
-            /* close all open files and delete all planetary data */
-            swe_close();
-            /* environment variable SE_EPHE_PATH has priority */
-            //  if ((sp = getenv("SE_EPHE_PATH")) != NULL 
-            //    && strlen(sp) != 0
-            //    && strlen(sp) <= AS_MAXCH-1-13) {
-            //    s= sp;
-            //  } else if (path == NULL) {
-            //    s= SE_EPHE_PATH;
-            //  } else if (strlen(path) <= AS_MAXCH-1-13)
-            //    s= path;
-            //  else
-            //    s= SE_EPHE_PATH;
-            s = !String.IsNullOrWhiteSpace(path) ? path : SE_EPHE_PATH;
-            i = s.Length;
-            //  if (*(s + i - 1) != *DIR_GLUE && *s != '\0')
-            //    s+= DIR_GLUE;
-            if (!s.EndsWith(DIR_GLUE.ToString()))
-                s = s + DIR_GLUE;
-            swed.ephepath = s;
-            /* try to open lunar ephemeris, in order to get DE number and set
-             * tidal acceleration of the Moon */
-            iflag = SEFLG_SWIEPH | SEFLG_J2000 | SEFLG_TRUEPOS | SEFLG_ICRS;
-            swe_calc(J2000, SE_MOON, iflag, xx, ref sdummy);
-            if (swed.fidat[SEI_FILE_MOON].fptr != null) {
-                swe_set_tid_acc((double)swed.fidat[SEI_FILE_MOON].sweph_denum);
-            }
-#if TRACE
-            //  swi_open_trace(NULL);
-            //  if (swi_trace_count < TRACE_COUNT_MAX) {
-            //    if (swi_fp_trace_c != NULL) {
-            //      fputs("\n/*SWE_SET_EPHE_PATH*/\n", swi_fp_trace_c);
-            //      if (path == NULL) 
-            //        fputs("  *s = '\\0';\n", swi_fp_trace_c);
-            //      else
-            //    fprintf(swi_fp_trace_c, "  strcpy(s, \"%s\");\n", path);
-            //      fputs("  swe_set_ephe_path(s);\n", swi_fp_trace_c);
-            //      fputs("  printf(\"swe_set_ephe_path: path_in = \");", swi_fp_trace_c);
-            //      fputs("  printf(s);\n", swi_fp_trace_c);
-            //      fputs("  \tprintf(\"\\tpath_set = unknown to swetrace\\n\"); /* unknown to swetrace */\n", swi_fp_trace_c);
-            //      fflush(swi_fp_trace_c);
-            //    }
-            //    if (swi_fp_trace_out != NULL) {
-            //      fputs("swe_set_ephe_path: path_in = ", swi_fp_trace_out);
-            //      if (path != NULL)
-            //          fputs(path, swi_fp_trace_out);
-            //      fputs("\tpath_set = ", swi_fp_trace_out);
-            //      fputs(s, swi_fp_trace_out);
-            //      fputs("\n", swi_fp_trace_out);
-            trace("swe_set_ephe_path: path_in = %s\tpath_set = %s", path, s);
-            //      fflush(swi_fp_trace_out);
-            //    }
-            //  }
-#endif
-        }
+//        /* sets ephemeris file path. 
+//         * also calls swe_close(). this makes sure that swe_calc()
+//         * won't return planet positions previously computed from other
+//         * ephemerides
+//         */
+//        public void swe_set_ephe_path(string path) {
+//            int i, iflag;
+//            string s; string sdummy = null;
+//            //string sp;
+//            double[] xx = new double[6];
+//            swed.ephe_path_is_set = true;
+//            /* close all open files and delete all planetary data */
+//            swe_close();
+//            /* environment variable SE_EPHE_PATH has priority */
+//            //  if ((sp = getenv("SE_EPHE_PATH")) != NULL 
+//            //    && strlen(sp) != 0
+//            //    && strlen(sp) <= AS_MAXCH-1-13) {
+//            //    s= sp;
+//            //  } else if (path == NULL) {
+//            //    s= SE_EPHE_PATH;
+//            //  } else if (strlen(path) <= AS_MAXCH-1-13)
+//            //    s= path;
+//            //  else
+//            //    s= SE_EPHE_PATH;
+//            s = !String.IsNullOrWhiteSpace(path) ? path : SE_EPHE_PATH;
+//            i = s.Length;
+//            //  if (*(s + i - 1) != *DIR_GLUE && *s != '\0')
+//            //    s+= DIR_GLUE;
+//            if (!s.EndsWith(DIR_GLUE.ToString()))
+//                s = s + DIR_GLUE;
+//            swed.ephepath = s;
+//            /* try to open lunar ephemeris, in order to get DE number and set
+//             * tidal acceleration of the Moon */
+//            iflag = SEFLG_SWIEPH | SEFLG_J2000 | SEFLG_TRUEPOS | SEFLG_ICRS;
+//            swe_calc(J2000, SE_MOON, iflag, xx, ref sdummy);
+//            if (swed.fidat[SEI_FILE_MOON].fptr != null) {
+//                swe_set_tid_acc((double)swed.fidat[SEI_FILE_MOON].sweph_denum);
+//            }
+//#if TRACE
+//            //  swi_open_trace(NULL);
+//            //  if (swi_trace_count < TRACE_COUNT_MAX) {
+//            //    if (swi_fp_trace_c != NULL) {
+//            //      fputs("\n/*SWE_SET_EPHE_PATH*/\n", swi_fp_trace_c);
+//            //      if (path == NULL) 
+//            //        fputs("  *s = '\\0';\n", swi_fp_trace_c);
+//            //      else
+//            //    fprintf(swi_fp_trace_c, "  strcpy(s, \"%s\");\n", path);
+//            //      fputs("  swe_set_ephe_path(s);\n", swi_fp_trace_c);
+//            //      fputs("  printf(\"swe_set_ephe_path: path_in = \");", swi_fp_trace_c);
+//            //      fputs("  printf(s);\n", swi_fp_trace_c);
+//            //      fputs("  \tprintf(\"\\tpath_set = unknown to swetrace\\n\"); /* unknown to swetrace */\n", swi_fp_trace_c);
+//            //      fflush(swi_fp_trace_c);
+//            //    }
+//            //    if (swi_fp_trace_out != NULL) {
+//            //      fputs("swe_set_ephe_path: path_in = ", swi_fp_trace_out);
+//            //      if (path != NULL)
+//            //          fputs(path, swi_fp_trace_out);
+//            //      fputs("\tpath_set = ", swi_fp_trace_out);
+//            //      fputs(s, swi_fp_trace_out);
+//            //      fputs("\n", swi_fp_trace_out);
+//            trace("swe_set_ephe_path: path_in = %s\tpath_set = %s", path, s);
+//            //      fflush(swi_fp_trace_out);
+//            //    }
+//            //  }
+//#endif
+//        }
 
         void load_dpsi_deps() {
             CFile fp;
@@ -1182,7 +1183,7 @@ namespace SweNet
             double dpsi, deps, TJDOFS = 2400000.5;
             if (swed.eop_dpsi_loaded > 0)
                 return;
-            fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_EOPC04, swed.ephepath, ref sdummy);
+            fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_EOPC04, ref sdummy);
             if (fp == null) {
                 swed.eop_dpsi_loaded = ERR;
                 return;
@@ -1214,7 +1215,7 @@ namespace SweNet
             fp.Dispose();
             /* file finals.all may have some more data, and especially estimations 
              * for the near future */
-            fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_FINALS, swed.ephepath, ref sdummy);
+            fp = swi_fopen(-1, DPSI_DEPS_IAU1980_FILE_FINALS, ref sdummy);
             if (fp == null)
                 return; /* return without error as existence of file is not mandatory */
             while ((s = fp.ReadLine()) != null) {
@@ -1273,12 +1274,13 @@ namespace SweNet
             //    sp = sp + 1;
             //if (strlen(sp) >= AS_MAXCH)
             //    sp[AS_MAXCH] = '\0';
-            spi = fname.LastIndexOf(DIR_GLUE);
-            sp = spi < 0 ? fname : fname.Substring(spi + 1);
+            //spi = fname.LastIndexOf(DIR_GLUE);
+            //sp = spi < 0 ? fname : fname.Substring(spi + 1);
+            sp = fname;
             swed.jplfnam = sp;
             /* open ephemeris, if still closed */
             if (!swed.jpl_file_is_open) {
-                retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref sdummy);
+                retc = open_jpl_file(ss, swed.jplfnam, ref sdummy);
                 if (retc == OK) {
                     if (swed.jpldenum >= 403) {
                         if (INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980) {
@@ -1797,7 +1799,7 @@ namespace SweNet
                 ictr = J_EARTH;
             /* open ephemeris, if still closed */
             if (!swed.jpl_file_is_open) {
-                retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref serr);
+                retc = open_jpl_file(ss, swed.jplfnam, ref serr);
                 if (retc != OK)
                     return (retc);
             }
@@ -1957,16 +1959,16 @@ namespace SweNet
                 //} else {
                 //    subdirlen = 0;
                 //}
-                spi = fname.LastIndexOf(DIR_GLUE);
-                if (spi > 0) {
-                    subdirnam = fname.Substring(0, spi);
-                    subdirlen = subdirnam.Length;
-                } else {
-                    subdirlen = 0;
-                }
+                //spi = fname.LastIndexOf(DIR_GLUE);
+                //if (spi > 0) {
+                //    subdirnam = fname.Substring(0, spi);
+                //    subdirlen = subdirnam.Length;
+                //} else {
+                subdirlen = 0;
+                //}
                 s = fname;
             again:
-                fdp.fptr = swi_fopen(ifno, s, swed.ephepath, ref serr);
+                fdp.fptr = swi_fopen(ifno, s, ref serr);
                 if (fdp.fptr == null) {
                     /*
                      * if it is a numbered asteroid file, try also for short files (..s.se1)
@@ -2109,49 +2111,16 @@ namespace SweNet
         /*
          * Alois 2.12.98: inserted error message generation for file not found 
          */
-        CFile swi_fopen(int ifno, string fname, string ephepath, ref string serr) {
-            int np, i/*, j*/;
+        CFile swi_fopen(int ifno, string fname, ref string serr) {
             CFile fp = null;
-            string fnamp;
-            string[] cpos;
-            //  char s[2 * AS_MAXCH], *s1 = s + AS_MAXCH;	/* a little trick */
-            string s = String.Empty, s1 = String.Empty;
-            //if (ifno >= 0) {
-            //    fnamp = swed.fidat[ifno].fnam;
-            //} else {
-            //    fnamp = fn;
-            //}
-            s1 = ephepath;
-            cpos = s1.Split(new char[] { PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
-            np = cpos.Length;
-            for (i = 0; i < np; i++) {
-                s = cpos[i];
-                fnamp = s.TrimEnd('\\', '/') + "\\" + fname;
+            fp = LoadFile(fname);
+            if (fp != null) {
                 if (ifno >= 0) {
-                    swed.fidat[ifno].fnam = fnamp;
+                    swed.fidat[ifno].fnam = fname;
                 }
-                fp = LoadFile(fnamp);
-                if (fp != null) return fp;
-                //    if (strcmp(s, ".") == 0) { /* current directory */
-                //      *s = '\0';
-                //    } else {
-                //      j = strlen(s);
-                //      if (*(s + j - 1) != *DIR_GLUE && *s != '\0')
-                //    s+= DIR_GLUE;
-                //    }
-                //    if (strlen(s) + strlen(fname) < AS_MAXCH) {
-                //      s+= fname;
-                //    } else {
-                //      if (serr != NULL)
-                //    serr=C.sprintf("error: file path and name must be shorter than %d.", AS_MAXCH);
-                //      return NULL;
-                //    }
-                //    fnamp= s;
-                //    fp = fopen(fnamp, BFILE_R_ACCESS);
-                //    if (fp != NULL) 
-                //      return fp;
+                return fp;
             }
-            serr = C.sprintf("SwissEph file '%s' not found in PATH '%s'", fname, ephepath);
+            serr = C.sprintf("SwissEph file '%s' not found", fname);
             return null;
         }
 
@@ -5669,9 +5638,9 @@ namespace SweNet
                * Comment lines start with # and are ignored.
                ******************************************************/
               if (swed.fixfp == null) {
-                  if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE, swed.ephepath, ref serr)) == null) {
+                  if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE, ref serr)) == null) {
                       swed.is_old_starfile = true;
-                      if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null) {
+                      if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE_OLD, ref sdummy)) == null) {
                           swed.is_old_starfile = false;
                           /* no fixed star file available. If Spica is called, we provide it
                            * even without a star file, because Spica is required for the
@@ -6069,9 +6038,9 @@ namespace SweNet
                * Comment lines start with # and are ignored.
                ******************************************************/
               if (swed.fixfp == null) {
-                  if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE, swed.ephepath, ref serr)) == null) {
+                  if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE, ref serr)) == null) {
                       swed.is_old_starfile = true;
-                      if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null) {
+                      if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SE_STARFILE_OLD, ref sdummy)) == null) {
                           retc = ERR;
                           goto return_err;
                       }
@@ -6323,7 +6292,7 @@ namespace SweNet
                              CFile fp;
                              String sp;
                              //char si[AS_MAXCH], *sp, *sp2;
-                             if ((fp = swi_fopen(-1, SE_ASTNAMFILE, swed.ephepath, ref sdummy)) != null) {
+                             if ((fp = swi_fopen(-1, SE_ASTNAMFILE, ref sdummy)) != null) {
                                  while (ipli != iplf && ((sp = fp.ReadLine()) != null)) {
                                      sp = sp.TrimStart(' ', '\t', '(', '[', '{');
                                      if (String.IsNullOrWhiteSpace(sp) || sp.StartsWith("#"))
@@ -6624,15 +6593,15 @@ namespace SweNet
             return retval;
         }
 
-        int open_jpl_file(CPointer<double> ss, string fname, string fpath, ref string serr) {
+        int open_jpl_file(CPointer<double> ss, string fname, ref string serr) {
             int retc;
             string serr2 = String.Empty;
-            retc = swi_open_jpl_file(ss, fname, fpath, ref serr);
+            retc = swi_open_jpl_file(ss, fname, ref serr);
             /* If we fail with default JPL ephemeris (DE431), we try the second default
              * (DE406), but only if serr is not NULL and an warning message can be 
              * returned. */
             if (retc != OK && fname.Contains(SE_FNAME_DFT)) {
-                retc = swi_open_jpl_file(ss, SE_FNAME_DFT2, fpath, ref serr2);
+                retc = swi_open_jpl_file(ss, SE_FNAME_DFT2, ref serr2);
                 if (retc == OK) {
                     swed.jplfnam = SE_FNAME_DFT2;
                     serr2 = "Error with JPL ephemeris file ";

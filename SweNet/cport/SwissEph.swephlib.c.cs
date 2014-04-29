@@ -2345,8 +2345,8 @@ namespace SweNet
             if (!init_dt_done) {
                 init_dt_done = true;
                 /* no error message if file is missing */
-                if ((fp = swi_fopen(-1, "swe_deltat.txt", swed.ephepath, ref sdummy)) == null
-                  && (fp = swi_fopen(-1, "sedeltat.txt", swed.ephepath, ref sdummy)) == null)
+                if ((fp = swi_fopen(-1, "swe_deltat.txt", ref sdummy)) == null
+                  && (fp = swi_fopen(-1, "sedeltat.txt", ref sdummy)) == null)
                     return TABSIZ;
                 while ( (s=fp.ReadLine()) != null) {
                     sp = s.TrimStart(' ', '\t');

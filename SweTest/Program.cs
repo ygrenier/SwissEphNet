@@ -615,6 +615,7 @@ static string infoexamp = @"\n\
         static char psp;
         static Int32 norefrac = 0;
         static Int32 disccenter = 0;
+        static string ephepath = String.Empty;
 
         const int SP_LUNAR_ECLIPSE = 1;
         const int SP_SOLAR_ECLIPSE = 2;
@@ -654,7 +655,6 @@ static string infoexamp = @"\n\
             bool have_geopos = false;
             char ihsy = 'p';
             bool do_houses = false;
-            string ephepath = String.Empty;
             string fname = String.Empty;
             string sdate = String.Empty;
             string begindate = null;
@@ -674,6 +674,7 @@ static string infoexamp = @"\n\
             //  argc = ccommand(&argv); /* display the arguments window */    
             //# endif
             using (sweph = new SwissEph()) {
+                sweph.OnLoadFile += sweph_OnLoadFile;
                 ephepath = "";
                 fname = SwissEph.SE_FNAME_DFT;
                 for (i = 1; i < argc; i++) {
@@ -1001,7 +1002,7 @@ static string infoexamp = @"\n\
                         whicheph = SwissEph.SEFLG_MOSEPH;
                     }
                 }
-                sweph.swe_set_ephe_path(ephepath);
+                //sweph.swe_set_ephe_path(ephepath);
                 if ((whicheph & SwissEph.SEFLG_JPLEPH) != 0)
                     sweph.swe_set_jpl_file(fname);
                 while (true) {
@@ -1481,6 +1482,17 @@ static string infoexamp = @"\n\
             end_main:
                 //swe_close();
                 return SwissEph.OK;
+            }
+        }
+
+        static void sweph_OnLoadFile(object sender, LoadFileEventArgs e) {
+            String fname = e.FileName;
+            String[] paths = String.IsNullOrWhiteSpace(ephepath) ? new String[] { "" } : ephepath.Split(';');
+            foreach (var path in paths) {
+                String f = System.IO.Path.Combine(path, fname);
+                if (System.IO.File.Exists(f)) {
+                    e.File = new System.IO.FileStream(fname, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
+                }
             }
         }
 
@@ -2846,13 +2858,13 @@ static string infoexamp = @"\n\
             if ((iflg & SwissEph.SEFLG_MOSEPH) != 0)
                 return SwissEph.OK;
             /* current working directory */
-            path = C.sprintf(".%c", SwissEph.PATH_SEPARATOR);
+            path = C.sprintf(".%c", ';');
             /* program directory */
             spi = argv0.LastIndexOf(dirglue);
             if (spi >= 0) {
                 pathlen = spi;
                 path += argv0.Substring(0, pathlen);
-                path += C.sprintf("%c", SwissEph.PATH_SEPARATOR);
+                path += C.sprintf("%c", ';');
             }
 #if MSDOS
             {
@@ -2860,8 +2872,9 @@ static string infoexamp = @"\n\
                 string s = string.Empty, s1 = String.Empty;
                 string[] sp = new string[3];
                 int i, j, np;
-                s1 = SwissEph.SE_EPHE_PATH;
-                cpos = s1.Split(new char[] { SwissEph.PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
+                //s1 = SwissEph.SE_EPHE_PATH;
+                s1 = ".;sweph";
+                cpos = s1.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 np = cpos.Length;
                 /* 
                  * default path from swephexp.h
@@ -2893,7 +2906,7 @@ static string infoexamp = @"\n\
                         continue;
                     for (j = 0; j < 3; j++) {
                         if (sp[j] != null)
-                            path += C.sprintf("%c:%s%c", sp[j][0], s, SwissEph.PATH_SEPARATOR);
+                            path += C.sprintf("%c:%s%c", sp[j][0], s, ';');
                     }
                 }
             }

@@ -717,7 +717,7 @@ namespace SweNet
             double tt = 0;
             try {
                 /* -1, because file information is not saved, file is always closed */
-                if ((fp = swi_fopen(-1, SE_FICTFILE, swed.ephepath, ref serr)) == null) {
+                if ((fp = swi_fopen(-1, SE_FICTFILE, ref serr)) == null) {
                     /* file does not exist, use built-in bodies */
                     if (ipl >= SE_NFICT_ELEM) {
                         //if (serr != null)

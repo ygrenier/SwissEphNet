@@ -389,10 +389,6 @@ namespace SweNet
 //# endif
 //#endif
 //#endif  /* SE_EPHE_PATH */
-        /// <summary>
-        /// SweNet : We create a pseudo constant for detect ephemeris path when loading
-        /// </summary>
-        public const String SE_EPHE_PATH = "[ephe]";
 
         /* defines for function swe_split_deg() (in swephlib.c) */
         public const int SE_SPLIT_DEG_ROUND_SEC = 1;
