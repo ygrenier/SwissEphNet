@@ -44,7 +44,17 @@ namespace SweWPF.ViewModels
         /// Create new Sweph context with current configuration
         /// </summary>
         private SweNet.SwissEph CreateNewSweph() {
-            return new SweNet.SwissEph();
+            var result = new SweNet.SwissEph();
+            result.OnLoadFile += Sweph_OnLoadFile;
+            return result;
+        }
+
+        void Sweph_OnLoadFile(object sender, LoadFileEventArgs e) {
+            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SwephData");
+            var fName = System.IO.Path.Combine(path, e.FileName);
+            if (System.IO.File.Exists(fName)) {
+                e.File = new System.IO.FileStream(fName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+            }
         }
 
         public void DoCalculation(InputViewModel input) {
