@@ -1,6 +1,7 @@
 ﻿using SweNet;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,12 @@ namespace SweWPF.ViewModels
     /// </summary>
     public class CalculationResultViewModel : ChildViewModel
     {
+        /// <summary>
+        /// New result
+        /// </summary>
+        public CalculationResultViewModel() {
+            Planets = new ObservableCollection<PlanetInfos>();
+        }
 
         /// <summary>
         /// Date UTC
@@ -40,6 +47,16 @@ namespace SweWPF.ViewModels
         public double SideralTime { get; set; }
 
         /// <summary>
+        /// Sideral time in degrees
+        /// </summary>
+        public double SideralTimeInDegrees { get { return SideralTime * 15; } }
+
+        /// <summary>
+        /// ARMC : Sideral time in degrees
+        /// </summary>
+        public double ARMC { get { return SideralTime * 15; } }
+
+        /// <summary>
         /// Mean ecliptic obliquity
         /// </summary>
         public Double MeanEclipticObliquity { get; set; }
@@ -58,6 +75,11 @@ namespace SweWPF.ViewModels
         /// Nutation in obliquity
         /// </summary>
         public Double NutationObliquity { get; set; }
+
+        /// <summary>
+        /// Planets calculation result
+        /// </summary>
+        public ObservableCollection<PlanetInfos> Planets { get; private set; }
 
     }
 

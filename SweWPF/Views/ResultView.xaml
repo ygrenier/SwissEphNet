@@ -60,7 +60,56 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Planets">
-                
+                <Grid Grid.IsSharedSizeScope="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140" SharedSizeGroup="Col1" />
+                            <ColumnDefinition SharedSizeGroup="Col2" />
+                            <ColumnDefinition SharedSizeGroup="Col3" />
+                            <ColumnDefinition SharedSizeGroup="Col4" />
+                            <ColumnDefinition SharedSizeGroup="Col5" />
+                            <ColumnDefinition SharedSizeGroup="Col6" />
+                            <ColumnDefinition SharedSizeGroup="Col7" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Planet" />
+                        <TextBlock Grid.Column="1" Text="Longitude" />
+                        <TextBlock Grid.Column="2" Text="Latitude" />
+                        <TextBlock Grid.Column="3" Text="Distance" />
+                        <TextBlock Grid.Column="4" Text="Speed in Longitude" />
+                        <TextBlock Grid.Column="5" Text="Speed in Latitude" />
+                        <TextBlock Grid.Column="6" Text="Speed in Distance" />
+                    </Grid>
+
+                    <ListView Grid.Row="1" ItemsSource="{Binding Planets}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition SharedSizeGroup="Col1" />
+                                        <ColumnDefinition SharedSizeGroup="Col2" />
+                                        <ColumnDefinition SharedSizeGroup="Col3" />
+                                        <ColumnDefinition SharedSizeGroup="Col4" />
+                                        <ColumnDefinition SharedSizeGroup="Col5" />
+                                        <ColumnDefinition SharedSizeGroup="Col6" />
+                                        <ColumnDefinition SharedSizeGroup="Col7" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding PlanetName}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Longitude}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding Latitude}" />
+                                    <TextBlock Grid.Column="3" Text="{Binding Distance}" />
+                                    <TextBlock Grid.Column="4" Text="{Binding LongitudeSpeed}" />
+                                    <TextBlock Grid.Column="5" Text="{Binding LatitudeSpeed}" />
+                                    <TextBlock Grid.Column="6" Text="{Binding DistanceSpeed}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </TabItem>
             <TabItem Header="House">
 

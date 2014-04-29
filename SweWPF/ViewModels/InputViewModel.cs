@@ -14,6 +14,7 @@ namespace SweWPF.ViewModels
     {
 
         public InputViewModel() {
+            Planets = new List<Planet>();
             TimeZones = TimeZoneInfo.GetSystemTimeZones().ToList();
             TimeZone = TimeZoneInfo.Local;
             //Date = new DateUT(DateTime.Now);
@@ -25,6 +26,13 @@ namespace SweWPF.ViewModels
             DoCalculationCommand = new RelayCommand(() => {
                 MainModel.DoCalculation(this);
             });
+            Planets.AddRange(new Planet[] { 
+                Planet.Sun, Planet.Moon, Planet.Mercury, Planet.Venus, Planet.Mars, Planet.Jupiter, 
+                Planet.Saturn, Planet.Uranus, Planet.Neptune, Planet.Pluto,
+                Planet.MeanNode, Planet.TrueNode,
+                Planet.MeanApog, Planet.OscuApog, Planet.Earth
+            });
+            Planets.AddRange(new Planet[] { 433, 3045, 7066 });
         }
 
         private TimeZoneInfo _TimeZone;
@@ -129,5 +137,9 @@ namespace SweWPF.ViewModels
         /// </summary>
         public RelayCommand DoCalculationCommand { get; private set; }
 
+        /// <summary>
+        /// Planets to calculate
+        /// </summary>
+        public List<Planet> Planets { get; private set; }
     }
 }

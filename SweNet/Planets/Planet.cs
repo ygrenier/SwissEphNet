@@ -109,6 +109,20 @@ namespace SweNet
 
         #endregion
 
+        #region Specials
+
+        /// <summary>
+        /// Ecliptic/Nutation
+        /// </summary>
+        public static readonly Planet EclipticNutation = -1;
+
+        /// <summary>
+        /// Fixed star
+        /// </summary>
+        public static readonly Planet FixedStar = -10;
+
+        #endregion
+
         #region Fictitious
 
         #region Hamburger or Uranian "planets"

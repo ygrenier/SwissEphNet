@@ -1,6 +1,7 @@
 ﻿using SweNet;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,6 +60,9 @@ namespace SweWPF.ViewModels
 
         public void DoCalculation(InputViewModel input) {
             CalculationResultViewModel result = new CalculationResultViewModel();
+            String star = String.Empty;
+            char hsys = 'P';
+            result.Planets.Clear();
 
             // Initialize engine
             Sweph.swe_set_topo(input.Longitude, input.Latitude, input.Altitude);
@@ -70,19 +74,54 @@ namespace SweWPF.ViewModels
             result.SideralTime = Sweph.swe_sidtime(result.JulianDay) + (input.Longitude / 15.0);
             if (result.SideralTime >= 24.0) result.SideralTime -= 24.0;
             if (result.SideralTime < 0.0) result.SideralTime += 24.0;
-            //var armc = sidt * 15;
 
             // Calculation
             String serr = null;
             Double[] x=new double[24];
             var iflag = SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_SPEED;
-            var iflgret = Sweph.swe_calc(result.EphemerisTime, SwissEph.SE_ECL_NUT, iflag, x, ref serr);
+            var iflgret = Sweph.swe_calc(result.EphemerisTime, Planet.EclipticNutation, iflag, x, ref serr);
             result.TrueEclipticObliquity = x[0];
             result.MeanEclipticObliquity = x[1];
             result.NutationLongitude = x[2];
             result.NutationObliquity = x[3];
 
             // Planets
+            foreach (var planet in input.Planets) {
+                if (planet == Planet.Earth) continue;   // Exclude Earth if geo or topo
+                serr = null;
+                var pi = new PlanetInfos() {
+                    Planet = planet
+                };
+                result.Planets.Add(pi);
+                // Ecliptic position
+                if (planet == Planet.FixedStar) {
+                    iflgret = Sweph.swe_fixstar(star, result.EphemerisTime, iflag, x, ref serr);
+                    pi.PlanetName = star;
+                } else {
+                    iflgret = Sweph.swe_calc(result.EphemerisTime, planet, iflag, x, ref serr);
+                    pi.PlanetName = Sweph.swe_get_planet_name(planet);
+                    if (planet.IsAsteroid) {
+                        pi.PlanetName = String.Format("#{0}", planet);
+                    }
+                }
+                if (iflgret >= 0) {
+                    pi.Longitude = x[0];
+                    pi.Latitude = x[1];
+                    pi.Distance = x[2];
+                    pi.LongitudeSpeed = x[3];
+                    pi.LatitudeSpeed = x[4];
+                    pi.DistanceSpeed = x[5];
+                    pi.HousePosition = Sweph.swe_house_pos(result.ARMC, input.Latitude, result.TrueEclipticObliquity, hsys, x, ref serr);
+                    if (pi.HousePosition == 0)
+                        iflgret = SwissEph.ERR;
+                }
+                if (iflgret < 0) {
+                    if (!String.IsNullOrEmpty(serr)) {
+                        pi.ErrorMessage = serr;
+                    }
+                } else if (!String.IsNullOrEmpty(serr) && String.IsNullOrEmpty(pi.WarnMessage))
+                    pi.WarnMessage = serr;
+            }
 
             NavigateTo(result);
         }
