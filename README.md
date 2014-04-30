@@ -27,6 +27,15 @@ The other elements are declared as private.
 
 The compilation configuration use pre-processor constants. We remove lot of them in our case. The other are converted as constants, not pre-processor.
 
+# Seconds steps
+
+When we got a correct C conversion, we rewrite public methods to use a more .Net/C# friendly code. Using classes and structs
+instead of array of double, returns values instead of reference parameters, throw exception instead of reference 'serr', etc.
+
+For this we create more classes to manage each domain (date, math, etc.) and the Sweph class federate all this classes.
+
+The 'Swisseph' inherits from 'Sweph', and we replace each 'swe_*' methods by equivalent in 'Sweph'.
+
 # References
 
 The Swiss Ephemeris Programming Interface documentation : http://www.astro.com/swisseph/swephprg.htm.
