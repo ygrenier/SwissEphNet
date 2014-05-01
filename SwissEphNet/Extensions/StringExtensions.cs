@@ -16,6 +16,7 @@ namespace SwissEphNet
         /// String.Contains() for Char
         /// </summary>
         public static bool Contains(this String s, Char c) {
+            if (String.IsNullOrEmpty(s)) return false;
             return s.Contains(c.ToString());
         }
 
