@@ -1002,7 +1002,7 @@ static string infoexamp = @"\n\
                         whicheph = SwissEph.SEFLG_MOSEPH;
                     }
                 }
-                //sweph.swe_set_ephe_path(ephepath);
+                sweph.swe_set_ephe_path(ephepath);
                 if ((whicheph & SwissEph.SEFLG_JPLEPH) != 0)
                     sweph.swe_set_jpl_file(fname);
                 while (true) {
@@ -2858,13 +2858,13 @@ static string infoexamp = @"\n\
             if ((iflg & SwissEph.SEFLG_MOSEPH) != 0)
                 return SwissEph.OK;
             /* current working directory */
-            path = C.sprintf(".%c", ';');
+            path = C.sprintf(".%c", SwissEph.PATH_SEPARATOR);
             /* program directory */
             spi = argv0.LastIndexOf(dirglue);
             if (spi >= 0) {
                 pathlen = spi;
                 path += argv0.Substring(0, pathlen);
-                path += C.sprintf("%c", ';');
+                path += C.sprintf("%c", SwissEph.PATH_SEPARATOR);
             }
 #if MSDOS
             {
@@ -2872,9 +2872,9 @@ static string infoexamp = @"\n\
                 string s = string.Empty, s1 = String.Empty;
                 string[] sp = new string[3];
                 int i, j, np;
-                //s1 = SwissEph.SE_EPHE_PATH;
-                s1 = ".;sweph";
-                cpos = s1.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                s1 = SwissEph.SE_EPHE_PATH;
+                //s1 = ".;sweph";
+                cpos = s1.Split(new char[] { SwissEph.PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
                 np = cpos.Length;
                 /* 
                  * default path from swephexp.h
@@ -2906,7 +2906,7 @@ static string infoexamp = @"\n\
                         continue;
                     for (j = 0; j < 3; j++) {
                         if (sp[j] != null)
-                            path += C.sprintf("%c:%s%c", sp[j][0], s, ';');
+                            path += C.sprintf("%c:%s%c", sp[j][0], s, SwissEph.PATH_SEPARATOR);
                     }
                 }
             }

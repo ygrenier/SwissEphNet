@@ -130,7 +130,7 @@ namespace SweNet
                 do_km = false;
             }
             public string jplfname;
-            //public string jplfpath;
+            public string jplfpath;
             public CFile jplfptr;
             public bool do_reorder;
             public double[] eh_cval;
@@ -236,8 +236,7 @@ namespace SweNet
             int i, kmx, khi, nd;
             Int32 ksize; int[] lpt = new int[3];
             sbyte[] ttl = new sbyte[6 * 14 * 3];
-            //if ((js.jplfptr = swi_fopen(SEI_FILE_PLANET, js.jplfname, js.jplfpath, ref serr)) == null) {
-            if ((js.jplfptr = swi_fopen(SEI_FILE_PLANET, js.jplfname, ref serr)) == null) {
+            if ((js.jplfptr = swi_fopen(SEI_FILE_PLANET, js.jplfname, js.jplfpath, ref serr)) == null) {
                 return NOT_AVAILABLE;
             }
             /* ttl = ephemeris title, e.g.
@@ -1009,7 +1008,7 @@ namespace SweNet
             }
         }
 
-        int swi_open_jpl_file(CPointer<double> ss, string fname, ref string serr) {
+        int swi_open_jpl_file(CPointer<double> ss, string fname, string fpath, ref string serr) {
             int retc = OK;
             /* if open, return */
             if (js != null && js.jplfptr != null)
@@ -1022,8 +1021,7 @@ namespace SweNet
             //   serr= "error in malloc() with JPL ephemeris.";
             //  return ERR;
             //}
-            js.jplfname = fname;
-            //js.jplfpath = fpath;
+            js.jplfpath = fpath;
             retc = read_const_jpl(ss, ref serr);
             if (retc != OK)
                 swi_close_jpl_file();

@@ -1065,12 +1065,12 @@ namespace SweWin
             if ((iflag & SwissEph.SEFLG_MOSEPH) != 0)
                 return SwissEph.OK;
             /* current working directory */
-            path = C.sprintf(".%c", ';');
+            path = C.sprintf(".%c", SwissEph.PATH_SEPARATOR);
             /* program directory */
             spi = argv0.LastIndexOf(dirglue);
             if (spi >= 0) {
                 pathlen = spi;
-                path = argv0.Substring(0, pathlen) + ';';
+                path = argv0.Substring(0, pathlen) + SwissEph.PATH_SEPARATOR;
             }
 
             //#if MSDOS
@@ -1081,7 +1081,7 @@ namespace SweWin
             string[] sp = new string[3];
             int i, j, np;
             s1 = ".;sweph";
-            cpos = s1.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            cpos = s1.Split(new char[] { SwissEph.PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
             np = cpos.Length;
             /* 
              * default path from swephexp.h
