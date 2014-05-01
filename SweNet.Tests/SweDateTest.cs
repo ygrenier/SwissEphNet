@@ -13,6 +13,8 @@ namespace SweNet.Tests
             using (var swe = new Sweph()) {
 
                 Assert.AreEqual(0.0, SweDate.DateToJulianDay(new DateUT(-4713, 11, 24, 12, 0, 0), DateCalendar.Gregorian));
+                Assert.AreEqual(-38.0, SweDate.DateToJulianDay(new DateUT(-4713, 11, 24, 12, 0, 0), DateCalendar.Julian));
+                Assert.AreEqual(-38.0, SweDate.DateToJulianDay(new DateUT(-4713, 11, 24, 12, 0, 0)));
                 Assert.AreEqual(0.0, SweDate.DateToJulianDay(-4713, 11, 24, 12, 0, 0, DateCalendar.Gregorian));
                 Assert.AreEqual(0.0, SweDate.DateToJulianDay(-4713, 11, 24, 12.0, DateCalendar.Gregorian));
                 Assert.AreEqual(0.0, SweDate.DateToJulianDay(-4712, 1, 1, 12.0, DateCalendar.Julian));
@@ -69,7 +71,26 @@ namespace SweNet.Tests
                 Assert.AreEqual(12, date.Hours);
                 Assert.AreEqual(0, date.Minutes);
                 Assert.AreEqual(0, date.Seconds);
+
+                date = SweDate.JulianDayToDate(2000000);
+                Assert.AreEqual(763, date.Year);
+                Assert.AreEqual(9, date.Month);
+                Assert.AreEqual(14, date.Day);
+                Assert.AreEqual(12, date.Hours);
+                Assert.AreEqual(0, date.Minutes);
+                Assert.AreEqual(0, date.Seconds);
             }
+        }
+
+        [TestMethod]
+        public void TestDayOfWeek() {
+            Assert.AreEqual(WeekDay.Thursday, SweDate.DayOfWeek(SweDate.DateToJulianDay(2014, 5, 1, 0, DateCalendar.Gregorian)));
+            Assert.AreEqual(WeekDay.Friday, SweDate.DayOfWeek(SweDate.DateToJulianDay(2014, 5, 2, 0, DateCalendar.Gregorian)));
+            Assert.AreEqual(WeekDay.Saturday, SweDate.DayOfWeek(SweDate.DateToJulianDay(2014, 5, 3, 0, DateCalendar.Gregorian)));
+            Assert.AreEqual(WeekDay.Sunday, SweDate.DayOfWeek(SweDate.DateToJulianDay(2014, 5, 4, 0, DateCalendar.Gregorian)));
+            Assert.AreEqual(WeekDay.Monday, SweDate.DayOfWeek(SweDate.DateToJulianDay(2014, 5, 5, 0, DateCalendar.Gregorian)));
+            Assert.AreEqual(WeekDay.Tuesday, SweDate.DayOfWeek(SweDate.DateToJulianDay(2014, 5, 6, 0, DateCalendar.Gregorian)));
+            Assert.AreEqual(WeekDay.Wednesday, SweDate.DayOfWeek(SweDate.DateToJulianDay(2014, 5, 7, 0, DateCalendar.Gregorian)));
         }
 
         [TestMethod]
@@ -201,6 +222,23 @@ namespace SweNet.Tests
                 Assert.AreEqual(0.101230598229371, swe.Date.DeltaT(3000000.5), deltaPrec);
                 Assert.AreEqual(0.101230680826441, swe.Date.DeltaT(3000000.75), deltaPrec);
 
+            }
+        }
+
+        [TestMethod]
+        public void TestGetCalendar() {
+            Assert.AreEqual(DateCalendar.Julian, SweDate.GetCalendar(0));
+            Assert.AreEqual(DateCalendar.Julian, SweDate.GetCalendar(-10000000));
+            Assert.AreEqual(DateCalendar.Gregorian, SweDate.GetCalendar(+10000000));
+            Assert.AreEqual(DateCalendar.Gregorian, SweDate.GetCalendar(SweConst.GregorianFirstJD));
+            Assert.AreEqual(DateCalendar.Gregorian, SweDate.GetCalendar(SweConst.GregorianFirstJD + 1.0));
+            Assert.AreEqual(DateCalendar.Julian, SweDate.GetCalendar(SweConst.GregorianFirstJD - 1.0));
+        }
+
+        [TestMethod]
+        public void TestGetTidAcc() {
+            using (var swe = new Sweph()) {
+                Assert.AreEqual(-25.82, swe.Date.GetTidAcc());
             }
         }
 
