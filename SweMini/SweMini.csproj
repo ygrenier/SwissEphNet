@@ -49,6 +49,10 @@
       <Project>{1fb73ee2-380e-460f-a57d-0fbaa73eba25}</Project>
       <Name>SweNet</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SwissEphNet\SwissEphNet.csproj">
+      <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
+      <Name>SwissEphNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

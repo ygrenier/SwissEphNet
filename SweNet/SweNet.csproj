@@ -97,7 +97,12 @@
   <ItemGroup>
     <Compile Include="SwissEph.file.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SwissEphNet\SwissEphNet.csproj">
+      <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
+      <Name>SwissEphNet</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

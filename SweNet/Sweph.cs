@@ -9,7 +9,7 @@ namespace SweNet
     /// <summary>
     /// Swiss Ephemeris engine
     /// </summary>
-    public class Sweph : IDisposable
+    public class Sweph : SwissEphNet.SwissEph
     {
         bool _Initialized = false;
         SweDate _Date;
