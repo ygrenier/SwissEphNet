@@ -429,6 +429,11 @@ namespace SwissEphNet
         public const int SE_SCOTOPIC_FLAG = 1;
         public const int SE_MIXEDOPIC_FLAG = 2;
 
+        /// <summary>
+        /// 2000 January 1.5
+        /// </summary>
+        public const double J2000 = 2451545.0;
+
         ///***********************************************************
         // * exported functions
         // ***********************************************************/
@@ -436,7 +441,10 @@ namespace SwissEphNet
         //#define ext_def(x)	extern EXP32 x FAR PASCAL_CONV EXP16
         //            /* ext_def(x) evaluates to x on Unix */
 
-        //ext_def(int32) swe_heliacal_ut(double tjdstart_ut, double *geopos, double *datm, double *dobs, char *ObjectName, int32 TypeEvent, int32 iflag, double *dret, char *serr);
+        public Int32 swe_heliacal_ut(double tjdstart_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName, Int32 TypeEvent, Int32 iflag, double[] dret, ref string serr) {
+            return SweHel.swe_heliacal_ut(tjdstart_ut, geopos, datm, dobs, ObjectName, TypeEvent, iflag, dret, ref serr);
+        }
+
         //ext_def(int32) swe_heliacal_pheno_ut(double tjd_ut, double *geopos, double *datm, double *dobs, char *ObjectName, int32 TypeEvent, int32 helflag, double *darr, char *serr);
         //ext_def(int32) swe_vis_limit_mag(double tjdut, double *geopos, double *datm, double *dobs, char *ObjectName, int32 helflag, double *dret, char *serr);
         ///* the following are secret, for Victor Reijs' */
@@ -447,8 +455,7 @@ namespace SwissEphNet
         // * exports from sweph.c 
         // ****************************/
 
-        //ext_def(char *) swe_version(char *);
-
+        public string swe_version() { return Sweph.swe_version(); }
         
         /// <summary>
         /// planets, moon, nodes etc. 
@@ -479,11 +486,17 @@ namespace SwissEphNet
         /// </summary>
         public void swe_close() { Sweph.swe_close(); }
 
-        ///* set directory path of ephemeris files */
-        //ext_def( void ) swe_set_ephe_path(char *path);
+        /// <summary>
+        /// set directory path of ephemeris files
+        /// </summary>
+        public void swe_set_ephe_path(String path) { Sweph.swe_set_ephe_path(path); }
 
-        ///* set file name of JPL file */
-        //ext_def( void ) swe_set_jpl_file(char *fname);
+
+        /// <summary>
+        /// set file name of JPL file
+        /// </summary>
+        public void swe_set_jpl_file(string fname) { Sweph.swe_set_jpl_file(fname); }
+
 
         /// <summary>
         /// get planet name
@@ -559,9 +572,9 @@ namespace SwissEphNet
         //        double tjd_ut, double geolat, double geolon, int hsys, 
         //    double *cusps, double *ascmc);
 
-        //ext_def( int ) swe_houses_ex(
-        //        double tjd_ut, int32 iflag, double geolat, double geolon, int hsys, 
-        //    double *cusps, double *ascmc);
+        public int swe_houses_ex(double tjd_ut, Int32 iflag, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc) {
+            return SweHouse.swe_houses_ex(tjd_ut, iflag, geolat, geolon, hsys, hcusps, ascmc);
+        }
 
         //ext_def( int ) swe_houses_armc(
         //        double armc, double geolat, double eps, int hsys, 
@@ -573,53 +586,81 @@ namespace SwissEphNet
             return SweHouse.swe_house_pos(armc, geolon, eps, hsys, xpin, ref serr);
         }
 
-
-        //ext_def(char *) swe_house_name(int hsys);
-
-
+        public string swe_house_name(char hsys) { return SweHouse.swe_house_name(hsys); }
 
         ///**************************** 
         // * exports from swecl.c 
         // ****************************/
 
-        //ext_def(int32) swe_gauquelin_sector(double t_ut, int32 ipl, char *starname, int32 iflag, int32 imeth, double *geopos, double atpress, double attemp, double *dgsect, char *serr);
+        public Int32 swe_gauquelin_sector(double t_ut, Int32 ipl, String starname, Int32 iflag, Int32 imeth, double[] geopos,
+            double atpress, double attemp, ref double dgsect, ref string serr) {
+            return SweCL.swe_gauquelin_sector(t_ut, ipl, starname, iflag, imeth, geopos, atpress, attemp, ref dgsect, ref serr);
+        }
 
-        ///* computes geographic location and attributes of solar 
-        // * eclipse at a given tjd */
-        //ext_def (int32) swe_sol_eclipse_where(double tjd, int32 ifl, double *geopos, double *attr, char *serr);
+        /// <summary>
+        /// computes geographic location and attributes of solar
+        /// eclipse at a given tjd
+        /// </summary>
+        public Int32 swe_sol_eclipse_where(double tjd, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
+            return SweCL.swe_sol_eclipse_where(tjd, ifl, geopos, attr, ref serr);
+        }
 
-        //ext_def (int32) swe_lun_occult_where(double tjd, int32 ipl, char *starname, int32 ifl, double *geopos, double *attr, char *serr);
+        public Int32 swe_lun_occult_where(double tjd, Int32 ipl, string starname, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
+            return SweCL.swe_lun_occult_where(tjd, ipl, starname, ifl, geopos, attr, ref serr);
+        }
 
         ///* computes attributes of a solar eclipse for given tjd, geolon, geolat */
         //ext_def (int32) swe_sol_eclipse_how(double tjd, int32 ifl, double *geopos, double *attr, char *serr);
 
-        ///* finds time of next local eclipse */
-        //ext_def (int32) swe_sol_eclipse_when_loc(double tjd_start, int32 ifl, double *geopos, double *tret, double *attr, int32 backward, char *serr);
-
-        //ext_def (int32) swe_lun_occult_when_loc(double tjd_start, int32 ipl, char *starname, int32 ifl,
-        //     double *geopos, double *tret, double *attr, int32 backward, char *serr);
-
-        ///* finds time of next eclipse globally */
-        //ext_def (int32) swe_sol_eclipse_when_glob(double tjd_start, int32 ifl, int32 ifltype,
-        //     double *tret, int32 backward, char *serr);
-
         ///* finds time of next occultation globally */
-        //ext_def (int32) swe_lun_occult_when_glob(double tjd_start, int32 ipl, char *starname, int32 ifl, int32 ifltype,
-        //     double *tret, int32 backward, char *serr);
+        public Int32 swe_lun_occult_when_glob(double tjd_start, Int32 ipl, string starname, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr) {
+            return SweCL.swe_lun_occult_when_glob(tjd_start, ipl, starname, ifl, ifltype, tret, backward, ref serr);
+        }
+
+        /// <summary>
+        /// finds time of next local eclipse
+        /// </summary>
+        public Int32 swe_sol_eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
+            return SweCL.swe_sol_eclipse_when_loc(tjd_start, ifl, geopos, tret, attr, backward, ref serr);
+        }
+
+        public Int32 swe_lun_occult_when_loc(double tjd_start, Int32 ipl, String starname, Int32 ifl, double[] geopos, double[] tret,
+            double[] attr, bool backward, ref string serr) {
+                return SweCL.swe_lun_occult_when_loc(tjd_start, ipl, starname, ifl, geopos, tret, attr, backward, ref serr);
+        }
+
+        /// <summary>
+        /// finds time of next eclipse globally
+        /// </summary>
+        public Int32 swe_sol_eclipse_when_glob(double tjd_start, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr) {
+            return SweCL.swe_sol_eclipse_when_glob(tjd_start, ifl, ifltype, tret, backward, ref serr);
+        }
+
+        /// <summary>
+        /// computes attributes of a lunar eclipse for given tjd
+        /// </summary>
+        public Int32 swe_lun_eclipse_how(double tjd_ut, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
+            return SweCL.swe_lun_eclipse_how(tjd_ut, ifl, geopos, attr, ref serr);
+        }
+
+        public Int32 swe_lun_eclipse_when(double tjd_start, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr) {
+            return SweCL.swe_lun_eclipse_when(tjd_start, ifl, ifltype, tret, backward, ref serr);
+        }
+
+        public Int32 swe_lun_eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
+            return SweCL.swe_lun_eclipse_when_loc(tjd_start, ifl, geopos, tret, attr, backward, ref serr);
+        }
 
         ///* computes attributes of a lunar eclipse for given tjd */
-        //ext_def (int32) swe_lun_eclipse_how(
+        //DllImport int32 FAR PASCAL swe_lun_eclipse_how(
         //          double tjd_ut, 
         //          int32 ifl,
-        //          double *geopos, 
+        //      double *geopos,
         //          double *attr, 
         //          char *serr);
+        //DllImport int32 FAR PASCAL swe_lun_eclipse_when(double tjd_start, int32 ifl, int32 ifltype, double *tret, int32 backward, char *serr);
+        //DllImport int32 FAR PASCAL swe_lun_eclipse_when_loc(double tjd_start, int32 ifl, double *geopos, double *tret, double *attr, int32 backward, char *serr);
 
-        //ext_def (int32) swe_lun_eclipse_when(double tjd_start, int32 ifl, int32 ifltype,
-        //     double *tret, int32 backward, char *serr);
-
-        //ext_def (int32) swe_lun_eclipse_when_loc(double tjd_start, int32 ifl, 
-        //     double *geopos, double *tret, double *attr, int32 backward, char *serr);
 
         /// <summary>
         /// planetary phenomena
@@ -655,11 +696,14 @@ namespace SwissEphNet
                 return SweCL.swe_rise_trans(tjd_ut, ipl, starname, epheflag, rsmi, geopos, atpress, attemp, ref tret, ref serr);
         }
 
-        //ext_def (int32) swe_nod_aps(double tjd_et, int32 ipl, int32 iflag, 
-        //                      int32  method,
-        //                      double *xnasc, double *xndsc, 
-        //                      double *xperi, double *xaphe, 
-        //                      char *serr);
+        public Int32 swe_nod_aps(double tjd_et, Int32 ipl, Int32 iflag,
+                              Int32 method,
+                              double[] xnasc, double[] xndsc,
+                              double[] xperi, double[] xaphe,
+                              ref string serr) {
+            return SweCL.swe_nod_aps(tjd_et, ipl, iflag, method, xnasc, xndsc, xperi, xaphe, ref serr);
+        }
+
 
         //ext_def (int32) swe_nod_aps_ut(double tjd_ut, int32 ipl, int32 iflag, 
         //                      int32  method,
@@ -675,10 +719,17 @@ namespace SwissEphNet
         /* delta t */
         public double swe_deltat(double tjd) { return SwephLib.swe_deltat(tjd); }
 
-        ///* equation of time */
-        //ext_def(int32) swe_time_equ(double tjd, double *te, char *serr);
-        //ext_def(int32) swe_lmt_to_lat(double tjd_lmt, double geolon, double *tjd_lat, char *serr);
-        //ext_def(int32) swe_lat_to_lmt(double tjd_lat, double geolon, double *tjd_lmt, char *serr);
+        /// <summary>
+        /// equation of time
+        /// </summary>
+        public int swe_time_equ(double tjd, out double e, ref string serr) { return Sweph.swe_time_equ(tjd, out e, ref serr); }
+        public int swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, ref string serr) {
+            return Sweph.swe_lmt_to_lat(tjd_lmt, geolon, out tjd_lat, ref serr); 
+        }
+        public int swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, ref string serr) {
+            return Sweph.swe_lat_to_lmt(tjd_lat, geolon, out tjd_lmt, ref serr); 
+        }
+
 
         /// <summary>
         /// sidereal time 
@@ -705,7 +756,9 @@ namespace SwissEphNet
         public double swe_rad_midp(double x1, double x0) { return SwephLib.swe_rad_midp(x1, x0); }
         public double swe_deg_midp(double x1, double x0) { return SwephLib.swe_deg_midp(x1, x0); }
 
-        //ext_def( void ) swe_split_deg(double ddeg, int32 roundflag, int32 *ideg, int32 *imin, int32 *isec, double *dsecfr, int32 *isgn);
+        public void swe_split_deg(double ddeg, Int32 roundflag, out Int32 ideg, out Int32 imin, out Int32 isec, out double dsecfr, out Int32 isgn) {
+            SwephLib.swe_split_deg(ddeg, roundflag, out ideg, out imin, out isec, out dsecfr, out isgn);
+        }
 
         ///******************************************************* 
         // * other functions from swephlib.c;

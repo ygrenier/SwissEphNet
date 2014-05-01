@@ -8,7 +8,7 @@ namespace SwissEphNet
     /// <summary>
     /// Swiss Ephemeris C conversion
     /// </summary>
-    public abstract partial class SwissEph : IDisposable
+    public partial class SwissEph : IDisposable
     {
 
         #region Ctors & Dest
@@ -25,6 +25,7 @@ namespace SwissEphNet
             SweDate = new CPort.SweDate(this);
             SweHouse = new CPort.SweHouse(this);
             SweCL = new CPort.SweCL(this);
+            SweHel = new CPort.SweHel(this);
         }
 
         /// <summary>
@@ -41,6 +42,18 @@ namespace SwissEphNet
         /// </summary>
         public void Dispose() {
             Dispose(true);
+        }
+
+        #endregion
+
+        #region Configuration
+
+        /// <summary>
+        /// Configuration to use Espenak Meeus 2006 in Delta T calculation
+        /// </summary>
+        public bool ESPENAK_MEEUS_2006 {
+            get { return SwephLib.ESPENAK_MEEUS_2006; }
+            set { SwephLib.ESPENAK_MEEUS_2006 = value; }
         }
 
         #endregion
@@ -126,6 +139,11 @@ namespace SwissEphNet
         /// SweCL
         /// </summary>
         internal CPort.SweCL SweCL { get; private set; }
+
+        /// <summary>
+        /// SweHel
+        /// </summary>
+        internal CPort.SweHel SweHel { get; private set; }
 
         #endregion
 

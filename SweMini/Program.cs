@@ -84,8 +84,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SweNet;
 using System.Text.RegularExpressions;
+using SwissEphNet;
+using SweNet;
 
 namespace SweMini
 {
@@ -104,7 +105,7 @@ namespace SweMini
                 jhour = 20,
                 jmin = 41,
                 jsec = 23;
-            using (SwissEph sweph = new SwissEph()) {
+            using (Sweph sweph = new Sweph()) {
                 double jut = jhour + (jmin / 60.0) + (jsec / 3600.0);
                 double tjd = sweph.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
                 double deltat = sweph.swe_deltat(tjd);
@@ -131,7 +132,7 @@ namespace SweMini
             Int32 iflag, iflgret;
             //int p;
             iflag = SwissEph.SEFLG_SPEED;
-            using (var swe = new SwissEph()) {
+            using (var swe = new Sweph()) {
                 while (true) {
                     Console.Write("\nDate (d.m.y) ? ");
                     sdate = Console.ReadLine();

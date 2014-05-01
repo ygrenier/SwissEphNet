@@ -82,6 +82,9 @@ namespace SwissEphNet.CPort
     using System.Linq;
     using System.Text;
 
+    /// <summary>
+    /// 
+    /// </summary>
     partial class SweDate : BaseCPort
     {
         public SweDate(SwissEph se)

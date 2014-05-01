@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Text;
+using SwissEphNet;
 
 namespace SweNet.Tests
 {

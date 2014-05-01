@@ -1,4 +1,5 @@
 ﻿using SweNet;
+using SwissEphNet;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,7 @@ namespace SweWPF.ViewModels
     public class MainViewModel : ViewModel, IDisposable
     {
         private ChildViewModel _CurrentChild;
-        private SweNet.SwissEph _Sweph;
+        private Sweph _Sweph;
 
         public MainViewModel() {
             DoCalculationCommand = new RelayCommand(() => {
@@ -44,8 +45,8 @@ namespace SweWPF.ViewModels
         /// <summary>
         /// Create new Sweph context with current configuration
         /// </summary>
-        private SweNet.SwissEph CreateNewSweph() {
-            var result = new SweNet.SwissEph();
+        private Sweph CreateNewSweph() {
+            var result = new Sweph();
             result.OnLoadFile += Sweph_OnLoadFile;
             return result;
         }
@@ -154,7 +155,7 @@ namespace SweWPF.ViewModels
         /// <summary>
         /// Sweph context
         /// </summary>
-        public SweNet.SwissEph Sweph {
+        public Sweph Sweph {
             get { return _Sweph ?? (_Sweph = CreateNewSweph()); }
         }
 

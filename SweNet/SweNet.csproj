@@ -42,28 +42,6 @@
     <Compile Include="Extensions\ArrayExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cport\SwissEph.swecl.c.cs" />
-    <Compile Include="cport\SwissEph.swedate.c.cs" />
-    <Compile Include="cport\SwissEph.swedate.h.cs" />
-    <Compile Include="cport\SwissEph.swedll.h.cs" />
-    <Compile Include="cport\SwissEph.swehel.c.cs" />
-    <Compile Include="cport\SwissEph.swehouse.c.cs" />
-    <Compile Include="cport\SwissEph.swehouse.h.cs" />
-    <Compile Include="cport\SwissEph.swejpl.c.cs" />
-    <Compile Include="cport\SwissEph.swejpl.h.cs" />
-    <Compile Include="cport\SwissEph.swemmoon.c.cs" />
-    <Compile Include="cport\SwissEph.swemplan.c.cs" />
-    <Compile Include="cport\SwissEph.swemptab.c.cs" />
-    <Compile Include="cport\SwissEph.swenut2000a.h.cs" />
-    <Compile Include="cport\SwissEph.sweodef.h.cs" />
-    <Compile Include="cport\SwissEph.swepcalc.c.cs" />
-    <Compile Include="cport\SwissEph.swepcalc.h.cs" />
-    <Compile Include="cport\SwissEph.swepdate.c.cs" />
-    <Compile Include="cport\SwissEph.sweph.c.cs" />
-    <Compile Include="cport\SwissEph.sweph.h.cs" />
-    <Compile Include="cport\SwissEph.swephexp.h.cs" />
-    <Compile Include="cport\SwissEph.swephlib.c.cs" />
-    <Compile Include="cport\SwissEph.swephlib.h.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Geo\GeoPosition.cs" />
@@ -84,18 +62,7 @@
     <Compile Include="SweFormat.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Planets\Planet.cs" />
-    <Compile Include="SwissEph.cs" />
-    <Compile Include="SwissEph.trace.cs" />
-    <Compile Include="Tools\CFile.cs" />
-    <Compile Include="Tools\CPointer.cs" />
-    <Compile Include="Tools\C.cs" />
-    <Compile Include="Tools\C.printf.cs" />
-    <Compile Include="Tools\C.scanf.cs" />
     <Compile Include="[Enums].cs" />
-    <Compile Include="[events].cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="SwissEph.file.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SwissEphNet\SwissEphNet.csproj">

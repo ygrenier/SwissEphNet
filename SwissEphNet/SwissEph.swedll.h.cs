@@ -87,31 +87,19 @@ namespace SwissEphNet
     {
         /* $Id: swedll.h,v 1.75 2009/04/08 07:19:08 dieter Exp $ */
 
-        //DllImport int32 FAR PASCAL swe_heliacal_ut(double JDNDaysUTStart, double *geopos, double *datm, double *dobs, char *ObjectName, int32 TypeEvent, int32 iflag, double *dret, char *serr);
         //DllImport int32 FAR PASCAL swe_heliacal_pheno_ut(double JDNDaysUT, double *geopos, double *datm, double *dobs, char *ObjectName, int32 TypeEvent, int32 helflag, double *darr, char *serr);
         //DllImport int32 FAR PASCAL swe_vis_limit_mag(double tjdut, double *geopos, double *datm, double *dobs, char *ObjectName, int32 helflag, double *dret, char *serr);
         ///* the following are secret, for Victor Reijs' */
         //DllImport int32 FAR PASCAL swe_heliacal_angle(double tjdut, double *dgeo, double *datm, double *dobs, int32 helflag, double mag, double azi_obj, double azi_sun, double azi_moon, double alt_moon, double *dret, char *serr);
         //DllImport int32 FAR PASCAL swe_topo_arcus_visionis(double tjdut, double *dgeo, double *datm, double *dobs, int32 helflag, double mag, double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, double *dret, char *serr);
 
-        //DllImport char * FAR PASCAL swe_version(char *);
-
         //DllImport int FAR PASCAL swe_houses(
         //        double tjd_ut, double geolat, double geolon, int hsys, 
-        //        double *hcusps, double *ascmc);
-
-        //DllImport int FAR PASCAL swe_houses_ex(
-        //        double tjd_ut, int32 iflag, double geolat, double geolon, int hsys, 
         //        double *hcusps, double *ascmc);
 
         //DllImport int FAR PASCAL swe_houses_armc(
         //        double armc, double geolat, double eps, int hsys, 
         //        double *hcusps, double *ascmc);
-
-        //DllImport char * FAR PASCAL swe_house_name(int hsys);
-
-        //DllImport int32 FAR PASCAL swe_gauquelin_sector(
-        //    double t_ut, int32 ipl, char *starname, int32 iflag, int32 imeth, double *geopos, double atpress, double attemp, double *dgsect, char *serr);
 
         //DllImport int FAR PASCAL swe_date_conversion(
         //        int y , int m , int d ,         /* year, month, day */
@@ -141,47 +129,12 @@ namespace SwissEphNet
         //    int32 *iyear, int32 *imonth, int32 *iday, 
         //    int32 *ihour, int32 *imin, double *dsec);
 
-        //DllImport int FAR PASCAL swe_time_equ(
-        //        double tjd, double *e, char *serr);
-        //DllImport int FAR PASCAL swe_lmt_to_lat(double tjd_lmt, double geolon, double *tjd_lat, char *serr);
-        //DllImport int FAR PASCAL swe_lat_to_lmt(double tjd_lat, double geolon, double *tjd_lmt, char *serr);
-
-        //DllImport void FAR PASCAL swe_set_ephe_path(char *path);
-        //DllImport void FAR PASCAL swe_set_jpl_file(char *fname);
-
         ///**************************** 
         // * from swecl.c 
         // ****************************/
 
-        ///* computes geographic location and attributes of solar 
-        // * eclipse at a given tjd */
-        //DllImport int32 FAR PASCAL swe_sol_eclipse_where(double tjd, int32 ifl, double *geopos, double *attr, char *serr);
-
-        //DllImport int32 FAR PASCAL swe_lun_occult_where(double tjd, int32 ipl, char *starname, int32 ifl, double *geopos, double *attr, char *serr);
-
         ///* computes attributes of a solar eclipse for given tjd, geolon, geolat */
         //DllImport int32 FAR PASCAL swe_sol_eclipse_how(double tjd, int32 ifl, double *geopos, double *attr, char *serr);
-
-        ///* finds time of next local eclipse */
-        //DllImport int32 FAR PASCAL swe_sol_eclipse_when_loc(double tjd_start, int32 ifl, double *geopos, double *tret, double *attr, int32 backward, char *serr);
-
-        //DllImport int32 FAR PASCAL swe_lun_occult_when_loc(double tjd_start, int32 ipl, char *starname, int32 ifl, double *geopos, double *tret, double *attr, int32 backward, char *serr);
-
-        ///* finds time of next eclipse globally */
-        //DllImport int32 FAR PASCAL swe_sol_eclipse_when_glob(double tjd_start, int32 ifl, int32 ifltype, double *tret, int32 backward, char *serr);
-
-        ///* finds time of next occultation globally */
-        //DllImport int32 FAR PASCAL swe_lun_occult_when_glob(double tjd_start, int32 ipl, char *starname, int32 ifl, int32 ifltype, double *tret, int32 backward, char *serr);
-
-        ///* computes attributes of a lunar eclipse for given tjd */
-        //DllImport int32 FAR PASCAL swe_lun_eclipse_how(
-        //          double tjd_ut, 
-        //          int32 ifl,
-        //      double *geopos,
-        //          double *attr, 
-        //          char *serr);
-        //DllImport int32 FAR PASCAL swe_lun_eclipse_when(double tjd_start, int32 ifl, int32 ifltype, double *tret, int32 backward, char *serr);
-        //DllImport int32 FAR PASCAL swe_lun_eclipse_when_loc(double tjd_start, int32 ifl, double *geopos, double *tret, double *attr, int32 backward, char *serr);
 
         //DllImport double FAR PASCAL swe_refrac(double inalt, double atpress, double attemp, int32 calc_flag);
         //DllImport double FAR PASCAL swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, int32 calc_flag, double *dret);
@@ -203,12 +156,6 @@ namespace SwissEphNet
         //               double *tret,
         //               char *serr);
 
-        //DllImport int32 FAR PASCAL swe_nod_aps(double tjd_et, int32 ipl, int32 iflag, 
-        //                      int32  method,
-        //                      double *xnasc, double *xndsc, 
-        //                      double *xperi, double *xaphe, 
-        //                      char *serr);
-
         //DllImport int32 FAR PASCAL swe_nod_aps_ut(double tjd_ut, int32 ipl, int32 iflag, 
         //                      int32  method,
         //                      double *xnasc, double *xndsc, 
@@ -228,8 +175,6 @@ namespace SwissEphNet
 
         //DllImport double FAR PASCAL swe_rad_midp(double x1, double x0);
         //DllImport double FAR PASCAL swe_deg_midp(double x1, double x0);
-
-        //DllImport void FAR PASCAL swe_split_deg(double ddeg, int32 roundflag, int32 *ideg, int32 *imin, int32 *isec, double *dsecfr, int32 *isgn);
 
         ///* monday = 0, ... sunday = 6 */
         //DllImport int FAR PASCAL swe_day_of_week(double jd);
