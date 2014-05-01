@@ -103,28 +103,42 @@ namespace SwissEphNet
         /// Test if an inner array is the same of an array
         /// </summary>
         public static bool operator ==(CPointer<T> access, T[] array) {
-            return access.BaseArray == array;
+            return access.BaseArray == array && access.BaseIndex == 0;
         }
 
         /// <summary>
         /// Test if an inner array is not the same of an array
         /// </summary>
         public static bool operator !=(CPointer<T> access, T[] array) {
-            return access.BaseArray != array;
+            return access.BaseArray != array && access.BaseIndex == 0;
         }
 
         /// <summary>
         /// Test if an inner array is the same of an array
         /// </summary>
         public static bool operator ==(T[] array, CPointer<T> access) {
-            return access.BaseArray == array;
+            return access.BaseArray == array && access.BaseIndex == 0;
         }
 
         /// <summary>
         /// Test if an inner array is not the same of an array
         /// </summary>
         public static bool operator !=(T[] array, CPointer<T> access) {
-            return access.BaseArray != array;
+            return access.BaseArray != array && access.BaseIndex == 0;
+        }
+
+        /// <summary>
+        /// Test two pointers equality
+        /// </summary>
+        public static bool operator ==(CPointer<T> p1, CPointer<T> p2) {
+            return p1.BaseArray == p2.BaseArray && p1.BaseIndex == p2.BaseIndex;
+        }
+
+        /// <summary>
+        /// Test two pointers inequality
+        /// </summary>
+        public static bool operator !=(CPointer<T> p1, CPointer<T> p2) {
+            return p1.BaseArray != p2.BaseArray || p1.BaseIndex != p2.BaseIndex;
         }
 
         /// <summary>
