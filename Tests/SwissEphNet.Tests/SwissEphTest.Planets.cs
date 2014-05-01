@@ -1,9 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using SwissEphNet;
 
-namespace SweNet.Tests
+namespace SwissEphNet.Tests
 {
     partial class SwissEphTest
     {

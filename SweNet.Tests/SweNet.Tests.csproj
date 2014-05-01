@@ -57,13 +57,10 @@
     <Compile Include="LatitudeTest.cs" />
     <Compile Include="SwePlanetTest.cs" />
     <Compile Include="SweDateTest.cs" />
-    <Compile Include="SwissEphTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CPrintfTest.cs" />
     <Compile Include="CScanfTest.cs" />
     <Compile Include="SwephTest.Date.cs" />
-    <Compile Include="SwissEphTest.Planets.cs" />
-    <Compile Include="SwissEphTest.Date.cs" />
     <Compile Include="CFileTest.cs" />
     <Compile Include="LongitudeTest.cs" />
     <Compile Include="EphemerisTimeTest.cs" />

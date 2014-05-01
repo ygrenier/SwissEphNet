@@ -60,6 +60,9 @@
     <Compile Include="ArrayExtensionsTest.cs" />
     <Compile Include="LoadFileEventArgsTest.cs" />
     <Compile Include="TraceEventArgsTest.cs" />
+    <Compile Include="SwissEphTest.cs" />
+    <Compile Include="SwissEphTest.Date.cs" />
+    <Compile Include="SwissEphTest.Planets.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.csproj">

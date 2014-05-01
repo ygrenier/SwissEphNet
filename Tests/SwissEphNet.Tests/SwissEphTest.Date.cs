@@ -1,9 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using SwissEphNet;
 
-namespace SweNet.Tests
+namespace SwissEphNet.Tests
 {
     partial class SwissEphTest
     {
@@ -24,7 +23,7 @@ namespace SweNet.Tests
                 Assert.AreEqual(1063865, swe.swe_julday(-1800, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
 
                 Assert.AreEqual(2442275.47916667, swe.swe_julday(1974, 8, 15, 23 + 30 / 60.0 + 0 / 3600.0, SwissEph.SE_GREG_CAL), 0.00000001);
-                Assert.AreEqual(2456774.20375, swe.swe_julday(2014, 4, 26, SweDate.GetHourValue(16, 53, 24), SwissEph.SE_GREG_CAL));
+                Assert.AreEqual(2456774.20375, swe.swe_julday(2014, 4, 26, SwissEph.GetHourValue(16, 53, 24), SwissEph.SE_GREG_CAL));
             }
         }
 
@@ -68,7 +67,7 @@ namespace SweNet.Tests
                 Assert.AreEqual(60803, Math.Floor(ut * 3600.0));
                 Assert.AreEqual(23.9999887347221, (ut * 3600.0) % 60.0, 0.0000000000001);
                 Assert.AreEqual(23, Math.Floor(ut * 3600.0) % 60.0);
-                
+
 
                 swe.swe_revjul(2442275.47916667, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
                 Assert.AreEqual(1974, y);
