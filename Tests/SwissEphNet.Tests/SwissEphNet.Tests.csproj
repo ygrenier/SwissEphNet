@@ -59,6 +59,7 @@
     <Compile Include="CPointerTest.cs" />
     <Compile Include="ArrayExtensionsTest.cs" />
     <Compile Include="LoadFileEventArgsTest.cs" />
+    <Compile Include="TraceEventArgsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.csproj">
