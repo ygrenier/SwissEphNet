@@ -487,9 +487,9 @@ namespace SweWin
             double ar, sinp;
             double a, sidt, armc, lon, lat;
             double eps_true, eps_mean, nutl, nuto;
-            string ephepath;
+            //string ephepath;
             string fname = String.Empty;
-            string splan, sast;
+            //string splan = null, sast = null;
             int nast, iast;
             int[] astno = new int[100];
             int iflag = 0, iflag2;              /* external flag: helio, geo... */
@@ -507,7 +507,7 @@ namespace SweWin
             string jul;
             char hsys = pd.hsysname[0];
             //  *serr = *serr_save = *serr_warn = '\0';
-            ephepath = ".;sweph";
+            //ephepath = ".;sweph";
             if (String.Compare(pd.ephe, ephe[1]) == 0) {
                 whicheph = SwissEph.SEFLG_JPLEPH;
                 fname = SwissEph.SE_FNAME_DE406;

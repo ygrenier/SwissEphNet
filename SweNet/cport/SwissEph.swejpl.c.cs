@@ -129,7 +129,7 @@ namespace SweNet
                 jc = new double[18];
                 do_km = false;
             }
-            public string jplfname;
+            public string jplfname = null;
             public string jplfpath;
             public CFile jplfptr;
             public bool do_reorder;
