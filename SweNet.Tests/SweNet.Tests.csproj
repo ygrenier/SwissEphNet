@@ -68,6 +68,7 @@
     <Compile Include="LongitudeTest.cs" />
     <Compile Include="EphemerisTimeTest.cs" />
     <Compile Include="JulianDayTest.cs" />
+    <Compile Include="PlanetTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SweNet\SweNet.csproj">
