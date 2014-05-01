@@ -22,6 +22,9 @@ namespace SwissEphNet
             SwephLib = new CPort.SwephLib(this);
             SwemMoon = new CPort.SwemMoon(this);
             SwemPlan = new CPort.SwemPlan(this);
+            SweDate = new CPort.SweDate(this);
+            SweHouse = new CPort.SweHouse(this);
+            SweCL = new CPort.SweCL(this);
         }
 
         /// <summary>
@@ -108,6 +111,21 @@ namespace SwissEphNet
         /// SwemPlan 
         /// </summary>
         internal CPort.SwemPlan SwemPlan { get; private set; }
+
+        /// <summary>
+        /// SweDate
+        /// </summary>
+        internal CPort.SweDate SweDate { get; private set; }
+
+        /// <summary>
+        /// SweHouse
+        /// </summary>
+        internal CPort.SweHouse SweHouse { get; private set; }
+
+        /// <summary>
+        /// SweCL
+        /// </summary>
+        internal CPort.SweCL SweCL { get; private set; }
 
         #endregion
 

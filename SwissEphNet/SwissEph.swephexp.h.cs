@@ -89,6 +89,7 @@
 */
 namespace SwissEphNet
 {
+    using SwissEphNet.CPort;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -452,21 +453,31 @@ namespace SwissEphNet
         /// <summary>
         /// planets, moon, nodes etc. 
         /// </summary>
-        public Int32 swe_calc(double tjd, int ipl, Int32 iflag, double[] xx, ref string serr) { throw new NotImplementedException(); }
+        public Int32 swe_calc(double tjd, int ipl, Int32 iflag, double[] xx, ref string serr) {
+            return Sweph.swe_calc(tjd, ipl, iflag, xx, ref serr);
+        }
 
-        public Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] xx, ref string serr) { throw new NotImplementedException(); }
+        public Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] xx, ref string serr) {
+            return Sweph.swe_calc(tjd_ut, ipl, iflag, xx, ref serr);
+        }
 
         /// <summary>
         /// fixed stars
         /// </summary>
-        public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr) { throw new NotImplementedException(); }
-        public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr) { throw new NotImplementedException(); }
-        public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr) { throw new NotImplementedException(); }
+        public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr) {
+            return Sweph.swe_fixstar(star, tjd, iflag, xx, ref serr);
+        }
+        public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr) {
+            return Sweph.swe_fixstar_ut(star, tjd_ut, iflag, xx, ref serr);
+        }
+        public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr) {
+            return Sweph.swe_fixstar_mag(ref star, ref mag, ref serr);
+        }
 
         /// <summary>
         /// Close Swiss Ephemeris
         /// </summary>
-        public void swe_close() { throw new NotImplementedException(); }
+        public void swe_close() { Sweph.swe_close(); }
 
         ///* set directory path of ephemeris files */
         //ext_def( void ) swe_set_ephe_path(char *path);
@@ -477,27 +488,27 @@ namespace SwissEphNet
         /// <summary>
         /// get planet name
         /// </summary>
-        public string swe_get_planet_name(int ipl) { throw new NotImplementedException(); }
+        public string swe_get_planet_name(int ipl) { return Sweph.swe_get_planet_name(ipl); }
 
         /// <summary>
         /// set geographic position of observer
         /// </summary>
-        public void swe_set_topo(double geolon, double geolat, double height) { throw new NotImplementedException(); }
+        public void swe_set_topo(double geolon, double geolat, double height) { Sweph.swe_set_topo(geolon, geolat, height); }
 
 
         /// <summary>
         /// set sidereal mode
         /// </summary>
-        public void swe_set_sid_mode(Int32 sid_mode, double t0, double ayan_t0) { throw new NotImplementedException(); }
+        public void swe_set_sid_mode(Int32 sid_mode, double t0, double ayan_t0) { Sweph.swe_set_sid_mode(sid_mode, t0, ayan_t0); }
 
         /// <summary>
         /// get ayanamsa 
         /// </summary>
-        public double swe_get_ayanamsa(double tjd_et) { throw new NotImplementedException(); }
+        public double swe_get_ayanamsa(double tjd_et) { return Sweph.swe_get_ayanamsa(tjd_et); }
 
-        public double swe_get_ayanamsa_ut(double tjd_ut) { throw new NotImplementedException(); }
+        public double swe_get_ayanamsa_ut(double tjd_ut) { return Sweph.swe_get_ayanamsa_ut(tjd_ut); }
 
-        public string swe_get_ayanamsa_name(Int32 isidmode) { throw new NotImplementedException(); }
+        //public string swe_get_ayanamsa_name(Int32 isidmode) { return Sweph.swe_get_ayanamsa_name(isidmode); }
 
 
         ///**************************** 
@@ -510,9 +521,13 @@ namespace SwissEphNet
         //        char c,         /* calendar g[regorian]|j[ulian] */
         //        double *tjd);
 
-        public double swe_julday(int year, int mon, int mday, double hour, int gregflag) { throw new NotImplementedException(); }
+        public double swe_julday(int year, int mon, int mday, double hour, int gregflag) {
+            return SweDate.swe_julday(year, mon, mday, hour, gregflag);
+        }
 
-        public void swe_revjul(double jd, int gregflag, ref int year, ref int mon, ref int mday, ref double hour) { throw new NotImplementedException(); }
+        public void swe_revjul(double jd, int gregflag, ref int year, ref int mon, ref int mday, ref double hour) {
+            SweDate.swe_revjul(jd, gregflag, ref year, ref mon, ref mday, ref hour);
+        }
 
         //ext_def(int32) swe_utc_to_jd(
         //        int32 iyear, int32 imonth, int32 iday, 
@@ -554,7 +569,9 @@ namespace SwissEphNet
 
         //ext_def(double) swe_house_pos(
         //    double armc, double geolat, double eps, int hsys, double *xpin, char *serr);
-        public double swe_house_pos(double armc, double geolon, double eps, int hsys, double[] xpin, ref string serr) { throw new NotImplementedException(); }
+        public double swe_house_pos(double armc, double geolon, double eps, char hsys, double[] xpin, ref string serr) { 
+            return SweHouse.swe_house_pos(armc, geolon, eps, hsys, xpin, ref serr);
+        }
 
 
         //ext_def(char *) swe_house_name(int hsys);
@@ -607,9 +624,13 @@ namespace SwissEphNet
         /// <summary>
         /// planetary phenomena
         /// </summary>
-        public Int32 swe_pheno(double tjd, Int32 ipl, Int32 iflag, double[] attr, ref string serr) { throw new NotImplementedException(); }
+        public Int32 swe_pheno(double tjd, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
+            return SweCL.swe_pheno(tjd, ipl, iflag, attr, ref serr);
+        }
 
-        public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) { throw new NotImplementedException(); }
+        public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) { 
+            return swe_pheno_ut(tjd_ut, ipl, iflag, attr, ref serr); 
+        }
 
         //ext_def (double) swe_refrac(double inalt, double atpress, double attemp, int32 calc_flag);
 
@@ -617,7 +638,10 @@ namespace SwissEphNet
 
         //ext_def (void) swe_set_lapse_rate(double lapse_rate);
 
-        public void swe_azalt(double tjd_ut, Int32 calc_flag, double[] geopos, double atpress, double attemp, double[] xin, double[] xaz) { throw new NotImplementedException(); } 
+        public void swe_azalt(double tjd_ut, Int32 calc_flag, double[] geopos, double atpress, double attemp, double[] xin, double[] xaz) { 
+            SweCL.swe_azalt(tjd_ut, calc_flag, geopos, atpress, attemp, xin, xaz); 
+        }
+
 
         //ext_def (void) swe_azalt_rev(
         //      double tjd_ut,
@@ -627,7 +651,9 @@ namespace SwissEphNet
         //      double *xout); 
 
         public Int32 swe_rise_trans(double tjd_ut, Int32 ipl, string starname, Int32 epheflag, Int32 rsmi,
-            double[] geopos, double atpress, double attemp, ref double tret, ref string serr) { throw new NotImplementedException(); }
+            double[] geopos, double atpress, double attemp, ref double tret, ref string serr) {
+                return SweCL.swe_rise_trans(tjd_ut, ipl, starname, epheflag, rsmi, geopos, atpress, attemp, ref tret, ref serr);
+        }
 
         //ext_def (int32) swe_nod_aps(double tjd_et, int32 ipl, int32 iflag, 
         //                      int32  method,
@@ -670,8 +696,8 @@ namespace SwissEphNet
         /// <summary>
         /// tidal acceleration to be used in swe_deltat()
         /// </summary>
-        public double swe_get_tid_acc() { throw new NotImplementedException(); }
-        public void swe_set_tid_acc(double tidacc) { throw new NotImplementedException(); }
+        public double swe_get_tid_acc() { return SwephLib.swe_get_tid_acc(); }
+        public void swe_set_tid_acc(double tidacc) { SwephLib.swe_set_tid_acc(tidacc); }
 
         public double swe_degnorm(double x) { return SwephLib.swe_degnorm(x); }
 
@@ -690,33 +716,33 @@ namespace SwissEphNet
         /// <summary>
         /// normalize argument into interval [0..DEG360]
         /// </summary>
-        public Int32 swe_csnorm(Int32 p) { throw new NotImplementedException(); }
+        public Int32 swe_csnorm(Int32 p) { return SwephLib.swe_csnorm(p); }
 
         /// <summary>
         /// distance in centisecs p1 - p2 normalized to [0..360[
         /// </summary>
-        public Int32 swe_difcsn(Int32 p1, Int32 p2) { throw new NotImplementedException(); }
+        public Int32 swe_difcsn(Int32 p1, Int32 p2) { return SwephLib.swe_difcsn(p1, p2); }
 
-        public double swe_difdegn(double p1, double p2) { throw new NotImplementedException(); }
+        public double swe_difdegn(double p1, double p2) { return SwephLib.swe_difdegn(p1, p2); }
 
         /// <summary>
         /// distance in centisecs p1 - p2 normalized to [-180..180[
         /// </summary>
-        public Int32 swe_difcs2n(Int32 p1, Int32 p2) { throw new NotImplementedException(); }
+        public Int32 swe_difcs2n(Int32 p1, Int32 p2) { return SwephLib.swe_difcs2n(p1, p2); }
 
-        public double swe_difdeg2n(double p1, double p2) { throw new NotImplementedException(); }
+        public double swe_difdeg2n(double p1, double p2) { return SwephLib.swe_difdeg2n(p1, p2); }
 
-        public double swe_difrad2n(double p1, double p2) { throw new NotImplementedException(); }
+        public double swe_difrad2n(double p1, double p2) { return SwephLib.swe_difrad2n(p1, p2); }
 
         /// <summary>
         /// round second, but at 29.5959 always down
         /// </summary>
-        public Int32 swe_csroundsec(Int32 x) { throw new NotImplementedException(); }
+        public Int32 swe_csroundsec(Int32 x) { return SwephLib.swe_csroundsec(x); }
 
         /// <summary>
         /// double to int32 with rounding, no overflow check
         /// </summary>
-        public Int32 swe_d2l(double x) { throw new NotImplementedException(); }
+        public Int32 swe_d2l(double x) { return SwephLib.swe_d2l(x); }
 
         ///* monday = 0, ... sunday = 6 */
         //ext_def( int ) swe_day_of_week(double jd);

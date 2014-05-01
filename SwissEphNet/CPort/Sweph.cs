@@ -1035,7 +1035,7 @@ namespace SwissEphNet.CPort
         /* closes all open files, frees space of planetary data, 
          * deletes memory of all computed positions 
          */
-        protected void swe_close() {
+        public void swe_close() {
             // TODO Finalize swe_close
             //  int i;
             //  /* close SWISSEPH files */
