@@ -186,18 +186,18 @@ namespace SwissEphNet
         public const int SE_POLASC = 7;	/* "polar ascendant" (M. Munkasey) */
         public const int SE_NASCMC = 8;
 
-        ///*
-        // * flag bits for parameter iflag in function swe_calc()
-        // * The flag bits are defined in such a way that iflag = 0 delivers what one
-        // * usually wants:
-        // *    - the default ephemeris (SWISS EPHEMERIS) is used,
-        // *    - apparent geocentric positions referring to the true equinox of date
-        // *      are returned.
-        // * If not only coordinates, but also speed values are required, use 
-        // * flag = SEFLG_SPEED.
-        // *
-        // * The 'L' behind the number indicates that 32-bit integers (Long) are used.
-        // */
+        /*
+         * flag bits for parameter iflag in function swe_calc()
+         * The flag bits are defined in such a way that iflag = 0 delivers what one
+         * usually wants:
+         *    - the default ephemeris (SWISS EPHEMERIS) is used,
+         *    - apparent geocentric positions referring to the true equinox of date
+         *      are returned.
+         * If not only coordinates, but also speed values are required, use 
+         * flag = SEFLG_SPEED.
+         *
+         * The 'L' behind the number indicates that 32-bit integers (Long) are used.
+         */
         public const int SEFLG_JPLEPH = 1;       /* use JPL ephemeris */
         public const int SEFLG_SWIEPH = 2;       /* use SWISSEPH ephemeris */
         public const int SEFLG_MOSEPH = 4;       /* use Moshier ephemeris */
@@ -434,9 +434,9 @@ namespace SwissEphNet
         /// </summary>
         public const double J2000 = 2451545.0;
 
-        ///***********************************************************
-        // * exported functions
-        // ***********************************************************/
+        /***********************************************************
+         * exported functions
+         ***********************************************************/
 
         public Int32 swe_heliacal_ut(double tjdstart_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName, 
             Int32 TypeEvent, Int32 iflag, double[] dret, ref string serr) {
@@ -461,9 +461,9 @@ namespace SwissEphNet
             return SweHel.swe_topo_arcus_visionis(tjdut, dgeo, datm, dobs, helflag, mag, azi_obj, alt_obj, azi_sun, azi_moon, alt_moon, ref dret, ref serr);
         }
 
-        ///**************************** 
-        // * exports from sweph.c 
-        // ****************************/
+        /**************************** 
+         * exports from sweph.c 
+         ****************************/
 
         public string swe_version() { return Sweph.swe_version(); }
         
@@ -534,9 +534,9 @@ namespace SwissEphNet
         public string swe_get_ayanamsa_name(Int32 isidmode) { return Sweph.swe_get_ayanamsa_name(isidmode); }
 
 
-        ///**************************** 
-        // * exports from swedate.c 
-        // ****************************/
+        /**************************** 
+         * exports from swedate.c 
+         ****************************/
 
         public int swe_date_conversion(
                 int y, int m, int d,         /* year, month, day */
@@ -588,9 +588,9 @@ namespace SwissEphNet
                 ref ihour_out, ref imin_out, ref dsec_out);
         }
 
-        ///**************************** 
-        // * exports from swehouse.c 
-        // ****************************/
+        /**************************** 
+         * exports from swehouse.c 
+         ****************************/
 
         public int swe_houses(double tjd_ut, double geolat, double geolon, char hsys, double[] cusps, double[] ascmc) {
             return SweHouse.swe_houses(tjd_ut, geolat, geolon, hsys, cusps, ascmc);
@@ -610,9 +610,9 @@ namespace SwissEphNet
 
         public string swe_house_name(char hsys) { return SweHouse.swe_house_name(hsys); }
 
-        ///**************************** 
-        // * exports from swecl.c 
-        // ****************************/
+        /**************************** 
+         * exports from swecl.c 
+         ****************************/
 
         public Int32 swe_gauquelin_sector(double t_ut, Int32 ipl, String starname, Int32 iflag, Int32 imeth, double[] geopos,
             double atpress, double attemp, ref double dgsect, ref string serr) {
@@ -737,7 +737,9 @@ namespace SwissEphNet
          * exports from swephlib.c 
          ****************************/
 
-        /* delta t */
+        /// <summary>
+        /// delta t
+        /// </summary>
         public double swe_deltat(double tjd) { return SwephLib.swe_deltat(tjd); }
 
         /// <summary>
@@ -781,11 +783,11 @@ namespace SwissEphNet
             SwephLib.swe_split_deg(ddeg, roundflag, out ideg, out imin, out isec, out dsecfr, out isgn);
         }
 
-        ///******************************************************* 
-        // * other functions from swephlib.c;
-        // * they are not needed for Swiss Ephemeris,
-        // * but may be useful to former Placalc users.
-        // ********************************************************/
+        /******************************************************* 
+         * other functions from swephlib.c;
+         * they are not needed for Swiss Ephemeris,
+         * but may be useful to former Placalc users.
+         ********************************************************/
 
         /// <summary>
         /// normalize argument into interval [0..DEG360]
