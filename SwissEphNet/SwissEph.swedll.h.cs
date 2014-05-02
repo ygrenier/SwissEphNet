@@ -87,14 +87,6 @@ namespace SwissEphNet
     {
         /* $Id: swedll.h,v 1.75 2009/04/08 07:19:08 dieter Exp $ */
 
-        //DllImport int FAR PASCAL swe_houses(
-        //        double tjd_ut, double geolat, double geolon, int hsys, 
-        //        double *hcusps, double *ascmc);
-
-        //DllImport int FAR PASCAL swe_houses_armc(
-        //        double armc, double geolat, double eps, int hsys, 
-        //        double *hcusps, double *ascmc);
-
         //DllImport void FAR PASCAL swe_utc_time_zone(
         //        int32 iyear, int32 imonth, int32 iday,
         //    int32 ihour, int32 imin, double dsec,
@@ -120,20 +112,6 @@ namespace SwissEphNet
         ///**************************** 
         // * from swecl.c 
         // ****************************/
-
-        ///* computes attributes of a solar eclipse for given tjd, geolon, geolat */
-        //DllImport int32 FAR PASCAL swe_sol_eclipse_how(double tjd, int32 ifl, double *geopos, double *attr, char *serr);
-
-        //DllImport double FAR PASCAL swe_refrac(double inalt, double atpress, double attemp, int32 calc_flag);
-        //DllImport double FAR PASCAL swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, int32 calc_flag, double *dret);
-        //DllImport void FAR PASCAL swe_set_lapse_rate(double lapse_rate);
-
-        //DllImport void FAR PASCAL swe_azalt_rev(
-        //      double tjd_ut,
-        //      int32 calc_flag,
-        //      double *geopos,
-        //      double *xin, 
-        //      double *xout); 
 
         //DllImport int32 FAR PASCAL swe_rise_trans_true_hor(
         //               double tjd_ut, int32 ipl, char *starname, 

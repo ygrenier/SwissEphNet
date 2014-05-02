@@ -134,7 +134,7 @@ namespace SwissEphNet.CPort
          * ascmc[6] = coasc2		* "co-ascendant" (M. Munkasey) *
          * ascmc[7] = polasc		* "polar ascendant" (M. Munkasey) *
          */
-        int swe_houses(double tjd_ut,
+        public int swe_houses(double tjd_ut,
                         double geolat,
                         double geolon,
                         char hsys,
@@ -514,7 +514,7 @@ namespace SwissEphNet.CPort
          * ascmc[6] = coasc2		* "co-ascendant" (M. Munkasey) *
          * ascmc[7] = polasc		* "polar ascendant" (M. Munkasey) *
          */
-        int swe_houses_armc(
+        public int swe_houses_armc(
                         double armc,
                         double geolat,
                         double eps,

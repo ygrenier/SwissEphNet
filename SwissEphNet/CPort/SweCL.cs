@@ -915,7 +915,7 @@ namespace SwissEphNet.CPort
          *         declare as attr[20] at least !
          * 
          */
-        Int32 swe_sol_eclipse_how(
+        public Int32 swe_sol_eclipse_how(
                   double tjd_ut,
                   Int32 ifl,
                   double[] geopos,
@@ -2670,7 +2670,7 @@ namespace SwissEphNet.CPort
          *   iflag        either SE_HOR2ECL or SE_HOR2EQU
          *   xin[2]       azimut and true altitude, in degrees 
          */
-        void swe_azalt_rev(
+        public void swe_azalt_rev(
               double tjd_ut,
               Int32 calc_flag,
               double[] geopos,
@@ -2718,7 +2718,7 @@ namespace SwissEphNet.CPort
          * int32  calc_flag;	* either SE_CALC_APP_TO_TRUE or 
          *                      *        SE_CALC_TRUE_TO_APP
          */
-        double swe_refrac(double inalt, double atpress, double attemp, Int32 calc_flag) {
+        public double swe_refrac(double inalt, double atpress, double attemp, Int32 calc_flag) {
             double a, refr;
             double pt_factor = atpress / 1010.0 * 283.0 / (273.0 + attemp);
             double trualt, appalt;
@@ -2816,7 +2816,7 @@ namespace SwissEphNet.CPort
             }
         }
 
-        void swe_set_lapse_rate(double lapse_rate) {
+        public void swe_set_lapse_rate(double lapse_rate) {
             const_lapse_rate = lapse_rate;
         }
 
@@ -2862,7 +2862,7 @@ namespace SwissEphNet.CPort
          *
          * The body is above the horizon if the dret[0] != dret[1]
          */
-        double swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, Int32 calc_flag, double[] dret) {
+        public double swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, Int32 calc_flag, double[] dret) {
             double refr;
             double trualt;
             double dip = calc_dip(geoalt, atpress, attemp, lapse_rate);
@@ -3761,7 +3761,7 @@ namespace SwissEphNet.CPort
             return SwissEph.OK;
         }
 
-        Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
+        public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
             return swe_pheno(tjd_ut + SE.swe_deltat(tjd_ut), ipl, iflag, attr, ref serr);
         }
 
@@ -5044,7 +5044,7 @@ namespace SwissEphNet.CPort
             return SwissEph.OK;
         }
 
-        Int32 swe_nod_aps_ut(double tjd_ut, Int32 ipl, Int32 iflag,
+        public Int32 swe_nod_aps_ut(double tjd_ut, Int32 ipl, Int32 iflag,
                               Int32 method,
                               double[] xnasc, double[] xndsc,
                               double[] xperi, double[] xaphe,

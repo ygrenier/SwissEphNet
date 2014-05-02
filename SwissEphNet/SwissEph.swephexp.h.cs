@@ -554,10 +554,11 @@ namespace SwissEphNet
             SweDate.swe_revjul(jd, gregflag, ref year, ref mon, ref mday, ref hour);
         }
 
-        //ext_def(int32) swe_utc_to_jd(
-        //        int32 iyear, int32 imonth, int32 iday, 
-        //    int32 ihour, int32 imin, double dsec, 
-        //    int32 gregflag, double *dret, char *serr);
+        //public Int32 swe_utc_to_jd(Int32 iyear, Int32 imonth, Int32 iday, 
+        //        Int32 ihour, Int32 imin, double dsec,
+        //        Int32 gregflag, ref double dret, ref string serr) {
+
+        //}
 
         //ext_def(void) swe_jdet_to_utc(
         //        double tjd_et, int32 gregflag, 
@@ -580,20 +581,18 @@ namespace SwissEphNet
         // * exports from swehouse.c 
         // ****************************/
 
-        //ext_def( int ) swe_houses(
-        //        double tjd_ut, double geolat, double geolon, int hsys, 
-        //    double *cusps, double *ascmc);
+        public int swe_houses(double tjd_ut, double geolat, double geolon, char hsys, double[] cusps, double[] ascmc) {
+            return SweHouse.swe_houses(tjd_ut, geolat, geolon, hsys, cusps, ascmc);
+        }
 
         public int swe_houses_ex(double tjd_ut, Int32 iflag, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc) {
             return SweHouse.swe_houses_ex(tjd_ut, iflag, geolat, geolon, hsys, hcusps, ascmc);
         }
 
-        //ext_def( int ) swe_houses_armc(
-        //        double armc, double geolat, double eps, int hsys, 
-        //    double *cusps, double *ascmc);
+        public int swe_houses_armc(double armc, double geolat, double eps, char hsys, double[] cusps, double[] ascmc) {
+            return SweHouse.swe_houses_armc(armc, geolat, eps, hsys, cusps, ascmc);
+        }
 
-        //ext_def(double) swe_house_pos(
-        //    double armc, double geolat, double eps, int hsys, double *xpin, char *serr);
         public double swe_house_pos(double armc, double geolon, double eps, char hsys, double[] xpin, ref string serr) { 
             return SweHouse.swe_house_pos(armc, geolon, eps, hsys, xpin, ref serr);
         }
@@ -621,10 +620,16 @@ namespace SwissEphNet
             return SweCL.swe_lun_occult_where(tjd, ipl, starname, ifl, geopos, attr, ref serr);
         }
 
-        ///* computes attributes of a solar eclipse for given tjd, geolon, geolat */
-        //ext_def (int32) swe_sol_eclipse_how(double tjd, int32 ifl, double *geopos, double *attr, char *serr);
-
-        ///* finds time of next occultation globally */
+        /// <summary>
+        /// computes attributes of a solar eclipse for given tjd, geolon, geolat
+        /// </summary>
+        public Int32 swe_sol_eclipse_how(double tjd, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
+            return SweCL.swe_sol_eclipse_how(tjd, ifl, geopos, attr, ref serr) ;
+        }
+        
+        /// <summary>
+        /// finds time of next occultation globally
+        /// </summary>
         public Int32 swe_lun_occult_when_glob(double tjd_start, Int32 ipl, string starname, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr) {
             return SweCL.swe_lun_occult_when_glob(tjd_start, ipl, starname, ifl, ifltype, tret, backward, ref serr);
         }
@@ -663,17 +668,6 @@ namespace SwissEphNet
             return SweCL.swe_lun_eclipse_when_loc(tjd_start, ifl, geopos, tret, attr, backward, ref serr);
         }
 
-        ///* computes attributes of a lunar eclipse for given tjd */
-        //DllImport int32 FAR PASCAL swe_lun_eclipse_how(
-        //          double tjd_ut, 
-        //          int32 ifl,
-        //      double *geopos,
-        //          double *attr, 
-        //          char *serr);
-        //DllImport int32 FAR PASCAL swe_lun_eclipse_when(double tjd_start, int32 ifl, int32 ifltype, double *tret, int32 backward, char *serr);
-        //DllImport int32 FAR PASCAL swe_lun_eclipse_when_loc(double tjd_start, int32 ifl, double *geopos, double *tret, double *attr, int32 backward, char *serr);
-
-
         /// <summary>
         /// planetary phenomena
         /// </summary>
@@ -681,27 +675,29 @@ namespace SwissEphNet
             return SweCL.swe_pheno(tjd, ipl, iflag, attr, ref serr);
         }
 
-        public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) { 
-            return swe_pheno_ut(tjd_ut, ipl, iflag, attr, ref serr); 
+        public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
+            return SweCL.swe_pheno_ut(tjd_ut, ipl, iflag, attr, ref serr); 
         }
 
-        //ext_def (double) swe_refrac(double inalt, double atpress, double attemp, int32 calc_flag);
+        public double swe_refrac(double inalt, double atpress, double attemp, Int32 calc_flag) {
+            return SweCL.swe_refrac(inalt, atpress, attemp, calc_flag);
+        }
 
-        //ext_def (double) swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, int32 calc_flag, double *dret);
+        public double swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, Int32 calc_flag, double[] dret) {
+            return SweCL.swe_refrac_extended(inalt, geoalt, atpress, attemp, lapse_rate, calc_flag, dret);
+        }
 
-        //ext_def (void) swe_set_lapse_rate(double lapse_rate);
+        public void swe_set_lapse_rate(double lapse_rate) {
+            SweCL.swe_set_lapse_rate(lapse_rate);
+        }
 
         public void swe_azalt(double tjd_ut, Int32 calc_flag, double[] geopos, double atpress, double attemp, double[] xin, double[] xaz) { 
             SweCL.swe_azalt(tjd_ut, calc_flag, geopos, atpress, attemp, xin, xaz); 
         }
 
-
-        //ext_def (void) swe_azalt_rev(
-        //      double tjd_ut,
-        //      int32 calc_flag,
-        //      double *geopos,
-        //      double *xin, 
-        //      double *xout); 
+        public void swe_azalt_rev(double tjd_ut, Int32 calc_flag, double[] geopos, double[] xin, double[] xout) {
+            SweCL.swe_azalt_rev(tjd_ut, calc_flag, geopos, xin, xout);
+        }
 
         public Int32 swe_rise_trans(double tjd_ut, Int32 ipl, string starname, Int32 epheflag, Int32 rsmi,
             double[] geopos, double atpress, double attemp, ref double tret, ref string serr) {
@@ -717,11 +713,13 @@ namespace SwissEphNet
         }
 
 
-        //ext_def (int32) swe_nod_aps_ut(double tjd_ut, int32 ipl, int32 iflag, 
-        //                      int32  method,
-        //                      double *xnasc, double *xndsc, 
-        //                      double *xperi, double *xaphe, 
-        //                      char *serr);
+        public Int32 swe_nod_aps_ut(double tjd_ut, Int32 ipl, Int32 iflag,
+                              Int32 method,
+                              double[] xnasc, double[] xndsc,
+                              double[] xperi, double[] xaphe,
+                              ref string serr) {
+            return SweCL.swe_nod_aps_ut(tjd_ut, ipl, iflag, method, xnasc, xndsc, xperi, xaphe, ref serr);
+        }
 
 
         /**************************** 
@@ -809,22 +807,16 @@ namespace SwissEphNet
         /// </summary>
         public Int32 swe_d2l(double x) { return SwephLib.swe_d2l(x); }
 
-        ///* monday = 0, ... sunday = 6 */
-        //ext_def( int ) swe_day_of_week(double jd);
+        /// <summary>
+        /// monday = 0, ... sunday = 6
+        /// </summary>
+        public int swe_day_of_week(double jd) { return SwephLib.swe_day_of_week(jd); }
 
-        //ext_def( char *) swe_cs2timestr(CSEC t, int sep, AS_BOOL suppressZero, char *a);
+        public string swe_cs2timestr(Int32 t, char sep, bool suppressZero, ref string a) { return SwephLib.swe_cs2timestr(t, sep, suppressZero, ref a); }
 
-        //ext_def( char *) swe_cs2lonlatstr(CSEC t, char pchar, char mchar, char *s);
+        public string swe_cs2lonlatstr(Int32 t, char pchar, char mchar, ref string s) { return SwephLib.swe_cs2lonlatstr(t, pchar, mchar, ref s); }
 
-        //ext_def( char *) swe_cs2degstr(CSEC t, char *a);
-
-        //#endif  /* #ifndef _SWEDLL_H */
-
-        //#endif  /* #ifndef _SWEPHEXP_INCLUDED */
-
-        //#ifdef __cplusplus
-        //} /* extern C */
-        //#endif
+        public string swe_cs2degstr(Int32 t, ref string a) { return SwephLib.swe_cs2degstr(t, ref a); }
 
     }
 
