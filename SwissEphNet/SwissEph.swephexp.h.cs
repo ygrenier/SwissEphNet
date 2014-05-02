@@ -461,6 +461,10 @@ namespace SwissEphNet
             return SweHel.swe_topo_arcus_visionis(tjdut, dgeo, datm, dobs, helflag, mag, azi_obj, alt_obj, azi_sun, azi_moon, alt_moon, ref dret, ref serr);
         }
 
+        ///*DllImport int32 FAR PASCAL HeliacalAngle(double Magn, double Age, int SN, double AziO, double AltM, double AziM, double JDNDaysUT, double AziS, double Lat, double HeightEye, double Temperature, double Pressure, double RH, double VR, double *dangret, char *serr);
+
+        //DllImport int32 FAR PASCAL HeliacalJDut(double JDNDaysUTStart, double Age, int SN, double Lat, double Longitude, double HeightEye, double Temperature, double Pressure, double RH, double VR, char *ObjectName, int TypeEvent, char *AVkind, double *dret, char *serr);*/
+
         /**************************** 
          * exports from sweph.c 
          ****************************/
@@ -501,12 +505,10 @@ namespace SwissEphNet
         /// </summary>
         public void swe_set_ephe_path(String path) { Sweph.swe_set_ephe_path(path); }
 
-
         /// <summary>
         /// set file name of JPL file
         /// </summary>
         public void swe_set_jpl_file(string fname) { Sweph.swe_set_jpl_file(fname); }
-
 
         /// <summary>
         /// get planet name
@@ -517,7 +519,6 @@ namespace SwissEphNet
         /// set geographic position of observer
         /// </summary>
         public void swe_set_topo(double geolon, double geolat, double height) { Sweph.swe_set_topo(geolon, geolat, height); }
-
 
         /// <summary>
         /// set sidereal mode
@@ -708,6 +709,14 @@ namespace SwissEphNet
 
         public void swe_azalt_rev(double tjd_ut, Int32 calc_flag, double[] geopos, double[] xin, double[] xout) {
             SweCL.swe_azalt_rev(tjd_ut, calc_flag, geopos, xin, xout);
+        }
+
+        public Int32 swe_rise_trans_true_hor(double tjd_ut, Int32 ipl, string starname,
+                   Int32 epheflag, Int32 rsmi, double[] geopos, double atpress, double attemp,
+                   double horhgt, ref double tret, ref string serr) {
+            return SweCL.swe_rise_trans_true_hor(tjd_ut, ipl, starname,
+                   epheflag, rsmi, geopos, atpress, attemp,
+                   horhgt, ref tret, ref serr);
         }
 
         public Int32 swe_rise_trans(double tjd_ut, Int32 ipl, string starname, Int32 epheflag, Int32 rsmi,

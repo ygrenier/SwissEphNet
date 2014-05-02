@@ -49,9 +49,6 @@
     <Compile Include="CPort\SwemPlan.cs" />
     <Compile Include="CPort\SwemTab.cs" />
     <Compile Include="CPort\SweNut200a.h.cs" />
-    <Compile Include="CPort\SwepCalc.cs" />
-    <Compile Include="CPort\SwepCalc.h.cs" />
-    <Compile Include="CPort\SwepDate.cs" />
     <Compile Include="CPort\Sweph.cs" />
     <Compile Include="CPort\Sweph.h.cs" />
     <Compile Include="CPort\SwephLib.cs" />
@@ -60,7 +57,6 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwissEph.cs" />
-    <Compile Include="SwissEph.swedll.h.cs" />
     <Compile Include="SwissEph.sweodef.h.cs" />
     <Compile Include="SwissEph.swephexp.h.cs" />
     <Compile Include="Tools\C.cs" />
