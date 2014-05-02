@@ -554,28 +554,39 @@ namespace SwissEphNet
             SweDate.swe_revjul(jd, gregflag, ref year, ref mon, ref mday, ref hour);
         }
 
-        //public Int32 swe_utc_to_jd(Int32 iyear, Int32 imonth, Int32 iday, 
-        //        Int32 ihour, Int32 imin, double dsec,
-        //        Int32 gregflag, ref double dret, ref string serr) {
+        public Int32 swe_utc_to_jd(Int32 iyear, Int32 imonth, Int32 iday,
+                Int32 ihour, Int32 imin, double dsec,
+                Int32 gregflag, double[] dret, ref string serr) {
+            return SweDate.swe_utc_to_jd(iyear, imonth, iday, ihour, imin, dsec, gregflag, dret, ref serr);
+        }
 
-        //}
+        public void swe_jdet_to_utc(
+                double tjd_et, Int32 gregflag,
+                ref Int32 iyear, ref Int32 imonth, ref Int32 iday,
+                ref Int32 ihour, ref Int32 imin, ref double dsec) {
+            SweDate.swe_jdet_to_utc(tjd_et, gregflag, ref iyear, ref imonth, ref iday, ref ihour, ref imin, ref dsec);
+        }
 
-        //ext_def(void) swe_jdet_to_utc(
-        //        double tjd_et, int32 gregflag, 
-        //    int32 *iyear, int32 *imonth, int32 *iday, 
-        //    int32 *ihour, int32 *imin, double *dsec);
+        public void swe_jdut1_to_utc(
+                double tjd_ut, Int32 gregflag,
+                ref Int32 iyear, ref Int32 imonth, ref Int32 iday,
+                ref Int32 ihour, ref Int32 imin, ref double dsec) {
+            SweDate.swe_jdut1_to_utc(tjd_ut, gregflag, ref iyear, ref imonth, ref iday, ref ihour, ref imin, ref dsec);
+        }
 
-        //ext_def(void) swe_jdut1_to_utc(
-        //        double tjd_ut, int32 gregflag, 
-        //    int32 *iyear, int32 *imonth, int32 *iday, 
-        //    int32 *ihour, int32 *imin, double *dsec);
-
-        //ext_def(void) swe_utc_time_zone(
-        //        int32 iyear, int32 imonth, int32 iday,
-        //    int32 ihour, int32 imin, double dsec,
-        //    double d_timezone,
-        //    int32 *iyear_out, int32 *imonth_out, int32 *iday_out,
-        //    int32 *ihour_out, int32 *imin_out, double *dsec_out);
+        public void swe_utc_time_zone(
+                Int32 iyear, Int32 imonth, Int32 iday,
+                Int32 ihour, Int32 imin, double dsec,
+                double d_timezone,
+                ref Int32 iyear_out, ref Int32 imonth_out, ref Int32 iday_out,
+                ref Int32 ihour_out, ref Int32 imin_out, ref double dsec_out) {
+            SweDate.swe_utc_time_zone(
+                iyear, imonth, iday,
+                ihour, imin, dsec,
+                d_timezone,
+                ref iyear_out, ref imonth_out, ref iday_out,
+                ref ihour_out, ref imin_out, ref dsec_out);
+        }
 
         ///**************************** 
         // * exports from swehouse.c 

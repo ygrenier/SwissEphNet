@@ -113,10 +113,7 @@ namespace SwissEphNet.CPort
           Return: OK or ERR (for illegal date)
         *********************************************************/
 
-        //# include "swephexp.h"
-        //# include "sweph.h"
-
-        //static AS_BOOL init_leapseconds_done = FALSE;
+        bool init_leapseconds_done = false;
 
 
         public int swe_date_conversion(int y,
@@ -296,320 +293,315 @@ namespace SwissEphNet.CPort
                 dsec_out += 1.0;
         }
 
-        ///*
-        // * functions for the handling of UTC
-        // */
+        /*
+         * functions for the handling of UTC
+         */
 
-        ///* Leap seconds were inserted at the end of the following days:*/
-        //#define NLEAP_SECONDS 24
-        //#define NLEAP_SECONDS_SPACE 100
-        //static int leap_seconds[NLEAP_SECONDS_SPACE] = {
-        //19720630,
-        //19721231,
-        //19731231,
-        //19741231,
-        //19751231,
-        //19761231,
-        //19771231,
-        //19781231,
-        //19791231,
-        //19810630,
-        //19820630,
-        //19830630,
-        //19850630,
-        //19871231,
-        //19891231,
-        //19901231,
-        //19920630,
-        //19930630,
-        //19940630,
-        //19951231,
-        //19970630,
-        //19981231,
-        //20051231,
-        //20081231,
-        //0  /* keep this 0 as end mark */
-        //};
-        //#define J1972 2441317.5
-        //#define NLEAP_INIT 10
+        /* Leap seconds were inserted at the end of the following days:*/
+        const int NLEAP_SECONDS = 24;
+        const int NLEAP_SECONDS_SPACE = 100;
+        int[] leap_seconds = new int[]{
+        19720630,
+        19721231,
+        19731231,
+        19741231,
+        19751231,
+        19761231,
+        19771231,
+        19781231,
+        19791231,
+        19810630,
+        19820630,
+        19830630,
+        19850630,
+        19871231,
+        19891231,
+        19901231,
+        19920630,
+        19930630,
+        19940630,
+        19951231,
+        19970630,
+        19981231,
+        20051231,
+        20081231,
+        0  /* keep this 0 as end mark */
+        };
+        const double J1972 = 2441317.5;
+        const int NLEAP_INIT = 10;
 
-        ///* Read additional leap second dates from external file, if given.
-        // */
-        //static int init_leapsec(void)
-        //{
-        //  FILE *fp;
-        //  int ndat, ndat_last;
-        //  int tabsiz = 0;
-        //  int i;
-        //  char s[AS_MAXCH];
-        //  char *sp;
-        //  if (!init_leapseconds_done) {
-        //    init_leapseconds_done = TRUE;
-        //    tabsiz = NLEAP_SECONDS;
-        //    ndat_last = leap_seconds[NLEAP_SECONDS - 1];
-        //    /* no error message if file is missing */
-        //    if ((fp = swi_fopen(-1, "seleapsec.txt", swed.ephepath, NULL)) == NULL)
-        //      return NLEAP_SECONDS; 
-        //    while(fgets(s, AS_MAXCH, fp) != NULL) {
-        //      sp = s;
-        //      while (*sp == ' ' || *sp == '\t') sp++;
-        //        sp++;
-        //      if (*sp == '#' || *sp == '\n')
-        //        continue;
-        //      ndat = atoi(s);
-        //      if (ndat <= ndat_last)
-        //        continue;
-        //      /* table space is limited. no error msg, if exceeded */
-        //      if (tabsiz >= NLEAP_SECONDS_SPACE)
-        //        return tabsiz;
-        //      leap_seconds[tabsiz] = ndat;
-        //      tabsiz++;
-        //    }
-        //    if (tabsiz > NLEAP_SECONDS) leap_seconds[tabsiz] = 0; /* end mark */
-        //    fclose(fp);
-        //    return tabsiz;
-        //  }
-        //  /* find table size */
-        //  tabsiz = 0;
-        //  for (i = 0; i < NLEAP_SECONDS_SPACE; i++) {
-        //    if (leap_seconds[i] == 0) 
-        //      break;
-        //    else
-        //      tabsiz++;
-        //  }
-        //  return tabsiz;
-        //}
+        /* Read additional leap second dates from external file, if given.
+         */
+        int init_leapsec() {
+            CFile fp;
+            int ndat, ndat_last;
+            int tabsiz = 0;
+            int i;
+            string s;
+            //char *sp;
+            if (!init_leapseconds_done) {
+                var list = new List<int>(leap_seconds);
+                while (list.Count < NLEAP_SECONDS_SPACE) list.Add(0);
+                leap_seconds = list.ToArray();
+                init_leapseconds_done = true;
+                tabsiz = NLEAP_SECONDS;
+                ndat_last = leap_seconds[NLEAP_SECONDS - 1];
+                /* no error message if file is missing */
+                string sdummy = null;
+                if ((fp = SE.Sweph.swi_fopen(-1, "seleapsec.txt", SE.Sweph.swed.ephepath, ref sdummy)) == null)
+                    return NLEAP_SECONDS;
+                while ((s = fp.ReadLine()) != null) {
+                    s = s.TrimStart(' ', '\t');
+                    if (String.IsNullOrEmpty(s) || s.StartsWith("#")) continue;
+                    ndat = int.Parse(s);
+                    if (ndat <= ndat_last)
+                        continue;
+                    /* table space is limited. no error msg, if exceeded */
+                    if (tabsiz >= NLEAP_SECONDS_SPACE)
+                        return tabsiz;
+                    leap_seconds[tabsiz] = ndat;
+                    tabsiz++;
+                }
+                if (tabsiz > NLEAP_SECONDS) leap_seconds[tabsiz] = 0; /* end mark */
+                fp.Dispose();
+                return tabsiz;
+            }
+            /* find table size */
+            tabsiz = 0;
+            for (i = 0; i < NLEAP_SECONDS_SPACE; i++) {
+                if (leap_seconds[i] == 0)
+                    break;
+                else
+                    tabsiz++;
+            }
+            return tabsiz;
+        }
 
-        ///*
-        // * Input:  Clock time UTC, year, month, day, hour, minute, second (decimal).
-        // *         gregflag  Calendar flag
-        // *         serr      error string
-        // * Output: An array of doubles:
-        // *         dret[0] = Julian day number TT (ET)
-        // *         dret[1] = Julian day number UT1
-        // *
-        // * Function returns OK or Error.
-        // *
-        // * - Before 1972, swe_utc_to_jd() treats its input time as UT1.
-        // *   Note: UTC was introduced in 1961. From 1961 - 1971, the length of the
-        // *   UTC second was regularly changed, so that UTC remained very close to UT1.
-        // * - From 1972 on, input time is treated as UTC.
-        // * - If delta_t - nleap - 32.184 > 1, the input time is treated as UT1.
-        // *   Note: Like this we avoid errors greater than 1 second in case that
-        // *   the leap seconds table (or the Swiss Ephemeris version) is not updated
-        // *   for a long time.
-        //*/
-        //int32 FAR PASCAL_CONV swe_utc_to_jd(int32 iyear, int32 imonth, int32 iday, int32 ihour, int32 imin, double dsec, int32 gregflag, double *dret, char *serr)
-        //{
-        //  double tjd_ut1, tjd_et, tjd_et_1972, dhour, d;
-        //  int iyear2, imonth2, iday2;
-        //  int i, j, ndat, nleap, tabsiz_nleap;
-        //  /* 
-        //   * error handling: invalid iyear etc. 
-        //   */
-        //  tjd_ut1 = swe_julday(iyear, imonth, iday, 0, gregflag);
-        //  swe_revjul(tjd_ut1, gregflag, &iyear2, &imonth2, &iday2, &d);
-        //  if (iyear != iyear2 || imonth != imonth2 || iday != iday2) {
-        //    if (serr != NULL)
-        //      serr=C.sprintf("invalid date: year = %d, month = %d, day = %d", iyear, imonth, iday);
-        //    return ERR;
-        //  }
-        //  if (ihour < 0 || ihour > 23 
-        //   || imin < 0 || imin > 59 
-        //   || dsec < 0 || dsec >= 61
-        //   || (dsec >= 60 && (imin < 59 || ihour < 23 || tjd_ut1 < J1972))) {
-        //    if (serr != NULL)
-        //      serr=C.sprintf("invalid time: %d:%d:%.2f", ihour, imin, dsec);
-        //    return ERR;
-        //  }
-        //  dhour = (double) ihour + ((double) imin) / 60.0 + dsec / 3600.0;
-        //  /* 
-        //   * before 1972, we treat input date as UT1 
-        //   */
-        //  if (tjd_ut1 < J1972) {
-        //    dret[1] = swe_julday(iyear, imonth, iday, dhour, gregflag);
-        //    dret[0] = dret[1] + swe_deltat(dret[1]);
-        //    return OK;
-        //  }
-        //  /* 
-        //   * if gregflag = Julian calendar, convert to gregorian calendar 
-        //   */
-        //  if (gregflag == SE_JUL_CAL) {
-        //    gregflag = SE_GREG_CAL;
-        //    swe_revjul(tjd_ut1, gregflag, &iyear, &imonth, &iday, &d);
-        //  }
-        //  /* 
-        //   * number of leap seconds since 1972: 
-        //   */
-        //  tabsiz_nleap = init_leapsec();
-        //  nleap = NLEAP_INIT; /* initial difference between UTC and TAI in 1972 */
-        //  ndat = iyear * 10000 + imonth * 100 + iday;
-        //  for (i = 0; i < tabsiz_nleap; i++) {
-        //    if (ndat <= leap_seconds[i])
-        //      break;
-        //    nleap++;
-        //  }
-        //  /*
-        //   * For input dates > today:
-        //   * If leap seconds table is not up to date, we'd better interpret the
-        //   * input time as UT1, not as UTC. How do we find out? 
-        //   * Check, if delta_t - nleap - 32.184 > 0.9
-        //   */
-        //  d = swe_deltat(tjd_ut1) * 86400.0;
-        //  if (d - (double) nleap - 32.184 >= 1.0) {
-        //    dret[1] = tjd_ut1 + dhour / 24.0;
-        //    dret[0] = dret[1] + swe_deltat(dret[1]);
-        //    return OK;
-        //  }
-        //  /* 
-        //   * if input second is 60: is it a valid leap second ? 
-        //   */
-        //  if (dsec >= 60) {
-        //    j = 0;
-        //    for (i = 0; i < tabsiz_nleap; i++) {
-        //      if (ndat == leap_seconds[i]) {
-        //    j = 1;
-        //    break;
-        //      }
-        //    }
-        //    if (j != 1) {
-        //      if (serr != NULL)
-        //    serr=C.sprintf("invalid time (no leap second!): %d:%d:%.2f", ihour, imin, dsec);
-        //      return ERR;
-        //    }
-        //  }
-        //  /* 
-        //   * convert UTC to ET and UT1 
-        //   */
-        //  /* the number of days between input date and 1 jan 1972: */
-        //  d = tjd_ut1 - J1972;
-        //  /* SI time since 1972, ignoring leap seconds: */
-        //  d += (double) ihour / 24.0 + (double) imin / 1440.0 + dsec / 86400.0; 
-        //  /* ET (TT) */
-        //  tjd_et_1972 = J1972 + (32.184 + NLEAP_INIT) / 86400.0;
-        //  tjd_et = tjd_et_1972 + d + ((double) (nleap - NLEAP_INIT)) / 86400.0;
-        //  d = swe_deltat(tjd_et);
-        //  tjd_ut1 = tjd_et - swe_deltat(tjd_et - d);
-        //  dret[0] = tjd_et;
-        //  dret[1] = tjd_ut1;
-        //  return OK;
-        //}
+        /*
+         * Input:  Clock time UTC, year, month, day, hour, minute, second (decimal).
+         *         gregflag  Calendar flag
+         *         serr      error string
+         * Output: An array of doubles:
+         *         dret[0] = Julian day number TT (ET)
+         *         dret[1] = Julian day number UT1
+         *
+         * Function returns OK or Error.
+         *
+         * - Before 1972, swe_utc_to_jd() treats its input time as UT1.
+         *   Note: UTC was introduced in 1961. From 1961 - 1971, the length of the
+         *   UTC second was regularly changed, so that UTC remained very close to UT1.
+         * - From 1972 on, input time is treated as UTC.
+         * - If delta_t - nleap - 32.184 > 1, the input time is treated as UT1.
+         *   Note: Like this we avoid errors greater than 1 second in case that
+         *   the leap seconds table (or the Swiss Ephemeris version) is not updated
+         *   for a long time.
+        */
+        public Int32 swe_utc_to_jd(Int32 iyear, Int32 imonth, Int32 iday, Int32 ihour, Int32 imin, double dsec, Int32 gregflag, double[] dret, ref string serr) {
+            double tjd_ut1, tjd_et, tjd_et_1972, dhour, d = 0;
+            int iyear2 = 0, imonth2 = 0, iday2 = 0;
+            int i, j, ndat, nleap, tabsiz_nleap;
+            /* 
+             * error handling: invalid iyear etc. 
+             */
+            tjd_ut1 = swe_julday(iyear, imonth, iday, 0, gregflag);
+            swe_revjul(tjd_ut1, gregflag, ref iyear2, ref imonth2, ref iday2, ref d);
+            if (iyear != iyear2 || imonth != imonth2 || iday != iday2) {
+                serr = C.sprintf("invalid date: year = %d, month = %d, day = %d", iyear, imonth, iday);
+                return SwissEph.ERR;
+            }
+            if (ihour < 0 || ihour > 23
+             || imin < 0 || imin > 59
+             || dsec < 0 || dsec >= 61
+             || (dsec >= 60 && (imin < 59 || ihour < 23 || tjd_ut1 < J1972))) {
+                serr = C.sprintf("invalid time: %d:%d:%.2f", ihour, imin, dsec);
+                return SwissEph.ERR;
+            }
+            dhour = (double)ihour + ((double)imin) / 60.0 + dsec / 3600.0;
+            /* 
+             * before 1972, we treat input date as UT1 
+             */
+            if (tjd_ut1 < J1972) {
+                dret[1] = swe_julday(iyear, imonth, iday, dhour, gregflag);
+                dret[0] = dret[1] + SE.SwephLib.swe_deltat(dret[1]);
+                return SwissEph.OK;
+            }
+            /* 
+             * if gregflag = Julian calendar, convert to gregorian calendar 
+             */
+            if (gregflag == SwissEph.SE_JUL_CAL) {
+                gregflag = SwissEph.SE_GREG_CAL;
+                swe_revjul(tjd_ut1, gregflag, ref iyear, ref imonth, ref iday, ref d);
+            }
+            /* 
+             * number of leap seconds since 1972: 
+             */
+            tabsiz_nleap = init_leapsec();
+            nleap = NLEAP_INIT; /* initial difference between UTC and TAI in 1972 */
+            ndat = iyear * 10000 + imonth * 100 + iday;
+            for (i = 0; i < tabsiz_nleap; i++) {
+                if (ndat <= leap_seconds[i])
+                    break;
+                nleap++;
+            }
+            /*
+             * For input dates > today:
+             * If leap seconds table is not up to date, we'd better interpret the
+             * input time as UT1, not as UTC. How do we find out? 
+             * Check, if delta_t - nleap - 32.184 > 0.9
+             */
+            d = SE.SwephLib.swe_deltat(tjd_ut1) * 86400.0;
+            if (d - (double)nleap - 32.184 >= 1.0) {
+                dret[1] = tjd_ut1 + dhour / 24.0;
+                dret[0] = dret[1] + SE.SwephLib.swe_deltat(dret[1]);
+                return SwissEph.OK;
+            }
+            /* 
+             * if input second is 60: is it a valid leap second ? 
+             */
+            if (dsec >= 60) {
+                j = 0;
+                for (i = 0; i < tabsiz_nleap; i++) {
+                    if (ndat == leap_seconds[i]) {
+                        j = 1;
+                        break;
+                    }
+                }
+                if (j != 1) {
+                    serr = C.sprintf("invalid time (no leap second!): %d:%d:%.2f", ihour, imin, dsec);
+                    return SwissEph.ERR;
+                }
+            }
+            /* 
+             * convert UTC to ET and UT1 
+             */
+            /* the number of days between input date and 1 jan 1972: */
+            d = tjd_ut1 - J1972;
+            /* SI time since 1972, ignoring leap seconds: */
+            d += (double)ihour / 24.0 + (double)imin / 1440.0 + dsec / 86400.0;
+            /* ET (TT) */
+            tjd_et_1972 = J1972 + (32.184 + NLEAP_INIT) / 86400.0;
+            tjd_et = tjd_et_1972 + d + ((double)(nleap - NLEAP_INIT)) / 86400.0;
+            d = SE.SwephLib.swe_deltat(tjd_et);
+            tjd_ut1 = tjd_et - SE.SwephLib.swe_deltat(tjd_et - d);
+            dret[0] = tjd_et;
+            dret[1] = tjd_ut1;
+            return SwissEph.OK;
+        }
 
-        ///*
-        // * Input:  tjd_et   Julian day number, terrestrial time (ephemeris time).
-        // *         gregfalg Calendar flag
-        // * Output: UTC year, month, day, hour, minute, second (decimal).
-        // *
-        // * - Before 1 jan 1972 UTC, output UT1.
-        // *   Note: UTC was introduced in 1961. From 1961 - 1971, the length of the
-        // *   UTC second was regularly changed, so that UTC remained very close to UT1.
-        // * - From 1972 on, output is UTC.
-        // * - If delta_t - nleap - 32.184 > 1, the output is UT1.
-        // *   Note: Like this we avoid errors greater than 1 second in case that
-        // *   the leap seconds table (or the Swiss Ephemeris version) has not been
-        // *   updated for a long time.
-        // */
-        //void FAR PASCAL_CONV swe_jdet_to_utc(double tjd_et, int32 gregflag, int32 *iyear, int32 *imonth, int32 *iday, int32 *ihour, int32 *imin, double *dsec) 
-        //{
-        //  int i;
-        //  int second_60 = 0;
-        //  int iyear2, imonth2, iday2, nleap, ndat, tabsiz_nleap;
-        //  double d, tjd, tjd_et_1972, tjd_ut, dret[10];
-        //  /* 
-        //   * if tjd_et is before 1 jan 1972 UTC, return UT1
-        //   */
-        //  tjd_et_1972 = J1972 + (32.184 + NLEAP_INIT) / 86400.0; 
-        //  d = swe_deltat(tjd_et);
-        //  tjd_ut = tjd_et - swe_deltat(tjd_et - d);
-        //  if (tjd_et < tjd_et_1972) {
-        //    swe_revjul(tjd_ut, gregflag, iyear, imonth, iday, &d);
-        //    *ihour = (int32) d;
-        //    d -= (double) *ihour;
-        //    d *= 60;
-        //    *imin = (int32) d;
-        //    *dsec = (d - (double) *imin) * 60.0;
-        //    return;
-        //  }
-        //  /* 
-        //   * minimum number of leap seconds since 1972; we may be missing one leap
-        //   * second
-        //   */
-        //  tabsiz_nleap = init_leapsec();
-        //  swe_revjul(tjd_ut-1, SE_GREG_CAL, &iyear2, &imonth2, &iday2, &d);
-        //  ndat = iyear2 * 10000 + imonth2 * 100 + iday2;
-        //  nleap = 0; 
-        //  for (i = 0; i < tabsiz_nleap; i++) {
-        //    if (ndat <= leap_seconds[i])
-        //      break;
-        //    nleap++;
-        //  }
-        //  /* date of potentially missing leapsecond */
-        //  if (nleap < tabsiz_nleap) {
-        //    i = leap_seconds[nleap];
-        //    iyear2 = i / 10000;
-        //    imonth2 = (i % 10000) / 100;;
-        //    iday2 = i % 100;
-        //    tjd = swe_julday(iyear2, imonth2, iday2, 0, SE_GREG_CAL);
-        //    swe_revjul(tjd+1, SE_GREG_CAL, &iyear2, &imonth2, &iday2, &d);
-        //    swe_utc_to_jd(iyear2,imonth2,iday2, 0, 0, 0, SE_GREG_CAL, dret, NULL);
-        //    d = tjd_et - dret[0];
-        //    if (d >= 0) {
-        //      nleap++;
-        //    } else if (d < 0 && d > -1.0/86400.0) {
-        //      second_60 = 1;
-        //    }
-        //  }
-        //  /*
-        //   * UTC, still unsure about one leap second
-        //   */
-        //  tjd = J1972 + (tjd_et - tjd_et_1972) - ((double) nleap + second_60) / 86400.0;
-        //  swe_revjul(tjd, SE_GREG_CAL, iyear, imonth, iday, &d);
-        //  *ihour = (int32) d;
-        //  d -= (double) *ihour;
-        //  d *= 60;
-        //  *imin = (int32) d;
-        //  *dsec = (d - (double) *imin) * 60.0 + second_60;
-        //  /*
-        //   * For input dates > today:
-        //   * If leap seconds table is not up to date, we'd better interpret the
-        //   * input time as UT1, not as UTC. How do we find out? 
-        //   * Check, if delta_t - nleap - 32.184 > 0.9
-        //   */
-        //  d = swe_deltat(tjd_et);
-        //  d = swe_deltat(tjd_et - d);
-        //  if (d * 86400.0 - (double) (nleap + NLEAP_INIT) - 32.184 >= 1.0) {
-        //    swe_revjul(tjd_et - d, SE_GREG_CAL, iyear, imonth, iday, &d);
-        //    *ihour = (int32) d;
-        //    d -= (double) *ihour;
-        //    d *= 60;
-        //    *imin = (int32) d;
-        //    *dsec = (d - (double) *imin) * 60.0;
-        //  }
-        //  if (gregflag == SE_JUL_CAL) {
-        //    tjd = swe_julday(*iyear, *imonth, *iday, 0, SE_GREG_CAL);
-        //    swe_revjul(tjd, gregflag, iyear, imonth, iday, &d);
-        //  }
-        //}
+        /*
+         * Input:  tjd_et   Julian day number, terrestrial time (ephemeris time).
+         *         gregfalg Calendar flag
+         * Output: UTC year, month, day, hour, minute, second (decimal).
+         *
+         * - Before 1 jan 1972 UTC, output UT1.
+         *   Note: UTC was introduced in 1961. From 1961 - 1971, the length of the
+         *   UTC second was regularly changed, so that UTC remained very close to UT1.
+         * - From 1972 on, output is UTC.
+         * - If delta_t - nleap - 32.184 > 1, the output is UT1.
+         *   Note: Like this we avoid errors greater than 1 second in case that
+         *   the leap seconds table (or the Swiss Ephemeris version) has not been
+         *   updated for a long time.
+         */
+        public void swe_jdet_to_utc(double tjd_et, Int32 gregflag, ref Int32 iyear, ref Int32 imonth, ref Int32 iday, ref Int32 ihour, ref Int32 imin, ref double dsec) {
+            int i;
+            int second_60 = 0;
+            int iyear2 = 0, imonth2 = 0, iday2 = 0, nleap, ndat, tabsiz_nleap;
+            double d, tjd, tjd_et_1972, tjd_ut; double[] dret = new double[10];
+            String sdummy = null;
+            /* 
+             * if tjd_et is before 1 jan 1972 UTC, return UT1
+             */
+            tjd_et_1972 = J1972 + (32.184 + NLEAP_INIT) / 86400.0;
+            d = SE.SwephLib.swe_deltat(tjd_et);
+            tjd_ut = tjd_et - SE.SwephLib.swe_deltat(tjd_et - d);
+            if (tjd_et < tjd_et_1972) {
+                swe_revjul(tjd_ut, gregflag, ref iyear, ref imonth, ref iday, ref d);
+                ihour = (Int32)d;
+                d -= (double)ihour;
+                d *= 60;
+                imin = (Int32)d;
+                dsec = (d - (double)imin) * 60.0;
+                return;
+            }
+            /* 
+             * minimum number of leap seconds since 1972; we may be missing one leap
+             * second
+             */
+            tabsiz_nleap = init_leapsec();
+            swe_revjul(tjd_ut - 1, SwissEph.SE_GREG_CAL, ref iyear2, ref imonth2, ref iday2, ref d);
+            ndat = iyear2 * 10000 + imonth2 * 100 + iday2;
+            nleap = 0;
+            for (i = 0; i < tabsiz_nleap; i++) {
+                if (ndat <= leap_seconds[i])
+                    break;
+                nleap++;
+            }
+            /* date of potentially missing leapsecond */
+            if (nleap < tabsiz_nleap) {
+                i = leap_seconds[nleap];
+                iyear2 = i / 10000;
+                imonth2 = (i % 10000) / 100; ;
+                iday2 = i % 100;
+                tjd = swe_julday(iyear2, imonth2, iday2, 0, SwissEph.SE_GREG_CAL);
+                swe_revjul(tjd + 1, SwissEph.SE_GREG_CAL, ref iyear2, ref imonth2, ref iday2, ref d);
+                swe_utc_to_jd(iyear2, imonth2, iday2, 0, 0, 0, SwissEph.SE_GREG_CAL, dret, ref sdummy);
+                d = tjd_et - dret[0];
+                if (d >= 0) {
+                    nleap++;
+                } else if (d < 0 && d > -1.0 / 86400.0) {
+                    second_60 = 1;
+                }
+            }
+            /*
+             * UTC, still unsure about one leap second
+             */
+            tjd = J1972 + (tjd_et - tjd_et_1972) - ((double)nleap + second_60) / 86400.0;
+            swe_revjul(tjd, SwissEph.SE_GREG_CAL, ref iyear, ref imonth, ref iday, ref d);
+            ihour = (Int32)d;
+            d -= (double)ihour;
+            d *= 60;
+            imin = (Int32)d;
+            dsec = (d - (double)imin) * 60.0 + second_60;
+            /*
+             * For input dates > today:
+             * If leap seconds table is not up to date, we'd better interpret the
+             * input time as UT1, not as UTC. How do we find out? 
+             * Check, if delta_t - nleap - 32.184 > 0.9
+             */
+            d = SE.SwephLib.swe_deltat(tjd_et);
+            d = SE.SwephLib.swe_deltat(tjd_et - d);
+            if (d * 86400.0 - (double)(nleap + NLEAP_INIT) - 32.184 >= 1.0) {
+                swe_revjul(tjd_et - d, SwissEph.SE_GREG_CAL, ref iyear, ref imonth, ref iday, ref d);
+                ihour = (Int32)d;
+                d -= (double)ihour;
+                d *= 60;
+                imin = (Int32)d;
+                dsec = (d - (double)imin) * 60.0;
+            }
+            if (gregflag == SwissEph.SE_JUL_CAL) {
+                tjd = swe_julday(iyear, imonth, iday, 0, SwissEph.SE_GREG_CAL);
+                swe_revjul(tjd, gregflag, ref iyear, ref imonth, ref iday, ref d);
+            }
+        }
 
-        ///*
-        // * Input:  tjd_ut   Julian day number, universal time (UT1).
-        // *         gregfalg Calendar flag
-        // * Output: UTC year, month, day, hour, minute, second (decimal).
-        // *
-        // * - Before 1 jan 1972 UTC, output UT1.
-        // *   Note: UTC was introduced in 1961. From 1961 - 1971, the length of the
-        // *   UTC second was regularly changed, so that UTC remained very close to UT1.
-        // * - From 1972 on, output is UTC.
-        // * - If delta_t - nleap - 32.184 > 1, the output is UT1.
-        // *   Note: Like this we avoid errors greater than 1 second in case that
-        // *   the leap seconds table (or the Swiss Ephemeris version) has not been
-        // *   updated for a long time.
-        // */
-        //void FAR PASCAL_CONV swe_jdut1_to_utc(double tjd_ut, int32 gregflag, int32 *iyear, int32 *imonth, int32 *iday, int32 *ihour, int32 *imin, double *dsec) 
-        //{
-        //  double tjd_et = tjd_ut + swe_deltat(tjd_ut);
-        //  swe_jdet_to_utc(tjd_et, gregflag, iyear, imonth, iday, ihour, imin, dsec);
-        //}
+        /*
+         * Input:  tjd_ut   Julian day number, universal time (UT1).
+         *         gregfalg Calendar flag
+         * Output: UTC year, month, day, hour, minute, second (decimal).
+         *
+         * - Before 1 jan 1972 UTC, output UT1.
+         *   Note: UTC was introduced in 1961. From 1961 - 1971, the length of the
+         *   UTC second was regularly changed, so that UTC remained very close to UT1.
+         * - From 1972 on, output is UTC.
+         * - If delta_t - nleap - 32.184 > 1, the output is UT1.
+         *   Note: Like this we avoid errors greater than 1 second in case that
+         *   the leap seconds table (or the Swiss Ephemeris version) has not been
+         *   updated for a long time.
+         */
+        public void swe_jdut1_to_utc(double tjd_ut, Int32 gregflag, ref Int32 iyear, ref Int32 imonth, ref Int32 iday, ref Int32 ihour, ref Int32 imin, ref double dsec) {
+            double tjd_et = tjd_ut + SE.SwephLib.swe_deltat(tjd_ut);
+            swe_jdet_to_utc(tjd_et, gregflag, ref iyear, ref imonth, ref iday, ref ihour, ref imin, ref dsec);
+        }
 
     }
 }
