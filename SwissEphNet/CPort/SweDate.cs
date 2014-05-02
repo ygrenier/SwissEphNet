@@ -91,27 +91,27 @@ namespace SwissEphNet.CPort
             : base(se) {
         }
 
-        ///*
-        //  swe_date_conversion():
-        //  This function converts some date+time input {d,m,y,uttime}
-        //  into the Julian day number tjd.
-        //  The function checks that the input is a legal combination
-        //  of dates; for illegal dates like 32 January 1993 it returns ERR
-        //  but still converts the date correctly, i.e. like 1 Feb 1993.
-        //  The function is usually used to convert user input of birth data
-        //  into the Julian day number. Illegal dates should be notified to the user.
+        /*
+          swe_date_conversion():
+          This function converts some date+time input {d,m,y,uttime}
+          into the Julian day number tjd.
+          The function checks that the input is a legal combination
+          of dates; for illegal dates like 32 January 1993 it returns ERR
+          but still converts the date correctly, i.e. like 1 Feb 1993.
+          The function is usually used to convert user input of birth data
+          into the Julian day number. Illegal dates should be notified to the user.
 
-        //  Be aware that we always use astronomical year numbering for the years
-        //  before Christ, not the historical year numbering.
-        //  Astronomical years are done with negative numbers, historical
-        //  years with indicators BC or BCE (before common era).
-        //  Year 0 (astronomical)  	= 1 BC historical.
-        //  year -1 (astronomical) 	= 2 BC
-        //  etc.
-        //  Many users of Astro programs do not know about this difference.
+          Be aware that we always use astronomical year numbering for the years
+          before Christ, not the historical year numbering.
+          Astronomical years are done with negative numbers, historical
+          years with indicators BC or BCE (before common era).
+          Year 0 (astronomical)  	= 1 BC historical.
+          year -1 (astronomical) 	= 2 BC
+          etc.
+          Many users of Astro programs do not know about this difference.
 
-        //  Return: OK or ERR (for illegal date)
-        //*********************************************************/
+          Return: OK or ERR (for illegal date)
+        *********************************************************/
 
         //# include "swephexp.h"
         //# include "sweph.h"
@@ -119,28 +119,27 @@ namespace SwissEphNet.CPort
         //static AS_BOOL init_leapseconds_done = FALSE;
 
 
-        //int FAR PASCAL_CONV swe_date_conversion(int y,
-        //             int m,
-        //             int d,		/* day, month, year */
-        //             double uttime, 	/* UT in hours (decimal) */
-        //             char c,		/* calendar g[regorian]|j[ulian] */
-        //             double *tjd)
-        //{
-        //  int rday, rmon, ryear;
-        //  double rut, jd;
-        //  int gregflag = SE_JUL_CAL;
-        //  if (c == 'g')
-        //    gregflag = SE_GREG_CAL;
-        //  rut = uttime;		/* hours UT */
-        //  jd = swe_julday(y, m, d, rut, gregflag);
-        //  swe_revjul(jd, gregflag, &ryear, &rmon, &rday, &rut);
-        //  *tjd = jd;
-        //  if (rmon == m && rday == d && ryear == y) {
-        //    return OK;
-        //  } else {
-        //    return ERR;
-        //  }
-        //}	/* end date_conversion */
+        public int swe_date_conversion(int y,
+                     int m,
+                     int d,		/* day, month, year */
+                     double uttime, 	/* UT in hours (decimal) */
+                     char c,		/* calendar g[regorian]|j[ulian] */
+                     ref double tjd) {
+            int rday = 0, rmon = 0, ryear = 0;
+            double rut, jd;
+            int gregflag = SwissEph.SE_JUL_CAL;
+            if (c == 'g')
+                gregflag = SwissEph.SE_GREG_CAL;
+            rut = uttime;		/* hours UT */
+            jd = swe_julday(y, m, d, rut, gregflag);
+            swe_revjul(jd, gregflag, ref ryear, ref rmon, ref rday, ref rut);
+            tjd = jd;
+            if (rmon == m && rday == d && ryear == y) {
+                return SwissEph.OK;
+            } else {
+                return SwissEph.ERR;
+            }
+        }	/* end date_conversion */
 
         /*************** swe_julday ********************************************
          * This function returns the absolute Julian day number (JD)

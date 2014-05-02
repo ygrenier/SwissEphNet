@@ -438,18 +438,28 @@ namespace SwissEphNet
         // * exported functions
         // ***********************************************************/
 
-        //#define ext_def(x)	extern EXP32 x FAR PASCAL_CONV EXP16
-        //            /* ext_def(x) evaluates to x on Unix */
-
-        public Int32 swe_heliacal_ut(double tjdstart_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName, Int32 TypeEvent, Int32 iflag, double[] dret, ref string serr) {
+        public Int32 swe_heliacal_ut(double tjdstart_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName, 
+            Int32 TypeEvent, Int32 iflag, double[] dret, ref string serr) {
             return SweHel.swe_heliacal_ut(tjdstart_ut, geopos, datm, dobs, ObjectName, TypeEvent, iflag, dret, ref serr);
         }
 
-        //ext_def(int32) swe_heliacal_pheno_ut(double tjd_ut, double *geopos, double *datm, double *dobs, char *ObjectName, int32 TypeEvent, int32 helflag, double *darr, char *serr);
-        //ext_def(int32) swe_vis_limit_mag(double tjdut, double *geopos, double *datm, double *dobs, char *ObjectName, int32 helflag, double *dret, char *serr);
-        ///* the following are secret, for Victor Reijs' */
-        //ext_def(int32) swe_heliacal_angle(double tjdut, double *dgeo, double *datm, double *dobs, int32 helflag, double mag, double azi_obj, double azi_sun, double azi_moon, double alt_moon, double *dret, char *serr);
-        //ext_def(int32) swe_topo_arcus_visionis(double tjdut, double *dgeo, double *datm, double *dobs, int32 helflag, double mag, double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, double *dret, char *serr);
+        public Int32 swe_heliacal_pheno_ut(double tjd_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName,
+            Int32 TypeEvent, Int32 helflag, double[] darr, ref string serr) {
+            return SweHel.swe_heliacal_pheno_ut(tjd_ut, geopos, datm, dobs, ObjectName, TypeEvent, helflag, darr, ref serr);
+        }
+        public Int32 swe_vis_limit_mag(double tjdut, double[] geopos, double[] datm, double[] dobs, string ObjectName, 
+            Int32 helflag, double[] dret, ref string serr) {
+            return SweHel.swe_vis_limit_mag(tjdut, geopos, datm, dobs, ObjectName, helflag, dret, ref serr);
+        }
+        /* the following are secret, for Victor Reijs' */
+        public Int32 swe_heliacal_angle(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag,
+            double azi_obj, double azi_sun, double azi_moon, double alt_moon, double[] dret, ref string serr) {
+            return SweHel.swe_heliacal_angle(tjdut, dgeo, datm, dobs, helflag, mag, azi_obj, azi_sun, azi_moon, alt_moon, dret, ref serr);
+        }
+        public Int32 swe_topo_arcus_visionis(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag,
+            double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr) {
+            return SweHel.swe_topo_arcus_visionis(tjdut, dgeo, datm, dobs, helflag, mag, azi_obj, alt_obj, azi_sun, azi_moon, alt_moon, ref dret, ref serr);
+        }
 
         ///**************************** 
         // * exports from sweph.c 
@@ -521,18 +531,20 @@ namespace SwissEphNet
 
         public double swe_get_ayanamsa_ut(double tjd_ut) { return Sweph.swe_get_ayanamsa_ut(tjd_ut); }
 
-        //public string swe_get_ayanamsa_name(Int32 isidmode) { return Sweph.swe_get_ayanamsa_name(isidmode); }
+        public string swe_get_ayanamsa_name(Int32 isidmode) { return Sweph.swe_get_ayanamsa_name(isidmode); }
 
 
         ///**************************** 
         // * exports from swedate.c 
         // ****************************/
 
-        //ext_def( int ) swe_date_conversion(
-        //        int y , int m , int d ,         /* year, month, day */
-        //        double utime,   /* universal time in hours (decimal) */
-        //        char c,         /* calendar g[regorian]|j[ulian] */
-        //        double *tjd);
+        public int swe_date_conversion(
+                int y, int m, int d,         /* year, month, day */
+                double utime,   /* universal time in hours (decimal) */
+                char c,         /* calendar g[regorian]|j[ulian] */
+                ref double tjd) {
+            return SweDate.swe_date_conversion(y, m, d, utime, c, ref tjd);
+        }
 
         public double swe_julday(int year, int mon, int mday, double hour, int gregflag) {
             return SweDate.swe_julday(year, mon, mday, hour, gregflag);

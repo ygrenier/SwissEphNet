@@ -6329,12 +6329,11 @@ namespace SwissEphNet.CPort
             return s;
         }
 
-        //char *FAR PASCAL_CONV swe_get_ayanamsa_name(int32 isidmode) 
-        //{
-        //  if (isidmode < SE_NSIDM_PREDEF)
-        //    return ayanamsa_name[isidmode];
-        //  return NULL;
-        //}
+        public string swe_get_ayanamsa_name(Int32 isidmode) {
+            if (isidmode < SwissEph.SE_NSIDM_PREDEF)
+                return ayanamsa_name[isidmode];
+            return null;
+        }
 
 #if TRACE
         void trace_swe_calc(int swtch, double tjd, int ipl, Int32 iflag, CPointer<double> xx, string serr) {

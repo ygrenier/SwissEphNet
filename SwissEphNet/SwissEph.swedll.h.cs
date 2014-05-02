@@ -87,12 +87,6 @@ namespace SwissEphNet
     {
         /* $Id: swedll.h,v 1.75 2009/04/08 07:19:08 dieter Exp $ */
 
-        //DllImport int32 FAR PASCAL swe_heliacal_pheno_ut(double JDNDaysUT, double *geopos, double *datm, double *dobs, char *ObjectName, int32 TypeEvent, int32 helflag, double *darr, char *serr);
-        //DllImport int32 FAR PASCAL swe_vis_limit_mag(double tjdut, double *geopos, double *datm, double *dobs, char *ObjectName, int32 helflag, double *dret, char *serr);
-        ///* the following are secret, for Victor Reijs' */
-        //DllImport int32 FAR PASCAL swe_heliacal_angle(double tjdut, double *dgeo, double *datm, double *dobs, int32 helflag, double mag, double azi_obj, double azi_sun, double azi_moon, double alt_moon, double *dret, char *serr);
-        //DllImport int32 FAR PASCAL swe_topo_arcus_visionis(double tjdut, double *dgeo, double *datm, double *dobs, int32 helflag, double mag, double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, double *dret, char *serr);
-
         //DllImport int FAR PASCAL swe_houses(
         //        double tjd_ut, double geolat, double geolon, int hsys, 
         //        double *hcusps, double *ascmc);
@@ -100,12 +94,6 @@ namespace SwissEphNet
         //DllImport int FAR PASCAL swe_houses_armc(
         //        double armc, double geolat, double eps, int hsys, 
         //        double *hcusps, double *ascmc);
-
-        //DllImport int FAR PASCAL swe_date_conversion(
-        //        int y , int m , int d ,         /* year, month, day */
-        //        double utime,   /* universal time in hours (decimal) */
-        //        char c,         /* calendar g[regorian]|j[ulian]|a[stro = greg] */
-        //        double *tjd);
 
         //DllImport void FAR PASCAL swe_utc_time_zone(
         //        int32 iyear, int32 imonth, int32 iday,

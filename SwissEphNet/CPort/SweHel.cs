@@ -1392,7 +1392,7 @@ namespace SwissEphNet.CPort
          *  |1  OK, scotopic vision
          *  |2  OK, near limit photopic/scotopic
         */
-        protected Int32 swe_vis_limit_mag(double tjdut, double[] dgeo, double[] datm, double[] dobs, string ObjectName, Int32 helflag, double[] dret, ref string serr) {
+        public Int32 swe_vis_limit_mag(double tjdut, double[] dgeo, double[] datm, double[] dobs, string ObjectName, Int32 helflag, double[] dret, ref string serr) {
             Int32 retval = SwissEph.OK, i, scotopic_flag = 0;
             double AltO = 0, AziO = 0, AltM = 0, AziM = 0, AltS = 0, AziS = 0;
             double sunra = SunRA(tjdut, helflag, ref serr);
@@ -1518,7 +1518,7 @@ namespace SwissEphNet.CPort
             return SwissEph.OK;
         }
 
-        Int32 swe_topo_arcus_visionis(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr) {
+        public Int32 swe_topo_arcus_visionis(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr) {
             double sunra = SunRA(tjdut, helflag, ref serr);
             if (!String.IsNullOrEmpty(serr))
                 return SwissEph.ERR;
@@ -1607,7 +1607,7 @@ namespace SwissEphNet.CPort
             return SwissEph.OK;
         }
 
-        Int32 swe_heliacal_angle(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double azi_sun, double azi_moon, double alt_moon, double[] dret, ref string serr) {
+        public Int32 swe_heliacal_angle(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double azi_sun, double azi_moon, double alt_moon, double[] dret, ref string serr) {
             return HeliacalAngle(mag, dobs, azi_obj, alt_moon, azi_moon, tjdut, azi_sun, dgeo, datm, helflag, dret, ref serr);
         }
 
@@ -1759,7 +1759,7 @@ namespace SwissEphNet.CPort
         '28=CVAact [deg] 'new
         '29=MSk [-]
         */
-        protected Int32 swe_heliacal_pheno_ut(double JDNDaysUT, double[] dgeo, double[] datm, double[] dobs, string ObjectNameIn, Int32 TypeEvent, Int32 helflag, double[] darr, ref string serr) {
+        public Int32 swe_heliacal_pheno_ut(double JDNDaysUT, double[] dgeo, double[] datm, double[] dobs, string ObjectNameIn, Int32 TypeEvent, Int32 helflag, double[] darr, ref string serr) {
             double AziS = 0, AltS = 0, AltS2 = 0, AziO = 0, AltO = 0, AltO2 = 0, GeoAltO = 0, AppAltO = 0, DAZact = 0, TAVact = 0, ParO = 0, MagnO = 0;
             double ARCVact, ARCLact, kact, WMoon, LMoon = 0, qYal, qCrit;
             double RiseSetO = 0, RiseSetS = 0, Lag, TbYallop, TfirstVR, TlastVR, TbVR;
