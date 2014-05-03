@@ -63,6 +63,7 @@
     <Compile Include="SwissEphTest.cs" />
     <Compile Include="SwissEphTest.Date.cs" />
     <Compile Include="SwissEphTest.Planets.cs" />
+    <Compile Include="SwissEphTest.Format.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.csproj">
