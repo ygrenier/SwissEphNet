@@ -145,6 +145,10 @@ namespace SwissEphNet.Tests
             Assert.IsTrue(RunTest("[%'ld]", String.Format("[65{0}537]", sep1000), 65537));
             Assert.IsTrue(RunTest("[%'ld]", String.Format("[10{0}065{0}537]", sep1000), 10065537));
 
+            Assert.IsTrue(RunTest("[.%04ld]", "[.0042]", 42));
+            Assert.IsTrue(RunTest("[.%04ld]", "[.0002]", 2));
+            Assert.IsTrue(RunTest("[.%04ld]", "[.0000]", 0));
+
             //Console.WriteLine("\n\n");
         }
         #endregion

@@ -965,10 +965,10 @@ namespace SweWin
                 izod = (int)(x / 30);
                 x = (x % 30.0);
                 kdeg = (long)x;
-                s = C.sprintf("%2ld %s ", kdeg, zod_nam[izod]);
+                s = C.sprintf(" %2ld %s ", kdeg, zod_nam[izod]);
             } else {
                 kdeg = (long)x;
-                s = C.sprintf(" %3ld%s", kdeg, c);
+                s = C.sprintf("%3ld%s", kdeg, c);
             }
             x -= kdeg;
             x *= 60;

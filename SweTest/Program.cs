@@ -1948,10 +1948,10 @@ static string infoexamp = @"\n\
                 izod = (int)(xv / 30);
                 xv = (xv % 30.0);
                 kdeg = (Int32)xv;
-                s = C.sprintf("%2d %s ", kdeg, zod_nam[izod]);
+                s = C.sprintf(" %2d %s ", kdeg, zod_nam[izod]);
             } else {
                 kdeg = (Int32)xv;
-                s = C.sprintf(" %3d%s", kdeg, c);
+                s = C.sprintf("%3d%s", kdeg, c);
             }
             xv -= kdeg;
             xv *= 60;

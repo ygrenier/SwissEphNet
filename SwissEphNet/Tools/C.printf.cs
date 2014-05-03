@@ -633,7 +633,7 @@ namespace SwissEphNet
                     if (w.StartsWith("-"))
                         w = w.Substring(1);
                     if (FieldLength != int.MinValue)
-                        w = w.PadLeft(FieldLength - (PositiveSign || PositiveSpace || !IsPositive(Value, false) ? 1 : 0), Padding);
+                        w = w.PadLeft(FieldLength - (PositiveSign || PositiveSpace || !IsPositive(Value, true) ? 1 : 0), Padding);
                     if (IsPositive(Value, true)) {
                         if (PositiveSign || PositiveSpace) {
                             w = (PositiveSign ?
