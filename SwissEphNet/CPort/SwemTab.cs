@@ -80,11 +80,8 @@ namespace SwissEphNet.CPort
     using System.Linq;
     using System.Text;
 
-    class SwemTab : BaseCPort
+    static class SwemTab
     {
-        public SwemTab(SwissEph se)
-            : base(se) {
-        }
 
         /*
         First date in file = 1228000.50

@@ -9,7 +9,7 @@ namespace SwissEphNet.Tests
         [TestMethod]
         public void TestConstructor() {
             using (var target = new SwissEph()) {
-
+                Assert.AreEqual(true, target.ESPENAK_MEEUS_2006);
             }
         }
     }
