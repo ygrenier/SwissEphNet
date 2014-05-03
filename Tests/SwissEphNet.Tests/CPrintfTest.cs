@@ -218,8 +218,8 @@ namespace SwissEphNet.Tests
             //Console.WriteLine("Test float format %f");
             //Console.WriteLine("--------------------------------------------------------------------------------");
 
-            Assert.AreEqual(String.Format("[42]", sepDecimal), C.sprintf("[%g]", 42));
-            Assert.AreEqual(String.Format("[42]", sepDecimal), C.sprintf("[%G]", 42));
+            Assert.AreEqual("[42]", C.sprintf("[%g]", 42));
+            Assert.AreEqual("[42]", C.sprintf("[%G]", 42));
 
             Assert.IsTrue(RunTest("[%f]", String.Format("[42{0}000000]", sepDecimal), 42));
             Assert.IsTrue(RunTest("[%f]", String.Format("[42{0}500000]", sepDecimal), 42.5));

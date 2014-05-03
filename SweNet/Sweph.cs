@@ -42,18 +42,12 @@ namespace SweNet
         /// <summary>
         /// Internal release resources
         /// </summary>
-        protected virtual void Dispose(bool disposing) {
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing);
             if (disposing) {
                 Close();
                 _Initialized = true;
             }
-        }
-
-        /// <summary>
-        /// Release resources
-        /// </summary>
-        public void Dispose() {
-            Dispose(true);
         }
 
         #endregion
