@@ -19,6 +19,8 @@ namespace SweWPF.ViewModels
         /// </summary>
         public CalculationResultViewModel() {
             Planets = new ObservableCollection<PlanetInfos>();
+            Houses = new ObservableCollection<HouseInfos>();
+            ASMCs = new ObservableCollection<HouseInfos>();
         }
 
         /// <summary>
@@ -80,6 +82,16 @@ namespace SweWPF.ViewModels
         /// Planets calculation result
         /// </summary>
         public ObservableCollection<PlanetInfos> Planets { get; private set; }
+
+        /// <summary>
+        /// Houses
+        /// </summary>
+        public ObservableCollection<HouseInfos> Houses { get; private set; }
+
+        /// <summary>
+        /// Ascendants, MC etc.
+        /// </summary>
+        public ObservableCollection<HouseInfos> ASMCs { get; private set; }
 
     }
 

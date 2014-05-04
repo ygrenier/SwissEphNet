@@ -123,7 +123,54 @@ namespace SweWPF.ViewModels
                 } else if (!String.IsNullOrEmpty(serr) && String.IsNullOrEmpty(pi.WarnMessage))
                     pi.WarnMessage = serr;
             }
+            /*
+                //* equator position * /
+                if (fmt.IndexOfAny("aADdQ".ToCharArray()) >= 0) {
+                    iflag2 = iflag | SwissEph.SEFLG_EQUATORIAL;
+                    if (ipl == SwissEph.SE_FIXSTAR)
+                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xequ, ref serr);
+                    else
+                        iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xequ, ref serr);
+                }
+                //* ecliptic cartesian position * /
+                if (fmt.IndexOfAny("XU".ToCharArray()) >= 0) {
+                    iflag2 = iflag | SwissEph.SEFLG_XYZ;
+                    if (ipl == SwissEph.SE_FIXSTAR)
+                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xcart, ref serr);
+                    else
+                        iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xcart, ref serr);
+                }
+                //* equator cartesian position * /
+                if (fmt.IndexOfAny("xu".ToCharArray()) >= 0) {
+                    iflag2 = iflag | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_EQUATORIAL;
+                    if (ipl == SwissEph.SE_FIXSTAR)
+                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xcartq, ref serr);
+                    else
+                        iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xcartq, ref serr);
+                }
+                spnam = se_pname;
+             */
 
+            // Houses
+            double[] cusps = new double[13], ascmc = new double[10];
+            var hNames = new String[] { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
+            var amNames = new String[] { "Ascendant", "MC", "ARMC", "Vertex", "Equatorial ascendant", 
+                "Co-ascendant (Walter Koch)", "Co-ascendant (Michael Munkasey)", "Polar ascendant (M. Munkasey)" };
+            Sweph.swe_houses_ex(result.EphemerisTime, iflag, input.Latitude, input.Longitude, 'P', cusps, ascmc);
+            for (int i = 1; i <= 12; i++) {
+                result.Houses.Add(new HouseInfos() {
+                    House = i,
+                    HouseName = hNames[i],
+                    Cusp = cusps[i]
+                });
+            }
+            for (int i = 0; i < 7; i++) {
+                result.ASMCs.Add(new HouseInfos() {
+                    House = i,
+                    HouseName = amNames[i],
+                    Cusp = ascmc[i]
+                });
+            }
             NavigateTo(result);
         }
 

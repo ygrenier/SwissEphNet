@@ -68,6 +68,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ViewModels\CalculationResultViewModel.cs" />
     <Compile Include="ViewModels\ChildViewModel.cs" />
+    <Compile Include="ViewModels\HouseInfos.cs" />
     <Compile Include="ViewModels\InputViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\PlanetInfos.cs" />

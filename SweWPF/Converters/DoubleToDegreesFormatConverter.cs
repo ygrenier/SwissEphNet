@@ -16,7 +16,8 @@ namespace SweWPF.Converters
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
             double val = System.Convert.ToDouble(value);
-            return SweNet.SweFormat.FormatAsDegrees(val);
+            string fmt = parameter != null ? parameter.ToString() : null;
+            return SwissEphNet.SwissEph.FormatToDegreeMinuteSecond(val, fmt);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
