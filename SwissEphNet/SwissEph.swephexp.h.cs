@@ -470,7 +470,18 @@ namespace SwissEphNet
          ****************************/
 
         public string swe_version() { return Sweph.swe_version(); }
-        
+
+        /// <summary>
+        /// Version for DotNet portage
+        /// </summary>
+        /// <remarks>
+        /// DotNet version is the same than the SwissEph version. So we use only Revision part for our version.
+        /// </remarks>
+        public string swe_dotnet_version() {
+            var vrs = new System.Reflection.AssemblyName(typeof(SwissEph).Assembly.FullName).Version;
+            return String.Format("{0}.{1:D2}.{2:D2}-net-{3:D4}", vrs.Major, vrs.Minor, vrs.Build, vrs.Revision); 
+        }
+
         /// <summary>
         /// planets, moon, nodes etc. 
         /// </summary>
