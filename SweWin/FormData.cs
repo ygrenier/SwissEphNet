@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -101,16 +102,28 @@ namespace SweWin
             }
         }
 
+        Stream SearchFile(String fileName) {
+            fileName = fileName.Trim('/', '\\');
+            var folders = new string[] { 
+                System.IO.Path.Combine(Application.StartupPath, "Datas"),
+                @"C:\Temp\swisseph\swisseph\ephe"
+            };
+            foreach (var folder in folders) {
+                var f = Path.Combine(folder, fileName);
+                if (File.Exists(f))
+                    return new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            }
+            return null;
+        }
+
         void sweph_OnLoadFile(object sender, LoadFileEventArgs e) {
-            String f;
             if (e.FileName.StartsWith("[ephe]")) {
-                f = e.FileName.Replace("[ephe]", System.IO.Path.Combine(Application.StartupPath, "Datas"));
-            } else
-                f = e.FileName;
-            if (System.IO.File.Exists(f))
-                e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-            else
-                e.File = null;
+                e.File = SearchFile(e.FileName.Replace("[ephe]", string.Empty));
+            } else {
+                var f = e.FileName;
+                if (System.IO.File.Exists(f))
+                    e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            }
         }
 
         void FormData_Disposed(object sender, EventArgs e) {
