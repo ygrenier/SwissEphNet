@@ -954,8 +954,9 @@ namespace SwissEphNet.CPort
                         if (double.Parse(sp, CultureInfo.InvariantCulture) != 0 || sp.StartsWith("0"))
                             fac *= double.Parse(sp, CultureInfo.InvariantCulture);
                     }
-                    while (sp != null && "0123456789.".Contains(sp[0]))
-                        sp = sp.Substring(1);
+                    if (sp != null) {
+                        sp = sp.TrimStart('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
+                    }
                 }
                 z++;
             }
