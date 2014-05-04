@@ -159,7 +159,7 @@ namespace SwissEphNet
         /// For d*, a*, n*, g*, m* and s*, the same uppercase format exists for leading 0 instead of space
         /// </para>
         /// </remarks>
-        public String FormatToDegreeMinuteSecond(double value, String format = null) {
+        public static String FormatToDegreeMinuteSecond(double value, String format = null) {
             if (double.IsNaN(value)) return "nan";
             if (String.IsNullOrEmpty(format)) format = "dddd°mm'ss.pppp";
 			// Elements calculation
