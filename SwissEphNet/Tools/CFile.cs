@@ -50,14 +50,9 @@ namespace SwissEphNet
         /// Seek the file
         /// </summary>
         public long Seek(long offset, SeekOrigin origin) {
-            try {
-                if (_Stream == null) return -1;
-                _Stream.Seek(offset, origin);
-                return 0;
-            }
-            catch {
-                return -1;
-            }
+            if (_Stream == null) return -1;
+            _Stream.Seek(offset, origin);
+            return 0;
         }
 
         /// <summary>
