@@ -541,5 +541,20 @@ namespace SwissEphNet.Tests
             }
         }
 
+        [TestMethod]
+        public void Test_swe_day_of_week() {
+            using (var target = new SwissEph()) {
+                Assert.AreEqual(0, target.swe_day_of_week(0));
+                Assert.AreEqual(5, target.swe_day_of_week(2456774.20375));
+                Assert.AreEqual(6, target.swe_day_of_week(2456775.20375));
+                Assert.AreEqual(0, target.swe_day_of_week(2456776.20375));
+                Assert.AreEqual(1, target.swe_day_of_week(2456777.20375));
+                Assert.AreEqual(2, target.swe_day_of_week(2456778.20375));
+                Assert.AreEqual(3, target.swe_day_of_week(2456779.20375));
+                Assert.AreEqual(4, target.swe_day_of_week(2456780.20375));
+                Assert.AreEqual(5, target.swe_day_of_week(2456781.20375));
+            }
+        }
+
     }
 }

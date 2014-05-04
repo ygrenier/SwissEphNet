@@ -3034,7 +3034,7 @@ namespace SwissEphNet.CPort
             return (((int)Math.Floor(jd - 2433282 - 1.5) % 7) + 7) % 7;
         }
 
-        public string swe_cs2timestr(int t, char sep, bool suppressZero, ref string a)
+        public string swe_cs2timestr(int t, char sep, bool suppressZero)
             /* does not suppress zeros in hours or minutes */
         {
             /* static char a[9];*/
@@ -3056,11 +3056,10 @@ namespace SwissEphNet.CPort
                 .Append((char)(s / 10 + '0'))
                 .Append((char)(s % 10 + '0'));
             };
-            a = sb.ToString();
-            return (a);
+            return sb.ToString();
         } /* swe_cs2timestr() */
 
-        public string swe_cs2lonlatstr(int t, char pchar, char mchar, ref string sp) {
+        public string swe_cs2lonlatstr(int t, char pchar, char mchar) {
             //char a[10];	/* must be initialized at each call */
             //char *aa;
             /*int h, m, s;
@@ -3104,15 +3103,14 @@ namespace SwissEphNet.CPort
                 .Append((char)(m % 10 + '0'))
                 ;
             if (s != 0) /* cut off seconds */ {
-                sb.Append(' ')
+                sb.Append('\'')
                     .Append((char)(s / 10 + '0'))
                     .Append((char)(s % 10 + '0'));
             }
-            sp = sb.ToString();
-            return (sp);
+            return sb.ToString();
         } /* swe_cs2lonlatstr() */
 
-        public string swe_cs2degstr(int t, ref string a)
+        public string swe_cs2degstr(int t)
             /* does  suppress leading zeros in degrees */
         {
             /* char a[9];	 must be initialized at each call */
@@ -3121,8 +3119,7 @@ namespace SwissEphNet.CPort
             s = t % 60;
             m = t / 60 % 60;
             h = t / 3600 % 100;	/* only 0..99 degrees */
-            a = C.sprintf("%2d%s%02d'%02d", h, SwissEph.ODEGREE_STRING, m, s);
-            return (a);
+            return C.sprintf("%2d%s%02d'%02d", h, SwissEph.ODEGREE_STRING, m, s);
         } /* swe_cs2degstr() */
 
         /*********************************************************

@@ -490,7 +490,7 @@ namespace SwissEphNet
         }
 
         public Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] xx, ref string serr) {
-            return Sweph.swe_calc(tjd_ut, ipl, iflag, xx, ref serr);
+            return Sweph.swe_calc_ut(tjd_ut, ipl, iflag, xx, ref serr);
         }
 
         /// <summary>
@@ -845,11 +845,11 @@ namespace SwissEphNet
         /// </summary>
         public int swe_day_of_week(double jd) { return SwephLib.swe_day_of_week(jd); }
 
-        public string swe_cs2timestr(Int32 t, char sep, bool suppressZero, ref string a) { return SwephLib.swe_cs2timestr(t, sep, suppressZero, ref a); }
+        public string swe_cs2timestr(Int32 t, char sep, bool suppressZero) { return SwephLib.swe_cs2timestr(t, sep, suppressZero); }
 
-        public string swe_cs2lonlatstr(Int32 t, char pchar, char mchar, ref string s) { return SwephLib.swe_cs2lonlatstr(t, pchar, mchar, ref s); }
+        public string swe_cs2lonlatstr(Int32 t, char pchar, char mchar) { return SwephLib.swe_cs2lonlatstr(t, pchar, mchar); }
 
-        public string swe_cs2degstr(Int32 t, ref string a) { return SwephLib.swe_cs2degstr(t, ref a); }
+        public string swe_cs2degstr(Int32 t) { return SwephLib.swe_cs2degstr(t); }
 
     }
 
