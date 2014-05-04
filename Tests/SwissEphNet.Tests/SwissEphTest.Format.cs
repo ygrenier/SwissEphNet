@@ -125,7 +125,39 @@ namespace SwissEphNet.Tests
             Assert.AreEqual(" 198°45'55.5556", SwissEph.FormatToDegreeMinuteSecond(198.7654321));
             Assert.AreEqual("-198°45'55.5556", SwissEph.FormatToDegreeMinuteSecond(-198.7654321));
 
-            String format = "[d|dd|ddd|dddd|ddddd]";
+            String format = "D1";
+            Assert.AreEqual("   0° 0' 0.0000", SwissEph.FormatToDegreeMinuteSecond(0, format));
+            Assert.AreEqual("  12° 9'18.0000", SwissEph.FormatToDegreeMinuteSecond(12.155, format));
+            Assert.AreEqual("  98°45'55.5556", SwissEph.FormatToDegreeMinuteSecond(98.7654321, format));
+            Assert.AreEqual(" -98°45'55.5556", SwissEph.FormatToDegreeMinuteSecond(-98.7654321, format));
+            Assert.AreEqual(" 198°45'55.5556", SwissEph.FormatToDegreeMinuteSecond(198.7654321, format));
+            Assert.AreEqual("-198°45'55.5556", SwissEph.FormatToDegreeMinuteSecond(-198.7654321, format));
+
+            format = "D2";
+            Assert.AreEqual("   0° 0' 0\"", SwissEph.FormatToDegreeMinuteSecond(0, format));
+            Assert.AreEqual("  12° 9'18\"", SwissEph.FormatToDegreeMinuteSecond(12.155, format));
+            Assert.AreEqual("  98°45'55\"", SwissEph.FormatToDegreeMinuteSecond(98.7654321, format));
+            Assert.AreEqual(" -98°45'55\"", SwissEph.FormatToDegreeMinuteSecond(-98.7654321, format));
+            Assert.AreEqual(" 198°45'55\"", SwissEph.FormatToDegreeMinuteSecond(198.7654321, format));
+            Assert.AreEqual("-198°45'55\"", SwissEph.FormatToDegreeMinuteSecond(-198.7654321, format));
+
+            format = "Z1";
+            Assert.AreEqual(" 0 ar  0' 0.0000", SwissEph.FormatToDegreeMinuteSecond(0, format));
+            Assert.AreEqual("12 ar  9'18.0000", SwissEph.FormatToDegreeMinuteSecond(12.155, format));
+            Assert.AreEqual(" 8 cn 45'55.5556", SwissEph.FormatToDegreeMinuteSecond(98.7654321, format));
+            Assert.AreEqual(" 8 cn 45'55.5556", SwissEph.FormatToDegreeMinuteSecond(-98.7654321, format));
+            Assert.AreEqual("18 li 45'55.5556", SwissEph.FormatToDegreeMinuteSecond(198.7654321, format));
+            Assert.AreEqual("18 li 45'55.5556", SwissEph.FormatToDegreeMinuteSecond(-198.7654321, format));
+
+            format = "Z2";
+            Assert.AreEqual(" 0 ar  0' 0\"", SwissEph.FormatToDegreeMinuteSecond(0, format));
+            Assert.AreEqual("12 ar  9'18\"", SwissEph.FormatToDegreeMinuteSecond(12.155, format));
+            Assert.AreEqual(" 8 cn 45'55\"", SwissEph.FormatToDegreeMinuteSecond(98.7654321, format));
+            Assert.AreEqual(" 8 cn 45'55\"", SwissEph.FormatToDegreeMinuteSecond(-98.7654321, format));
+            Assert.AreEqual("18 li 45'55\"", SwissEph.FormatToDegreeMinuteSecond(198.7654321, format));
+            Assert.AreEqual("18 li 45'55\"", SwissEph.FormatToDegreeMinuteSecond(-198.7654321, format));
+
+            format = "[d|dd|ddd|dddd|ddddd]";
             Assert.AreEqual("[0| 0|  0|   0|    0]", SwissEph.FormatToDegreeMinuteSecond(0, format));
             Assert.AreEqual("[12|12| 12|  12|   12]", SwissEph.FormatToDegreeMinuteSecond(12.155, format));
             Assert.AreEqual("[98|98| 98|  98|   98]", SwissEph.FormatToDegreeMinuteSecond(98.7654321, format));

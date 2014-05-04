@@ -156,12 +156,27 @@ namespace SwissEphNet
         /// <item>+ : Minus sign if value is negative or space if positive</item>
         /// </list>
         /// <para>
+        /// Standard formats are:
+        /// <list type="bullet">
+        /// <item>D1 : dddd°mm'ss.pppp</item>
+        /// <item>D2 : dddd°mm'ss"</item>
+        /// <item>Z1 : gg zz mm'ss.pppp</item>
+        /// <item>Z2 : gg zz mm'ss"</item>
+        /// </list>
+        /// </para>
+        /// <para>
         /// For d*, a*, n*, g*, m* and s*, the same uppercase format exists for leading 0 instead of space
         /// </para>
         /// </remarks>
         public static String FormatToDegreeMinuteSecond(double value, String format = null) {
             if (double.IsNaN(value)) return "nan";
             if (String.IsNullOrEmpty(format)) format = "dddd°mm'ss.pppp";
+            switch (format) {
+                case "D1": format = "dddd°mm'ss.pppp"; break;
+                case "D2": format = "dddd°mm'ss\""; break;
+                case "Z1": format = "gg zz mm'ss.pppp"; break;
+                case "Z2": format = "gg zz mm'ss\""; break;
+            }
 			// Elements calculation
             var sgn = Math.Sign(value);
             double avalue = Math.Abs(value);
