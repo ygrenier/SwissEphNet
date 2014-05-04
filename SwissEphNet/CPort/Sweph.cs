@@ -1202,8 +1202,8 @@ namespace SwissEphNet.CPort
                 }
                 if (n == 0)
                     swed.eop_tjd_beg = mjd + TJDOFS;
-                swed.dpsi[n] = double.Parse(cpos[8]);
-                swed.deps[n] = double.Parse(cpos[9]);
+                swed.dpsi[n] = double.Parse(cpos[8], CultureInfo.InvariantCulture);
+                swed.deps[n] = double.Parse(cpos[9], CultureInfo.InvariantCulture);
                 /*    fprintf(stderr, "tjd=%f, dpsi=%f, deps=%f\n", mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);exit(0);*/
                 n++;
                 mjdsv = mjd;
@@ -1229,12 +1229,12 @@ namespace SwissEphNet.CPort
                     return;
                 }
                 /* dpsi, deps Bulletin B */
-                dpsi = double.Parse(s.Substring(168));
-                deps = double.Parse(s.Substring(178));
+                dpsi = double.Parse(s.Substring(168), CultureInfo.InvariantCulture);
+                deps = double.Parse(s.Substring(178), CultureInfo.InvariantCulture);
                 if (dpsi == 0) {
                     /* try dpsi, deps Bulletin A */
-                    dpsi = double.Parse(s.Substring(99));
-                    deps = double.Parse(s.Substring(118));
+                    dpsi = double.Parse(s.Substring(99), CultureInfo.InvariantCulture);
+                    deps = double.Parse(s.Substring(118), CultureInfo.InvariantCulture);
                 }
                 if (dpsi == 0) {
                     swed.eop_dpsi_loaded = 2;
@@ -3904,27 +3904,23 @@ namespace SwissEphNet.CPort
                 spi = 0;
                 /* MPC number and name; will be analyzed below:
                  * search "asteroid name" */
-                //while (*sp == ' ') sp++;
-                while (s[spi] == ' ') spi++;
-                //while (isdigit(*sp)) sp++;
-                while (Char.IsDigit(s[spi])) spi++;
-                spi++;
-                //i = sp - s;
+                sp = s.TrimStart();
+                spi = sp.IndexOfFirstNot("0123456789".ToCharArray()) + 1;
                 i = spi;
-                //strncpy(sastnam, sp, lastnam + i);
-                //*(sastnam + lastnam + i) = '\0';
-                // TODO Check this
                 sastnam = s.Substring(spi, lastnam + i);
                 /* save elements, they are required for swe_plan_pheno() */
                 swed.astelem = s;
                 /* required for magnitude */
-                swed.ast_H = double.Parse(s.Substring(35 + i));
-                swed.ast_G = double.Parse(s.Substring(42 + i));
+                swed.ast_H = double.Parse(s.Substring(35 + i, 7).Trim(), CultureInfo.InvariantCulture);
+                swed.ast_G = double.Parse(s.Substring(42 + i, 7).Trim(), CultureInfo.InvariantCulture);
                 if (swed.ast_G == 0) swed.ast_G = 0.15;
                 /* diameter in kilometers, not always given: */
-                s2 = s.Substring(51 + i, 7);
+                s2 = s.Substring(51 + i, 7).Trim();
                 //*(s2 + 7) = '\0';
-                swed.ast_diam = double.Parse(s2);
+                if (String.IsNullOrEmpty(s2))
+                    swed.ast_diam = 0;
+                else
+                    swed.ast_diam = double.Parse(s2, CultureInfo.InvariantCulture);
                 if (swed.ast_diam == 0) {
                     /* estimate the diameter from magnitude; assume albedo = 0.15 */
                     swed.ast_diam = 1329 / Math.Sqrt(0.15) * Math.Pow(10, -0.2 * swed.ast_H);
@@ -4041,9 +4037,13 @@ namespace SwissEphNet.CPort
                 j = 4;	/* old astorb.dat had only 4 characters for MPC# */
                 while (sastnam[j] != ' ' && j < 10)	/* new astorb.dat has 5 */
                     j++;
-                sastno = sastnam.Substring(j);
+                sastno = sastnam.Substring(0, j);
                 //sastno[j] = '\0';
-                i = (int)long.Parse(sastno);
+                long l;
+                if (!long.TryParse(sastno, out l))
+                    i = 0;
+                else
+                    i = (int)l;
                 if (i == fdp.ipl[0] - SwissEph.SE_AST_OFFSET) {
                     /* element record is from bowell database */
                     fdp.astnam = sastnam.Substring(j + 1, lastnam);
@@ -4065,7 +4065,9 @@ namespace SwissEphNet.CPort
                 //    sp--;
                 //}
                 //sp[1] = '\0';
-                fdp.astnam = fdp.astnam.TrimEnd();
+                i = fdp.astnam.IndexOf('\0');
+                if (i >= 0) fdp.astnam = fdp.astnam.Substring(0, i);
+                fdp.astnam = fdp.astnam.TrimEnd(' ', '\0');
             }
             /************************************* 
              * check CRC                         * 
@@ -6119,7 +6121,7 @@ namespace SwissEphNet.CPort
                 retc = ERR;
                 goto return_err;
             }
-            mag = double.Parse(cpos[13]);
+            mag = double.Parse(cpos[13], CultureInfo.InvariantCulture);
             /* return trad. name, nomeclature name */
             star = String.Format("{0},{1}", cpos[0], cpos[1]);
             return OK;
