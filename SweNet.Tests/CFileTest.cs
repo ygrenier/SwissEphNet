@@ -810,14 +810,14 @@ namespace SweNet.Tests
         [TestMethod]
         public void TestSeek() {
             using (var cfile = new CFile(BuildStream(new byte[] { 0x12, 0x34, 0x56, 0x78, 0xFE, 0xDC, 0xBA, 0x98 }))) {
-                Assert.AreEqual(4, cfile.Seek(4, SeekOrigin.Current));
+                Assert.AreEqual(0, cfile.Seek(4, SeekOrigin.Current));
                 Assert.AreEqual(0x98BADCFE, (uint)cfile.ReadInt32());
                 Assert.AreEqual(0, cfile.Seek(0, SeekOrigin.Begin));
                 Assert.AreEqual((int)0x78563412, cfile.ReadInt32());
             }
 
             using (var cfile = new CFile(null)) {
-                Assert.AreEqual(0, cfile.Seek(4, SeekOrigin.Current));
+                Assert.AreEqual(-1, cfile.Seek(4, SeekOrigin.Current));
             }
 
         }
