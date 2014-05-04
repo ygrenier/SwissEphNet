@@ -3843,14 +3843,14 @@ namespace SwissEphNet.CPort
             //    sp++;
             //if (*sp == '\0')
             //    goto file_damage;
-            if (!Regex.IsMatch(sp, @"^\d+$"))
-                goto file_damage;
+            var match = Regex.Match(sp, @"^.+(\d+)$");
+            if (!match.Success) goto file_damage;
             /* version unused so far */
-            fdp.fversion = int.Parse(sp);
+            fdp.fversion = int.Parse(match.Groups[1].Value);
             /************************************* 
              * correct file name?                *
              *************************************/
-            s = fp.ReadLine();
+            s = fp.ReadLine().Trim();
             if (String.IsNullOrEmpty(s))
                 goto file_damage;
             /* file name, without path */
@@ -3862,7 +3862,7 @@ namespace SwissEphNet.CPort
             //strcpy(s2, sp);
             sp = fdp.fnam;
             if (sp.LastIndexOf(SwissEph.DIR_GLUE) > 0)
-                sp = sp.Substring(sp.LastIndexOf(SwissEph.DIR_GLUE));
+                sp = sp.Substring(sp.LastIndexOf(SwissEph.DIR_GLUE) + 1);
             // TODO Check comparaison
             /* to lower case */
             //for (sp = s2; *sp != '\0'; sp++)
@@ -3971,7 +3971,11 @@ namespace SwissEphNet.CPort
             //c = (char*)&testendian;
             //c2 = SEI_FILE_TEST_ENDIAN / 16777216L;
             //if (*c == c2)
-            if (testendian / 16777216 == SEI_FILE_TEST_ENDIAN / 16777216)
+            //if (testendian / 16777216 == SEI_FILE_TEST_ENDIAN / 16777216)
+            //    fendian = SEI_FILE_BIGENDIAN;
+            //else
+            //    fendian = SEI_FILE_LITENDIAN;
+            if (!BitConverter.IsLittleEndian)
                 fendian = SEI_FILE_BIGENDIAN;
             else
                 fendian = SEI_FILE_LITENDIAN;
@@ -4077,10 +4081,11 @@ namespace SwissEphNet.CPort
             /* must check that defined length of s is less than fpos */
             //if (fpos - 1 > 2 * AS_MAXCH)
             //    goto file_damage;
-            if (!fp.ReadString(ref s, fpos))
+            byte[] crcBuff = new byte[fpos];
+            if (fp.Read(crcBuff, 0, fpos) != fpos)
                 goto file_damage;
             //#if 1
-            if (SE.SwephLib.swi_crc32(s, (int)fpos) != ulng)
+            if (SE.SwephLib.swi_crc32(crcBuff, (int)fpos) != ulng)
                 goto file_damage;
             /*printf("crc %d %d\n", ulng2, ulng);*/
             //#endif

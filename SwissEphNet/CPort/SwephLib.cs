@@ -2922,17 +2922,17 @@ namespace SwissEphNet.CPort
         /* Initialized first time "crc32()" is called. If you prefer, you can
          * statically initialize it at compile time. [Another exercise.]
          */
-        public UInt32 swi_crc32(String buf, int len) {
-            return swi_crc32(buf.ToCharArray(), len);
-        }
-        public UInt32 swi_crc32(char[] buf, int len) {
-            CPointer<char> p;
+        //public UInt32 swi_crc32(String buf, int len) {
+        //    return swi_crc32(buf.ToCharArray(), len);
+        //}
+        public UInt32 swi_crc32(byte[] buf, int len) {
+            CPointer<byte> p;
             UInt32 crc;
             if (crc32_table == null)    /* if not already done, */
                 init_crc32();   /* build table */
             crc = 0xffffffff;       /* preload shift register, per CRC-32 spec */
             for (p = buf; len > 0; ++p, --len)
-                crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ p];
+                crc = (crc << 8) ^ crc32_table[(crc >> 24) ^ p[0]];
             return ~crc;            /* transmit complement, per CRC-32 spec */
         }
 
@@ -2944,7 +2944,7 @@ namespace SwissEphNet.CPort
         static void init_crc32() {
             Int32 i, j;
             UInt32 c;
-            crc32_table = new UInt32[26];
+            crc32_table = new UInt32[256];
             for (i = 0; i < 256; ++i) {
                 for (c = (UInt32)(i << 24), j = 8; j > 0; --j)
                     c = (c & 0x80000000) != 0 ? (c << 1) ^ CRC32_POLY : (c << 1);

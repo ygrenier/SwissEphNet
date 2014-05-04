@@ -87,6 +87,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SwissEphNet;
 using SweNet;
+using System.IO;
 
 namespace SweMini
 {
@@ -133,6 +134,7 @@ namespace SweMini
             //int p;
             iflag = SwissEph.SEFLG_SPEED;
             using (var swe = new Sweph()) {
+                swe.OnLoadFile += swe_OnLoadFile;
                 while (true) {
                     Console.Write("\nDate (d.m.y) ? ");
                     sdate = Console.ReadLine();
@@ -192,6 +194,30 @@ namespace SweMini
             Console.ReadKey();
 #endif
             return 0;
+        }
+
+        static Stream SearchFile(String fileName) {
+            fileName = fileName.Trim('/', '\\');
+            var folders = new string[] { 
+                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Datas"),
+                @"C:\Temp\swisseph\swisseph\ephe"
+            };
+            foreach (var folder in folders) {
+                var f = Path.Combine(folder, fileName);
+                if (File.Exists(f))
+                    return new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            }
+            return null;
+        }
+
+        static void swe_OnLoadFile(object sender, LoadFileEventArgs e) {
+            if (e.FileName.StartsWith("[ephe]")) {
+                e.File = SearchFile(e.FileName.Replace("[ephe]", string.Empty));
+            } else {
+                var f = e.FileName;
+                if (System.IO.File.Exists(f))
+                    e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            }
         }
 
         public static void printf(string Format, params object[] Parameters) {
