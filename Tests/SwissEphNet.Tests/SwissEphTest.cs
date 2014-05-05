@@ -517,50 +517,63 @@ namespace SwissEphNet.Tests
         }
 
         [TestMethod]
-        public void Testswe_csnorm() {
-            //public Int32 swe_csnorm(Int32 p);
+        public void Test_swe_csnorm() {
             using (var target = new SwissEph()) {
-                Assert.Inconclusive();
+                Assert.AreEqual(0, target.swe_csnorm(0 * SwissEph.DEG));
+                Assert.AreEqual(3 * SwissEph.DEG, target.swe_csnorm(3 * SwissEph.DEG));
+                Assert.AreEqual(357 * SwissEph.DEG, target.swe_csnorm(-3 * SwissEph.DEG));
+                Assert.AreEqual(3 * SwissEph.DEG, target.swe_csnorm(363 * SwissEph.DEG));
+                Assert.AreEqual(357 * SwissEph.DEG, target.swe_csnorm(-363 * SwissEph.DEG));
             }
         }
 
         [TestMethod]
         public void Test_swe_difcsn() {
-            //public Int32 swe_difcsn(Int32 p1, Int32 p2);
             using (var target = new SwissEph()) {
-                Assert.Inconclusive();
+                Assert.AreEqual(0, target.swe_difcsn(0, 0));
+                Assert.AreEqual(129599997, target.swe_difcsn(0, 3));
+                Assert.AreEqual(3, target.swe_difcsn(3, 0));
+                Assert.AreEqual(0, target.swe_difcsn(3, 3));
             }
         }
 
         [TestMethod]
         public void Test_swe_difdegn() {
-            //public double swe_difdegn(double p1, double p2);
             using (var target = new SwissEph()) {
-                Assert.Inconclusive();
+                Assert.AreEqual(0, target.swe_difdegn(0, 0));
+                Assert.AreEqual(357, target.swe_difdegn(0, 3));
+                Assert.AreEqual(3, target.swe_difdegn(3, 0));
+                Assert.AreEqual(0, target.swe_difdegn(3, 3));
             }
         }
 
         [TestMethod]
         public void Test_swe_difcs2n() {
-            //public Int32 swe_difcs2n(Int32 p1, Int32 p2);
             using (var target = new SwissEph()) {
-                Assert.Inconclusive();
+                Assert.AreEqual(0, target.swe_difcs2n(0, 0));
+                Assert.AreEqual(-3, target.swe_difcs2n(0, 3));
+                Assert.AreEqual(3, target.swe_difcs2n(3, 0));
+                Assert.AreEqual(0, target.swe_difcs2n(3, 3));
             }
         }
 
         [TestMethod]
         public void Test_swe_difdeg2n() {
-            //public double swe_difdeg2n(double p1, double p2);
             using (var target = new SwissEph()) {
-                Assert.Inconclusive();
+                Assert.AreEqual(0, target.swe_difdeg2n(0, 0));
+                Assert.AreEqual(-3, target.swe_difdeg2n(0, 3));
+                Assert.AreEqual(3, target.swe_difdeg2n(3, 0));
+                Assert.AreEqual(0, target.swe_difdeg2n(3, 3));
             }
         }
 
         [TestMethod]
         public void Test_swe_difrad2n() {
-            //public double swe_difrad2n(double p1, double p2);
             using (var target = new SwissEph()) {
-                Assert.Inconclusive();
+                Assert.AreEqual(0, target.swe_difrad2n(0, 0));
+                Assert.AreEqual(-3, target.swe_difrad2n(0, 3));
+                Assert.AreEqual(3, target.swe_difrad2n(3, 0));
+                Assert.AreEqual(0, target.swe_difrad2n(3, 3));
             }
         }
 
@@ -568,6 +581,13 @@ namespace SwissEphNet.Tests
         public void Test_swe_csroundsec() {
             using (var target = new SwissEph()) {
                 Assert.AreEqual(0, target.swe_csroundsec(0));
+                Assert.AreEqual(10440000, target.swe_csroundsec(29 * SwissEph.DEG));
+                Assert.AreEqual(10799900, target.swe_csroundsec(10800000 - 40));
+                Assert.AreEqual(10800000, target.swe_csroundsec(30 * SwissEph.DEG));
+                Assert.AreEqual(-10439900, target.swe_csroundsec(-29 * SwissEph.DEG));
+                Assert.AreEqual(-10799900, target.swe_csroundsec(-(10800000 - 40)));
+                Assert.AreEqual(-10799900, target.swe_csroundsec(-30 * SwissEph.DEG));
+                
                 Assert.AreEqual(1200, target.swe_csroundsec(1234));
                 Assert.AreEqual(9900, target.swe_csroundsec(9876));
                 Assert.AreEqual(-1100, target.swe_csroundsec(-1234));
