@@ -5603,7 +5603,7 @@ namespace SwissEphNet.CPort
              * nutation                               * 
              ******************************************/
             swi_check_nutation(tjd, iflag);
-            sstar = star.Substring(SwissEph.SE_MAX_STNAME);
+            sstar = star.Length >= SwissEph.SE_MAX_STNAME ? star.Substring(0, SwissEph.SE_MAX_STNAME) : star;
             //sstar[SE_MAX_STNAME] = '\0';
             if (sstar[0] == ',') {
                 isnomclat = true;
@@ -5679,25 +5679,12 @@ namespace SwissEphNet.CPort
                     else
                         continue;
                 }
-                // TODO YG : Check this calculate, I don't totally understand. See sweph.c Ligne 5521 
-                //*sp = '\0';	/* cut off first field */
-                s = s.Substring(0, spi);
-                fstar = s.Substring(SwissEph.SE_MAX_STNAME);
-                //*sp = ',';
-                //fstar[SE_MAX_STNAME] = '\0';	/* force termination */
-                s = s + "," + fstar;
-                /*swi_right_trim(fstar);*/
-                //while ((sp = strchr(fstar, ' ')) != NULL)
-                //    sp = sp + 1;
+                fstar = s.Substring(0, spi);
                 fstar = fstar.TrimEnd();
                 i = fstar.Length;
                 if (i < (int)cmplen)
                     continue;
-                //for (sp2 = fstar; *sp2 != '\0'; sp2++) {
-                //    *sp2 = tolower((int)*sp2);
-                //}
-                fstar = fstar.ToLower();
-                if (!fstar.Equals(sstar.Substring(0, cmplen)))
+                if (sstar.Equals(fstar, StringComparison.CurrentCultureIgnoreCase))
                     goto found;
             }
             serr = C.sprintf("star %s not found", star);
@@ -5718,18 +5705,18 @@ namespace SwissEphNet.CPort
                 retc = ERR;
                 goto return_err;
             }
-            epoch = double.Parse(cpos[2], CultureInfo.InvariantCulture);
-            ra_h = double.Parse(cpos[3], CultureInfo.InvariantCulture);
-            ra_m = double.Parse(cpos[4], CultureInfo.InvariantCulture);
-            ra_s = double.Parse(cpos[5], CultureInfo.InvariantCulture);
-            de_d = double.Parse(cpos[6], CultureInfo.InvariantCulture);
+            epoch = C.atof(cpos[2]);
+            ra_h = C.atof(cpos[3]);
+            ra_m = C.atof(cpos[4]);
+            ra_s = C.atof(cpos[5]);
+            de_d = C.atof(cpos[6]);
             sde_d = cpos[6];
-            de_m = double.Parse(cpos[7], CultureInfo.InvariantCulture);
-            de_s = double.Parse(cpos[8], CultureInfo.InvariantCulture);
-            ra_pm = double.Parse(cpos[9], CultureInfo.InvariantCulture);
-            de_pm = double.Parse(cpos[10], CultureInfo.InvariantCulture);
-            radv = double.Parse(cpos[11], CultureInfo.InvariantCulture);
-            parall = double.Parse(cpos[12], CultureInfo.InvariantCulture);
+            de_m = C.atof(cpos[7]);
+            de_s = C.atof(cpos[8]);
+            ra_pm = C.atof(cpos[9]);
+            de_pm = C.atof(cpos[10]);
+            radv = C.atof(cpos[11]);
+            parall = C.atof(cpos[12]);
             /* return trad. name, nomeclature name */
             if (cpos[0].Length > SwissEph.SE_MAX_STNAME)
                 cpos[0] = cpos[0].Substring(0, SwissEph.SE_MAX_STNAME);

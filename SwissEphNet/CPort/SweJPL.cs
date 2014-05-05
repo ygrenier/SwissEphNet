@@ -230,7 +230,7 @@ namespace SwissEphNet.CPort
             ttl = js.jplfptr.ReadSBytes(252);
             /* cnam = names of constants */
             //fread((void *) js.ch_cnam, 1, 6*400, js.jplfptr);
-            js.ch_cnam = js.jplfptr.ReadChars(6 * 400);  // TODO Verify the current encoding for reading 8 bits char
+            js.ch_cnam = js.jplfptr.ReadChars(6 * 400);
             /* ss[0] = start epoch of ephemeris
              * ss[1] = end epoch
              * ss[2] = segment size in days */

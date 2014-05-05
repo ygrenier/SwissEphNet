@@ -1258,7 +1258,6 @@ namespace SwissEphNet.CPort
          2, 0, 0, 2, 0,     1,  0,    0,  0,
          0, 0, 2, 4, 2,    -1,  0,    0,  0,
          0, 1, 0, 1, 0,     1,  0,    0,  0,
-         // TODO Convert this #define with the settings variable
         #if NUT_CORR_1987 
         /* corrections to IAU 1980 nutation series by Herring 1987
          *             in 0.00001" !!!
