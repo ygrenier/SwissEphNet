@@ -564,6 +564,9 @@ namespace SwissEphNet.CPort
         public class swe_data
         {
             public swe_data() {
+                Reset();
+            }
+            public void Reset() {
                 fidat = Enumerable.Range(0, SEI_NEPHFILES).Select(i => new file_data()).ToArray();
                 savedat = Enumerable.Range(0, SwissEph.SE_NPLANETS + 1).Select(i => new save_positions()).ToArray();
                 pldat = Enumerable.Range(0, SEI_NPLANETS).Select(i => new plan_data()).ToArray();

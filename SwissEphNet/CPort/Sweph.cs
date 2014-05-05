@@ -1036,50 +1036,45 @@ namespace SwissEphNet.CPort
          * deletes memory of all computed positions 
          */
         public void swe_close() {
-            // TODO Finalize swe_close
-            //  int i;
-            //  /* close SWISSEPH files */
-            //  for (i = 0; i < SEI_NEPHFILES; i ++) {
-            //    if (swed.fidat[i].fptr != NULL) 
-            //      fclose(swed.fidat[i].fptr);
-            //    memset((void *) &swed.fidat[i], 0, sizeof(struct file_data));
-            //  }
-            //  /* free planets data space */
-            //  for (i = 0; i < SEI_NPLANETS; i++) {
-            //    if (swed.pldat[i].segp != NULL) {
-            //      free((void *) swed.pldat[i].segp);
-            //    }
-            //    if (swed.pldat[i].refep != NULL) {
-            //      free((void *) swed.pldat[i].refep);
-            //    }
-            //    memset((void *) &swed.pldat[i], 0, sizeof(struct plan_data));
-            //  }
-            //  for (i = 0; i <= SE_NPLANETS; i++) /* "<=" is correct! see decl. */
-            //    memset((void *) &swed.savedat[i], 0, sizeof(struct save_positions));
-            //  /* clear node data space */
-            //  for (i = 0; i < SEI_NNODE_ETC; i++) {
-            //#if 0
-            //    memset((void *) &swed.nddat[i], 0, sizeof(struct node_data));
-            //#else
-            //    memset((void *) &swed.nddat[i], 0, sizeof(struct plan_data));
-            //#endif
-            //  }
-            //  memset((void *) &swed.oec, 0, sizeof(struct epsilon));
-            //  memset((void *) &swed.oec2000, 0, sizeof(struct epsilon));
-            //  memset((void *) &swed.nut, 0, sizeof(struct nut));
-            //  memset((void *) &swed.nut2000, 0, sizeof(struct nut));
-            //  memset((void *) &swed.nutv, 0, sizeof(struct nut));
-            //  /* close JPL file */
+            int i;
+            /* close SWISSEPH files */
+            for (i = 0; i < SEI_NEPHFILES; i++) {
+                if (swed.fidat[i].fptr != null)
+                    swed.fidat[i].fptr.Dispose();
+                swed.fidat[i] = new file_data();
+            }
+            /* free planets data space */
+            for (i = 0; i < Sweph.SEI_NPLANETS; i++) {
+                if (swed.pldat[i].segp != null) {
+                    swed.pldat[i].segp = null;
+                }
+                if (swed.pldat[i].refep != null) {
+                    swed.pldat[i].refep = null;
+                }
+                swed.pldat[i] = new plan_data();
+            }
+            for (i = 0; i <= SwissEph.SE_NPLANETS; i++) /* "<=" is correct! see decl. */
+                swed.savedat[i] = new save_positions();
+            /* clear node data space */
+            for (i = 0; i < Sweph.SEI_NNODE_ETC; i++) {
+                //#if 0
+                //    memset((void *) &swed.nddat[i], 0, sizeof(struct node_data));
+                //#else
+                swed.nddat[i] = new plan_data();
+                //#endif
+            }
+            swed.Reset();
+            /* close JPL file */
             //#ifndef NO_JPL
             SE.SweJPL.swi_close_jpl_file();
             //#endif
-            //  swed.jpl_file_is_open = FALSE;
-            //  swed.jpldenum = 0;
-            //  /* close fixed stars */
-            //  if (swed.fixfp != NULL) {
-            //    fclose(swed.fixfp);
-            //    swed.fixfp = NULL;
-            //  }
+            swed.jpl_file_is_open = false;
+            swed.jpldenum = 0;
+            /* close fixed stars */
+            if (swed.fixfp != null) {
+                swed.fixfp.Dispose();
+                swed.fixfp = null;
+            }
 #if TRACE
             //#define TRACE_CLOSE FALSE
             //  swi_open_trace(NULL);
