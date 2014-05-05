@@ -256,7 +256,6 @@ namespace SwissEphNet.CPort
             double dt;
             serr = null;
 #if TRACE
-            // TODO Check if FORCE_IFLAG required
             //#ifdef FORCE_IFLAG
             //  /*
             //   * If this source file is compiled with /DFORCE_IFLAG or -DFORCE_IFLAG
@@ -1983,12 +1982,9 @@ namespace SwissEphNet.CPort
                          * asteroid subdirectory.
                          */
                         sppi--;	/* point to the character before '.' which must be a 's' */
-                        // TODO Test this part for validation
-                        //swi_strcpy(spp, spp + 1);	/* remove the s */
+                        // remove the s
                         s = s.Substring(0, sppi) + s.Substring(sppi + 1);
-                        //if (subdirlen > 0 && strncmp(s, subdirnam, (size_t)subdirlen) == 0) {
                         if (s.StartsWith(subdirnam)) {
-                            //swi_strcpy(s, s + subdirlen + 1);	/* remove "ast0/" etc. */
                             s = s.Substring(subdirlen + 1);
                             goto again;
                         }
@@ -3687,8 +3683,7 @@ namespace SwissEphNet.CPort
             fp.Seek(fpos, SeekOrigin.Begin);
             /* clear space of chebyshew coefficients */
             if (pdp.segp == null)
-                // TODO Check if µ8 is required, normally malloc use a size in bytes so *8 is for the double size
-                pdp.segp = new double[pdp.ncoe * 3 * 8]; //(double*)malloc((size_t)pdp.ncoe * 3 * 8);
+                pdp.segp = new double[pdp.ncoe * 3];
             //memset((void*)pdp.segp, 0, (size_t)pdp.ncoe * 3 * 8);
             for (int ii = 0; ii < pdp.segp.Length; ii++) {
                 pdp.segp[ii] = 0;
@@ -3849,33 +3844,9 @@ namespace SwissEphNet.CPort
             if (String.IsNullOrEmpty(s))
                 goto file_damage;
             /* file name, without path */
-            //sp = strrchr(fdp.fnam, (int)*DIR_GLUE);
-            //if (sp == NULL)
-            //    sp = fdp.fnam;
-            //else
-            //    sp++;
-            //strcpy(s2, sp);
             sp = fdp.fnam;
             if (sp.LastIndexOf(SwissEph.DIR_GLUE) > 0)
                 sp = sp.Substring(sp.LastIndexOf(SwissEph.DIR_GLUE) + 1);
-            // TODO Check comparaison
-            /* to lower case */
-            //for (sp = s2; *sp != '\0'; sp++)
-            //    *sp = tolower((int)*sp);
-            /* prepare string of should-be file name */
-            //sp = s + strlen(s) - 1;
-            //while (*sp == '\n' || *sp == '\r' || *sp == ' ') {
-            //    *sp = '\0';
-            //    sp--;
-            //}
-            //for (sp = s; *sp != '\0'; sp++)
-            //    *sp = tolower((int)*sp);
-            //if (strcmp(s2, s) != 0) {
-            //    if (serr != NULL) {
-            //        serr=C.sprintf("Ephemeris file name '%s' wrong; rename '%s' ", s2, s);
-            //    }
-            //    goto return_error;
-            //}
             if (!s.Equals(sp, StringComparison.CurrentCultureIgnoreCase)) {
                 serr = C.sprintf("Ephemeris file name '%s' wrong; rename '%s' ", sp, s);
                 goto return_error;
@@ -5182,7 +5153,6 @@ namespace SwissEphNet.CPort
                 } else	/* if SEFLG_J2000 */
                     oe = swed.oec2000;
             } else {
-                // TODO This code is repeated for #ifdef simulation
                 SE.SwephLib.swi_precess(xx, tjd, iflag, J2000_TO_J);
                 SE.SwephLib.swi_precess(xx + 3, tjd, iflag, J2000_TO_J);
                 /* epsilon */
@@ -5236,21 +5206,6 @@ namespace SwissEphNet.CPort
              ************************************************/
             SE.SwephLib.swi_coortrf2(xx, xx, oe.seps, oe.ceps);
             SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, oe.seps, oe.ceps);
-            /*
-        #if SID_TNODE_FROM_ECL_T0
-          if (iflag & SEFLG_SIDEREAL) {
-            /* subtract ayan_t0 * /
-            swi_cartpol_sp(xx, xx);
-            xx[0] -= sip.ayan_t0;
-            swi_polcart_sp(xx, xx);
-          } else 
-        #endif
-          if (!(iflag & SEFLG_NONUT)) {
-            swi_coortrf2(xx, xx, nutp.snut, nutp.cnut);
-            swi_coortrf2(xx+3, xx+3, nutp.snut, nutp.cnut);
-          }
-            */
-            // TODO Check this code with comments above
             if (SID_TNODE_FROM_ECL_T0 && (iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
                 /* subtract ayan_t0 */
                 SE.SwephLib.swi_cartpol_sp(xx, xx);
