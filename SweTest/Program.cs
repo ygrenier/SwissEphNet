@@ -675,7 +675,7 @@ static string infoexamp = @"\n\
             //# endif
             using (sweph = new SwissEph()) {
                 sweph.OnLoadFile += sweph_OnLoadFile;
-                ephepath = "";
+                ephepath = @".;C:\\sweph\ephe";
                 fname = SwissEph.SE_FNAME_DFT;
                 for (i = 1; i < argc; i++) {
                     if (argv[i].StartsWith("-ut")) {
@@ -1486,12 +1486,12 @@ static string infoexamp = @"\n\
         }
 
         static void sweph_OnLoadFile(object sender, LoadFileEventArgs e) {
-            String fname = e.FileName;
+            String fname = e.FileName.Replace("[ephe]", "").Trim('/', '\\');
             String[] paths = String.IsNullOrWhiteSpace(ephepath) ? new String[] { "" } : ephepath.Split(';');
             foreach (var path in paths) {
                 String f = System.IO.Path.Combine(path, fname);
                 if (System.IO.File.Exists(f)) {
-                    e.File = new System.IO.FileStream(fname, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
+                    e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
                 }
             }
         }
