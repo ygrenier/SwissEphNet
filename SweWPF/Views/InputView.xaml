@@ -53,7 +53,5 @@
         <Label Grid.Row="5">House system</Label>
         <ComboBox Grid.Row="6" ItemsSource="{Binding HouseSystems}" SelectedItem="{Binding HouseSystem, Mode=TwoWay}" Margin="2"/>
         
-        <Button Grid.Row="10" Grid.ColumnSpan="2" Content="Calculation" Padding="16,8" Margin="8" VerticalAlignment="Center" HorizontalAlignment="Center" Command="{Binding DoCalculationCommand, Mode=OneWay}"/>
-        
     </Grid>
 </UserControl>

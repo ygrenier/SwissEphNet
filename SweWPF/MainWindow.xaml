@@ -5,10 +5,37 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d" 
         xmlns:vm="clr-namespace:SweWPF.ViewModels"
+        xmlns:vw="clr-namespace:SweWPF.Views"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel, IsDesignTimeCreatable=True}"
         Title="Swiss Ephemeris" 
-        Height="350" Width="525">
+        WindowState="Maximized"
+        Height="384" Width="733">
     <Grid>
-        <ContentControl Name="ccHostCurrentContent" Content="{Binding CurrentChild}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="4*" />
+        </Grid.ColumnDefinitions>
+
+        <vw:ConfigView Grid.Row="0" Grid.ColumnSpan="2" DataContext="{Binding Config}" />
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                <vw:InputView DataContext="{Binding Input}" />
+            </ScrollViewer>
+            <Button Grid.Row="1" Content="Calculation" Padding="16,8" Margin="8" Command="{Binding DoCalculationCommand, Mode=OneWay}"/>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <vw:ResultView DataContext="{Binding Result}"/>
+        </ScrollViewer>
+        
     </Grid>
 </Window>

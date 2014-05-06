@@ -10,7 +10,7 @@ namespace SweWPF.ViewModels
     /// <summary>
     /// Input informations ViewModel
     /// </summary>
-    public class InputViewModel : ChildViewModel
+    public class InputViewModel : ViewModel
     {
 
         public InputViewModel() {
@@ -23,9 +23,6 @@ namespace SweWPF.ViewModels
             Latitude = new SweNet.Latitude(47, 52, 0, LatitudePolarity.North);
             HouseSystems = new string[] { "Placidus", "Campanus", "Regiomontanus", "Koch", "Equal", "Vehlow equal", "Horizon", "B=Alcabitus" };
             HouseSystem = HouseSystems[0];
-            DoCalculationCommand = new RelayCommand(() => {
-                MainModel.DoCalculation(this);
-            });
             Planets.AddRange(new Planet[] { 
                 Planet.Sun, Planet.Moon, Planet.Mercury, Planet.Venus, Planet.Mars, Planet.Jupiter, 
                 Planet.Saturn, Planet.Uranus, Planet.Neptune, Planet.Pluto,
@@ -133,13 +130,9 @@ namespace SweWPF.ViewModels
         public String[] HouseSystems { get; private set; }
 
         /// <summary>
-        /// Command to calculation
-        /// </summary>
-        public RelayCommand DoCalculationCommand { get; private set; }
-
-        /// <summary>
         /// Planets to calculate
         /// </summary>
         public List<Planet> Planets { get; private set; }
+
     }
 }

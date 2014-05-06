@@ -3,6 +3,7 @@ using SwissEphNet;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,14 +16,16 @@ namespace SweWPF.ViewModels
     /// </summary>
     public class MainViewModel : ViewModel, IDisposable
     {
-        private ChildViewModel _CurrentChild;
         private Sweph _Sweph;
+        private List<String> _SearchPaths = new List<string>();
 
         public MainViewModel() {
+            Config = new ConfigViewModel();
+            Input = new InputViewModel();
+            Result = new CalculationResultViewModel();
             DoCalculationCommand = new RelayCommand(() => {
-                DoCalculation((InputViewModel)CurrentChild);
-            }, () => CurrentChild is InputViewModel);
-            NavigateTo(new InputViewModel());
+                DoCalculation();
+            });
         }
 
         /// <summary>
@@ -52,54 +55,72 @@ namespace SweWPF.ViewModels
         }
 
         void Sweph_OnLoadFile(object sender, LoadFileEventArgs e) {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SwephData");
-            var fName = System.IO.Path.Combine(path, e.FileName);
-            if (System.IO.File.Exists(fName)) {
-                e.File = new System.IO.FileStream(fName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+            var f = e.FileName.Replace("[ephe]", "").Trim('\\', '/');
+            foreach (var p in _SearchPaths) {
+                var fName = Path.Combine(p, f);
+                if (System.IO.File.Exists(fName)) {
+                    e.File = new System.IO.FileStream(fName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
+                    return;
+                }
             }
         }
 
-        public void DoCalculation(InputViewModel input) {
-            CalculationResultViewModel result = new CalculationResultViewModel();
+        public void DoCalculation() {
             String star = String.Empty;
             char hsys = 'P';
-            result.Planets.Clear();
+
+            // Initialize paths
+            String sourcePath = Config.EphemerisPath;
+            if (String.IsNullOrWhiteSpace(sourcePath)) sourcePath = ".";
+            _SearchPaths.Clear();
+            foreach (var path in sourcePath.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) {
+                if (String.IsNullOrWhiteSpace(path)) continue;
+                if (path.Trim() == ".") {
+                    _SearchPaths.Add(AppDomain.CurrentDomain.BaseDirectory);
+                    _SearchPaths.Add(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SwephData"));
+                } else {
+                    _SearchPaths.Add(path.Trim());
+                }
+            }
+
+            // Initialize result
+            Result.Reset();
 
             // Initialize engine
-            Sweph.swe_set_topo(input.Longitude, input.Latitude, input.Altitude);
+            Sweph.swe_set_topo(Input.Longitude, Input.Latitude, Input.Altitude);
 
             // Dates and Times
-            result.JulianDay = Sweph.JulianDay(input.DateUTC);
-            result.DateUTC = Sweph.DateUT(result.JulianDay);
-            result.EphemerisTime = Sweph.EphemerisTime(result.JulianDay);
-            result.SideralTime = Sweph.swe_sidtime(result.JulianDay) + (input.Longitude / 15.0);
-            if (result.SideralTime >= 24.0) result.SideralTime -= 24.0;
-            if (result.SideralTime < 0.0) result.SideralTime += 24.0;
+            Result.JulianDay = Sweph.JulianDay(Input.DateUTC);
+            Result.DateUTC = Sweph.DateUT(Result.JulianDay);
+            Result.EphemerisTime = Sweph.EphemerisTime(Result.JulianDay);
+            Result.SideralTime = Sweph.swe_sidtime(Result.JulianDay) + (Input.Longitude / 15.0);
+            if (Result.SideralTime >= 24.0) Result.SideralTime -= 24.0;
+            if (Result.SideralTime < 0.0) Result.SideralTime += 24.0;
 
             // Calculation
             String serr = null;
             Double[] x=new double[24];
             var iflag = SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_SPEED;
-            var iflgret = Sweph.swe_calc(result.EphemerisTime, Planet.EclipticNutation, iflag, x, ref serr);
-            result.TrueEclipticObliquity = x[0];
-            result.MeanEclipticObliquity = x[1];
-            result.NutationLongitude = x[2];
-            result.NutationObliquity = x[3];
+            var iflgret = Sweph.swe_calc(Result.EphemerisTime, Planet.EclipticNutation, iflag, x, ref serr);
+            Result.TrueEclipticObliquity = x[0];
+            Result.MeanEclipticObliquity = x[1];
+            Result.NutationLongitude = x[2];
+            Result.NutationObliquity = x[3];
 
             // Planets
-            foreach (var planet in input.Planets) {
+            foreach (var planet in Input.Planets) {
                 if (planet == Planet.Earth) continue;   // Exclude Earth if geo or topo
                 serr = null;
                 var pi = new PlanetInfos() {
                     Planet = planet
                 };
-                result.Planets.Add(pi);
+                Result.Planets.Add(pi);
                 // Ecliptic position
                 if (planet == Planet.FixedStar) {
-                    iflgret = Sweph.swe_fixstar(star, result.EphemerisTime, iflag, x, ref serr);
+                    iflgret = Sweph.swe_fixstar(star, Result.EphemerisTime, iflag, x, ref serr);
                     pi.PlanetName = star;
                 } else {
-                    iflgret = Sweph.swe_calc(result.EphemerisTime, planet, iflag, x, ref serr);
+                    iflgret = Sweph.swe_calc(Result.EphemerisTime, planet, iflag, x, ref serr);
                     pi.PlanetName = Sweph.swe_get_planet_name(planet);
                     if (planet.IsAsteroid) {
                         pi.PlanetName = String.Format("#{0}", planet);
@@ -112,7 +133,7 @@ namespace SweWPF.ViewModels
                     pi.LongitudeSpeed = x[3];
                     pi.LatitudeSpeed = x[4];
                     pi.DistanceSpeed = x[5];
-                    pi.HousePosition = Sweph.swe_house_pos(result.ARMC, input.Latitude, result.TrueEclipticObliquity, hsys, x, ref serr);
+                    pi.HousePosition = Sweph.swe_house_pos(Result.ARMC, Input.Latitude, Result.TrueEclipticObliquity, hsys, x, ref serr);
                     if (pi.HousePosition == 0)
                         iflgret = SwissEph.ERR;
                 }
@@ -156,46 +177,20 @@ namespace SweWPF.ViewModels
             var hNames = new String[] { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
             var amNames = new String[] { "Ascendant", "MC", "ARMC", "Vertex", "Equatorial ascendant", 
                 "Co-ascendant (Walter Koch)", "Co-ascendant (Michael Munkasey)", "Polar ascendant (M. Munkasey)" };
-            Sweph.swe_houses_ex(result.EphemerisTime, iflag, input.Latitude, input.Longitude, 'P', cusps, ascmc);
+            Sweph.swe_houses_ex(Result.EphemerisTime, iflag, Input.Latitude, Input.Longitude, 'P', cusps, ascmc);
             for (int i = 1; i <= 12; i++) {
-                result.Houses.Add(new HouseInfos() {
+                Result.Houses.Add(new HouseInfos() {
                     House = i,
                     HouseName = hNames[i],
                     Cusp = cusps[i]
                 });
             }
             for (int i = 0; i < 7; i++) {
-                result.ASMCs.Add(new HouseInfos() {
+                Result.ASMCs.Add(new HouseInfos() {
                     House = i,
                     HouseName = amNames[i],
                     Cusp = ascmc[i]
                 });
-            }
-            NavigateTo(result);
-        }
-
-        /// <summary>
-        /// Navigate to a child model
-        /// </summary>
-        /// <param name="model"></param>
-        public void NavigateTo(ChildViewModel model) {
-            if (model == null) throw new ArgumentNullException("model");
-            if (model.MainModel != this)
-                model.Start(this);
-            CurrentChild = model;
-            DoCalculationCommand.RaiseCanExecuteChanged();
-        }
-
-        /// <summary>
-        /// Current Child
-        /// </summary>
-        public ChildViewModel CurrentChild {
-            get { return _CurrentChild; }
-            private set {
-                if (_CurrentChild != value) {
-                    _CurrentChild = value;
-                    RaisePropertyChanged("CurrentChild");
-                }
             }
         }
 
@@ -205,6 +200,21 @@ namespace SweWPF.ViewModels
         public Sweph Sweph {
             get { return _Sweph ?? (_Sweph = CreateNewSweph()); }
         }
+
+        /// <summary>
+        /// Configuration
+        /// </summary>
+        public ConfigViewModel Config { get; private set; }
+
+        /// <summary>
+        /// Input informations
+        /// </summary>
+        public InputViewModel Input { get; private set; }
+
+        /// <summary>
+        /// Calculation result
+        /// </summary>
+        public CalculationResultViewModel Result { get; private set; }
 
         /// <summary>
         /// Command to calculation

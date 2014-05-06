@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="SweWPF.Views.ConfigView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:SweWPF.ViewModels"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=vm:ConfigViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="248" d:DesignWidth="468">
+    <Grid>
+        <GroupBox Header="Configuration" VerticalAlignment="Top">
+            <Grid Margin="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <Label Grid.Row="0">Ephemeris path</Label>
+                <TextBox Grid.Row="1" Text="{Binding EphemerisPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>
