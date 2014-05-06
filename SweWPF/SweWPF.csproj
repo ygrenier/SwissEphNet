@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="Converters\DoubleToTimeFormatConverter.cs" />
     <Compile Include="Converters\DoubleToDegreesFormatConverter.cs" />
+    <Compile Include="Converters\StringEmptyToVisibility.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ViewModels\CalculationResultViewModel.cs" />
     <Compile Include="ViewModels\ConfigViewModel.cs" />

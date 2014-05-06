@@ -12,6 +12,7 @@
             <!-- Converters -->
             <converters:DoubleToDegreesFormatConverter x:Key="DoubleToDegreesFormatConverter" />
             <converters:DoubleToTimeFormatConverter x:Key="DoubleToTimeFormatConverter" />
+            <converters:StringEmptyToVisibility x:Key="StringEmptyToVisibility" />
             
         </ResourceDictionary>
     </Application.Resources>
