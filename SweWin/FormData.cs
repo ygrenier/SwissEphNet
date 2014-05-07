@@ -106,7 +106,7 @@ namespace SweWin
             fileName = fileName.Trim('/', '\\');
             var folders = new string[] { 
                 System.IO.Path.Combine(Application.StartupPath, "Datas"),
-                @"C:\swisseph\ephe"
+                @"C:\sweph\ephe"
             };
             foreach (var folder in folders) {
                 var f = Path.Combine(folder, fileName);
