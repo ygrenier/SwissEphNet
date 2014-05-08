@@ -32,6 +32,23 @@ namespace SweWPF.ViewModels
             Planets.AddRange(new Planet[] { Planet.AsAsteroid(433), Planet.AsAsteroid(3045), Planet.AsAsteroid(7066) });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public Models.InputCalculation CreateInputData() {
+            var result = new Models.InputCalculation() {
+                Altitude = this.Altitude,
+                Date = this.Date,
+                HouseSystem = this.HouseSystem,
+                Latitude = this.Latitude,
+                Longitude = this.Longitude,
+                TimeZone = this.TimeZone
+            };
+            result.Planets.Clear();
+            result.Planets.AddRange(Planets);
+            return result;
+        }
+
         private TimeZoneInfo _TimeZone;
 
         public TimeZoneInfo TimeZone {
@@ -134,7 +151,5 @@ namespace SweWPF.ViewModels
         /// </summary>
         public List<Planet> Planets { get; private set; }
 
-
-        public Planet SwissEph { get; set; }
     }
 }

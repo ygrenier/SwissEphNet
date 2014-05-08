@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SweWPF.ViewModels
+namespace SweWPF.Models
 {
-    public class PlanetInfos
+    public class PlanetValues
     {
         public Planet Planet { get; set; }
         public String PlanetName { get; set; }

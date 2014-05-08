@@ -67,12 +67,17 @@
     <Compile Include="Converters\DoubleToDegreesFormatConverter.cs" />
     <Compile Include="Converters\StringEmptyToVisibility.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\EphemerisResult.cs" />
+    <Compile Include="Models\HouseValues.cs" />
+    <Compile Include="Models\InputCalculation.cs" />
+    <Compile Include="Models\PlanetValues.cs" />
+    <Compile Include="Services\CalcService.cs" />
+    <Compile Include="Services\ICalcService.cs" />
     <Compile Include="ViewModels\CalculationResultViewModel.cs" />
     <Compile Include="ViewModels\ConfigViewModel.cs" />
-    <Compile Include="ViewModels\HouseInfos.cs" />
     <Compile Include="ViewModels\InputViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\PlanetInfos.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="Views\ConfigView.xaml.cs">
@@ -165,6 +170,7 @@
       <Name>SwissEphNet</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

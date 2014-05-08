@@ -14,8 +14,20 @@ namespace SweWPF.ViewModels
     {
         private String _EphemerisPath;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ConfigViewModel() {
             _EphemerisPath = @".;C:\sweph\ephe";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Models.Configuration CreateConfigurationData() {
+            var result = new Models.Configuration();
+            result.SearchPaths.AddRange(EphemerisPath.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+            return result;
         }
 
         /// <summary>

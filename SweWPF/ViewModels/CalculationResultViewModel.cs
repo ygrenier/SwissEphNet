@@ -1,4 +1,5 @@
 ﻿using SweNet;
+using SweWPF.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,9 +19,9 @@ namespace SweWPF.ViewModels
         /// New result
         /// </summary>
         public CalculationResultViewModel() {
-            Planets = new ObservableCollection<PlanetInfos>();
-            Houses = new ObservableCollection<HouseInfos>();
-            ASMCs = new ObservableCollection<HouseInfos>();
+            Planets = new ObservableCollection<PlanetValues>();
+            Houses = new ObservableCollection<HouseValues>();
+            ASMCs = new ObservableCollection<HouseValues>();
         }
 
         /// <summary>
@@ -38,6 +39,23 @@ namespace SweWPF.ViewModels
             Planets.Clear();
             Houses.Clear();
             ASMCs.Clear();
+        }
+
+        public void Apply(Models.EphemerisResult ephemerisResult) {
+            DateUTC = ephemerisResult.DateUTC;
+            JulianDay = ephemerisResult.JulianDay;
+            EphemerisTime = ephemerisResult.EphemerisTime;
+            SideralTime = ephemerisResult.SideralTime;
+            MeanEclipticObliquity = ephemerisResult.MeanEclipticObliquity;
+            TrueEclipticObliquity = ephemerisResult.TrueEclipticObliquity;
+            NutationLongitude = ephemerisResult.NutationLongitude;
+            NutationObliquity = ephemerisResult.NutationObliquity;
+            Planets.Clear();
+            foreach (var p in ephemerisResult.Planets) Planets.Add(p);
+            Houses.Clear();
+            foreach (var h in ephemerisResult.Houses) Houses.Add(h);
+            ASMCs.Clear();
+            foreach (var h in ephemerisResult.ASMCs) ASMCs.Add(h);
         }
 
         /// <summary>
@@ -157,17 +175,17 @@ namespace SweWPF.ViewModels
         /// <summary>
         /// Planets calculation result
         /// </summary>
-        public ObservableCollection<PlanetInfos> Planets { get; private set; }
+        public ObservableCollection<PlanetValues> Planets { get; private set; }
 
         /// <summary>
         /// Houses
         /// </summary>
-        public ObservableCollection<HouseInfos> Houses { get; private set; }
+        public ObservableCollection<HouseValues> Houses { get; private set; }
 
         /// <summary>
         /// Ascendants, MC etc.
         /// </summary>
-        public ObservableCollection<HouseInfos> ASMCs { get; private set; }
+        public ObservableCollection<HouseValues> ASMCs { get; private set; }
 
     }
 

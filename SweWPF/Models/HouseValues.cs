@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SweWPF.ViewModels
+namespace SweWPF.Models
 {
-    public class HouseInfos
+    public class HouseValues
     {
         public int House { get; set; }
         public String HouseName { get; set; }
