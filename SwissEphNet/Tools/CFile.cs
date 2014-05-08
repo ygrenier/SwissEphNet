@@ -296,28 +296,46 @@ namespace SwissEphNet
         /// Read an array of Int32
         /// </summary>
         public Int32[] ReadInt32s(int count) {
-            var result = new List<Int32>();
-            Int32 b = 0;
+            var result = new Int32[count];
+            var cnt = ReadInt32s(result, 0, count);
+            if (EOF && cnt == 0) return null;
+            return result.Take(cnt).ToArray();
+        }
+
+        /// <summary>
+        /// Read an array of Int32
+        /// </summary>
+        public int ReadInt32s(Int32[] buff, int offset, int count) {
+            Int32 b = 0, res = 0;
             for (int i = 0; i < count; i++) {
                 if (!Read(ref b)) break;
-                result.Add(b);
+                buff[offset + i] = b;
+                res++;
             }
-            if (EOF && result.Count == 0) return null;
-            return result.ToArray(); ;
+            return res;
         }
 
         /// <summary>
         /// Read an array of double
         /// </summary>
         public double[] ReadDoubles(int count) {
-            var result = new List<double>();
-            double b = 0;
+            var result = new Double[count];
+            var cnt = ReadDoubles(result, 0, count);
+            if (EOF && cnt == 0) return null;
+            return result.Take(cnt).ToArray();
+        }
+
+        /// <summary>
+        /// Read an array of double
+        /// </summary>
+        public int ReadDoubles(Double[] buff, int offset, int count) {
+            Double b = 0; int res = 0;
             for (int i = 0; i < count; i++) {
                 if (!Read(ref b)) break;
-                result.Add(b);
+                buff[offset + i] = b;
+                res++;
             }
-            if (EOF && result.Count == 0) return null;
-            return result.ToArray(); ;
+            return res;
         }
 
         /// <summary>

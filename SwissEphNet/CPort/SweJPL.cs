@@ -122,7 +122,7 @@ namespace SwissEphNet.CPort
             public double eh_emrat;
             public Int32 eh_denum;
             public Int32 eh_ncon;
-            public Int32[] eh_ipt;
+            public Int32[] eh_ipt { get; private set; }
             public char[] ch_cnam;
             public double[] pv { get; private set; }
             public double[] pvsun { get; private set; }
@@ -275,7 +275,7 @@ namespace SwissEphNet.CPort
              * ipt[i+1]: number of coefficients (interpolation order - 1)
              * ipt[i+2]: number of intervals in segment */
             //fread((void *) &js.eh_ipt[0], sizeof(int32), 36, js.jplfptr);
-            js.eh_ipt = js.jplfptr.ReadInt32s(36);
+            js.jplfptr.ReadInt32s(js.eh_ipt, 0, 36);
             if (js.do_reorder)
                 //reorder((char *) &js.eh_ipt[0], sizeof(int32), 36);
                 reorder(js.eh_ipt);
@@ -732,10 +732,10 @@ namespace SwissEphNet.CPort
                  * ipt[i+1]: number of coefficients (interpolation order - 1)
                  * ipt[i+2]: number of intervals in segment */
                 //fread((void *) &ipt[0], sizeof(int32), 36, js.jplfptr);
-                ipt = js.jplfptr.ReadInt32s(36);
+                js.jplfptr.ReadInt32s(ipt, 0, 36);
                 if (js.do_reorder)
                     //reorder((char *) &ipt[0], sizeof(int32), 36);
-                    reorder(ipt);
+                    reorder(ipt, 0, 36);
                 /* numde = number of jpl ephemeris "404" with de404 */
                 //fread((void *) &js.eh_denum, sizeof(int32), 1, js.jplfptr);
                 js.eh_denum = js.jplfptr.ReadInt32();
@@ -749,7 +749,7 @@ namespace SwissEphNet.CPort
                     reorder(lpt);
                 /* cval[]:  other constants in next record */
                 //FSEEK(js.jplfptr, (off_t) (1L * irecsz), 0);
-                js.jplfptr.Seek(irecsz, SeekOrigin.Current);
+                js.jplfptr.Seek(irecsz, SeekOrigin.Begin);
                 //fread((void *) &js.eh_cval[0], sizeof(double), 400, js.jplfptr);
                 js.eh_cval = js.jplfptr.ReadDoubles(400);
                 if (js.do_reorder)
@@ -795,20 +795,19 @@ namespace SwissEphNet.CPort
                 /* check if start and end dates in segments are the same as in 
                  * file header */
                 //FSEEK(js.jplfptr, (off_t) (2L * irecsz), 0);
-                js.jplfptr.Seek(2 * irecsz, SeekOrigin.Current);
+                js.jplfptr.Seek(2 * irecsz, SeekOrigin.Begin);
                 //fread((void *) &ts[0], sizeof(double), 2, js.jplfptr);
-                ts = js.jplfptr.ReadDoubles(2);
+                js.jplfptr.ReadDoubles(ts, 0, 2);
                 if (js.do_reorder)
                     //reorder((char *) &ts[0], sizeof(double), 2);
-                    reorder(ts);
+                    reorder(ts, 0, 2);
                 //FSEEK(js.jplfptr, (off_t)((nseg + 2 - 1) * ((off_t)irecsz)), 0);
-                js.jplfptr.Seek(((nseg + 2 - 1) * (irecsz)), SeekOrigin.Current);
+                js.jplfptr.Seek(((nseg + 2 - 1) * (irecsz)), SeekOrigin.Begin);
                 //fread((void*)&ts[2], sizeof(double), 2, js.jplfptr);
-                var tmpts = js.jplfptr.ReadDoubles(2);
+                js.jplfptr.ReadDoubles(ts, 2, 2);
                 if (js.do_reorder)
                     //reorder((char*)&ts[2], sizeof(double), 2);
-                    reorder(tmpts);
-                Array.Copy(tmpts, 0, ts, 2, 2);
+                    reorder(ts, 2, 2);
                 if (ts[0] != js.eh_ss[0] || ts[3] != js.eh_ss[1]) {
                     serr = C.sprintf("JPL ephemeris file is corrupt; start/end date check failed. %.1f != %.1f || %.1f != %.1f", ts[0], js.eh_ss[0], ts[3], js.eh_ss[1]);
                     return Sweph.NOT_AVAILABLE;
@@ -834,7 +833,7 @@ namespace SwissEphNet.CPort
             if (nr != nrl) {
                 nrl = nr;
                 //if (FSEEK(js.jplfptr, (off_t)(nr * ((off_t)irecsz)), 0) != 0) {
-                if (js.jplfptr.Seek((nr * (irecsz)), SeekOrigin.Current) != 0) {
+                if (js.jplfptr.Seek((nr * (irecsz)), SeekOrigin.Begin) != 0) {
                     serr = C.sprintf("Read error in JPL eph. at %f\n", et);
                     return Sweph.NOT_AVAILABLE;
                 }
@@ -964,11 +963,25 @@ namespace SwissEphNet.CPort
                 x[i] = BitConverter.ToDouble(sp2, 0);
             }
         }
+        public void reorder(Double[] x, int offset, int count) {
+            for (int i = 0; i < count; i++) {
+                var sp1 = BitConverter.GetBytes(x[offset + i]);
+                var sp2 = reorder(sp1);
+                x[offset + i] = BitConverter.ToDouble(sp2, 0);
+            }
+        }
         public void reorder(Int32[] x) {
             for (int i = 0; i < x.Length; i++) {
                 var sp1 = BitConverter.GetBytes(x[i]);
                 var sp2 = reorder(sp1);
                 x[i] = BitConverter.ToInt32(sp2, 0);
+            }
+        }
+        public void reorder(Int32[] x, int offset, int count) {
+            for (int i = 0; i < count; i++) {
+                var sp1 = BitConverter.GetBytes(x[offset + i]);
+                var sp2 = reorder(sp1);
+                x[offset + i] = BitConverter.ToInt32(sp2, 0);
             }
         }
         public int reorder(int x) {

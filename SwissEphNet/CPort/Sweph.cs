@@ -297,10 +297,10 @@ namespace SwissEphNet.CPort
 #endif //* TRACE */
 
             //#if NO_JPL
-            if ((iflag & SwissEph.SEFLG_JPLEPH) != 0) {
-                iflag = iflag & ~SwissEph.SEFLG_EPHMASK;
-                iflag |= SwissEph.SEFLG_SWIEPH;
-            }
+            //if ((iflag & SwissEph.SEFLG_JPLEPH) != 0) {
+            //    iflag = iflag & ~SwissEph.SEFLG_EPHMASK;
+            //    iflag |= SwissEph.SEFLG_SWIEPH;
+            //}
             //#endif
 
             /* function calls for Pluto with asteroid number 134340
@@ -544,7 +544,7 @@ namespace SwissEphNet.CPort
                 pdp = swed.pldat[ipli];
                 xp = pdp.xreturn;
                 switch (epheflag) {
-                    //#if NO_JPL
+                    //#ifndef NO_JPL
                     case SwissEph.SEFLG_JPLEPH:
                         retc = jplplan(tjd, ipli, iflag, DO_SAVE, null, null, null, ref serr);
                         /* read error or corrupt file */
@@ -630,28 +630,28 @@ namespace SwissEphNet.CPort
                 xp = pedp.xreturn;
                 switch (epheflag) {
                     //#if NO_JPL
-                    case SwissEph.SEFLG_JPLEPH:
-                        /* open ephemeris, if still closed */
-                        if (!swed.jpl_file_is_open) {
-                            retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref serr);
-                            if (retc != OK)
-                                goto sweph_sbar;
-                        }
-                        retc = SE.SweJPL.swi_pleph(tjd, SweJPL.J_SUN, SweJPL.J_SBARY, psdp.x, ref serr);
-                        if (retc == ERR || retc == BEYOND_EPH_LIMITS) {
-                            SE.SweJPL.swi_close_jpl_file();
-                            swed.jpl_file_is_open = false;
-                            goto return_error;
-                        }
-                        /* jpl ephemeris not on disk or date beyond ephemeris range 
-                     *     or file corrupt */
-                        if (retc == NOT_AVAILABLE) {
-                            iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
-                            serr = (serr ?? String.Empty) + serr;
-                            goto sweph_sbar;
-                        }
-                        psdp.teval = tjd;
-                        break;
+                    //case SwissEph.SEFLG_JPLEPH:
+                    //    /* open ephemeris, if still closed */
+                    //    if (!swed.jpl_file_is_open) {
+                    //        retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref serr);
+                    //        if (retc != OK)
+                    //            goto sweph_sbar;
+                    //    }
+                    //    retc = SE.SweJPL.swi_pleph(tjd, SweJPL.J_SUN, SweJPL.J_SBARY, psdp.x, ref serr);
+                    //    if (retc == ERR || retc == BEYOND_EPH_LIMITS) {
+                    //        SE.SweJPL.swi_close_jpl_file();
+                    //        swed.jpl_file_is_open = false;
+                    //        goto return_error;
+                    //    }
+                    //    /* jpl ephemeris not on disk or date beyond ephemeris range 
+                    // *     or file corrupt */
+                    //    if (retc == NOT_AVAILABLE) {
+                    //        iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
+                    //        serr = (serr ?? String.Empty) + serr;
+                    //        goto sweph_sbar;
+                    //    }
+                    //    psdp.teval = tjd;
+                    //    break;
                     //#endif
                     case SwissEph.SEFLG_SWIEPH:
                     sweph_sbar:
@@ -5456,8 +5456,8 @@ namespace SwissEphNet.CPort
             if (epheflag == 0)
                 epheflag = SwissEph.SEFLG_DEFAULTEPH;
             //#if NO_JPL
-            if (epheflag == SwissEph.SEFLG_JPLEPH)
-                epheflag = SwissEph.SEFLG_SWIEPH;
+            //if (epheflag == SwissEph.SEFLG_JPLEPH)
+            //    epheflag = SwissEph.SEFLG_SWIEPH;
             //#endif
             iflag = (iflag & ~SwissEph.SEFLG_EPHMASK) | epheflag;
             /* SwissEph.SEFLG_JPLHOR only with JPL and Swiss Ephemeeris */
