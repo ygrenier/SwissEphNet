@@ -678,7 +678,7 @@ namespace SwissEphNet.CPort
               CPointer<double> pv, CPointer<double> pvsun, CPointer<double> nut, ref string serr) {
             int i, j, k;
             Int32 nseg;
-            int flen, nb;
+            Int64 flen, nb;
             double[] buf = js.buf;
             double aufac, s, t, intv; double[] ts = new double[4];
             Int32 nrecl, ksize;
@@ -764,7 +764,7 @@ namespace SwissEphNet.CPort
                 //FSEEK(js.jplfptr, (off_t) 0L, SEEK_END);
                 js.jplfptr.Seek(0, SeekOrigin.End);
                 //flen = FTELL(js.jplfptr);
-                flen = (int)js.jplfptr.Position;
+                flen = js.jplfptr.Position;
                 /* # of segments in file */
                 nseg = (Int32)((js.eh_ss[1] - js.eh_ss[0]) / js.eh_ss[2]);
                 /* sum of all cheby coeffs of all planets and segments */
@@ -789,7 +789,7 @@ namespace SwissEphNet.CPort
                   && flen - nb != ksize * nrecl
                   ) {
                     //serr=C.sprintf("JPL ephemeris file is mutilated; length = %d instead of %d.", (uint)flen, (uint)nb);
-                    serr = C.sprintf("JPL ephemeris file %s is mutilated; length = %d instead of %d.", js.jplfname, (uint)flen, (uint)nb);
+                    serr = C.sprintf("JPL ephemeris file %s is mutilated; length = %d instead of %d.", js.jplfname, flen, nb);
                     return (Sweph.NOT_AVAILABLE);
                 }
                 /* check if start and end dates in segments are the same as in 
@@ -802,7 +802,7 @@ namespace SwissEphNet.CPort
                     //reorder((char *) &ts[0], sizeof(double), 2);
                     reorder(ts, 0, 2);
                 //FSEEK(js.jplfptr, (off_t)((nseg + 2 - 1) * ((off_t)irecsz)), 0);
-                js.jplfptr.Seek(((nseg + 2 - 1) * (irecsz)), SeekOrigin.Begin);
+                js.jplfptr.Seek((((Int64)nseg + 2 - 1) * ((Int64)irecsz)), SeekOrigin.Begin);
                 //fread((void*)&ts[2], sizeof(double), 2, js.jplfptr);
                 js.jplfptr.ReadDoubles(ts, 2, 2);
                 if (js.do_reorder)
