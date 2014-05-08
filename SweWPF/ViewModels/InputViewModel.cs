@@ -29,7 +29,7 @@ namespace SweWPF.ViewModels
                 Planet.MeanNode, Planet.TrueNode,
                 Planet.MeanApog, Planet.OscuApog, Planet.Earth
             });
-            Planets.AddRange(new Planet[] { 433, 3045, 7066 });
+            Planets.AddRange(new Planet[] { Planet.AsAsteroid(433), Planet.AsAsteroid(3045), Planet.AsAsteroid(7066) });
         }
 
         private TimeZoneInfo _TimeZone;
@@ -134,5 +134,7 @@ namespace SweWPF.ViewModels
         /// </summary>
         public List<Planet> Planets { get; private set; }
 
+
+        public Planet SwissEph { get; set; }
     }
 }

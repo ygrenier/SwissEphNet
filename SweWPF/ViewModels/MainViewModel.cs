@@ -123,7 +123,7 @@ namespace SweWPF.ViewModels
                     iflgret = Sweph.swe_calc(Result.EphemerisTime, planet, iflag, x, ref serr);
                     pi.PlanetName = Sweph.swe_get_planet_name(planet);
                     if (planet.IsAsteroid) {
-                        pi.PlanetName = String.Format("#{0}", planet);
+                        pi.PlanetName = String.Format("#{0}", planet - Planet.FirstAsteroid);
                     }
                 }
                 if (iflgret >= 0) {
