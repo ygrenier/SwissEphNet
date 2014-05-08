@@ -1004,6 +1004,7 @@ namespace SwissEphNet.CPort
             //   serr= "error in malloc() with JPL ephemeris.";
             //  return ERR;
             //}
+            js.jplfname = fname;
             js.jplfpath = fpath;
             retc = read_const_jpl(ss, ref serr);
             if (retc != SwissEph.OK)
