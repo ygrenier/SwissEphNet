@@ -2971,7 +2971,7 @@ static string infoexamp = @"\n\
 
         static int Main(string[] args) {
             var s = Environment.GetCommandLineArgs();
-            s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pp", "-ejpl" };
+            //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pp", "-ejpl" };
             //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pp", "-emos" };
             var result = main_test(s.Length, s);
 #if DEBUG
