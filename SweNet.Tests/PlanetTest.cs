@@ -86,5 +86,17 @@ namespace SweNet.Tests
             Assert.AreEqual(false, planet.IsPlanet);
         }
 
+        [TestMethod]
+        public void TestAsAsteroid() {
+            Planet planet = Planet.AsAsteroid(12);
+            Assert.AreEqual(Planet.FirstAsteroid + 12, planet.Id);
+        }
+
+        [TestMethod]
+        public void TestToString() {
+            Planet planet = Planet.Venus;
+            Assert.AreEqual("3", planet.ToString());
+        }
+
     }
 }

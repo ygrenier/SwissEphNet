@@ -189,11 +189,25 @@ namespace SweNet
         public const int FirstAsteroid = 10000;
 
         /// <summary>
+        /// Create a new planet as asteroid
+        /// </summary>
+        /// <param name="id">Id of the asteroid</param>
+        /// <returns>The asteroid</returns>
+        public static Planet AsAsteroid(Int32 id) { return new Planet(FirstAsteroid + id); }
+
+        /// <summary>
         /// New planet
         /// </summary>
         public Planet(Int32 id)
             : this() {
             this.Id = id;
+        }
+
+        /// <summary>
+        /// String value
+        /// </summary>
+        public override string ToString() {
+            return Id.ToString();
         }
 
         /// <summary>
