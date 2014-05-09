@@ -3,6 +3,41 @@ SwissEphNet
 
 This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from C to C# in a PCL project for cross platform usage.
 
+# Usage
+
+Now SwissEphNet is available as a [Nuget package](https://www.nuget.org/packages/SwissEphNet): `Install-Package SwissEphNet`
+
+Or you can download the binaries in [the last release](https://github.com/ygrenier/SwissEphNet/releases/latest).
+
+SwissEphNet is a Portable Class Library with support for .Net 4+, Silverlight 5, Windows Phone 8, Windows Store apps, Xamarin.Android and Xamarin.iOS.
+
+## Create an instance
+
+SwissEphNet.SwissEph is ```IDisposable``` so you can use it with an ```using``` statement.
+
+```C#
+using (var sweph = new SwissEphNet.SwissEph()) {
+    // Use it
+}
+```
+
+## Loading files
+
+SwissEphNet is a Portable Classe Library and we don't have file access.
+
+As Swiss Ephemeris use some data files, an event exists for loading the files required.
+
+```C#
+using (var sweph = new SwissEphNet.SwissEph()) {
+    sweph.OnLoadFile += (s, e) => {
+        // Loading file
+    };
+    // Use it
+}
+```
+
+For more information [read this page](https://github.com/ygrenier/SwissEphNet/wiki/Loading-files).
+
 # Firsts steps
 
 Our first step is to convert the C source code to C#, and provide some conversions from C like string format.
