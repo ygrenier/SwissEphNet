@@ -28,6 +28,13 @@ namespace SweNet
         }
 
         /// <summary>
+        /// String value
+        /// </summary>
+        public override string ToString() {
+            return String.Format("{0}, {1}, {2} m", Longitude, Latitude, Altitude);
+        }
+
+        /// <summary>
         /// Longitude
         /// </summary>
         public Longitude Longitude { get; set; }

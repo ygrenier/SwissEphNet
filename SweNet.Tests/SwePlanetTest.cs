@@ -48,6 +48,8 @@ namespace SweNet.Tests
                 // Call twice the same planet for code coverage in swe_get_planet_name optimization planet name
                 Assert.AreEqual("Pluto", swe.Planets.GetPlanetName(Planet.Pluto));
                 Assert.AreEqual("Pluto", swe.Planets.GetPlanetName(Planet.Pluto));
+
+                Assert.AreEqual("9988", swe.Planets.GetPlanetName(Planet.FirstAsteroid - 12));
             }
         }
 
@@ -62,7 +64,8 @@ namespace SweNet.Tests
         [TestMethod]
         public void TestGetPlanetName_Asteroid() {
             using (var swe = new Sweph()) {
-                Assert.AreEqual("0: not found", swe.Planets.GetPlanetName(SwissEph.SE_AST_OFFSET));
+                Assert.AreEqual("0: not found", swe.Planets.GetPlanetName(Planet.FirstAsteroid));
+                Assert.AreEqual("433: not found", swe.Planets.GetPlanetName(Planet.FirstAsteroid + 433));
             }
         }
 
