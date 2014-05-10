@@ -54,9 +54,19 @@ namespace SweWPF.Services
                 sweph.swe_set_topo(input.Longitude, input.Latitude, input.Altitude);
 
                 // Dates and Times
-                result.JulianDay = sweph.JulianDay(input.DateUTC);
-                result.DateUTC = sweph.DateUT(result.JulianDay);
-                result.EphemerisTime = sweph.EphemerisTime(result.JulianDay);
+                if (input.DateUT != null) {
+                    result.JulianDay = sweph.JulianDay(input.DateUT.Value);
+                    result.DateUTC = sweph.DateUT(result.JulianDay);
+                    result.EphemerisTime = sweph.EphemerisTime(result.JulianDay);
+                } else if (input.DateET != null) {
+                    result.JulianDay = sweph.JulianDay(input.DateET.Value);
+                    result.DateUTC = sweph.DateUT(result.JulianDay);
+                    result.EphemerisTime = new EphemerisTime(result.JulianDay, 0.0);
+                } else if (input.JulianDay != null) {
+                    result.JulianDay = input.JulianDay.Value;
+                    result.DateUTC = sweph.DateUT(result.JulianDay);
+                    result.EphemerisTime = sweph.EphemerisTime(result.JulianDay);
+                }
                 result.SideralTime = sweph.swe_sidtime(result.JulianDay) + (input.Longitude / 15.0);
                 if (result.SideralTime >= 24.0) result.SideralTime -= 24.0;
                 if (result.SideralTime < 0.0) result.SideralTime += 24.0;

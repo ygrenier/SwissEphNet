@@ -16,8 +16,7 @@ namespace SweWPF.Models
         public InputCalculation() {
             Planets = new List<Planet>();
             TimeZone = TimeZoneInfo.Local;
-            //Date = new DateUT(DateTime.Now);
-            Date = new DateUT(1974, 8, 16, 0, 30, 0);
+            DateUT = new DateUT(DateTime.Now);
             Longitude = new SweNet.Longitude(5, 20, 0, LongitudePolarity.East);
             Latitude = new SweNet.Latitude(47, 52, 0, LatitudePolarity.North);
             HouseSystem = "Placidus";
@@ -32,16 +31,11 @@ namespace SweWPF.Models
 
         public TimeZoneInfo TimeZone { get; set; }
 
-        public DateUT Date { get; set; }
+        public DateUT? DateUT { get; set; }
 
-        public DateUT DateUTC {
-            get {
-                TimeSpan daylight = TimeSpan.Zero;
-                if (Date.Year > 0 && TimeZone.SupportsDaylightSavingTime && TimeZone.IsDaylightSavingTime(Date.ToDateTime()))
-                    daylight = TimeSpan.FromHours(1);
-                return Date - (TimeZone.BaseUtcOffset + daylight);
-            }
-        }
+        public DateUT? DateET { get; set; }
+
+        public JulianDay? JulianDay { get; set; }
 
         /// <summary>
         /// Latitude

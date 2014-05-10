@@ -14,11 +14,10 @@ namespace SweWPF.ViewModels
     {
 
         public InputViewModel() {
+            InputDate = new InputDateViewModel();
             Planets = new List<Planet>();
-            TimeZones = TimeZoneInfo.GetSystemTimeZones().ToList();
-            TimeZone = TimeZoneInfo.Local;
-            //Date = new DateUT(DateTime.Now);
-            Date = new DateUT(1974, 8, 16, 0, 30, 0);
+            InputDate.Date = new DateUT(DateTime.Now);
+            //InputDate.Date = new DateUT(1974, 8, 16, 0, 30, 0);
             Longitude = new SweNet.Longitude(5, 20, 0, LongitudePolarity.East);
             Latitude = new SweNet.Latitude(47, 52, 0, LatitudePolarity.North);
             HouseSystems = new string[] { "Placidus", "Campanus", "Regiomontanus", "Koch", "Equal", "Vehlow equal", "Horizon", "B=Alcabitus" };
@@ -38,58 +37,30 @@ namespace SweWPF.ViewModels
         public Models.InputCalculation CreateInputData() {
             var result = new Models.InputCalculation() {
                 Altitude = this.Altitude,
-                Date = this.Date,
                 HouseSystem = this.HouseSystem,
                 Latitude = this.Latitude,
                 Longitude = this.Longitude,
-                TimeZone = this.TimeZone
+                TimeZone = this.InputDate.TimeZone
             };
+            result.DateUT = null; result.JulianDay = null; result.DateET = null;
+            switch (InputDate.DateType) {
+                case EphemerisDateType.EphemerisTime:
+                    result.DateET = this.InputDate.Date;
+                    break;
+                case EphemerisDateType.JulianDay:
+                    result.JulianDay = this.InputDate.JulianDay;
+                    break;
+                case EphemerisDateType.UniversalTime:
+                    result.DateUT = this.InputDate.DateUTC;
+                    break;
+            }
             result.Planets.Clear();
             result.Planets.AddRange(Planets);
             return result;
         }
 
-        private TimeZoneInfo _TimeZone;
 
-        public TimeZoneInfo TimeZone {
-            get { return _TimeZone; }
-            set {
-                if (_TimeZone != value) {
-                    _TimeZone = value;
-                    RaisePropertyChanged("TimeZone");
-                    RaisePropertyChanged("DateUTC");
-                }
-            }
-        }
-
-        private DateUT _Date;
-
-        public DateUT Date {
-            get { return _Date; }
-            set {
-                if (_Date != value) {
-                    _Date = value;
-                    RaisePropertyChanged("Date");
-                    RaisePropertyChanged("DateUTC");
-                }
-            }
-        }
-
-        public DateUT DateUTC {
-            get {
-                TimeSpan daylight = TimeSpan.Zero;
-                if (Date.Year > 0 && TimeZone.SupportsDaylightSavingTime && TimeZone.IsDaylightSavingTime(Date.ToDateTime()))
-                    daylight = TimeSpan.FromHours(1);
-                return Date - (TimeZone.BaseUtcOffset + daylight);
-            }
-        }
-
-        /// <summary>
-        /// Liste of time zones
-        /// </summary>
-        public List<TimeZoneInfo> TimeZones { get; private set; }
-
-        private Latitude _Latitude;
+        public InputDateViewModel InputDate { get; private set; }
 
         /// <summary>
         /// Latitude
@@ -101,8 +72,7 @@ namespace SweWPF.ViewModels
                 RaisePropertyChanged("Latitude");
             }
         }
-
-        private Longitude _Longitude;
+        private Latitude _Latitude;
 
         /// <summary>
         /// Longitude
@@ -114,8 +84,7 @@ namespace SweWPF.ViewModels
                 RaisePropertyChanged("Longitude");
             }
         }
-
-        private int _Altitude;
+        private Longitude _Longitude;
 
         /// <summary>
         /// Altitude
@@ -127,8 +96,7 @@ namespace SweWPF.ViewModels
                 RaisePropertyChanged("Altitude");
             }
         }
-
-        private String _HouseSystem;
+        private int _Altitude;
 
         /// <summary>
         /// House system
@@ -140,6 +108,7 @@ namespace SweWPF.ViewModels
                 RaisePropertyChanged("HouseSystem");
             }
         }
+        private String _HouseSystem;
 
         /// <summary>
         /// House systems

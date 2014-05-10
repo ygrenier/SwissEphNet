@@ -19,25 +19,24 @@
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Content="Day"/>
         <Label Grid.Column="1" Content="Month"/>
         <Label Grid.Column="2" Content="Year"/>
-        <Label Grid.Column="3" Content="Hours"/>
-        <Label Grid.Column="4" Content="Minutes"/>
-        <Label Grid.Column="5" Content="Seconds"/>
+        <Label Grid.Column="0" Grid.Row="2" Content="Hours"/>
+        <Label Grid.Column="1" Grid.Row="2" Content="Minutes"/>
+        <Label Grid.Column="2" Grid.Row="2" Content="Seconds"/>
         <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Day, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Month, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
         <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Year, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Hours, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
-        <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding Minutes, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
-        <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding Seconds, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
+        <TextBox Grid.Row="3" Grid.Column="0" Text="{Binding Hours, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Minutes, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
+        <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Seconds, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DateTimeInput}}, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat=D2}"/>
     </Grid>
 </UserControl>

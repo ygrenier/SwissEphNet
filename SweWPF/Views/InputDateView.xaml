@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="SweWPF.Views.InputDateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:controls="clr-namespace:SweWPF.Controls"
+             xmlns:vm="clr-namespace:SweWPF.ViewModels"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=vm:InputDateViewModel, IsDesignTimeCreatable=True}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel>
+    	<VisualStateManager.VisualStateGroups>
+    		<VisualStateGroup x:Name="DateTypeStateGroup">
+    			<VisualState x:Name="UniversalTimeState">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grdJulianDay">
+    						<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+    					</ObjectAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
+    			<VisualState x:Name="EphemerisTimeState">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grdTimeZone">
+    						<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+    					</ObjectAnimationUsingKeyFrames>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grdUtcTime">
+    						<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+    					</ObjectAnimationUsingKeyFrames>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grdJulianDay">
+    						<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+    					</ObjectAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
+    			<VisualState x:Name="JulianDayState">
+    				<Storyboard>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="dtiDate">
+    						<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+    					</ObjectAnimationUsingKeyFrames>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grdTimeZone">
+    						<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+    					</ObjectAnimationUsingKeyFrames>
+    					<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grdUtcTime">
+    						<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+    					</ObjectAnimationUsingKeyFrames>
+    				</Storyboard>
+    			</VisualState>
+    		</VisualStateGroup>
+    	</VisualStateManager.VisualStateGroups>
+        <ComboBox x:Name="cbTimeType" SelectionChanged="cbTimeType_SelectionChanged" ItemsSource="{Binding ListDateTypes}" SelectedValuePath="Item1" DisplayMemberPath="Item2" SelectedValue="{Binding DateType}">
+        </ComboBox>
+        <controls:DateTimeInput x:Name="dtiDate" Date="{Binding Date, Mode=TwoWay}" />
+        <Grid x:Name="grdTimeZone">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label>Time zone</Label>
+            <Label Grid.Column="1">Day light</Label>
+            <ComboBox Grid.Row="1" ItemsSource="{Binding TimeZones}" SelectedItem="{Binding TimeZone, Mode=TwoWay}"/>
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ListDayLights}" DisplayMemberPath="Item2" SelectedValuePath="Item1" SelectedValue="{Binding DayLight, Mode=TwoWay}" />
+        </Grid>
+        <Grid x:Name="grdUtcTime">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label>UTC time</Label>
+            <Label Grid.Row="1" Content="{Binding DateUTC}"></Label>
+        </Grid>
+        <Grid x:Name="grdJulianDay">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label>Julian day</Label>
+            <TextBox Grid.Row="1" Text="{Binding JdValue, Mode=TwoWay}" TextAlignment="Right"/>
+        </Grid>
+    </StackPanel>
+</UserControl>

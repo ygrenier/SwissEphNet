@@ -1,57 +1,62 @@
-﻿<UserControl xmlns:Controls="clr-namespace:SweWPF.Controls"  x:Class="SweWPF.Views.InputView"
+﻿<UserControl x:Class="SweWPF.Views.InputView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:SweWPF.ViewModels"
+             xmlns:vw="clr-namespace:SweWPF.Views"
+             xmlns:Controls="clr-namespace:SweWPF.Controls"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:InputViewModel}"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="600" d:DesignWidth="300">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Label Grid.ColumnSpan="2">Input information</Label>
-        <Controls:DateTimeInput Grid.Row="1" Grid.ColumnSpan="2" Date="{Binding Date, Mode=TwoWay}" />
-        <Label Grid.Row="2">Time zone</Label>
-        <ComboBox Grid.Row="3" ItemsSource="{Binding TimeZones}" SelectedItem="{Binding TimeZone, Mode=TwoWay}" Margin="2"/>
-        <Label Grid.Row="2" Grid.Column="1">Date UTC</Label>
-        <TextBox Grid.Column="1" Grid.Row="3" IsReadOnly="True" Text="{Binding DateUTC, Mode=OneWay}" Margin="2"/>
-        
-        <Grid Grid.Row="4" Grid.ColumnSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Label>Latitude</Label>
-            <Controls:LatitudeInput Grid.Row="1" Latitude="{Binding Latitude, Mode=TwoWay}" />
-            <Label Grid.Column="1">Longitude</Label>
-            <Controls:LongitudeInput Grid.Row="1" Grid.Column="1" Longitude="{Binding Longitude, Mode=TwoWay}"/>
-            <Label Grid.Column="2">Altitude</Label>
-            <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Altitude, Mode=TwoWay}" Margin="2" TextAlignment="Right"/>
-        </Grid>
-        
-        <Label Grid.Row="5">House system</Label>
-        <ComboBox Grid.Row="6" ItemsSource="{Binding HouseSystems}" SelectedItem="{Binding HouseSystem, Mode=TwoWay}" Margin="2"/>
-        
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Grid.ColumnSpan="2">Input information</Label>
+
+                <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header=" Date">
+                    <vw:InputDateView DataContext="{Binding InputDate}"/>
+                </GroupBox>
+
+                <GroupBox Grid.Row="2" Grid.ColumnSpan="2" Header="Geographic position">
+                    <StackPanel>
+                        <Label>Latitude</Label>
+                        <Controls:LatitudeInput Latitude="{Binding Latitude, Mode=TwoWay}" />
+                        <Label>Longitude</Label>
+                        <Controls:LongitudeInput Longitude="{Binding Longitude, Mode=TwoWay}"/>
+                        <Label>Altitude</Label>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Altitude, Mode=TwoWay}" Margin="2" TextAlignment="Right"/>
+                            <Label Grid.Column="1">meters</Label>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <!--<Label Grid.Row="3">House system</Label>
+                <ComboBox Grid.Row="4" ItemsSource="{Binding HouseSystems}" SelectedItem="{Binding HouseSystem, Mode=TwoWay}" Margin="2"/>-->
+                
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>
