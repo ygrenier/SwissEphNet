@@ -1,6 +1,7 @@
 ﻿using SwissEphNet;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -10,9 +11,10 @@ namespace SweNet
     /// <summary>
     /// Swiss Ephemeris engine
     /// </summary>
-    public class Sweph : SwissEphNet.SwissEph
+    public class Sweph : IDisposable
     {
         bool _Initialized = false;
+        SwissEphNet.SwissEph _SwissEph;
         SweDate _Date;
         Persit.IDataProvider _DataProvider;
         SwePlanet _Planets;
@@ -42,12 +44,18 @@ namespace SweNet
         /// <summary>
         /// Internal release resources
         /// </summary>
-        protected override void Dispose(bool disposing) {
-            base.Dispose(disposing);
+        protected virtual void Dispose(bool disposing) {
             if (disposing) {
                 Close();
                 _Initialized = true;
             }
+        }
+
+        /// <summary>
+        /// Release resources
+        /// </summary>
+        public void Dispose() {
+            Dispose(true);
         }
 
         #endregion
@@ -71,12 +79,19 @@ namespace SweNet
             _Date = CreateDateEngine();
             _DataProvider = CreateDataProvider();
             _Planets = CreatePlanetsEngine();
+            _SwissEph = new SwissEph();
+            _SwissEph.OnLoadFile += (s, e) => {
+                e.File = LoadFile(e.FileName);
+            };
         }
 
         /// <summary>
         /// Internal close
         /// </summary>
         void Close() {
+            if (_SwissEph != null)
+                _SwissEph.Dispose();
+            _SwissEph = null;
             _Date = null;
             _DataProvider = null;
         }
@@ -86,6 +101,62 @@ namespace SweNet
         /// </summary>
         public static Encoding CheckEncoding(Encoding encoding) {
             return encoding ?? Encoding.GetEncoding("Windows-1252");
+        }
+
+        #endregion
+
+        #region Swiss Ephemeris proxies
+
+        /// <summary>
+        /// swe_set_topo()
+        /// </summary>
+        public void swe_set_topo(double geolon, double geolat, double height) {
+            SwissEph.swe_set_topo(geolon, geolat, height);
+        }
+
+        /// <summary>
+        /// swe_calc()
+        /// </summary>
+        public Int32 swe_calc(double tjd, int ipl, Int32 iflag, double[] xx, ref string serr) {
+            return SwissEph.swe_calc(tjd, ipl, iflag, xx, ref serr);
+        }
+
+        /// <summary>
+        /// swe_sidtime()
+        /// </summary>
+        public double swe_sidtime(double tjd_ut) { return SwissEph.swe_sidtime(tjd_ut); }
+
+        /// <summary>
+        /// swe_fixstar()
+        /// </summary>
+        public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr) {
+            return SwissEph.swe_fixstar(star, tjd, iflag, xx, ref serr);
+        }
+
+        /// <summary>
+        /// swe_get_planet_name()
+        /// </summary>
+        public string swe_get_planet_name(int ipl) { return SwissEph.swe_get_planet_name(ipl); }
+
+        /// <summary>
+        /// swe_houses()
+        /// </summary>
+        public int swe_houses(double tjd_ut, double geolat, double geolon, char hsys, double[] cusps, double[] ascmc) {
+            return SwissEph.swe_houses(tjd_ut, geolat, geolon, hsys, cusps, ascmc);
+        }
+
+        /// <summary>
+        /// swe_houses_ex()
+        /// </summary>
+        public int swe_houses_ex(double tjd_ut, Int32 iflag, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc) {
+            return SwissEph.swe_houses_ex(tjd_ut, iflag, geolat, geolon, hsys, hcusps, ascmc);
+        }
+
+        /// <summary>
+        /// swe_house_pos()
+        /// </summary>
+        public double swe_house_pos(double armc, double geolon, double eps, char hsys, double[] xpin, ref string serr) {
+            return SwissEph.swe_house_pos(armc, geolon, eps, hsys, xpin, ref serr);
         }
 
         #endregion
@@ -175,6 +246,25 @@ namespace SweNet
 
         #endregion
 
+        #region File management
+
+        /// <summary>
+        /// Load a file
+        /// </summary>
+        /// <param name="filename">File name</param>
+        /// <returns>File loaded or null if file not found</returns>
+        internal protected Stream LoadFile(String filename) {
+            var h = OnLoadFile;
+            if (h != null) {
+                var e = new LoadFileEventArgs(filename);
+                h(this, e);
+                return e.File;
+            }
+            return null;
+        }
+
+        #endregion
+
         #region Trace
 
         /// <summary>
@@ -196,6 +286,11 @@ namespace SweNet
         /// Current configuration
         /// </summary>
         protected SweConfig Config { get; private set; }
+
+        /// <summary>
+        /// Swiss Ephemeris
+        /// </summary>
+        protected SwissEphNet.SwissEph SwissEph { get { CheckInitialized(); return _SwissEph; } }
 
         #endregion
 
@@ -224,6 +319,11 @@ namespace SweNet
         /// Event raised when a new trace message is invoked
         /// </summary>
         public event EventHandler<TraceEventArgs> OnTrace;
+
+        /// <summary>
+        /// Event raised when loading a file is required
+        /// </summary>
+        public event EventHandler<LoadFileEventArgs> OnLoadFile;
 
         #endregion
 

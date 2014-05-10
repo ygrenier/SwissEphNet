@@ -99,31 +99,31 @@ namespace SweMini
             //return Main_TestValues(args);
         }
 
-        static int Main_TestValues(string[] args) {
-            int jyear = 2014,
-                jmon = 4,
-                jday = 21,
-                jhour = 20,
-                jmin = 41,
-                jsec = 23;
-            using (Sweph sweph = new Sweph()) {
-                double jut = jhour + (jmin / 60.0) + (jsec / 3600.0);
-                double tjd = sweph.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
-                double deltat = sweph.swe_deltat(tjd);
-                double te = tjd + deltat;
-                printf("date: %02d.%02d.%d at %02d:%02d:%02d\nDeltat : %f\nJulian Day : %f\nEphemeris Time : %f\n", jday, jmon, jyear, jhour, jmin, jsec, deltat, tjd, te);
+        //static int Main_TestValues(string[] args) {
+        //    int jyear = 2014,
+        //        jmon = 4,
+        //        jday = 21,
+        //        jhour = 20,
+        //        jmin = 41,
+        //        jsec = 23;
+        //    using (Sweph sweph = new Sweph()) {
+        //        double jut = jhour + (jmin / 60.0) + (jsec / 3600.0);
+        //        double tjd = sweph.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
+        //        double deltat = sweph.swe_deltat(tjd);
+        //        double te = tjd + deltat;
+        //        printf("date: %02d.%02d.%d at %02d:%02d:%02d\nDeltat : %f\nJulian Day : %f\nEphemeris Time : %f\n", jday, jmon, jyear, jhour, jmin, jsec, deltat, tjd, te);
 
-                var date = new DateUT(jyear, jmon, jday, jhour, jmin, jsec);
-                var jd = sweph.JulianDay(date, DateCalendar.Gregorian);
-                var et = sweph.EphemerisTime(jd);
-                printf("date: %02d.%02d.%d at %02d:%02d:%02d\nDeltat : %f\nJulian Day : %f\nEphemeris Time : %f\n", 
-                    date.Day, date.Month, date.Year, date.Hours, date.Minutes, date.Seconds, et.DeltaT, jd.Value, et.Value);
+        //        var date = new DateUT(jyear, jmon, jday, jhour, jmin, jsec);
+        //        var jd = sweph.JulianDay(date, DateCalendar.Gregorian);
+        //        var et = sweph.EphemerisTime(jd);
+        //        printf("date: %02d.%02d.%d at %02d:%02d:%02d\nDeltat : %f\nJulian Day : %f\nEphemeris Time : %f\n", 
+        //            date.Day, date.Month, date.Year, date.Hours, date.Minutes, date.Seconds, et.DeltaT, jd.Value, et.Value);
 
-            }
+        //    }
 
-            Console.ReadKey();
-            return 0;
-        }
+        //    Console.ReadKey();
+        //    return 0;
+        //}
 
         static int Main_Mini(string[] args) {
             string sdate = String.Empty, snam = String.Empty, serr = String.Empty;
