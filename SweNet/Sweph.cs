@@ -83,6 +83,7 @@ namespace SweNet
             _SwissEph.OnLoadFile += (s, e) => {
                 e.File = LoadFile(e.FileName);
             };
+            RecalcSwissEphState();
         }
 
         /// <summary>
@@ -107,6 +108,53 @@ namespace SweNet
 
         #region Swiss Ephemeris proxies
 
+        Int32 _SwissFlag = 0;
+
+        /// <summary>
+        /// Recalculate the swisseph flag and parameters
+        /// </summary>
+        protected void RecalcSwissEphState() {
+            _SwissFlag = SwissEph.SEFLG_SPEED;
+            // Ephemeris type
+            switch (Ephemeris) {
+                case EphemerisMode.Moshier:
+                    _SwissFlag |= SwissEph.SEFLG_MOSEPH;
+                    break;
+                case EphemerisMode.JPL:
+                    _SwissFlag |= SwissEph.SEFLG_JPLEPH;
+                    break;
+                case EphemerisMode.SwissEphemeris:
+                default:
+                    _SwissFlag |= SwissEph.SEFLG_SWIEPH;
+                    break;
+            }
+            // Position center
+            var sidmode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
+            switch (PositionCenter) {
+                case PositionCenter.Topocentric:
+                    _SwissFlag |= SwissEph.SEFLG_TOPOCTR;
+                    break;
+                case PositionCenter.Heliocentric:
+                    _SwissFlag |= SwissEph.SEFLG_HELCTR;
+                    break;
+                case PositionCenter.Barycentric:
+                    _SwissFlag |= SwissEph.SEFLG_BARYCTR;
+                    break;
+                case PositionCenter.SiderealFagan:
+                    _SwissFlag |= SwissEph.SEFLG_SIDEREAL;
+                    sidmode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
+                    break;
+                case PositionCenter.SiderealLahiri:
+                    _SwissFlag |= SwissEph.SEFLG_SIDEREAL;
+                    sidmode = SwissEph.SE_SIDM_LAHIRI;
+                    break;
+                case PositionCenter.Geocentric:
+                default:
+                    break;
+            }
+            SwissEph.swe_set_sid_mode(sidmode, 0, 0);
+        }
+
         /// <summary>
         /// swe_set_topo()
         /// </summary>
@@ -117,6 +165,9 @@ namespace SweNet
         /// <summary>
         /// swe_calc()
         /// </summary>
+        public Int32 swe_calc(double tjd, int ipl, double[] xx, ref string serr) {
+            return SwissEph.swe_calc(tjd, ipl, _SwissFlag, xx, ref serr);
+        }
         public Int32 swe_calc(double tjd, int ipl, Int32 iflag, double[] xx, ref string serr) {
             return SwissEph.swe_calc(tjd, ipl, iflag, xx, ref serr);
         }
@@ -129,8 +180,8 @@ namespace SweNet
         /// <summary>
         /// swe_fixstar()
         /// </summary>
-        public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr) {
-            return SwissEph.swe_fixstar(star, tjd, iflag, xx, ref serr);
+        public Int32 swe_fixstar(string star, double tjd, double[] xx, ref string serr) {
+            return SwissEph.swe_fixstar(star, tjd, _SwissFlag, xx, ref serr);
         }
 
         /// <summary>
@@ -148,8 +199,8 @@ namespace SweNet
         /// <summary>
         /// swe_houses_ex()
         /// </summary>
-        public int swe_houses_ex(double tjd_ut, Int32 iflag, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc) {
-            return SwissEph.swe_houses_ex(tjd_ut, iflag, geolat, geolon, hsys, hcusps, ascmc);
+        public int swe_houses_ex(double tjd_ut, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc) {
+            return SwissEph.swe_houses_ex(tjd_ut, _SwissFlag, geolat, geolon, hsys, hcusps, ascmc);
         }
 
         /// <summary>
@@ -310,6 +361,38 @@ namespace SweNet
         /// Current planets engine
         /// </summary>
         public SwePlanet Planets { get { CheckInitialized(); return _Planets; } }
+
+        #endregion
+
+        #region Configuration properties
+
+        /// <summary>
+        /// Ephemeris use
+        /// </summary>
+        public EphemerisMode Ephemeris {
+            get { return _Ephemeris; }
+            set {
+                if (_Ephemeris != value) {
+                    _Ephemeris = value;
+                    RecalcSwissEphState();
+                }
+            }
+        }
+        private EphemerisMode _Ephemeris;
+
+        /// <summary>
+        /// Current position center
+        /// </summary>
+        public PositionCenter PositionCenter {
+            get { return _PositionCenter; }
+            set {
+                if (_PositionCenter != value) {
+                    _PositionCenter = value;
+                    RecalcSwissEphState();
+                }
+            }
+        }
+        private PositionCenter _PositionCenter;
 
         #endregion
 

@@ -10,7 +10,7 @@
              d:DataContext="{d:DesignInstance IsDesignTimeCreatable=True, Type=vm:InputViewModel}"
              d:DesignHeight="600" d:DesignWidth="300">
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="3">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -37,6 +37,8 @@
 
                 <GroupBox Grid.Row="2" Grid.ColumnSpan="2" Header="Geographic position">
                     <StackPanel>
+                        <Label>Position center</Label>
+                        <ComboBox ItemsSource="{Binding ListPositionCenters}" DisplayMemberPath="Item2" SelectedValuePath="Item1" SelectedValue="{Binding PositionCenter}" />
                         <Label>Latitude</Label>
                         <Controls:LatitudeInput Latitude="{Binding Latitude, Mode=TwoWay}" />
                         <Label>Longitude</Label>

@@ -15,7 +15,6 @@ namespace SweWPF.Models
 
         public InputCalculation() {
             Planets = new List<Planet>();
-            TimeZone = TimeZoneInfo.Local;
             DateUT = new DateUT(DateTime.Now);
             Longitude = new SweNet.Longitude(5, 20, 0, LongitudePolarity.East);
             Latitude = new SweNet.Latitude(47, 52, 0, LatitudePolarity.North);
@@ -29,13 +28,13 @@ namespace SweWPF.Models
             Planets.AddRange(new Planet[] { Planet.AsAsteroid(433), Planet.AsAsteroid(3045), Planet.AsAsteroid(7066) });
         }
 
-        public TimeZoneInfo TimeZone { get; set; }
-
         public DateUT? DateUT { get; set; }
 
         public DateUT? DateET { get; set; }
 
         public JulianDay? JulianDay { get; set; }
+
+        public PositionCenter PositionCenter { get; set; }
 
         /// <summary>
         /// Latitude

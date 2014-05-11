@@ -17,7 +17,15 @@ namespace SweWPF.ViewModels
             InputDate = new InputDateViewModel();
             Planets = new List<Planet>();
             InputDate.Date = new DateUT(DateTime.Now);
-            //InputDate.Date = new DateUT(1974, 8, 16, 0, 30, 0);
+            PositionCenter = SweNet.PositionCenter.Geocentric;
+            ListPositionCenters = new List<Tuple<SweNet.PositionCenter, string>>(new Tuple<SweNet.PositionCenter, string>[]{
+                new Tuple<SweNet.PositionCenter, string>(SweNet.PositionCenter.Geocentric,"Geocentric"),
+                new Tuple<SweNet.PositionCenter, string>(SweNet.PositionCenter.Topocentric,"Topocentric"),
+                new Tuple<SweNet.PositionCenter, string>(SweNet.PositionCenter.Heliocentric,"Heliocentric"),
+                new Tuple<SweNet.PositionCenter, string>(SweNet.PositionCenter.Barycentric,"Barycentric"),
+                new Tuple<SweNet.PositionCenter, string>(SweNet.PositionCenter.SiderealFagan,"Sidereal Fagan"),
+                new Tuple<SweNet.PositionCenter, string>(SweNet.PositionCenter.SiderealLahiri,"Sidereal Lahiri"),
+            });
             Longitude = new SweNet.Longitude(5, 20, 0, LongitudePolarity.East);
             Latitude = new SweNet.Latitude(47, 52, 0, LatitudePolarity.North);
             HouseSystems = new string[] { "Placidus", "Campanus", "Regiomontanus", "Koch", "Equal", "Vehlow equal", "Horizon", "B=Alcabitus" };
@@ -36,11 +44,11 @@ namespace SweWPF.ViewModels
         /// </summary>
         public Models.InputCalculation CreateInputData() {
             var result = new Models.InputCalculation() {
-                Altitude = this.Altitude,
-                HouseSystem = this.HouseSystem,
+                PositionCenter = this.PositionCenter,
                 Latitude = this.Latitude,
                 Longitude = this.Longitude,
-                TimeZone = this.InputDate.TimeZone
+                Altitude = this.Altitude,
+                HouseSystem = this.HouseSystem,
             };
             result.DateUT = null; result.JulianDay = null; result.DateET = null;
             switch (InputDate.DateType) {
@@ -59,8 +67,27 @@ namespace SweWPF.ViewModels
             return result;
         }
 
-
+        /// <summary>
+        /// Input date
+        /// </summary>
         public InputDateViewModel InputDate { get; private set; }
+
+        /// <summary>
+        /// List of position centers
+        /// </summary>
+        public List<Tuple<PositionCenter,String>> ListPositionCenters { get; private set; }
+
+        /// <summary>
+        /// Current position center
+        /// </summary>
+        public PositionCenter PositionCenter {
+            get { return _PositionCenter; }
+            set { 
+                _PositionCenter = value;
+                RaisePropertyChanged("PositionCenter");
+            }
+        }
+        private PositionCenter _PositionCenter;
 
         /// <summary>
         /// Latitude

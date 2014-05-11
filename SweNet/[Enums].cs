@@ -21,4 +21,27 @@ namespace SweNet
         Gregorian = 1
     }
 
+    /// <summary>
+    /// Ephemeris modes
+    /// </summary>
+    public enum EphemerisMode
+    {
+        SwissEphemeris,
+        Moshier,
+        JPL,
+    }
+
+    /// <summary>
+    /// Position center
+    /// </summary>
+    public enum PositionCenter
+    {
+        Geocentric,
+        Topocentric,
+        Heliocentric,
+        Barycentric,
+        SiderealFagan,
+        SiderealLahiri
+    }
+
 }
