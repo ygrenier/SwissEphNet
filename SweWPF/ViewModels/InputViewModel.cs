@@ -28,8 +28,11 @@ namespace SweWPF.ViewModels
             });
             Longitude = new SweNet.Longitude(5, 20, 0, LongitudePolarity.East);
             Latitude = new SweNet.Latitude(47, 52, 0, LatitudePolarity.North);
-            HouseSystems = new string[] { "Placidus", "Campanus", "Regiomontanus", "Koch", "Equal", "Vehlow equal", "Horizon", "B=Alcabitus" };
-            HouseSystem = HouseSystems[0];
+            HouseSystems = new List<Tuple<HouseSystem, String>>();
+            foreach (var hs in Enum.GetValues(typeof(SweNet.HouseSystem)).Cast<HouseSystem>()) {
+                HouseSystems.Add(new Tuple<HouseSystem, string>(hs, SweHouse.GetHouseSystemName(hs)));
+            }
+            HouseSystem = SweNet.HouseSystem.Placidus;
             Planets.AddRange(new Planet[] { 
                 Planet.Sun, Planet.Moon, Planet.Mercury, Planet.Venus, Planet.Mars, Planet.Jupiter, 
                 Planet.Saturn, Planet.Uranus, Planet.Neptune, Planet.Pluto,
@@ -128,19 +131,19 @@ namespace SweWPF.ViewModels
         /// <summary>
         /// House system
         /// </summary>
-        public String HouseSystem {
+        public HouseSystem HouseSystem {
             get { return _HouseSystem; }
             set {
                 _HouseSystem = value;
                 RaisePropertyChanged("HouseSystem");
             }
         }
-        private String _HouseSystem;
+        private HouseSystem _HouseSystem;
 
         /// <summary>
         /// House systems
         /// </summary>
-        public String[] HouseSystems { get; private set; }
+        public List<Tuple<HouseSystem, String>> HouseSystems { get; private set; }
 
         /// <summary>
         /// Planets to calculate

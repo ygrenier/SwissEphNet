@@ -55,8 +55,11 @@
                     </StackPanel>
                 </GroupBox>
 
-                <!--<Label Grid.Row="3">House system</Label>
-                <ComboBox Grid.Row="4" ItemsSource="{Binding HouseSystems}" SelectedItem="{Binding HouseSystem, Mode=TwoWay}" Margin="2"/>-->
+                <GroupBox Grid.Row="3" Grid.ColumnSpan="2" Header="House">
+                    <StackPanel>
+                        <ComboBox Grid.Row="4" ItemsSource="{Binding HouseSystems}" DisplayMemberPath="Item2" SelectedValuePath="Item1" SelectedValue="{Binding HouseSystem, Mode=TwoWay}" Margin="2"/>
+                    </StackPanel>
+                </GroupBox>
                 
             </Grid>
         </ScrollViewer>

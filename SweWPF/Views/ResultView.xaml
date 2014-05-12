@@ -130,6 +130,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
+                        <ColumnDefinition Width="4" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <ListView ItemsSource="{Binding ASMCs}">
@@ -146,7 +147,7 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <ListView Grid.Column="1" ItemsSource="{Binding Houses}">
+                    <ListView Grid.Column="2" ItemsSource="{Binding Houses}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>

@@ -109,6 +109,7 @@ namespace SweNet
         #region Swiss Ephemeris proxies
 
         Int32 _SwissFlag = 0;
+        Char _Hsys = 'P';
 
         /// <summary>
         /// Recalculate the swisseph flag and parameters
@@ -153,6 +154,8 @@ namespace SweNet
                     break;
             }
             SwissEph.swe_set_sid_mode(sidmode, 0, 0);
+            // House system
+            _Hsys = SweHouse.HouseSystemToChar(HouseSystem);
         }
 
         /// <summary>
@@ -166,9 +169,11 @@ namespace SweNet
         /// swe_calc()
         /// </summary>
         public Int32 swe_calc(double tjd, int ipl, double[] xx, ref string serr) {
+            CheckInitialized();
             return SwissEph.swe_calc(tjd, ipl, _SwissFlag, xx, ref serr);
         }
         public Int32 swe_calc(double tjd, int ipl, Int32 iflag, double[] xx, ref string serr) {
+            CheckInitialized();
             return SwissEph.swe_calc(tjd, ipl, iflag, xx, ref serr);
         }
 
@@ -181,6 +186,7 @@ namespace SweNet
         /// swe_fixstar()
         /// </summary>
         public Int32 swe_fixstar(string star, double tjd, double[] xx, ref string serr) {
+            CheckInitialized();
             return SwissEph.swe_fixstar(star, tjd, _SwissFlag, xx, ref serr);
         }
 
@@ -192,22 +198,25 @@ namespace SweNet
         /// <summary>
         /// swe_houses()
         /// </summary>
-        public int swe_houses(double tjd_ut, double geolat, double geolon, char hsys, double[] cusps, double[] ascmc) {
-            return SwissEph.swe_houses(tjd_ut, geolat, geolon, hsys, cusps, ascmc);
+        public int swe_houses(double tjd_ut, double geolat, double geolon, double[] cusps, double[] ascmc) {
+            CheckInitialized();
+            return SwissEph.swe_houses(tjd_ut, geolat, geolon, _Hsys, cusps, ascmc);
         }
 
         /// <summary>
         /// swe_houses_ex()
         /// </summary>
-        public int swe_houses_ex(double tjd_ut, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc) {
-            return SwissEph.swe_houses_ex(tjd_ut, _SwissFlag, geolat, geolon, hsys, hcusps, ascmc);
+        public int swe_houses_ex(double tjd_ut, double geolat, double geolon, CPointer<double> hcusps, CPointer<double> ascmc) {
+            CheckInitialized();
+            return SwissEph.swe_houses_ex(tjd_ut, _SwissFlag, geolat, geolon, _Hsys, hcusps, ascmc);
         }
 
         /// <summary>
         /// swe_house_pos()
         /// </summary>
-        public double swe_house_pos(double armc, double geolon, double eps, char hsys, double[] xpin, ref string serr) {
-            return SwissEph.swe_house_pos(armc, geolon, eps, hsys, xpin, ref serr);
+        public double swe_house_pos(double armc, double geolon, double eps, double[] xpin, ref string serr) {
+            CheckInitialized();
+            return SwissEph.swe_house_pos(armc, geolon, eps, _Hsys, xpin, ref serr);
         }
 
         #endregion
@@ -393,6 +402,20 @@ namespace SweNet
             }
         }
         private PositionCenter _PositionCenter;
+
+        /// <summary>
+        /// Current house system
+        /// </summary>
+        public HouseSystem HouseSystem {
+            get { return _HouseSystem; }
+            set {
+                if (_HouseSystem != value) {
+                    _HouseSystem = value;
+                    RecalcSwissEphState();
+                }
+            }
+        }
+        private HouseSystem _HouseSystem;
 
         #endregion
 

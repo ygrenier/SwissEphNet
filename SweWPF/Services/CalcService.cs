@@ -19,7 +19,6 @@ namespace SweWPF.Services
         private static EphemerisResult SwephCalculation(Configuration config, InputCalculation input) {
             EphemerisResult result = new EphemerisResult();
             String star = String.Empty;
-            char hsys = 'P';
             List<String> searchPaths = new List<string>();
 
             // Initialize paths
@@ -51,9 +50,9 @@ namespace SweWPF.Services
                 // Initialize engine
                 sweph.Ephemeris = EphemerisMode.SwissEphemeris;
                 sweph.PositionCenter = input.PositionCenter;
-
                 if (sweph.PositionCenter == PositionCenter.Topocentric)
                     sweph.swe_set_topo(input.Longitude, input.Latitude, input.Altitude);
+                sweph.HouseSystem = input.HouseSystem;
 
                 // Dates and Times
                 if (input.DateUT != null) {
@@ -108,7 +107,7 @@ namespace SweWPF.Services
                         pi.LongitudeSpeed = x[3];
                         pi.LatitudeSpeed = x[4];
                         pi.DistanceSpeed = x[5];
-                        pi.HousePosition = sweph.swe_house_pos(result.ARMC, input.Latitude, result.TrueEclipticObliquity, hsys, x, ref serr);
+                        pi.HousePosition = sweph.swe_house_pos(result.ARMC, input.Latitude, result.TrueEclipticObliquity, x, ref serr);
                         if (pi.HousePosition == 0)
                             iflgret = SwissEph.ERR;
                     }
@@ -148,11 +147,12 @@ namespace SweWPF.Services
                  */
 
                 // Houses
-                double[] cusps = new double[13], ascmc = new double[10];
+                double[] cusps = new double[input.HouseSystem == HouseSystem.GauquelinSector ? 37 : 13];
+                double[] ascmc = new double[10];
                 var hNames = new String[] { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII" };
                 var amNames = new String[] { "Ascendant", "MC", "ARMC", "Vertex", "Equatorial ascendant", 
                     "Co-ascendant (Walter Koch)", "Co-ascendant (Michael Munkasey)", "Polar ascendant (M. Munkasey)" };
-                sweph.swe_houses_ex(result.JulianDay, input.Latitude, input.Longitude, 'P', cusps, ascmc);
+                sweph.swe_houses_ex(result.JulianDay, input.Latitude, input.Longitude, cusps, ascmc);
                 for (int i = 1; i <= 12; i++) {
                     result.Houses.Add(new HouseValues() {
                         House = i,

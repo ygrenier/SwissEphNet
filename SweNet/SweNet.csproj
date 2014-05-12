@@ -48,6 +48,7 @@
     <Compile Include="Geo\Latitude.cs" />
     <Compile Include="Geo\Longitude.cs" />
     <Compile Include="Date\IDeltaTReader.cs" />
+    <Compile Include="Houses\SweHouse.cs" />
     <Compile Include="Persit\EmptyDataProvider.cs" />
     <Compile Include="Persit\IDataProvider.cs" />
     <Compile Include="Persit\IDataReader.cs" />
