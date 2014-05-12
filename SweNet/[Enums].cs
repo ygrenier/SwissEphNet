@@ -56,15 +56,34 @@ namespace SweNet
         Campanus,
         Equal,
         VehlowEqual,
-        WholeSign ,
+        WholeSign,
         MeridianSystem,
         Horizon,
-        PolichPage ,
+        PolichPage,
         Alcabitus,
         Morinus,
         KrusinskiPisa,
         GauquelinSector,
         APC
+    }
+
+    /// <summary>
+    /// Zodiacal sign
+    /// </summary>
+    public enum ZodiacSign
+    {
+        Aries,
+        Taurus,
+        Gemini,
+        Cancer,
+        Leo,
+        Virgo,
+        Libra,
+        Scorpio,
+        Sagittarius,
+        Capricorn,
+        Aquarius,
+        Pisces
     }
 
 }

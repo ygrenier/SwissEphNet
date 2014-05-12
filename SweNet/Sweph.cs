@@ -83,6 +83,9 @@ namespace SweNet
             _SwissEph.OnLoadFile += (s, e) => {
                 e.File = LoadFile(e.FileName);
             };
+            _SwissEph.OnTrace += (s, e) => {
+                this.Trace(e.Message);
+            };
             RecalcSwissEphState();
         }
 
