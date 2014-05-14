@@ -229,7 +229,7 @@ namespace SweNet
         /// <summary>
         /// New date engine
         /// </summary>
-        public SweDate(Sweph sweph, bool useEspenakMeeus) {
+        public SweDate(Sweph sweph, bool useEspenakMeeus = true) {
             _Sweph = sweph;
             _TidAcc = SE_TIDAL_DEFAULT;
             UseEspenakMeeus2006 = useEspenakMeeus;
@@ -791,7 +791,7 @@ namespace SweNet
         /// <summary>
         /// Indicate if DeltaT calculation use Espenak Meeus calculation
         /// </summary>
-        public bool UseEspenakMeeus2006 { get; private set; }
+        public bool UseEspenakMeeus2006 { get; set; }
 
     }
 }
