@@ -14,6 +14,7 @@
             <converters:DoubleToDegreesFormatConverter x:Key="DoubleToDegreesFormatConverter" />
             <converters:DoubleToTimeFormatConverter x:Key="DoubleToTimeFormatConverter" />
             <converters:StringEmptyToVisibility x:Key="StringEmptyToVisibility" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
             
         </ResourceDictionary>
     </Application.Resources>

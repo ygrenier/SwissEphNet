@@ -11,31 +11,22 @@
              d:DesignHeight="600" d:DesignWidth="300">
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="3">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+            <StackPanel>
                 <Label Grid.ColumnSpan="2">Input information</Label>
 
-                <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header=" Date">
+                <GroupBox Header=" Date">
                     <vw:InputDateView DataContext="{Binding InputDate}"/>
                 </GroupBox>
 
-                <GroupBox Grid.Row="2" Grid.ColumnSpan="2" Header="Geographic position">
+                <GroupBox Header="Ephemeris">
+                    <StackPanel>
+                        <ComboBox ItemsSource="{Binding ListEphemerisModes}" DisplayMemberPath="Item2" SelectedValuePath="Item1" SelectedValue="{Binding EphemerisMode, Mode=TwoWay}" />
+                        <Label>JPL files</Label>
+                        <ComboBox ItemsSource="{Binding ListJplFiles}" DisplayMemberPath="Item2" SelectedValuePath="Item1" SelectedValue="{Binding JplFile, Mode=TwoWay}" IsEnabled="{Binding IsJplMode, Mode=OneWay}" />
+                    </StackPanel>
+                </GroupBox>
+                
+                <GroupBox Header="Geographic position">
                     <StackPanel>
                         <Label>Position center</Label>
                         <ComboBox ItemsSource="{Binding ListPositionCenters}" DisplayMemberPath="Item2" SelectedValuePath="Item1" SelectedValue="{Binding PositionCenter}" />
@@ -55,13 +46,13 @@
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Grid.Row="3" Grid.ColumnSpan="2" Header="House">
+                <GroupBox Header="House">
                     <StackPanel>
                         <ComboBox Grid.Row="4" ItemsSource="{Binding HouseSystems}" DisplayMemberPath="Item2" SelectedValuePath="Item1" SelectedValue="{Binding HouseSystem, Mode=TwoWay}" Margin="2"/>
                     </StackPanel>
                 </GroupBox>
                 
-            </Grid>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>

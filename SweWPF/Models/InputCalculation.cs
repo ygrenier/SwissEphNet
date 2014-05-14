@@ -14,6 +14,8 @@ namespace SweWPF.Models
     {
 
         public InputCalculation() {
+            EphemerisMode = SweNet.EphemerisMode.SwissEphemeris;
+            JplFile = SwissEphNet.SwissEph.SE_FNAME_DFT;
             Planets = new List<Planet>();
             DateUT = new DateUT(DateTime.Now);
             Longitude = new SweNet.Longitude(5, 20, 0, LongitudePolarity.East);
@@ -27,6 +29,10 @@ namespace SweWPF.Models
             });
             Planets.AddRange(new Planet[] { Planet.AsAsteroid(433), Planet.AsAsteroid(3045), Planet.AsAsteroid(7066) });
         }
+
+        public EphemerisMode EphemerisMode { get; set; }
+
+        public String JplFile { get; set; }
 
         public DateUT? DateUT { get; set; }
 

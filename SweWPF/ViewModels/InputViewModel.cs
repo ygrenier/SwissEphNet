@@ -14,6 +14,17 @@ namespace SweWPF.ViewModels
     {
 
         public InputViewModel() {
+            ListEphemerisModes = new List<Tuple<SweNet.EphemerisMode, string>> {
+                new Tuple<EphemerisMode,String>(SweNet.EphemerisMode.SwissEphemeris, "Swiss Ephemeris"),
+                new Tuple<EphemerisMode,String>(SweNet.EphemerisMode.JPL, "JPL Ephemeris"),
+                new Tuple<EphemerisMode,String>(SweNet.EphemerisMode.Moshier, "Moshier Ephemeris"),
+            };
+            EphemerisMode = SweNet.EphemerisMode.SwissEphemeris;
+            ListJplFiles = new List<Tuple<string, string>> {
+                new Tuple<String,String>(SwissEphNet.SwissEph.SE_FNAME_DE406, "JPL D406"),
+                new Tuple<String,String>(SwissEphNet.SwissEph.SE_FNAME_DE431, "JPL D431")
+            };
+            JplFile = SwissEphNet.SwissEph.SE_FNAME_DFT;
             InputDate = new InputDateViewModel();
             Planets = new List<Planet>();
             InputDate.Date = new DateUT(DateTime.Now);
@@ -52,6 +63,8 @@ namespace SweWPF.ViewModels
                 Longitude = this.Longitude,
                 Altitude = this.Altitude,
                 HouseSystem = this.HouseSystem,
+                EphemerisMode = this.EphemerisMode,
+                JplFile = this.JplFile
             };
             result.DateUT = null; result.JulianDay = null; result.DateET = null;
             switch (InputDate.DateType) {
@@ -69,6 +82,46 @@ namespace SweWPF.ViewModels
             result.Planets.AddRange(Planets);
             return result;
         }
+
+        /// <summary>
+        /// List of ephemeris modde
+        /// </summary>
+        public List<Tuple<EphemerisMode, String>> ListEphemerisModes { get; private set; }
+
+        /// <summary>
+        /// Current ephemeris mode
+        /// </summary>
+        public EphemerisMode EphemerisMode {
+            get { return _EphemerisMode; }
+            set {
+                _EphemerisMode = value;
+                RaisePropertyChanged("EphemerisMode");
+                RaisePropertyChanged("IsJplMode");
+            }
+        }
+        private EphemerisMode _EphemerisMode;
+
+        /// <summary>
+        /// Indicate if the ephemeris mode is JPL
+        /// </summary>
+        public bool IsJplMode { get { return EphemerisMode == SweNet.EphemerisMode.JPL; } }
+
+        /// <summary>
+        /// List of JPL files versions
+        /// </summary>
+        public List<Tuple<String, String>> ListJplFiles { get; private set; }
+
+        /// <summary>
+        /// Current JPL file
+        /// </summary>
+        public String JplFile {
+            get { return _JplFile; }
+            set {
+                _JplFile = value;
+                RaisePropertyChanged("JplFile");
+            }
+        }
+        private String _JplFile;
 
         /// <summary>
         /// Input date

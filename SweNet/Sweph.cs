@@ -162,6 +162,14 @@ namespace SweNet
         }
 
         /// <summary>
+        /// swe_set_jpl_file()
+        /// </summary>
+        /// <param name="file"></param>
+        public void swe_set_jpl_file(String file) {
+            this._SwissEph.swe_set_jpl_file(file);
+        }
+
+        /// <summary>
         /// swe_set_topo()
         /// </summary>
         public void swe_set_topo(double geolon, double geolat, double height) {

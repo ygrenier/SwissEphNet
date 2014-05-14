@@ -48,7 +48,9 @@ namespace SweWPF.Services
                 result.Reset();
 
                 // Initialize engine
-                sweph.Ephemeris = EphemerisMode.SwissEphemeris;
+                sweph.Ephemeris = input.EphemerisMode;
+                if (sweph.Ephemeris == EphemerisMode.JPL)
+                    sweph.swe_set_jpl_file(input.JplFile);
                 sweph.PositionCenter = input.PositionCenter;
                 if (sweph.PositionCenter == PositionCenter.Topocentric)
                     sweph.swe_set_topo(input.Longitude, input.Latitude, input.Altitude);
