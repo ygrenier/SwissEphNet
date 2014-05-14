@@ -210,7 +210,7 @@ namespace SweMini
             return null;
         }
 
-        static void swe_OnLoadFile(object sender, LoadFileEventArgs e) {
+        static void swe_OnLoadFile(object sender, SweNet.LoadFileEventArgs e) {
             if (e.FileName.StartsWith("[ephe]")) {
                 e.File = SearchFile(e.FileName.Replace("[ephe]", string.Empty));
             } else {

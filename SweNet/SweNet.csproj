@@ -39,6 +39,7 @@
     <Compile Include="Date\SideralTime.cs" />
     <Compile Include="Date\StreamDeltaTReader.cs" />
     <Compile Include="Date\WeekDay.cs" />
+    <Compile Include="[Events].cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\DateTimeExtensions.cs" />
