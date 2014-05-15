@@ -6,128 +6,128 @@
              xmlns:vm="clr-namespace:SweWPF.ViewModels"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=vm:CalculationResultViewModel, IsDesignTimeCreatable=True}"
-             d:DesignHeight="328" d:DesignWidth="629">
+             d:DesignHeight="360" d:DesignWidth="629">
     <Grid>
-        <TabControl>
-            <TabItem Header="Calculations" Height="23" Width="82">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
-                        <Label Grid.Row="0" Content="Date UTC"/>
-                        <Label Grid.Row="1" Content="{Binding DateUTC}" />
-
-                        <Label Grid.Row="2" Content="Julian Day" />
-                        <Label Grid.Row="3" Content="{Binding JulianDay}" />
-
-                        <Label Grid.Row="4" Content="Delta T" />
-                        <Label Grid.Row="5" Content="{Binding DeltaTSec}" />
-
-                        <Label Grid.Row="6" Content="Ephemeris Time" />
-                        <Label Grid.Row="7" Content="{Binding EphemerisTime}" />
-
-                        <Label Grid.Row="8" Content="Sideral Time" />
-                        <Label Grid.Row="9" Content="{Binding SideralTime, ConverterParameter=hour, Converter={StaticResource DoubleToTimeFormatConverter}}" />
-
-
-                        <Label Grid.Row="0" Grid.Column="1" Content="Mean Ecliptic Obliquity"/>
-                        <Label Grid.Row="1" Grid.Column="1" Content="{Binding MeanEclipticObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-
-                        <Label Grid.Row="2" Grid.Column="1" Content="True Ecliptic Obliquity" />
-                        <Label Grid.Row="3" Grid.Column="1" Content="{Binding TrueEclipticObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-
-                        <Label Grid.Row="4" Grid.Column="1" Content="Nutation in Longitude" />
-                        <Label Grid.Row="5" Grid.Column="1" Content="{Binding NutationLongitude, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-
-                        <Label Grid.Row="6" Grid.Column="1" Content="Nutation Obliquity" />
-                        <Label Grid.Row="7" Grid.Column="1" Content="{Binding NutationObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-
-                        <Label Grid.Row="8" Grid.Column="1" Content="ARMC" />
-                        <Label Grid.Row="9" Grid.Column="1" Content="{Binding ARMC, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-                    </Grid>
-                </ScrollViewer>
-            </TabItem>
-            <TabItem Header="Planets">
-                <Grid Grid.IsSharedSizeScope="True">
+        <ScrollViewer Padding="4">
+            <StackPanel>
+                <!-- Date and calculations -->
+                <Label Style="{StaticResource SectionLabel}">Date and calculation</Label>
+                <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition />
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120" SharedSizeGroup="Col1" />
-                            <ColumnDefinition Width="120" SharedSizeGroup="Col2" />
-                            <ColumnDefinition Width="120" SharedSizeGroup="Col3" />
-                            <ColumnDefinition Width="120" SharedSizeGroup="Col4" />
-                            <ColumnDefinition Width="120" SharedSizeGroup="Col5" />
-                            <ColumnDefinition Width="120" SharedSizeGroup="Col6" />
-                            <ColumnDefinition Width="120" SharedSizeGroup="Col7" />
-                            <ColumnDefinition Width="80" SharedSizeGroup="Col8" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Planet" Grid.ColumnSpan="2" />
-                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="Longitude" />
-                        <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="Latitude" />
-                        <TextBlock Grid.Column="3" HorizontalAlignment="Right" Text="Distance" Grid.ColumnSpan="2" Margin="0,0,119,0" />
-                        <TextBlock Grid.Column="4" HorizontalAlignment="Right" Text="Speed in Longitude" />
-                        <TextBlock Grid.Column="5" HorizontalAlignment="Right" Text="Speed in Latitude" Grid.ColumnSpan="2" Margin="0,0,119,0" />
-                        <TextBlock Grid.Column="6" HorizontalAlignment="Right" Text="Speed in Distance" />
-                        <TextBlock Grid.Column="7" HorizontalAlignment="Right" Text="House" />
-                    </Grid>
+                    <Label Grid.Row="0" Grid.Column="0" Content="Date UTC" Style="{StaticResource CaptionLabel}"/>
+                    <Label Grid.Row="1" Grid.Column="0" Content="{Binding DateUTC}" />
 
-                    <ListView Grid.Row="1" ItemsSource="{Binding Planets}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition SharedSizeGroup="Col1" />
-                                        <ColumnDefinition SharedSizeGroup="Col2" />
-                                        <ColumnDefinition SharedSizeGroup="Col3" />
-                                        <ColumnDefinition SharedSizeGroup="Col4" />
-                                        <ColumnDefinition SharedSizeGroup="Col5" />
-                                        <ColumnDefinition SharedSizeGroup="Col6" />
-                                        <ColumnDefinition SharedSizeGroup="Col7" />
-                                        <ColumnDefinition SharedSizeGroup="Col8" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding PlanetName}" />
-                                    <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="{Binding Longitude, ConverterParameter=Z1, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="{Binding Latitude, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-                                    <TextBlock Grid.Column="3" HorizontalAlignment="Right" Text="{Binding Distance, StringFormat=F9}" />
-                                    <TextBlock Grid.Column="4" HorizontalAlignment="Right" Text="{Binding LongitudeSpeed, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-                                    <TextBlock Grid.Column="5" HorizontalAlignment="Right" Text="{Binding LatitudeSpeed, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
-                                    <TextBlock Grid.Column="6" HorizontalAlignment="Right" Text="{Binding DistanceSpeed, StringFormat=F9}" />
-                                    <TextBlock Grid.Column="7" HorizontalAlignment="Right" Text="{Binding HousePosition, StringFormat=F4}" />
-                                    <TextBlock Grid.Row="1" Grid.ColumnSpan="8" Text="{Binding ErrorMessage}" Foreground="Red" Visibility="{Binding ErrorMessage, Converter={StaticResource StringEmptyToVisibility}}" />
-                                    <TextBlock Grid.Row="2" Grid.ColumnSpan="8" Text="{Binding WarnMessage}" Foreground="Cyan" Visibility="{Binding WarnMessage, Converter={StaticResource StringEmptyToVisibility}}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <Label Grid.Row="0" Grid.Column="1" Content="Julian Day" Style="{StaticResource CaptionLabel}"/>
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding JulianDay}" />
+
+                    <Label Grid.Row="0" Grid.Column="2" Content="Delta T" Style="{StaticResource CaptionLabel}"/>
+                    <Label Grid.Row="1" Grid.Column="2" Content="{Binding DeltaTSec}" />
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="Ephemeris Time" Style="{StaticResource CaptionLabel}"/>
+                    <Label Grid.Row="3" Grid.Column="0" Content="{Binding EphemerisTime}" />
+
+                    <Label Grid.Row="2" Grid.Column="1" Content="Sideral Time" Style="{StaticResource CaptionLabel}"/>
+                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding SideralTime, ConverterParameter=hour, Converter={StaticResource DoubleToTimeFormatConverter}}" />
+
+                    <Label Grid.Row="4" Grid.Column="0" Content="Mean Ecliptic Obliquity" Style="{StaticResource CaptionLabel}"/>
+                    <Label Grid.Row="5" Grid.Column="0" Content="{Binding MeanEclipticObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+
+                    <Label Grid.Row="6" Grid.Column="0" Content="True Ecliptic Obliquity" Style="{StaticResource CaptionLabel}"/>
+                    <Label Grid.Row="7" Grid.Column="0" Content="{Binding TrueEclipticObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+
+                    <Label Grid.Row="4" Grid.Column="1" Content="Nutation in Longitude" Style="{StaticResource CaptionLabel}" />
+                    <Label Grid.Row="5" Grid.Column="1" Content="{Binding NutationLongitude, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+
+                    <Label Grid.Row="6" Grid.Column="1" Content="Nutation Obliquity" Style="{StaticResource CaptionLabel}" />
+                    <Label Grid.Row="7" Grid.Column="1" Content="{Binding NutationObliquity, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+
+                    <Label Grid.Row="4" Grid.Column="2" Content="ARMC" Style="{StaticResource CaptionLabel}" />
+                    <Label Grid.Row="5" Grid.Column="2" Content="{Binding ARMC, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
                 </Grid>
-            </TabItem>
-            <TabItem Header="House">
-                <Grid>
+
+                <!-- Planets -->
+                <Label Style="{StaticResource SectionLabel}">Planets</Label>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                    <Grid Grid.IsSharedSizeScope="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" SharedSizeGroup="Col1" />
+                                <ColumnDefinition Width="120" SharedSizeGroup="Col2" />
+                                <ColumnDefinition Width="120" SharedSizeGroup="Col3" />
+                                <ColumnDefinition Width="120" SharedSizeGroup="Col4" />
+                                <ColumnDefinition Width="120" SharedSizeGroup="Col5" />
+                                <ColumnDefinition Width="120" SharedSizeGroup="Col6" />
+                                <ColumnDefinition Width="120" SharedSizeGroup="Col7" />
+                                <ColumnDefinition Width="80" SharedSizeGroup="Col8" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Style="{StaticResource CaptionLabel}" Content="Planet" Grid.ColumnSpan="2" />
+                            <Label Grid.Column="1" Style="{StaticResource CaptionLabel}" HorizontalAlignment="Right" Content="Longitude" />
+                            <Label Grid.Column="2" Style="{StaticResource CaptionLabel}" HorizontalAlignment="Right" Content="Latitude" />
+                            <Label Grid.Column="3" Style="{StaticResource CaptionLabel}" HorizontalAlignment="Right" Content="Distance" Grid.ColumnSpan="2" Margin="0,0,119,0" />
+                            <Label Grid.Column="4" Style="{StaticResource CaptionLabel}" HorizontalAlignment="Right" Content="Speed in Longitude" />
+                            <Label Grid.Column="5" Style="{StaticResource CaptionLabel}" HorizontalAlignment="Right" Content="Speed in Latitude" Grid.ColumnSpan="2" Margin="0,0,119,0" />
+                            <Label Grid.Column="6" Style="{StaticResource CaptionLabel}" HorizontalAlignment="Right" Content="Speed in Distance" />
+                            <Label Grid.Column="7" Style="{StaticResource CaptionLabel}" HorizontalAlignment="Right" Content="House" />
+                        </Grid>
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Planets}" Margin="6">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition SharedSizeGroup="Col1" />
+                                            <ColumnDefinition SharedSizeGroup="Col2" />
+                                            <ColumnDefinition SharedSizeGroup="Col3" />
+                                            <ColumnDefinition SharedSizeGroup="Col4" />
+                                            <ColumnDefinition SharedSizeGroup="Col5" />
+                                            <ColumnDefinition SharedSizeGroup="Col6" />
+                                            <ColumnDefinition SharedSizeGroup="Col7" />
+                                            <ColumnDefinition SharedSizeGroup="Col8" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding PlanetName}" />
+                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="{Binding Longitude, ConverterParameter=Z1, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+                                        <TextBlock Grid.Column="2" HorizontalAlignment="Right" Text="{Binding Latitude, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+                                        <TextBlock Grid.Column="3" HorizontalAlignment="Right" Text="{Binding Distance, StringFormat=F9}" />
+                                        <TextBlock Grid.Column="4" HorizontalAlignment="Right" Text="{Binding LongitudeSpeed, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+                                        <TextBlock Grid.Column="5" HorizontalAlignment="Right" Text="{Binding LatitudeSpeed, Converter={StaticResource DoubleToDegreesFormatConverter}}" />
+                                        <TextBlock Grid.Column="6" HorizontalAlignment="Right" Text="{Binding DistanceSpeed, StringFormat=F9}" />
+                                        <TextBlock Grid.Column="7" HorizontalAlignment="Right" Text="{Binding HousePosition, StringFormat=F4}" />
+                                        <TextBlock Grid.Row="1" Grid.ColumnSpan="8" Text="{Binding ErrorMessage}" Foreground="Red" Visibility="{Binding ErrorMessage, Converter={StaticResource StringEmptyToVisibility}}" />
+                                        <TextBlock Grid.Row="2" Grid.ColumnSpan="8" Text="{Binding WarnMessage}" Foreground="Cyan" Visibility="{Binding WarnMessage, Converter={StaticResource StringEmptyToVisibility}}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </ScrollViewer>
+
+                <!-- Houses -->
+                <Label Style="{StaticResource SectionLabel}">Houses</Label>
+                <Grid Margin="6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="4" />
@@ -162,8 +162,8 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Grid>
-            </TabItem>
-        </TabControl>
 
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>
