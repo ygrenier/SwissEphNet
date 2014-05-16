@@ -50,7 +50,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="EphemerisTimeTest.cs" />
+    <Compile Include="SideralTimeTest.cs" />
     <Compile Include="SweDateTest.cs" />
+    <Compile Include="SweFormatTest.cs" />
     <Compile Include="UniversalTimeTest.cs" />
     <Compile Include="JulianDayTest.cs" />
     <Compile Include="SwephNetTest.cs" />
