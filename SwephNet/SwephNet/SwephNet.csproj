@@ -37,6 +37,11 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Date\SweDate.cs" />
+    <Compile Include="Date\UniversalTime.cs" />
+    <Compile Include="Date\JulianDay.cs" />
+    <Compile Include="Date\[Enums].cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
