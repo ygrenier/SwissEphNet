@@ -43,6 +43,9 @@
     <Compile Include="Date\UniversalTime.cs" />
     <Compile Include="Date\JulianDay.cs" />
     <Compile Include="Date\[Enums].cs" />
+    <Compile Include="Dependency\IDependencyContainer.cs" />
+    <Compile Include="Dependency\IDependencyResolver.cs" />
+    <Compile Include="Dependency\SimpleContainer.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="SweFormat.cs" />
     <Compile Include="Sweph.cs" />
