@@ -86,7 +86,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using SwissEphNet;
-using SweNet;
 using System.IO;
 
 namespace SweMini
@@ -133,7 +132,7 @@ namespace SweMini
             Int32 iflag, iflgret;
             //int p;
             iflag = SwissEph.SEFLG_SPEED;
-            using (var swe = new Sweph()) {
+            using (var swe = new SwissEph()) {
                 swe.OnLoadFile += swe_OnLoadFile;
                 while (true) {
                     Console.Write("\nDate (d.m.y) ? ");
@@ -152,22 +151,22 @@ namespace SweMini
                     /*
                      * we have day, month and year and convert to Julian day number
                      */
-                    var jd = swe.JulianDay(jyear, jmon, jday, jut, DateCalendar.Gregorian);
+                    var jd = swe.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
                     /*
                      * compute Ephemeris time from Universal time by adding delta_t
                      */
-                    var et = swe.EphemerisTime(jd);
+                    var te = jd + swe.swe_deltat(jd);
                     Console.WriteLine("date: {0:00}.{1:00}.{2:D4} at 0:00 Universal time", jday, jmon, jyear);
                     Console.WriteLine("planet     \tlongitude\tlatitude\tdistance\tspeed long.");
                     /*
                      * a loop over all planets
                      */
-                    for (var p = Planet.Sun; p <= Planet.Chiron; p++) {
-                        if (p == Planet.Earth) continue;
+                    for (var p = SwissEph.SE_SUN; p <= SwissEph.SE_CHIRON; p++) {
+                        if (p == SwissEph.SE_EARTH) continue;
                         /*
                          * do the coordinate calculation for this planet p
                          */
-                        iflgret = swe.swe_calc(et, p, iflag, x2, ref serr);
+                        iflgret = swe.swe_calc(te, p, iflag, x2, ref serr);
                         /*
                          * if there is a problem, a negative value is returned and an 
                          * errpr message is in serr.
@@ -179,7 +178,7 @@ namespace SweMini
                         /*
                          * get the name of the planet p
                          */
-                        snam = swe.PlanetName(p);
+                        snam = swe.swe_get_planet_name(p);
                         /*
                          * print the coordinates
                          */
@@ -210,7 +209,7 @@ namespace SweMini
             return null;
         }
 
-        static void swe_OnLoadFile(object sender, SweNet.LoadFileEventArgs e) {
+        static void swe_OnLoadFile(object sender, LoadFileEventArgs e) {
             if (e.FileName.StartsWith("[ephe]")) {
                 e.File = SearchFile(e.FileName.Replace("[ephe]", string.Empty));
             } else {
