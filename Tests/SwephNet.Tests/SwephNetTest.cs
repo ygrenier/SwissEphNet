@@ -10,7 +10,7 @@ namespace SwephNet.Tests
         [TestMethod]
         public void TestCreate() {
             using (var swe = new Sweph()) {
-                //
+                Assert.IsNotNull(swe.Date);
             }
         }
 
