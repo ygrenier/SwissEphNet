@@ -94,7 +94,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SwissEphNet\SwissEphNet.csproj">
+    <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.csproj">
       <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
       <Name>SwissEphNet</Name>
     </ProjectReference>
