@@ -44,12 +44,13 @@
     <Compile Include="Date\JulianDay.cs" />
     <Compile Include="Date\[Enums].cs" />
     <Compile Include="Dependency\IDependencyContainer.cs" />
-    <Compile Include="Dependency\IDependencyResolver.cs" />
     <Compile Include="Dependency\SimpleContainer.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\DependencyExtensions.cs" />
     <Compile Include="SweFormat.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Check.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
