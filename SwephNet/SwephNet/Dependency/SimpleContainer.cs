@@ -20,7 +20,6 @@ namespace SwephNet.Dependency
         {
             object Resolve(SimpleContainer container);
         }
-
         List<object> _ExternalInstances = new List<object>();
         List<object> _Instances = new List<object>();
         Dictionary<Type, object> _InstanceIndex = new Dictionary<Type, object>();
