@@ -11,7 +11,7 @@ namespace SwephNet
     /// </summary>
     public class Sweph : IDisposable
     {
-        private SweDate _Date;
+        private IDependencyContainer _Dependencies;
 
         #region Ctors & Dest
 
@@ -26,7 +26,10 @@ namespace SwephNet
         /// </summary>
         protected virtual void Dispose(bool disposing) {
             if (disposing) {
-                // TODO Dispose resources
+                if (_Dependencies != null) {
+                    _Dependencies.Dispose();
+                }
+                _Dependencies = null;
             }
         }
 
@@ -39,18 +42,49 @@ namespace SwephNet
 
         #endregion
 
-        #region Embedded engines
+        #region Dependency container
 
         /// <summary>
-        /// Create new SweDate
+        /// Get the current container
         /// </summary>
-        protected virtual SweDate CreateSweDate() { return new SweDate(); }
+        protected IDependencyContainer GetDependencies() {
+            if (_Dependencies == null) {
+                _Dependencies = CreateDependencyContainer();
+                BuildDependencies(_Dependencies);
+            }
+            return _Dependencies;
+        }
+
+        /// <summary>
+        /// Create a new container
+        /// </summary>
+        protected virtual IDependencyContainer CreateDependencyContainer() {
+            return new Dependency.SimpleContainer();
+        }
+
+        /// <summary>
+        /// Create all dependencies
+        /// </summary>
+        protected virtual void BuildDependencies(IDependencyContainer container) {
+            // TODO Create registrations
+            //container.Register(this);
+            //container.Register<SweDate>();
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Dependency container
+        /// </summary>
+        public IDependencyContainer Dependencies { get { return GetDependencies(); } }
 
         /// <summary>
         /// Date engine
         /// </summary>
         public SweDate Date {
-            get { return _Date ?? (_Date = CreateSweDate()); }
+            get { return Dependencies.Resolve<SweDate>(); }
         }
 
         #endregion
