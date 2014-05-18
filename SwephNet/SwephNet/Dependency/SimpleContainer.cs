@@ -12,7 +12,7 @@ namespace SwephNet.Dependency
     /// </summary>
     class SimpleContainer : IDependencyContainer
     {
-        interface ITypeCreator
+        interface ICreator
         {
             object Create(SimpleContainer container);
         }
@@ -20,31 +20,105 @@ namespace SwephNet.Dependency
         {
             object Resolve(SimpleContainer container);
         }
-        List<object> _ExternalInstances = new List<object>();
-        List<object> _Instances = new List<object>();
-        Dictionary<Type, object> _InstanceIndex = new Dictionary<Type, object>();
-        Dictionary<Type, ITypeCreator> _Creators = new Dictionary<Type, ITypeCreator>();
+        class InstanceResolver : IResolver, IDisposable
+        {
+            public InstanceResolver()
+            {
+                OwnInstance = true;
+            }
+            public virtual void Dispose()
+            {
+                if (OwnInstance && Instance is IDisposable)
+                {
+                    ((IDisposable)Instance).Dispose();
+                }
+                Instance = null;
+            }
+            public virtual object Resolve(SimpleContainer container) { return Instance; }
+            public object Instance { get; set; }
+            public bool OwnInstance { get; set; }
+        }
+        class CreatorResolver<TToResolved> : InstanceResolver, ICreator
+        {
+            public CreatorResolver()
+            {
+                IsSingleton = true;
+            }
+            public object Create(SimpleContainer container)
+            {
+                return Creator(container);
+            }
+            public override object Resolve(SimpleContainer container)
+            {
+                if (IsSingleton && Instance != null) return Instance;
+                object result = Create(container);
+                if (IsSingleton)
+                    Instance = result;
+                return result;
+            }
+            public Func<IDependencyContainer, TToResolved> Creator { get; set; }
+            public bool IsSingleton { get; set; }
+        }
         Dictionary<Type, IResolver> _Resolvers = new Dictionary<Type, IResolver>();
+
+        /// <summary>
+        /// Register a resolver by creator
+        /// </summary>
+        public IDependencyContainer Register<TToResolved>(Func<IDependencyContainer, TToResolved> creator, bool asSingleton = true)
+        {
+            Check.ArgumentNotNull(creator, "creator");
+            _Resolvers[typeof(TToResolved)] = new CreatorResolver<TToResolved>() {
+                Creator = creator,
+                Instance = null,
+                IsSingleton = asSingleton
+            };
+            return this;
+        }
+
+        /// <summary>
+        /// Register a type
+        /// </summary>
+        /// <typeparam name="TToResolved"></typeparam>
+        /// <typeparam name="TConcreteType"></typeparam>
+        /// <param name="asSingleton"></param>
+        /// <returns></returns>
+        public IDependencyContainer Register<TToResolved, TConcreteType>(bool asSingleton = true)
+            where TConcreteType : class, TToResolved
+        {
+            return Register<TToResolved>(cnt => (TToResolved)DefaultCreateInstance(typeof(TConcreteType)), asSingleton);
+        }
+
+        /// <summary>
+        /// Register an instance to resolved a type
+        /// </summary>
+        public IDependencyContainer RegisterInstance<TToResolved>(TToResolved instance)
+        {
+            Check.ArgumentNotNull(instance, "instance");
+            _Resolvers[typeof(TToResolved)] = new InstanceResolver() {
+                Instance = instance,
+                OwnInstance = true
+            };
+            return this;
+        }
 
         /// <summary>
         /// Release resources
         /// </summary>
-        public void Dispose() {
-            foreach (var instance in _Instances) {
-                if (instance is IDisposable)
-                    ((IDisposable)instance).Dispose();
+        public void Dispose()
+        {
+            foreach (var resolver in _Resolvers.Values)
+            {
+                if (resolver is IDisposable)
+                    ((IDisposable)resolver).Dispose();
             }
-            _InstanceIndex.Clear();
-            _ExternalInstances.Clear();
-            _Instances.Clear();
             _Resolvers.Clear();
-            _Creators.Clear();
         }
 
         /// <summary>
         /// Check if we can resolve a type
         /// </summary>
-        public bool CanResolve(Type type) {
+        public bool CanResolve(Type type)
+        {
             if (type == null) return false;
             return _Resolvers.ContainsKey(type);
         }
@@ -52,39 +126,96 @@ namespace SwephNet.Dependency
         /// <summary>
         /// Resolve a type
         /// </summary>
-        public object Resolve(Type type) {
+        public object Resolve(Type type)
+        {
             Check.ArgumentNotNull(type, "type");
             IResolver resolver = null;
-            if (_Resolvers.TryGetValue(type, out resolver))
-                return resolver.Resolve(this);
-            throw new InvalidOperationException(String.Format("Resolver not found for type '{0}'", type.FullName));
+            if (!_Resolvers.TryGetValue(type, out resolver))
+                throw new InvalidOperationException(String.Format("Can't resolve type '{0}'", type.FullName));
+            return resolver.Resolve(this);
+        }
+
+        /// <summary>
+        /// Try to resolve a type
+        /// </summary>
+        public bool TryToResolve(Type type, out object resolved)
+        {
+            Check.ArgumentNotNull(type, "type");
+            if (CanResolve(type))
+            {
+                resolved = Resolve(type);
+                return true;
+            }
+            // Create
+            resolved = Create(type);
+            return false;
         }
 
         /// <summary>
         /// Create a new instance of a type
         /// </summary>
-        public object Create(Type type) {
+        public object Create(Type type)
+        {
             Check.ArgumentNotNull(type, "type");
-            ITypeCreator creator;
-            if (_Creators.TryGetValue(type, out creator))
-                return creator.Create(this);
-            return IoCCreate(type);
+            IResolver resolver;
+            if (_Resolvers.TryGetValue(type, out resolver))
+            {
+                ICreator creator = resolver as ICreator;
+                if (creator != null)
+                    return creator.Create(this);
+            }
+            try
+            {
+                return DefaultCreateInstance(type);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
-        /// Create a new isntance of type by reflection
+        /// Build constructor parameters
         /// </summary>
-        protected object IoCCreate(Type type) {
-            ConstructorInfo constructor = type.GetConstructors().FirstOrDefault();
-            if (constructor == null) return Activator.CreateInstance(type);
-            // Build parameters
-            List<object> parameters = new List<object>();
-            foreach (var param in constructor.GetParameters()) {
-                if (CanResolve(param.ParameterType))
-                    parameters.Add(Resolve(param.ParameterType));
-                else
-                    parameters.Add(Create(param.ParameterType));
+        protected List<object> BuildConstructorParameter(Type type, ConstructorInfo constructor)
+        {
+            var result = new List<object>();
+            foreach (var parameterInfo in constructor.GetParameters())
+            {
+                object pValue;
+                if (!TryToResolve(parameterInfo.ParameterType, out pValue))
+                {
+                    if (parameterInfo.IsOptional)
+                    {
+                        pValue = Type.Missing;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(String.Format(
+                            "Can't resolve parameter '{0}' of type '{1}' for construct '{2}'",
+                            parameterInfo.Name,
+                            parameterInfo.ParameterType.Name,
+                            type.FullName));
+                    }
+                }
+                result.Add(pValue);
             }
+            return result;
+        }
+
+        /// <summary>
+        /// Create a new instance of type by reflection
+        /// </summary>
+        protected object DefaultCreateInstance(Type type)
+        {
+            // Check type
+            if (type.IsInterface || type.IsAbstract || type.IsByRef || type.IsGenericType)
+                throw new InvalidOperationException(String.Format("'{0}' can't be instanciate", type.FullName));
+            ConstructorInfo constructor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault();
+            if (constructor == null)
+                throw new InvalidOperationException(String.Format("Can't find a constructor for type '{0}'", type.FullName));
+            // Build parameters
+            List<object> parameters = BuildConstructorParameter(type, constructor);
             // Create instance
             return Activator.CreateInstance(type, parameters.ToArray());
         }
