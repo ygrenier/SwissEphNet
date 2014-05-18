@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Collections.Generic;
+using SwephNet;
 
 namespace SwephNet.Tests
 {
@@ -53,9 +54,11 @@ namespace SwephNet.Tests
                 };
                 swe.Trace(null);
                 swe.Trace("Message 2");
+                swe.Trace("Message {0}", 3);
                 CollectionAssert.AreEqual(new String[]{
                     null,
-                    "Message 2"
+                    "Message 2",
+                    "Message 3",
                 }, messages.ToArray());
             }
         }
