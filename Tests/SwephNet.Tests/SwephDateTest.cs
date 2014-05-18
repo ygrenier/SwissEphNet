@@ -43,5 +43,17 @@ namespace SwephNet.Tests
             }
         }
 
+        [TestMethod]
+        public void TestEphemerisTime()
+        {
+            using (var swe = new Sweph())
+            {
+                double prec = 0.00000001;
+                Assert.AreEqual(1.5716511059188, swe.EphemerisTime(new JulianDay()), prec);
+                Assert.AreEqual(2442275.52135549, swe.EphemerisTime(new JulianDay(new UniversalTime(1974, 8, 16, 0.5))), prec);
+
+            }
+        }
+
     }
 }
