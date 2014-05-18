@@ -35,6 +35,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <EmbeddedResource Include="Locales\LSR.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Locales\LSR.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>LSR.Designer.cs</LastGenOutput>

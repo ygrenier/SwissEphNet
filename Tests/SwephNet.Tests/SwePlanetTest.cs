@@ -7,6 +7,23 @@ namespace SwephNet.Tests
     [TestClass]
     public class SwePlanetTest
     {
+        System.Globalization.CultureInfo _SaveCulture, _SaveUICulture;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _SaveCulture = System.Globalization.CultureInfo.DefaultThreadCurrentCulture;
+            _SaveUICulture = System.Globalization.CultureInfo.DefaultThreadCurrentUICulture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+        }
+
+        [TestCleanup]
+        public void Restore()
+        {
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = _SaveCulture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = _SaveUICulture;
+        }
 
         [TestMethod]
         public void TestGetPlanetName() {

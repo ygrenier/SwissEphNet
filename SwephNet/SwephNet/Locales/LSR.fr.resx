@@ -118,28 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Dependency_Error_CantFindConstructor" xml:space="preserve">
-    <value>Can't find a constructor for type '{0}'</value>
+    <value>Constructeur pour le type '{0}' introuvable.</value>
   </data>
   <data name="Dependency_Error_CantInstanciateType" xml:space="preserve">
-    <value>'{0}' can't be instanciate</value>
+    <value>Impossible d'instancier '{0}'.</value>
   </data>
   <data name="Dependency_Error_CantResolveParameterForConstruct" xml:space="preserve">
-    <value>Can't resolve parameter '{0}' of type '{1}' for construct '{2}'</value>
+    <value>Impossible de résoudre le paramètre '{0}' du type '{1}' pour construire '{2}'</value>
   </data>
   <data name="Dependency_Error_CantResolveType" xml:space="preserve">
-    <value>Can't resolve type '{0}'</value>
+    <value>Impossible de resoudre le type '{0}'.</value>
   </data>
   <data name="PlanetName_Moon" xml:space="preserve">
-    <value>Moon</value>
+    <value>Lune</value>
   </data>
   <data name="PlanetName_Sun" xml:space="preserve">
-    <value>Sun</value>
+    <value>Soleil</value>
   </data>
   <data name="PlanetName_Mercury" xml:space="preserve">
-    <value>Mercury</value>
+    <value>Mercure</value>
   </data>
   <data name="PlanetName_Venus" xml:space="preserve">
-    <value>Venus</value>
+    <value>Vénus</value>
   </data>
   <data name="PlanetName_Mars" xml:space="preserve">
     <value>Mars</value>
@@ -148,7 +148,7 @@
     <value>Jupiter</value>
   </data>
   <data name="PlanetName_Saturn" xml:space="preserve">
-    <value>Saturn</value>
+    <value>Saturne</value>
   </data>
   <data name="PlanetName_Uranus" xml:space="preserve">
     <value>Uranus</value>
@@ -157,7 +157,7 @@
     <value>Neptune</value>
   </data>
   <data name="PlanetName_Pluto" xml:space="preserve">
-    <value>Pluto</value>
+    <value>Pluton</value>
   </data>
   <data name="PlanetName_MeanNode" xml:space="preserve">
     <value>mean Node</value>
@@ -166,22 +166,22 @@
     <value>true Node</value>
   </data>
   <data name="PlanetName_MeanApogee" xml:space="preserve">
-    <value>mean Apogee</value>
+    <value>mean Apogée</value>
   </data>
   <data name="PlanetName_OscuApogee" xml:space="preserve">
-    <value>osc. Apogee</value>
+    <value>osc. Apogée</value>
   </data>
   <data name="PlanetName_IntpApogee" xml:space="preserve">
-    <value>intp. Apogee</value>
+    <value>intp. Apogée</value>
   </data>
   <data name="PlanetName_IntpPerigee" xml:space="preserve">
-    <value>intp. Perigee</value>
+    <value>intp. Périgée</value>
   </data>
   <data name="PlanetName_Earth" xml:space="preserve">
-    <value>Earth</value>
+    <value>Terre</value>
   </data>
   <data name="PlanetName_Ceres" xml:space="preserve">
-    <value>Ceres</value>
+    <value>Céres</value>
   </data>
   <data name="PlanetName_Pallas" xml:space="preserve">
     <value>Pallas</value>
@@ -199,6 +199,6 @@
     <value>Pholus</value>
   </data>
   <data name="Asteroid_NameNotFound" xml:space="preserve">
-    <value>{0}: not found</value>
+    <value>{0}: nom inconnu</value>
   </data>
 </root>
