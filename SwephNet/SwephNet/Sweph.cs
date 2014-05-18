@@ -66,9 +66,9 @@ namespace SwephNet
         /// Create all dependencies
         /// </summary>
         protected virtual void BuildDependencies(IDependencyContainer container) {
-            // TODO Create registrations
-            //container.Register(this);
-            //container.Register<SweDate>();
+            container.RegisterInstance(this);
+            container.RegisterInstance<IDependencyContainer>(container);
+            container.Register<SweDate, SweDate>();
         }
 
         #endregion
