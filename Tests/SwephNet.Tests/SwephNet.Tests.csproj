@@ -59,7 +59,7 @@
     <Compile Include="SwephDateTest.cs" />
     <Compile Include="UniversalTimeTest.cs" />
     <Compile Include="JulianDayTest.cs" />
-    <Compile Include="SwephNetTest.cs" />
+    <Compile Include="SwephTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

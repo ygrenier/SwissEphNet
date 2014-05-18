@@ -11,7 +11,8 @@ namespace SwephNet
     /// </summary>
     public class Sweph :
         IDisposable,
-        IStreamProvider
+        IStreamProvider,
+        ITracer
     {
         private IDependencyContainer _Dependencies;
 
@@ -80,6 +81,7 @@ namespace SwephNet
             // Register default type
             container.RegisterInstance(this);
             container.RegisterInstance<IStreamProvider>(this);
+            container.RegisterInstance<ITracer>(this);
             container.RegisterInstance<IDependencyContainer>(container);
             // Register engines types
             container.Register<SweDate, SweDate>();
@@ -102,6 +104,22 @@ namespace SwephNet
                 return e.File;
             }
             return null;
+        }
+
+        #endregion
+
+        #region Trace
+
+        /// <summary>
+        /// Trace a message
+        /// </summary>
+        public void Trace(String message)
+        {
+            var h = OnTrace;
+            if (h != null)
+            {
+                h(this, new TraceEventArgs(message));
+            }
         }
 
         #endregion
@@ -173,6 +191,11 @@ namespace SwephNet
         /// Event raised when a file is required
         /// </summary>
         public event EventHandler<LoadFileEventArgs> OnLoadFile;
+
+        /// <summary>
+        /// Event raised when a message is traced
+        /// </summary>
+        public event EventHandler<TraceEventArgs> OnTrace;
 
         #endregion
 

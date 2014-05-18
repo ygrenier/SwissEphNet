@@ -1,11 +1,12 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Collections.Generic;
 
 namespace SwephNet.Tests
 {
     [TestClass]
-    public class SwephNetTest
+    public class SwephTest
     {
 
         [TestMethod]
@@ -36,6 +37,26 @@ namespace SwephNet.Tests
                 {
                     Assert.AreEqual("This is the file content.", r.ReadToEnd());
                 }
+            }
+        }
+
+        [TestMethod]
+        public void TestTrace()
+        {
+            using (var swe = new Sweph())
+            {
+                List<String> messages = new List<string>();
+                swe.Trace(null);
+                swe.Trace("Message 1");
+                swe.OnTrace += (s, e) => {
+                    messages.Add(e.Message);
+                };
+                swe.Trace(null);
+                swe.Trace("Message 2");
+                CollectionAssert.AreEqual(new String[]{
+                    null,
+                    "Message 2"
+                }, messages.ToArray());
             }
         }
 
