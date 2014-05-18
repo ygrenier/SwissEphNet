@@ -166,6 +166,14 @@ namespace SwephNet
             return SweDate.JulianDayToDate(et.JulianDay.Value, et.JulianDay.Calendar);
         }
 
+        /// <summary>
+        /// Create an Ephemeris Time
+        /// </summary>
+        public EphemerisTime EphemerisTime(JulianDay day)
+        {
+            return new EphemerisTime(day, Date.DeltaT(day));
+        }
+
         #endregion
 
         #region Properties
