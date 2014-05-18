@@ -56,6 +56,7 @@
     <Compile Include="SideralTimeTest.cs" />
     <Compile Include="SweDateTest.cs" />
     <Compile Include="SweFormatTest.cs" />
+    <Compile Include="SwephDateTest.cs" />
     <Compile Include="UniversalTimeTest.cs" />
     <Compile Include="JulianDayTest.cs" />
     <Compile Include="SwephNetTest.cs" />

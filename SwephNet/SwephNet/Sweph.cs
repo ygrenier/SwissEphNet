@@ -9,7 +9,7 @@ namespace SwephNet
     /// <summary>
     /// Swiss Ephmeris context
     /// </summary>
-    public class Sweph : 
+    public class Sweph :
         IDisposable,
         IStreamProvider
     {
@@ -20,15 +20,19 @@ namespace SwephNet
         /// <summary>
         /// Create a new engine
         /// </summary>
-        public Sweph() {
+        public Sweph()
+        {
         }
 
         /// <summary>
         /// Internal release resources
         /// </summary>
-        protected virtual void Dispose(bool disposing) {
-            if (disposing) {
-                if (_Dependencies != null) {
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_Dependencies != null)
+                {
                     _Dependencies.Dispose();
                 }
                 _Dependencies = null;
@@ -38,7 +42,8 @@ namespace SwephNet
         /// <summary>
         /// Release resources
         /// </summary>
-        public void Dispose() {
+        public void Dispose()
+        {
             Dispose(true);
         }
 
@@ -49,8 +54,10 @@ namespace SwephNet
         /// <summary>
         /// Get the current container
         /// </summary>
-        protected IDependencyContainer GetDependencies() {
-            if (_Dependencies == null) {
+        protected IDependencyContainer GetDependencies()
+        {
+            if (_Dependencies == null)
+            {
                 _Dependencies = CreateDependencyContainer();
                 BuildDependencies(_Dependencies);
             }
@@ -60,14 +67,16 @@ namespace SwephNet
         /// <summary>
         /// Create a new container
         /// </summary>
-        protected virtual IDependencyContainer CreateDependencyContainer() {
+        protected virtual IDependencyContainer CreateDependencyContainer()
+        {
             return new Dependency.SimpleContainer();
         }
 
         /// <summary>
         /// Create all dependencies
         /// </summary>
-        protected virtual void BuildDependencies(IDependencyContainer container) {
+        protected virtual void BuildDependencies(IDependencyContainer container)
+        {
             // Register default type
             container.RegisterInstance(this);
             container.RegisterInstance<IStreamProvider>(this);
@@ -97,6 +106,50 @@ namespace SwephNet
 
         #endregion
 
+        #region Date management
+
+        /// <summary>
+        /// Create a Julian Day
+        /// </summary>
+        public JulianDay JulianDay(int year, int month, int day, double hour, DateCalendar? calendar = null)
+        {
+            return JulianDay(new UniversalTime(year, month, day, hour), calendar);
+        }
+
+        /// <summary>
+        /// Create a Julian Day
+        /// </summary>
+        public JulianDay JulianDay(int year, int month, int day, int hour, int minute, int second, DateCalendar? calendar = null)
+        {
+            return JulianDay(new UniversalTime(year, month, day, hour, minute, second), calendar);
+        }
+
+        /// <summary>
+        /// Create a Julian Day
+        /// </summary>
+        public JulianDay JulianDay(UniversalTime date, DateCalendar? calendar = null)
+        {
+            return new JulianDay(date, calendar);
+        }
+
+        /// <summary>
+        /// Get Date UT from Julian Day
+        /// </summary>
+        public UniversalTime DateUT(JulianDay jd)
+        {
+            return SweDate.JulianDayToDate(jd.Value, jd.Calendar);
+        }
+
+        /// <summary>
+        /// Get Date UT from Ephemeris Time
+        /// </summary>
+        public UniversalTime DateUT(EphemerisTime et)
+        {
+            return SweDate.JulianDayToDate(et.JulianDay.Value, et.JulianDay.Calendar);
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -107,7 +160,8 @@ namespace SwephNet
         /// <summary>
         /// Date engine
         /// </summary>
-        public SweDate Date {
+        public SweDate Date
+        {
             get { return Dependencies.Resolve<SweDate>(); }
         }
 
