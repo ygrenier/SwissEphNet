@@ -35,6 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <EmbeddedResource Include="Locales\LSR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>LSR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Date\EphemerisTime.cs" />
@@ -47,6 +51,11 @@
     <Compile Include="Dependency\SimpleContainer.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DependencyExtensions.cs" />
+    <Compile Include="Locales\LSR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LSR.resx</DependentUpon>
+    </Compile>
     <Compile Include="Persit\IStreamProvider.cs" />
     <Compile Include="Persit\LoadFileEventArgs.cs" />
     <Compile Include="SweFormat.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using SwephNet.Locales;
 
 namespace SwephNet.Dependency
 {
@@ -131,7 +132,7 @@ namespace SwephNet.Dependency
             Check.ArgumentNotNull(type, "type");
             IResolver resolver = null;
             if (!_Resolvers.TryGetValue(type, out resolver))
-                throw new InvalidOperationException(String.Format("Can't resolve type '{0}'", type.FullName));
+                throw new InvalidOperationException(String.Format(LSR.Dependency_Error_CantResolveType, type.FullName));
             return resolver.Resolve(this);
         }
 
@@ -192,7 +193,7 @@ namespace SwephNet.Dependency
                     else
                     {
                         throw new InvalidOperationException(String.Format(
-                            "Can't resolve parameter '{0}' of type '{1}' for construct '{2}'",
+                            LSR.Dependency_Error_CantResolveParameterForConstruct,
                             parameterInfo.Name,
                             parameterInfo.ParameterType.Name,
                             type.FullName));
@@ -210,10 +211,10 @@ namespace SwephNet.Dependency
         {
             // Check type
             if (type.IsInterface || type.IsAbstract || type.IsByRef || type.IsGenericType)
-                throw new InvalidOperationException(String.Format("'{0}' can't be instanciate", type.FullName));
+                throw new InvalidOperationException(String.Format(LSR.Dependency_Error_CantInstanciateType, type.FullName));
             ConstructorInfo constructor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault();
             if (constructor == null)
-                throw new InvalidOperationException(String.Format("Can't find a constructor for type '{0}'", type.FullName));
+                throw new InvalidOperationException(String.Format(LSR.Dependency_Error_CantFindConstructor, type.FullName));
             // Build parameters
             List<object> parameters = BuildConstructorParameter(type, constructor);
             // Create instance
