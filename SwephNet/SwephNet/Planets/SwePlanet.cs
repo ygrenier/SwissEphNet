@@ -80,7 +80,7 @@ namespace SwephNet
             //        s = swed.fidat[SEI_FILE_ANY_AST].astnam;
             //    else
             //        s = C.sprintf("%d: not found", ipl - SE_AST_OFFSET);
-            String result = String.Format("{0}: not found", asteroid);
+            String result = String.Format(Locales.LSR.Asteroid_NameNotFound, asteroid);
             //}
 
             // If there is a provisional designation only in ephemeris file,

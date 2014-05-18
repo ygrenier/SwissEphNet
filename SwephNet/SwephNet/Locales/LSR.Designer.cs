@@ -61,6 +61,15 @@ namespace SwephNet.Locales {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0}: not found.
+        /// </summary>
+        public static string Asteroid_NameNotFound {
+            get {
+                return ResourceManager.GetString("Asteroid_NameNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Can&apos;t find a constructor for type &apos;{0}&apos;.
         /// </summary>
         public static string Dependency_Error_CantFindConstructor {
