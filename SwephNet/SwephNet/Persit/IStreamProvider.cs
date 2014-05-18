@@ -19,10 +19,5 @@ namespace SwephNet
         /// <returns>The stream or null if the file not exists</returns>
         Stream LoadFile(String filename);
 
-        /// <summary>
-        /// Event raised when a file is required
-        /// </summary>
-        event EventHandler<LoadFileEventArgs> OnLoadFile;
-
     }
 }
