@@ -129,4 +129,73 @@
   <data name="Dependency_Error_CantResolveType" xml:space="preserve">
     <value>Can't resolve type '{0}'</value>
   </data>
+  <data name="PlanetName_Moon" xml:space="preserve">
+    <value>Moon</value>
+  </data>
+  <data name="PlanetName_Sun" xml:space="preserve">
+    <value>Sun</value>
+  </data>
+  <data name="PlanetName_Mercury" xml:space="preserve">
+    <value>Mercury</value>
+  </data>
+  <data name="PlanetName_Venus" xml:space="preserve">
+    <value>Venus</value>
+  </data>
+  <data name="PlanetName_Mars" xml:space="preserve">
+    <value>Mars</value>
+  </data>
+  <data name="PlanetName_Jupiter" xml:space="preserve">
+    <value>Jupiter</value>
+  </data>
+  <data name="PlanetName_Saturn" xml:space="preserve">
+    <value>Saturn</value>
+  </data>
+  <data name="PlanetName_Uranus" xml:space="preserve">
+    <value>Uranus</value>
+  </data>
+  <data name="PlanetName_Neptune" xml:space="preserve">
+    <value>Neptune</value>
+  </data>
+  <data name="PlanetName_Pluto" xml:space="preserve">
+    <value>Pluto</value>
+  </data>
+  <data name="PlanetName_MeanNode" xml:space="preserve">
+    <value>mean Node</value>
+  </data>
+  <data name="PlanetName_TrueNode" xml:space="preserve">
+    <value>true Node</value>
+  </data>
+  <data name="PlanetName_MeanApogee" xml:space="preserve">
+    <value>mean Apogee</value>
+  </data>
+  <data name="PlanetName_OscuApogee" xml:space="preserve">
+    <value>osc. Apogee</value>
+  </data>
+  <data name="PlanetName_IntpApogee" xml:space="preserve">
+    <value>intp. Apogee</value>
+  </data>
+  <data name="PlanetName_IntpPerigee" xml:space="preserve">
+    <value>intp. Perigee</value>
+  </data>
+  <data name="PlanetName_Earth" xml:space="preserve">
+    <value>Earth</value>
+  </data>
+  <data name="PlanetName_Ceres" xml:space="preserve">
+    <value>Ceres</value>
+  </data>
+  <data name="PlanetName_Pallas" xml:space="preserve">
+    <value>Pallas</value>
+  </data>
+  <data name="PlanetName_Juno" xml:space="preserve">
+    <value>Juno</value>
+  </data>
+  <data name="PlanetName_Vesta" xml:space="preserve">
+    <value>Vesta</value>
+  </data>
+  <data name="PlanetName_Chiron" xml:space="preserve">
+    <value>Chiron</value>
+  </data>
+  <data name="PlanetName_Pholus" xml:space="preserve">
+    <value>Pholus</value>
+  </data>
 </root>

@@ -85,6 +85,7 @@ namespace SwephNet
             container.RegisterInstance<IDependencyContainer>(container);
             // Register engines types
             container.Register<SweDate, SweDate>();
+            container.Register<SwePlanet, SwePlanet>();
         }
 
         #endregion
@@ -189,6 +190,14 @@ namespace SwephNet
         public SweDate Date
         {
             get { return Dependencies.Resolve<SweDate>(); }
+        }
+
+        /// <summary>
+        /// Planet engine
+        /// </summary>
+        public SwePlanet Planet
+        {
+            get { return Dependencies.Resolve<SwePlanet>(); }
         }
 
         #endregion
