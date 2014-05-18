@@ -95,5 +95,212 @@ namespace SwephNet.Locales {
                 return ResourceManager.GetString("Dependency_Error_CantResolveType", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Ceres.
+        /// </summary>
+        public static string PlanetName_Ceres {
+            get {
+                return ResourceManager.GetString("PlanetName_Ceres", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Chiron.
+        /// </summary>
+        public static string PlanetName_Chiron {
+            get {
+                return ResourceManager.GetString("PlanetName_Chiron", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Earth.
+        /// </summary>
+        public static string PlanetName_Earth {
+            get {
+                return ResourceManager.GetString("PlanetName_Earth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à intp. Apogee.
+        /// </summary>
+        public static string PlanetName_IntpApogee {
+            get {
+                return ResourceManager.GetString("PlanetName_IntpApogee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à intp. Perigee.
+        /// </summary>
+        public static string PlanetName_IntpPerigee {
+            get {
+                return ResourceManager.GetString("PlanetName_IntpPerigee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Juno.
+        /// </summary>
+        public static string PlanetName_Juno {
+            get {
+                return ResourceManager.GetString("PlanetName_Juno", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Jupiter.
+        /// </summary>
+        public static string PlanetName_Jupiter {
+            get {
+                return ResourceManager.GetString("PlanetName_Jupiter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Mars.
+        /// </summary>
+        public static string PlanetName_Mars {
+            get {
+                return ResourceManager.GetString("PlanetName_Mars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à mean Apogee.
+        /// </summary>
+        public static string PlanetName_MeanApogee {
+            get {
+                return ResourceManager.GetString("PlanetName_MeanApogee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à mean Node.
+        /// </summary>
+        public static string PlanetName_MeanNode {
+            get {
+                return ResourceManager.GetString("PlanetName_MeanNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Mercury.
+        /// </summary>
+        public static string PlanetName_Mercury {
+            get {
+                return ResourceManager.GetString("PlanetName_Mercury", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Moon.
+        /// </summary>
+        public static string PlanetName_Moon {
+            get {
+                return ResourceManager.GetString("PlanetName_Moon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Neptune.
+        /// </summary>
+        public static string PlanetName_Neptune {
+            get {
+                return ResourceManager.GetString("PlanetName_Neptune", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à osc. Apogee.
+        /// </summary>
+        public static string PlanetName_OscuApogee {
+            get {
+                return ResourceManager.GetString("PlanetName_OscuApogee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Pallas.
+        /// </summary>
+        public static string PlanetName_Pallas {
+            get {
+                return ResourceManager.GetString("PlanetName_Pallas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Pholus.
+        /// </summary>
+        public static string PlanetName_Pholus {
+            get {
+                return ResourceManager.GetString("PlanetName_Pholus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Pluto.
+        /// </summary>
+        public static string PlanetName_Pluto {
+            get {
+                return ResourceManager.GetString("PlanetName_Pluto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Saturn.
+        /// </summary>
+        public static string PlanetName_Saturn {
+            get {
+                return ResourceManager.GetString("PlanetName_Saturn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sun.
+        /// </summary>
+        public static string PlanetName_Sun {
+            get {
+                return ResourceManager.GetString("PlanetName_Sun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à true Node.
+        /// </summary>
+        public static string PlanetName_TrueNode {
+            get {
+                return ResourceManager.GetString("PlanetName_TrueNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Uranus.
+        /// </summary>
+        public static string PlanetName_Uranus {
+            get {
+                return ResourceManager.GetString("PlanetName_Uranus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Venus.
+        /// </summary>
+        public static string PlanetName_Venus {
+            get {
+                return ResourceManager.GetString("PlanetName_Venus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Vesta.
+        /// </summary>
+        public static string PlanetName_Vesta {
+            get {
+                return ResourceManager.GetString("PlanetName_Vesta", resourceCulture);
+            }
+        }
     }
 }

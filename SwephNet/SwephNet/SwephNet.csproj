@@ -38,6 +38,7 @@
     <EmbeddedResource Include="Locales\LSR.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>LSR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +64,7 @@
     <Compile Include="Persit\IStreamProvider.cs" />
     <Compile Include="Persit\LoadFileEventArgs.cs" />
     <Compile Include="Planets\Planet.cs" />
+    <Compile Include="Planets\SwePlanet.cs" />
     <Compile Include="SweFormat.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
