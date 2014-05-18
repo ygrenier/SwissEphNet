@@ -53,6 +53,7 @@
     <Compile Include="CheckTest.cs" />
     <Compile Include="DependencyTest.cs" />
     <Compile Include="EphemerisTimeTest.cs" />
+    <Compile Include="PlanetTest.cs" />
     <Compile Include="SideralTimeTest.cs" />
     <Compile Include="SweDateTest.cs" />
     <Compile Include="SweFormatTest.cs" />

@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="Persit\IStreamProvider.cs" />
     <Compile Include="Persit\LoadFileEventArgs.cs" />
+    <Compile Include="Planets\Planet.cs" />
     <Compile Include="SweFormat.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
