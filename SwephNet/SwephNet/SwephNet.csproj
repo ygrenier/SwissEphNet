@@ -47,6 +47,8 @@
     <Compile Include="Dependency\SimpleContainer.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DependencyExtensions.cs" />
+    <Compile Include="Persit\IStreamProvider.cs" />
+    <Compile Include="Persit\LoadFileEventArgs.cs" />
     <Compile Include="SweFormat.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

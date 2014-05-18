@@ -9,7 +9,9 @@ namespace SwephNet
     /// <summary>
     /// Swiss Ephmeris context
     /// </summary>
-    public class Sweph : IDisposable
+    public class Sweph : 
+        IDisposable,
+        IStreamProvider
     {
         private IDependencyContainer _Dependencies;
 
@@ -66,9 +68,31 @@ namespace SwephNet
         /// Create all dependencies
         /// </summary>
         protected virtual void BuildDependencies(IDependencyContainer container) {
+            // Register default type
             container.RegisterInstance(this);
+            container.RegisterInstance<IStreamProvider>(this);
             container.RegisterInstance<IDependencyContainer>(container);
+            // Register engines types
             container.Register<SweDate, SweDate>();
+        }
+
+        #endregion
+
+        #region File management
+
+        /// <summary>
+        /// Load a file
+        /// </summary>
+        public System.IO.Stream LoadFile(string filename)
+        {
+            var h = OnLoadFile;
+            if (h != null)
+            {
+                var e = new LoadFileEventArgs(filename);
+                h(this, e);
+                return e.File;
+            }
+            return null;
         }
 
         #endregion
@@ -86,6 +110,15 @@ namespace SwephNet
         public SweDate Date {
             get { return Dependencies.Resolve<SweDate>(); }
         }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Event raised when a file is required
+        /// </summary>
+        public event EventHandler<LoadFileEventArgs> OnLoadFile;
 
         #endregion
 
