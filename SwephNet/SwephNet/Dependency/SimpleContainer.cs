@@ -91,12 +91,12 @@ namespace SwephNet.Dependency
         /// <summary>
         /// Register an instance to resolved a type
         /// </summary>
-        public IDependencyContainer RegisterInstance<TToResolved>(TToResolved instance)
+        public IDependencyContainer RegisterInstance<TToResolved>(TToResolved instance, bool ownInstance = false)
         {
             Check.ArgumentNotNull(instance, "instance");
             _Resolvers[typeof(TToResolved)] = new InstanceResolver() {
                 Instance = instance,
-                OwnInstance = true
+                OwnInstance = ownInstance
             };
             return this;
         }

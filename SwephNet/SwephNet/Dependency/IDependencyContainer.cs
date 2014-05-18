@@ -25,7 +25,7 @@ namespace SwephNet
         /// <summary>
         /// Register an instance to resolved a type
         /// </summary>
-        IDependencyContainer RegisterInstance<TToResolved>(TToResolved instance);
+        IDependencyContainer RegisterInstance<TToResolved>(TToResolved instance, bool ownInstance = false);
 
         /// <summary>
         /// Indicate if we can resolve a registered type
