@@ -41,7 +41,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Date\DeltaTRecord.cs" />
+    <Compile Include="Date\DeltaTRecordFile.cs" />
     <Compile Include="Date\EphemerisTime.cs" />
+    <Compile Include="Date\IDeltaTRecordProvider.cs" />
     <Compile Include="Date\SideralTime.cs" />
     <Compile Include="Date\SweDate.cs" />
     <Compile Include="Date\UniversalTime.cs" />
@@ -51,6 +54,7 @@
     <Compile Include="Dependency\SimpleContainer.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DependencyExtensions.cs" />
+    <Compile Include="Extensions\TracerExtensions.cs" />
     <Compile Include="Locales\LSR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
