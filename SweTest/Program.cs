@@ -2973,6 +2973,7 @@ static string infoexamp = @"\n\
             var s = Environment.GetCommandLineArgs();
             //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pp", "-ejpl" };
             //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pp", "-emos" };
+            //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pah", "-ejplde431.eph" };
             var result = main_test(s.Length, s);
 #if DEBUG
             Console.ReadKey();

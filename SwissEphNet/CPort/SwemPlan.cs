@@ -947,12 +947,19 @@ namespace SwissEphNet.CPort
                         sp = sp.Substring(1);
                         if (sp != null && (sp.StartsWith("+") || sp.StartsWith("-")))
                             fac *= tt[0];
-                        else if ((i = int.Parse(sp)) <= 4 && i >= 0)
-                            fac *= tt[i];
+                        else
+                        {
+                            if (!int.TryParse(sp, out i)) i = 0;
+                            if (i <= 4 && i >= 0)
+                                fac *= tt[i];
+                        }
                     } else {
                         /* a number */
-                        if (double.Parse(sp, CultureInfo.InvariantCulture) != 0 || sp.StartsWith("0"))
-                            fac *= double.Parse(sp, CultureInfo.InvariantCulture);
+                        int cnt = sp.IndexOfFirstNot('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
+                        String sval = cnt < 0 ? sp : sp.Substring(0, cnt);
+                        var val = double.Parse(sval, CultureInfo.InvariantCulture);
+                        if (val != 0 || sp.StartsWith("0"))
+                            fac *= val;
                     }
                     if (sp != null) {
                         sp = sp.TrimStart('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
