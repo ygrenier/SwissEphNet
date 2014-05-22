@@ -66,9 +66,14 @@
     </Compile>
     <Compile Include="Persit\IStreamProvider.cs" />
     <Compile Include="Persit\LoadFileEventArgs.cs" />
+    <Compile Include="Planets\IOsculatingElementProvider.cs" />
+    <Compile Include="Planets\OsculatingElement.cs" />
+    <Compile Include="Planets\OsculatingElementFile.cs" />
     <Compile Include="Planets\Planet.cs" />
     <Compile Include="Planets\SwePlanet.cs" />
+    <Compile Include="SweError.cs" />
     <Compile Include="SweFormat.cs" />
+    <Compile Include="SweLib.cs" />
     <Compile Include="Sweph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Check.cs" />

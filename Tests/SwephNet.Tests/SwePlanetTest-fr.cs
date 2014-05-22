@@ -41,11 +41,11 @@ namespace SwephNet.Tests
             }
         }
 
-        [TestMethod, ExpectedException(typeof(NotImplementedException))]
+        [TestMethod]
         public void TestGetPlanetName_Fictitious() {
             using (var swe = new Sweph()) {
                 Assert.AreEqual("Cupido", swe.Planet.GetPlanetName(Planet.FirstFictitious));
-                Assert.AreEqual("name not found", swe.Planet.GetPlanetName(Planet.FirstFictitious + 200));
+                Assert.AreEqual("Nom inconnu", swe.Planet.GetPlanetName(Planet.FirstFictitious + 200));
             }
         }
 

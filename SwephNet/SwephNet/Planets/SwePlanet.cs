@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SwephNet.Planets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace SwephNet
     public class SwePlanet
     {
         private Dictionary<int, String> _BufferNames = new Dictionary<int, String>();
+        IDependencyContainer _Container;
 
         // Suffixes planets locales names
         static String[] PlanetNames = new String[]{
@@ -23,29 +25,118 @@ namespace SwephNet
             "Vesta", "IntpApogee", "IntpPerigee"
         };
 
-        //const string SE_NAME_CUPIDO = "Cupido";
-        //const string SE_NAME_HADES = "Hades";
-        //const string SE_NAME_ZEUS = "Zeus";
-        //const string SE_NAME_KRONOS = "Kronos";
-        //const string SE_NAME_APOLLON = "Apollon";
-        //const string SE_NAME_ADMETOS = "Admetos";
-        //const string SE_NAME_VULKANUS = "Vulkanus";
-        //const string SE_NAME_POSEIDON = "Poseidon";
-        //const string SE_NAME_ISIS = "Isis";
-        //const string SE_NAME_NIBIRU = "Nibiru";
-        //const string SE_NAME_HARRINGTON = "Harrington";
-        //const string SE_NAME_NEPTUNE_LEVERRIER = "Leverrier";
-        //const string SE_NAME_NEPTUNE_ADAMS = "Adams";
-        //const string SE_NAME_PLUTO_LOWELL = "Lowell";
-        //const string SE_NAME_PLUTO_PICKERING = "Pickering";
-        //const string SE_NAME_VULCAN = "Vulcan";
-        //const string SE_NAME_WHITE_MOON = "White Moon";
+        static string[] PlanetFictitiousNames = new string[]{
+            "Cupido", "Hades", "Zeus", "Kronos", 
+           "Apollon", "Admetos", "Vulkanus", "Poseidon",
+           "Isis-Transpluto", "Nibiru", "Harrington",
+           "Leverrier", "Adams",
+           "Lowell", "Pickering"};
 
         /// <summary>
         /// Create a new planet management
         /// </summary>
-        public SwePlanet() {
+        public SwePlanet(IDependencyContainer container) {
+            UseNeely = true;
+            _Container = container;
+            // Define default providers if not exists
+            if (!container.CanResolve<IOsculatingElementProvider>())
+                container.Register<IOsculatingElementProvider, OsculatingElementFile>(false);
         }
+
+        #region Osculating elements
+
+        static double[][] plan_oscu_elem_neely = new double[][] {
+          new double[] {SweDate.J1900, SweDate.J1900, 163.7409, 40.99837, 0.00460, 171.4333, 129.8325, 1.0833},/* Cupido Neely */ 
+          new double[] {SweDate.J1900, SweDate.J1900,  27.6496, 50.66744, 0.00245, 148.1796, 161.3339, 1.0500},/* Hades Neely */
+          new double[] {SweDate.J1900, SweDate.J1900, 165.1232, 59.21436, 0.00120, 299.0440,   0.0000, 0.0000},/* Zeus Neely */
+          new double[] {SweDate.J1900, SweDate.J1900, 169.0193, 64.81960, 0.00305, 208.8801,   0.0000, 0.0000},/* Kronos Neely */ 
+          new double[] {SweDate.J1900, SweDate.J1900, 138.0533, 70.29949, 0.00000,   0.0000,   0.0000, 0.0000},/* Apollon Neely */
+          new double[] {SweDate.J1900, SweDate.J1900, 351.3350, 73.62765, 0.00000,   0.0000,   0.0000, 0.0000},/* Admetos Neely */
+          new double[] {SweDate.J1900, SweDate.J1900,  55.8983, 77.25568, 0.00000,   0.0000,   0.0000, 0.0000},/* Vulcanus Neely */
+          new double[] {SweDate.J1900, SweDate.J1900, 165.5163, 83.66907, 0.00000,   0.0000,   0.0000, 0.0000},/* Poseidon Neely */
+          /* Isis-Transpluto; elements from "Die Sterne" 3/1952, p. 70ff. 
+           * Strubell does not give an equinox. 1945 is taken to best reproduce 
+           * ASTRON ephemeris. (This is a strange choice, though.)
+           * The epoch is 1772.76. The year is understood to have 366 days.
+           * The fraction is counted from 1 Jan. 1772 */
+          new double[] {2368547.66, 2431456.5, 0.0, 77.775, 0.3, 0.7, 0, 0},
+          /* Nibiru, elements from Christian Woeltge, Hannover */
+          new double[] {1856113.380954, 1856113.380954, 0.0, 234.8921, 0.981092, 103.966, -44.567, 158.708},
+          /* Harrington, elements from Astronomical Journal 96(4), Oct. 1988 */
+          new double[] {2374696.5, SweDate.J2000, 0.0, 101.2, 0.411, 208.5, 275.4, 32.4},
+          /* Leverrier's Neptune, 
+            according to W.G. Hoyt, "Planets X and Pluto", Tucson 1980, p. 63 */
+          new double[] {2395662.5, 2395662.5, 34.05, 36.15, 0.10761, 284.75, 0, 0}, 
+          /* Adam's Neptune */
+          new double[] {2395662.5, 2395662.5, 24.28, 37.25, 0.12062, 299.11, 0, 0}, 
+          /* Lowell's Pluto */
+          new double[] {2425977.5, 2425977.5, 281, 43.0, 0.202, 204.9, 0, 0}, 
+          /* Pickering's Pluto */
+          new double[] {2425977.5, 2425977.5, 48.95, 55.1, 0.31, 280.1, 100, 15}, /**/
+        };
+        static double[][] plan_oscu_elem_no_neely = new double[][] {
+          new double[] {SweDate.J1900, SweDate.J1900, 104.5959, 40.99837,  0, 0, 0, 0}, /* Cupido   */
+          new double[] {SweDate.J1900, SweDate.J1900, 337.4517, 50.667443, 0, 0, 0, 0}, /* Hades    */
+          new double[] {SweDate.J1900, SweDate.J1900, 104.0904, 59.214362, 0, 0, 0, 0}, /* Zeus     */
+          new double[] {SweDate.J1900, SweDate.J1900,  17.7346, 64.816896, 0, 0, 0, 0}, /* Kronos   */
+          new double[] {SweDate.J1900, SweDate.J1900, 138.0354, 70.361652, 0, 0, 0, 0}, /* Apollon  */
+          new double[] {SweDate.J1900, SweDate.J1900,  -8.678,  73.736476, 0, 0, 0, 0}, /* Admetos  */
+          new double[] {SweDate.J1900, SweDate.J1900,  55.9826, 77.445895, 0, 0, 0, 0}, /* Vulkanus */
+          new double[] {SweDate.J1900, SweDate.J1900, 165.3595, 83.493733, 0, 0, 0, 0}, /* Poseidon */
+          /* Isis-Transpluto; elements from "Die Sterne" 3/1952, p. 70ff. 
+           * Strubell does not give an equinox. 1945 is taken to best reproduce 
+           * ASTRON ephemeris. (This is a strange choice, though.)
+           * The epoch is 1772.76. The year is understood to have 366 days.
+           * The fraction is counted from 1 Jan. 1772 */
+          new double[] {2368547.66, 2431456.5, 0.0, 77.775, 0.3, 0.7, 0, 0},
+          /* Nibiru, elements from Christian Woeltge, Hannover */
+          new double[] {1856113.380954, 1856113.380954, 0.0, 234.8921, 0.981092, 103.966, -44.567, 158.708},
+          /* Harrington, elements from Astronomical Journal 96(4), Oct. 1988 */
+          new double[] {2374696.5, SweDate.J2000, 0.0, 101.2, 0.411, 208.5, 275.4, 32.4},
+          /* Leverrier's Neptune, 
+            according to W.G. Hoyt, "Planets X and Pluto", Tucson 1980, p. 63 */
+          new double[] {2395662.5, 2395662.5, 34.05, 36.15, 0.10761, 284.75, 0, 0}, 
+          /* Adam's Neptune */
+          new double[] {2395662.5, 2395662.5, 24.28, 37.25, 0.12062, 299.11, 0, 0}, 
+          /* Lowell's Pluto */
+          new double[] {2425977.5, 2425977.5, 281, 43.0, 0.202, 204.9, 0, 0}, 
+          /* Pickering's Pluto */
+          new double[] {2425977.5, 2425977.5, 48.95, 55.1, 0.31, 280.1, 100, 15}, /**/
+        };
+
+        double[][] plan_oscu_elem { get { return UseNeely ? plan_oscu_elem_neely : plan_oscu_elem_no_neely; } }
+
+        /// <summary>
+        /// Read an osculating element for a planet and a julian day
+        /// </summary>
+        /// <param name="idPlanet"></param>
+        /// <returns></returns>
+        protected OsculatingElement ReadElement(int idPlanet, double jd, ref int fict_ifl)
+        {
+            OsculatingElement result = _Container.Resolve<IOsculatingElementProvider>().FindElement(idPlanet, jd, ref fict_ifl);
+            // If file or planet not found, use built-in bodies
+            if (result == null)
+            {
+                var planOscu = plan_oscu_elem;
+                if (idPlanet >= planOscu.Length)
+                    throw new SweError(Locales.LSR.Fictitious_ErrorNoElements, idPlanet);
+                var plan = planOscu[idPlanet];
+                result = new OsculatingElement() {
+                    Epoch = plan[0],
+                    Equinox = plan[1],
+                    MeanAnomaly = plan[2] * SweLib.DEGTORAD,
+                    SemiAxis = plan[3],
+                    Eccentricity = plan[4],
+                    Perihelion = plan[5] * SweLib.DEGTORAD,
+                    AscendingNode = plan[6] * SweLib.DEGTORAD,
+                    Inclination = plan[7] * SweLib.DEGTORAD,
+                    Name = Locales.LSR.ResourceManager.GetString(String.Format("FictitiousName_{0}", PlanetFictitiousNames[idPlanet]))
+                };
+            }
+            return result;
+        }
+
+        #endregion
 
         /// <summary>
         /// Returns the name of a fictitious planet
@@ -53,13 +144,18 @@ namespace SwephNet
         /// <param name="id">Id of the fictitious planet. 0 is the first fictitious id.</param>
         /// <returns>Name of the fictitious planet</returns>
         protected string GetFictitiousName(Int32 id) {
-            throw new NotImplementedException("SwePlanet.GetFictitiousName()");
-            //string snam = null, serr = null; double dummy = 0; int idummy = 0;
-            //if (read_elements_file(ipl, 0, ref dummy, ref dummy,
-            //     ref dummy, ref dummy, ref dummy, ref dummy, ref dummy, ref dummy,
-            //     ref snam, ref idummy, ref serr) == ERR)
-            //    snam = "name not found";
-            //return snam;
+            try
+            {
+                int iDummy = 0;
+                var elm = ReadElement(id, 0, ref iDummy);
+                if (elm != null)
+                    return elm.Name;
+            }
+            catch (Exception ex)
+            {
+                _Container.Resolve<ITracer>().Trace("Error while reading fictitious '{0}' name : {1}", id, ex.Message);
+            }
+            return Locales.LSR.Fictitious_NameNotFound;
         }
 
         /// <summary>
@@ -225,6 +321,11 @@ namespace SwephNet
             _BufferNames[id] = result;
             return result;
         }
+
+        /// <summary>
+        /// Use James Neely's revised elements of Uranian planets
+        /// </summary>
+        public bool UseNeely { get; set; }
 
     }
 

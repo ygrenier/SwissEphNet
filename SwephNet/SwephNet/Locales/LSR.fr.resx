@@ -201,4 +201,88 @@
   <data name="Asteroid_NameNotFound" xml:space="preserve">
     <value>{0}: nom inconnu</value>
   </data>
+  <data name="Fictitious_NameNotFound" xml:space="preserve">
+    <value>Nom inconnu</value>
+  </data>
+  <data name="Error_ReadingFile" xml:space="preserve">
+    <value>Erreur lors de la lecture du fichier {0}, ligne {1} : {2}</value>
+  </data>
+  <data name="FictitiousName_Adams" xml:space="preserve">
+    <value>Adams</value>
+  </data>
+  <data name="FictitiousName_Admetos" xml:space="preserve">
+    <value>Admetos</value>
+  </data>
+  <data name="FictitiousName_Apollon" xml:space="preserve">
+    <value>Apollon</value>
+  </data>
+  <data name="FictitiousName_Cupido" xml:space="preserve">
+    <value>Cupido</value>
+  </data>
+  <data name="FictitiousName_Hades" xml:space="preserve">
+    <value>Hades</value>
+  </data>
+  <data name="FictitiousName_Harrington" xml:space="preserve">
+    <value>Harrington</value>
+  </data>
+  <data name="FictitiousName_IsisTranspluto" xml:space="preserve">
+    <value>Isis-Transpluto</value>
+  </data>
+  <data name="FictitiousName_Kronos" xml:space="preserve">
+    <value>Kronos</value>
+  </data>
+  <data name="FictitiousName_Leverrier" xml:space="preserve">
+    <value>Leverrier</value>
+  </data>
+  <data name="FictitiousName_Lowell" xml:space="preserve">
+    <value>Lowell</value>
+  </data>
+  <data name="FictitiousName_Nibiru" xml:space="preserve">
+    <value>Nibiru</value>
+  </data>
+  <data name="FictitiousName_Pickering" xml:space="preserve">
+    <value>Pickering</value>
+  </data>
+  <data name="FictitiousName_Poseidon" xml:space="preserve">
+    <value>Poseidon</value>
+  </data>
+  <data name="FictitiousName_Vulkanus" xml:space="preserve">
+    <value>Vulkanus</value>
+  </data>
+  <data name="FictitiousName_Zeus" xml:space="preserve">
+    <value>Zeus</value>
+  </data>
+  <data name="Fictitious_ErrorEccentricityValueInvalid" xml:space="preserve">
+    <value>excentricité non valide (aucune orbite parabolique ou hyperbolique autorisées)</value>
+  </data>
+  <data name="Fictitious_ErrorElementsNotFound" xml:space="preserve">
+    <value>impossible de trouver les éléments pour la planète {1}</value>
+  </data>
+  <data name="Fictitious_ErrorInclinationValueInvalid" xml:space="preserve">
+    <value>valeur d'inclinaison invalide</value>
+  </data>
+  <data name="Fictitious_ErrorInvalidEpoch" xml:space="preserve">
+    <value>epoch invalide</value>
+  </data>
+  <data name="Fictitious_ErrorInvalidEquinox" xml:space="preserve">
+    <value>équinoxe invalide</value>
+  </data>
+  <data name="Fictitious_ErrorMeanAnomalyValueInvalid" xml:space="preserve">
+    <value>valeur Mean Anomaly incorrecte</value>
+  </data>
+  <data name="Fictitious_ErrorNineElementsRequired" xml:space="preserve">
+    <value>neuf éléments sont requis.</value>
+  </data>
+  <data name="Fictitious_ErrorNodeValueInvalid" xml:space="preserve">
+    <value>valeur de noeud invalide</value>
+  </data>
+  <data name="Fictitious_ErrorNoElements" xml:space="preserve">
+    <value>Erreur pas d'élément pour l'astre  n° {0}</value>
+  </data>
+  <data name="Fictitious_ErrorPerihelionArgumentValueInvalid" xml:space="preserve">
+    <value>valeur d'argument de périhélie non valide</value>
+  </data>
+  <data name="Fictitious_ErrorSemiAxisValueInvalid" xml:space="preserve">
+    <value>valeur de semi-axe incorrecte</value>
+  </data>
 </root>

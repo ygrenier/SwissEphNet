@@ -106,6 +106,258 @@ namespace SwephNet.Locales {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Error in file {0}, line {1}: {2}.
+        /// </summary>
+        public static string Error_ReadingFile {
+            get {
+                return ResourceManager.GetString("Error_ReadingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à eccentricity invalid (no parabolic or hyperbolic orbits allowed).
+        /// </summary>
+        public static string Fictitious_ErrorEccentricityValueInvalid {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorEccentricityValueInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à elements for planet {1} not found.
+        /// </summary>
+        public static string Fictitious_ErrorElementsNotFound {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorElementsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à inclination value invalid.
+        /// </summary>
+        public static string Fictitious_ErrorInclinationValueInvalid {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorInclinationValueInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à invalid epoch.
+        /// </summary>
+        public static string Fictitious_ErrorInvalidEpoch {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorInvalidEpoch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à invalid equinox.
+        /// </summary>
+        public static string Fictitious_ErrorInvalidEquinox {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorInvalidEquinox", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à mean anomaly value invalid.
+        /// </summary>
+        public static string Fictitious_ErrorMeanAnomalyValueInvalid {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorMeanAnomalyValueInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à nine elements required.
+        /// </summary>
+        public static string Fictitious_ErrorNineElementsRequired {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorNineElementsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à node value invalid.
+        /// </summary>
+        public static string Fictitious_ErrorNodeValueInvalid {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorNodeValueInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à error no elements for fictitious body no {0}.
+        /// </summary>
+        public static string Fictitious_ErrorNoElements {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorNoElements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à perihelion argument value invalid.
+        /// </summary>
+        public static string Fictitious_ErrorPerihelionArgumentValueInvalid {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorPerihelionArgumentValueInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à semi-axis value invalid.
+        /// </summary>
+        public static string Fictitious_ErrorSemiAxisValueInvalid {
+            get {
+                return ResourceManager.GetString("Fictitious_ErrorSemiAxisValueInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Name not found.
+        /// </summary>
+        public static string Fictitious_NameNotFound {
+            get {
+                return ResourceManager.GetString("Fictitious_NameNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Adams.
+        /// </summary>
+        public static string FictitiousName_Adams {
+            get {
+                return ResourceManager.GetString("FictitiousName_Adams", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Admetos.
+        /// </summary>
+        public static string FictitiousName_Admetos {
+            get {
+                return ResourceManager.GetString("FictitiousName_Admetos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Apollon.
+        /// </summary>
+        public static string FictitiousName_Apollon {
+            get {
+                return ResourceManager.GetString("FictitiousName_Apollon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Cupido.
+        /// </summary>
+        public static string FictitiousName_Cupido {
+            get {
+                return ResourceManager.GetString("FictitiousName_Cupido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Hades.
+        /// </summary>
+        public static string FictitiousName_Hades {
+            get {
+                return ResourceManager.GetString("FictitiousName_Hades", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Harrington.
+        /// </summary>
+        public static string FictitiousName_Harrington {
+            get {
+                return ResourceManager.GetString("FictitiousName_Harrington", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Isis-Transpluto.
+        /// </summary>
+        public static string FictitiousName_IsisTranspluto {
+            get {
+                return ResourceManager.GetString("FictitiousName_IsisTranspluto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Kronos.
+        /// </summary>
+        public static string FictitiousName_Kronos {
+            get {
+                return ResourceManager.GetString("FictitiousName_Kronos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Leverrier.
+        /// </summary>
+        public static string FictitiousName_Leverrier {
+            get {
+                return ResourceManager.GetString("FictitiousName_Leverrier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Lowell.
+        /// </summary>
+        public static string FictitiousName_Lowell {
+            get {
+                return ResourceManager.GetString("FictitiousName_Lowell", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nibiru.
+        /// </summary>
+        public static string FictitiousName_Nibiru {
+            get {
+                return ResourceManager.GetString("FictitiousName_Nibiru", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Pickering.
+        /// </summary>
+        public static string FictitiousName_Pickering {
+            get {
+                return ResourceManager.GetString("FictitiousName_Pickering", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Poseidon.
+        /// </summary>
+        public static string FictitiousName_Poseidon {
+            get {
+                return ResourceManager.GetString("FictitiousName_Poseidon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Vulkanus.
+        /// </summary>
+        public static string FictitiousName_Vulkanus {
+            get {
+                return ResourceManager.GetString("FictitiousName_Vulkanus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Zeus.
+        /// </summary>
+        public static string FictitiousName_Zeus {
+            get {
+                return ResourceManager.GetString("FictitiousName_Zeus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Ceres.
         /// </summary>
         public static string PlanetName_Ceres {
