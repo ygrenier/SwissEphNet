@@ -130,5 +130,41 @@ J2000, J2000, 174.794787 + 149472.5157715 * T, 0.38709831, 0.20563175 + 0.000020
             }
         }
 
+        [TestMethod]
+        public void TestGetPlanetName_Asteroid_WithFile()
+        {
+            using (var swe = new Sweph())
+            {
+                swe.OnLoadFile += (s, e) => {
+                    if (e.FileName == "seasnam.txt")
+                    {
+                        string fileContent = @"
+# Asteroid names
+000001  Ceres
+(000002)  Pallas
+ [3]  Juno
+Invalid line
+{ 004  } Vesta
+000430  Hybris
+000431  Nephele
+000432  Pythia
+000433  Eros
+   487  Venetia
+";
+                        e.File = new System.IO.MemoryStream(System.Text.Encoding.ASCII.GetBytes(fileContent));
+                    }
+                };
+
+                Assert.AreEqual("0: not found", swe.Planet.GetPlanetName(Planet.FirstAsteroid));
+                Assert.AreEqual("Ceres", swe.Planet.GetPlanetName(Planet.Ceres));
+                Assert.AreEqual("Pallas", swe.Planet.GetPlanetName(Planet.Pallas));
+                Assert.AreEqual("Juno", swe.Planet.GetPlanetName(Planet.Juno));
+                Assert.AreEqual("Vesta", swe.Planet.GetPlanetName(Planet.Vesta));
+                Assert.AreEqual("Hybris", swe.Planet.GetPlanetName(Planet.FirstAsteroid + 430));
+                Assert.AreEqual("Eros", swe.Planet.GetPlanetName(Planet.FirstAsteroid + 433));
+                Assert.AreEqual("450: not found", swe.Planet.GetPlanetName(Planet.FirstAsteroid + 450));
+            }
+        }
+
     }
 }

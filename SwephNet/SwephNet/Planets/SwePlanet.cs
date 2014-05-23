@@ -41,6 +41,8 @@ namespace SwephNet
             // Define default providers if not exists
             if (!container.CanResolve<IOsculatingElementProvider>())
                 container.Register<IOsculatingElementProvider, OsculatingElementFile>(false);
+            if (!container.CanResolve<IAsteroidNameProvider>())
+                container.Register<IAsteroidNameProvider, AsteroidNameFile>(false);
         }
 
         #region Osculating elements
@@ -163,7 +165,7 @@ namespace SwephNet
         /// </summary>
         /// <param name="asteroid">Id of the asteroid. 0 is the first asteroid id</param>
         /// <returns>Name of the asteroid</returns>
-        protected String GetAsteroidName(Planet asteroid)
+        protected String GetAsteroidName(int asteroid)
         {
             // TODO Check to implement this from a future 'File Data' ?????
             ///* if name is already available */
@@ -187,88 +189,14 @@ namespace SwephNet
             // provisional designation before 1925, when the current method
             // of provisional designations was introduced. They have an 'A'
             // as the first character, e.g. A924 RC. 
-            // The file seasnam.txt may contain comments starting with '#'.
-            // There must be at least two columns: 
-            // 1. asteroid catalog number
-            // 2. asteroid name
-            // The asteroid number may or may not be in brackets
-            // TODO Implements the read data
-            //if (!String.IsNullOrEmpty(result) && "?0123456789".Contains(result[0]))
-            //{
-            //    var reader = _Sweph.DataProvider.OpenAsteroidNameReader();
-            //    if (reader != null)
-            //    {
-            //        Tuple<int, string> aName;
-            //        while ((aName = reader.Read()) != null)
-            //        {
-            //            if (aName.Item1 == id)
-            //            {
-            //                result = aName.Item2;
-            //                break;
-            //            }
-            //        }
-            //    }
-            //}
-            // Return the result
+
+            // If name not found
+            if (String.IsNullOrWhiteSpace(result) || "?0123456789".Contains(result[0].ToString()) || (result.Length > 1 && Char.IsDigit(result[1])))
+            {
+                // Try to read from asteroid names file
+                result = _Container.Resolve<IAsteroidNameProvider>().FindAsteroidName(asteroid) ?? result;
+            }
             return result;
-
-
-            ///* if name is already available */
-            //if (ipl == swed.fidat[SEI_FILE_ANY_AST].ipl[0])
-            //    s = swed.fidat[SEI_FILE_ANY_AST].astnam;
-            ///* else try to get it from ephemeris file */
-            //else
-            //{
-            //    var retc = sweph(J2000, ipl, SEI_FILE_ANY_AST, 0, null, NO_SAVE, xp, ref sdummy);
-            //    if (retc != ERR && retc != NOT_AVAILABLE)
-            //        s = swed.fidat[SEI_FILE_ANY_AST].astnam;
-            //    else
-            //        s = C.sprintf("%d: not found", ipl - SwissEph.SE_AST_OFFSET);
-            //}
-            ///* If there is a provisional designation only in ephemeris file,
-            // * we look for a name in seasnam.txt, which can be updated by
-            // * the user.
-            // * Some old ephemeris files return a '?' in the first position.
-            // * There are still a couple of unnamed bodies that got their
-            // * provisional designation before 1925, when the current method
-            // * of provisional designations was introduced. They have an 'A'
-            // * as the first character, e.g. A924 RC. 
-            // * The file seasnam.txt may contain comments starting with '#'.
-            // * There must be at least two columns: 
-            // * 1. asteroid catalog number
-            // * 2. asteroid name
-            // * The asteroid number may or may not be in brackets
-            // */
-            //if (s[0] == '?' || Char.IsDigit(s[1]))
-            //{
-            //    int ipli = (int)(ipl - SwissEph.SE_AST_OFFSET), iplf = 0;
-            //    CFile fp;
-            //    String sp;
-            //    //char si[AS_MAXCH], *sp, *sp2;
-            //    if ((fp = swi_fopen(-1, SwissEph.SE_ASTNAMFILE, swed.ephepath, ref sdummy)) != null)
-            //    {
-            //        while (ipli != iplf && ((sp = fp.ReadLine()) != null))
-            //        {
-            //            sp = sp.TrimStart(' ', '\t', '(', '[', '{');
-            //            if (String.IsNullOrWhiteSpace(sp) || sp.StartsWith("#"))
-            //                continue;
-            //            /* catalog number of body of current line */
-            //            int spi = sp.IndexOfFirstNot('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-            //            if (spi < 0) continue;
-            //            iplf = int.Parse(sp.Substring(0, spi));
-            //            if (ipli != iplf)
-            //                continue;
-            //            sp = sp.Substring(spi);
-            //            /* set pointer after catalog number */
-            //            spi = sp.IndexOfAny(new char[] { ' ', '\t' });
-            //            if (spi < 0) continue;
-            //            s = sp.Substring(spi).TrimStart(' ', '\t');
-            //        }
-            //        fp.Dispose();
-            //    }
-            //}
-
-
         }
 
         /// <summary>
