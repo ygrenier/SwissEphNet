@@ -163,7 +163,7 @@ namespace SwephNet
         /// </summary>
         /// <param name="asteroid">Id of the asteroid. 0 is the first asteroid id</param>
         /// <returns>Name of the asteroid</returns>
-        protected String GetAsteroidName(Planet asteroid)
+        protected String GetAsteroidName(int asteroid)
         {
             // TODO Check to implement this from a future 'File Data' ?????
             ///* if name is already available */
@@ -211,34 +211,6 @@ namespace SwephNet
             //}
             // Return the result
             return result;
-
-
-            ///* if name is already available */
-            //if (ipl == swed.fidat[SEI_FILE_ANY_AST].ipl[0])
-            //    s = swed.fidat[SEI_FILE_ANY_AST].astnam;
-            ///* else try to get it from ephemeris file */
-            //else
-            //{
-            //    var retc = sweph(J2000, ipl, SEI_FILE_ANY_AST, 0, null, NO_SAVE, xp, ref sdummy);
-            //    if (retc != ERR && retc != NOT_AVAILABLE)
-            //        s = swed.fidat[SEI_FILE_ANY_AST].astnam;
-            //    else
-            //        s = C.sprintf("%d: not found", ipl - SwissEph.SE_AST_OFFSET);
-            //}
-            ///* If there is a provisional designation only in ephemeris file,
-            // * we look for a name in seasnam.txt, which can be updated by
-            // * the user.
-            // * Some old ephemeris files return a '?' in the first position.
-            // * There are still a couple of unnamed bodies that got their
-            // * provisional designation before 1925, when the current method
-            // * of provisional designations was introduced. They have an 'A'
-            // * as the first character, e.g. A924 RC. 
-            // * The file seasnam.txt may contain comments starting with '#'.
-            // * There must be at least two columns: 
-            // * 1. asteroid catalog number
-            // * 2. asteroid name
-            // * The asteroid number may or may not be in brackets
-            // */
             //if (s[0] == '?' || Char.IsDigit(s[1]))
             //{
             //    int ipli = (int)(ipl - SwissEph.SE_AST_OFFSET), iplf = 0;
@@ -267,8 +239,6 @@ namespace SwephNet
             //        fp.Dispose();
             //    }
             //}
-
-
         }
 
         /// <summary>
