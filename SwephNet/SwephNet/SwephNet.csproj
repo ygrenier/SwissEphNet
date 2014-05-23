@@ -66,6 +66,8 @@
     </Compile>
     <Compile Include="Persit\IStreamProvider.cs" />
     <Compile Include="Persit\LoadFileEventArgs.cs" />
+    <Compile Include="Planets\AsteroidNameFile.cs" />
+    <Compile Include="Planets\IAsteroidNameProvider.cs" />
     <Compile Include="Planets\IOsculatingElementProvider.cs" />
     <Compile Include="Planets\OsculatingElement.cs" />
     <Compile Include="Planets\OsculatingElementFile.cs" />
