@@ -58,10 +58,14 @@
     <Compile Include="Dependency\SimpleContainer.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DependencyExtensions.cs" />
+    <Compile Include="Extensions\HouseExtensions.cs" />
     <Compile Include="Extensions\TracerExtensions.cs" />
     <Compile Include="Geo\GeoPosition.cs" />
     <Compile Include="Geo\Latitude.cs" />
     <Compile Include="Geo\Longitude.cs" />
+    <Compile Include="Houses\HousePoint.cs" />
+    <Compile Include="Houses\HouseResult.cs" />
+    <Compile Include="Houses\HouseSystem.cs" />
     <Compile Include="Houses\SweHouse.cs" />
     <Compile Include="Locales\LSR.Designer.cs">
       <AutoGen>True</AutoGen>
