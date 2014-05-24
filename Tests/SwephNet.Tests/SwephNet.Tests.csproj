@@ -53,6 +53,9 @@
     <Compile Include="CheckTest.cs" />
     <Compile Include="DependencyTest.cs" />
     <Compile Include="EphemerisTimeTest.cs" />
+    <Compile Include="GeoPositionTest.cs" />
+    <Compile Include="LatitudeTest.cs" />
+    <Compile Include="LongitudeTest.cs" />
     <Compile Include="PlanetTest.cs" />
     <Compile Include="SideralTimeTest.cs" />
     <Compile Include="SweDateTest.cs" />
