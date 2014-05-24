@@ -45,6 +45,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\SweData.cs" />
     <Compile Include="Date\DeltaTRecord.cs" />
     <Compile Include="Date\DeltaTRecordFile.cs" />
     <Compile Include="Date\EphemerisTime.cs" />
