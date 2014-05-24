@@ -59,6 +59,7 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DependencyExtensions.cs" />
     <Compile Include="Extensions\TracerExtensions.cs" />
+    <Compile Include="Houses\SweHouse.cs" />
     <Compile Include="Locales\LSR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
