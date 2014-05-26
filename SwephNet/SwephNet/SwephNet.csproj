@@ -67,6 +67,7 @@
     <Compile Include="Houses\HouseResult.cs" />
     <Compile Include="Houses\HouseSystem.cs" />
     <Compile Include="Houses\SweHouse.cs" />
+    <Compile Include="JPL\[Enums].cs" />
     <Compile Include="Locales\LSR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
