@@ -316,6 +316,48 @@ namespace SwephNet
 
         #endregion
 
+        #region Nutation in longitude and obliquity
+
+        //internal double[] Nutation(double J, JPL.JplHorizonMode jplMode)
+        //{
+        //    double[] result;
+        //    if ((jplMode & JPL.JplHorizonMode.JplHorizons) != 0 && IncludeCodeForDpsiDepsIAU1980)
+        //    {
+        //        result = NutationIAU1980(J);
+        //    }
+        //    else if (NUT_IAU_1980)
+        //    {
+        //        result = NutationIAU1980(J);
+        //    }
+        //    else if (NUT_IAU_2000A || NUT_IAU_2000B)
+        //    {
+        //        result = NutationIAU2000ab(J);
+        //        /*if ((iflag & SEFLG_JPLHOR_APPROX) && FRAME_BIAS_APPROX_HORIZONS) {*/
+        //        if ((jplMode & JPL.JplHorizonMode.JplApproximate) != 0 && !ApproximateHorizonsAstrodienst)
+        //        {
+        //            result[0] += -41.7750 / 3600.0 / 1000.0 * DEGTORAD;
+        //            result[1] += -6.8192 / 3600.0 / 1000.0 * DEGTORAD;
+        //        }
+        //    }
+        //    if (IncludeCodeForDpsiDepsIAU1980)
+        //    {
+        //        if ((jplMode & JPL.JplHorizonMode.JplHorizons) != 0)
+        //        {
+        //            double n = (int)(swed.eop_tjd_end - swed.eop_tjd_beg + 0.000001);
+        //            double J2 = J;
+        //            if (J < swed.eop_tjd_beg_horizons)
+        //                J2 = swed.eop_tjd_beg_horizons;
+        //            double dpsi = bessel(swed.dpsi, n + 1, J2 - swed.eop_tjd_beg);
+        //            double deps = bessel(swed.deps, n + 1, J2 - swed.eop_tjd_beg);
+        //            result[0] += dpsi / 3600.0 * DEGTORAD;
+        //            result[1] += deps / 3600.0 * DEGTORAD;
+        //        }
+        //    }
+        //    return result;
+        //}
+
+        #endregion
+
         #region Parameters
 
         /// <summary>
