@@ -873,7 +873,7 @@ namespace SwissEphNet.CPort
         Int32 calc_planet_star(double tjd_et, Int32 ipl, string starname, Int32 iflag, double[] x, ref string serr) {
             int i;
             int retc = SwissEph.OK;
-            if (!String.IsNullOrEmpty(starname)) {
+            if (String.IsNullOrEmpty(starname)) {
                 retc = SE.swe_calc(tjd_et, ipl, iflag, x, ref serr);
             } else {
                 if ((retc = SE.swe_fixstar(starname, tjd_et, iflag, x, ref serr)) == SwissEph.OK) {
