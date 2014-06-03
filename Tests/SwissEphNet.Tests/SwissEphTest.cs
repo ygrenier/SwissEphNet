@@ -249,9 +249,11 @@ namespace SwissEphNet.Tests
         }
 
         [TestMethod]
-        public void Test_swe_lun_occult_where() {
+        public void Test_swe_lun_occult_where()
+        {
             //public Int32 swe_lun_occult_where(double tjd, Int32 ipl, string starname, Int32 ifl, double[] geopos, double[] attr, ref string serr);
-            using (var target = new SwissEph()) {
+            using (var target = new SwissEph())
+            {
                 Assert.Inconclusive();
             }
         }
@@ -268,7 +270,10 @@ namespace SwissEphNet.Tests
         public void Test_swe_lun_occult_when_glob() {
             //public Int32 swe_lun_occult_when_glob(double tjd_start, Int32 ipl, string starname, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr);
             using (var target = new SwissEph()) {
-                Assert.Inconclusive();
+                Double[] tret = new double[12];
+                String serr = null;
+                var r = target.swe_lun_occult_when_glob(0.0, 0, null, 0, 0, tret, false, ref serr);
+                Assert.AreEqual(-1, r);
             }
         }
 
