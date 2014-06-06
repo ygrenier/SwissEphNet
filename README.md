@@ -1,8 +1,16 @@
-SwissEphNet
-===========
+# SwissEphNet
 
 This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from 
 C (version 2.00.00) to C# in a PCL project for cross platform usage.
+
+# Projects splitted (2014-06-06)
+
+From now the SweNet et SwephNet projects are moved to a new repos [SwephNet](https://github.com/ygrenier/SwephNet).
+
+SwephNet is the next version of SwissEph, with a better .Net implementation. The two projects will 
+continue to exist in parallel :
+- SwissEphNet : is the direct C to C# portage of the Swiss Ephemeris.
+- SwephNet : is the full .Net implementation of the Swiss Ephemeris.
 
 # Usage
 
