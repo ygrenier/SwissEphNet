@@ -1,7 +1,8 @@
 SwissEphNet
 ===========
 
-This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from C to C# in a PCL project for cross platform usage.
+This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from 
+C (version 2.00.00) to C# in a PCL project for cross platform usage.
 
 # Usage
 
@@ -64,12 +65,8 @@ The compilation configuration use pre-processor constants. We remove lot of them
 
 # Seconds steps
 
-When we got a correct C conversion, we rewrite public methods to use a more .Net/C# friendly code. Using classes and structs
-instead of array of double, returns values instead of reference parameters, throw exception instead of reference 'serr', etc.
-
-For this we create more classes to manage each domain (date, math, etc.) and the Sweph class federate all this classes.
-
-The 'Swisseph' inherits from 'Sweph', and we replace each 'swe_*' methods by equivalent in 'Sweph'.
+Now the portage is correct, so we create a new project (https://github.com/ygrenier/SwephNet) with
+a new interface more adapted to the .Net guidelines.
 
 # References
 
