@@ -63,6 +63,7 @@
     <Compile Include="SwissEphTest.swe_calc_ut.cs" />
     <Compile Include="SwissEphTest.swe_calc.cs" />
     <Compile Include="SwissEphTest.swe_azalt_rev.cs" />
+    <Compile Include="SwissEphTest.swe_set_topo.cs" />
     <Compile Include="TraceEventArgsTest.cs" />
     <Compile Include="SwissEphTest.cs" />
     <Compile Include="SwissEphTest.Date.cs" />

@@ -1062,7 +1062,7 @@ namespace SwissEphNet.CPort
                 swed.nddat[i] = new plan_data();
                 //#endif
             }
-            swed.Reset();
+            swed.Reset(false);
             /* close JPL file */
             //#ifndef NO_JPL
             SE.SweJPL.swi_close_jpl_file();
