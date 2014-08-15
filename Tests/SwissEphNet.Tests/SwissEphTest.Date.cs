@@ -274,7 +274,7 @@ namespace SwissEphNet.Tests
 
                 res = swe.swe_utc_to_jd(year, 12, 31, 23, 59, 60, SwissEph.SE_JUL_CAL, dret, ref serr);
                 Assert.AreEqual(SwissEph.ERR, res);
-                Assert.AreEqual("invalid time (no leap second!): 23:59:60,00", serr);
+                Assert.AreEqual("invalid time (no leap second!): 23:59:60.00", serr);
                 serr = null;
 
                 // Before 1972
@@ -313,7 +313,7 @@ namespace SwissEphNet.Tests
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, 62, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
                 Assert.AreEqual(SwissEph.ERR, res);
-                Assert.AreEqual("invalid time: 0:62:0,00", serr);
+                Assert.AreEqual("invalid time: 0:62:0.00", serr);
 
             }
         }

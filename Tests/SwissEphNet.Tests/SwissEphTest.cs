@@ -1,11 +1,28 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Globalization;
 
 namespace SwissEphNet.Tests
 {
     [TestClass]
     public partial class SwissEphTest
     {
+        CultureInfo _OldCulture;
+
+        [TestInitialize]
+        public void InitializeTest()
+        {
+            _OldCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+        }
+        [TestCleanup]
+        public void CleanupTest()
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = _OldCulture;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = _OldCulture;
+        }
+
         [TestMethod]
         public void TestConstructor() {
             using (var target = new SwissEph()) {
