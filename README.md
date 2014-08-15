@@ -47,6 +47,14 @@ using (var sweph = new SwissEphNet.SwissEph()) {
 
 For more information [read this page](https://github.com/ygrenier/SwissEphNet/wiki/Loading-files).
 
+# Continuous Integration in AppVeyor
+
+The library is built and tested continuously with [AppVeyor CI](https://ci.appveyor.com/project/ygrenier/swissephnet).
+
+Current build status of the branch ```master``` : [![Build status](https://ci.appveyor.com/api/projects/status/srgd3dqui7f4uvq5/branch/master)](https://ci.appveyor.com/project/ygrenier/swissephnet/branch/master)
+
+Beware the build version number in AppVeyor is not the same than the published library.
+
 # Firsts steps
 
 Our first step is to convert the C source code to C#, and provide some conversions from C like string format.
