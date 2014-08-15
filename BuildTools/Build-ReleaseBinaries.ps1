@@ -3,7 +3,8 @@
 # -------------------------------------------------------------------------------------------------------------------
 
 # Init
-$ScriptPath = [System.IO.Path]::GetDirectoryName( $MyInvocation.InvocationName )
+$InvocationPath = Resolve-Path $MyInvocation.InvocationName
+$ScriptPath = [System.IO.Path]::GetDirectoryName( $InvocationPath )
 $SolutionPath = [System.IO.Path]::GetDirectoryName( $ScriptPath )
 $Nuget = "$ScriptPath\NuGet.exe"
 $DestPath = [System.IO.Path]::Combine($SolutionPath, "release-bin")
