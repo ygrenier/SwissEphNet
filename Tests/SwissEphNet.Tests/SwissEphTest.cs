@@ -169,14 +169,6 @@ namespace SwissEphNet.Tests
         }
 
         [TestMethod]
-        public void Test_swe_set_topo() {
-            //public void swe_set_topo(double geolon, double geolat, double height);
-            using (var target = new SwissEph()) {
-                Assert.Inconclusive();
-            }
-        }
-
-        [TestMethod]
         public void Test_swe_set_sid_mode() {
             //public void swe_set_sid_mode(Int32 sid_mode, double t0, double ayan_t0);
             using (var target = new SwissEph()) {

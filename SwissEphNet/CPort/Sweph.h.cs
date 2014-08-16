@@ -564,21 +564,24 @@ namespace SwissEphNet.CPort
         public class swe_data
         {
             public swe_data() {
-                Reset();
+                Reset(true);
             }
-            public void Reset() {
-                fidat = Enumerable.Range(0, SEI_NEPHFILES).Select(i => new file_data()).ToArray();
-                savedat = Enumerable.Range(0, SwissEph.SE_NPLANETS + 1).Select(i => new save_positions()).ToArray();
-                pldat = Enumerable.Range(0, SEI_NPLANETS).Select(i => new plan_data()).ToArray();
-                nddat = Enumerable.Range(0, SEI_NNODE_ETC).Select(i => new plan_data()).ToArray();
-                topd = new topo_data();
-                dpsi = new double[36525];
-                deps = new double[36525];
+            public void Reset(bool full) {
+                if (full)
+                {
+                    fidat = Enumerable.Range(0, SEI_NEPHFILES).Select(i => new file_data()).ToArray();
+                    savedat = Enumerable.Range(0, SwissEph.SE_NPLANETS + 1).Select(i => new save_positions()).ToArray();
+                    pldat = Enumerable.Range(0, SEI_NPLANETS).Select(i => new plan_data()).ToArray();
+                    nddat = Enumerable.Range(0, SEI_NNODE_ETC).Select(i => new plan_data()).ToArray();
+                    topd = new topo_data();
+                    dpsi = new double[36525];
+                    deps = new double[36525];
+                }
+                oec = new epsilon();
+                oec2000 = new epsilon();
                 nut = new nut();
                 nut2000 = new nut();
                 nutv = new nut();
-                oec = new epsilon();
-                oec2000 = new epsilon();
             }
             public bool ephe_path_is_set;
             public bool /*short*/ jpl_file_is_open;
