@@ -411,6 +411,7 @@ namespace SwissEphNet.CPort
             double tjd0 = tjd_start, tjdrise;
             double tjdnoon = (int)tjd0 - dgeo[0] / 15.0 / 24.0;
             Int32 iflag = helflag & (SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_MOSEPH);
+            Int32 epheflag = iflag;
             iflag |= SwissEph.SEFLG_EQUATORIAL;
             if (0 == (helflag & SwissEph.SE_HELFLAG_HIGH_PRECISION))
                 iflag |= SwissEph.SEFLG_NONUT | SwissEph.SEFLG_TRUEPOS;
@@ -466,14 +467,17 @@ namespace SwissEphNet.CPort
             /* now calculate more accurate rising and setting times.
              * use vertical speed in order to determine crossing of the horizon  
              * refraction of 34' and solar disk diameter of 16' = 50' = 0.84 deg */
-            iflag = SwissEph.SEFLG_SPEED | SwissEph.SEFLG_EQUATORIAL;
+            iflag = epheflag | SwissEph.SEFLG_SPEED | SwissEph.SEFLG_EQUATORIAL;
             if (ipl == SwissEph.SE_MOON)
                 iflag |= SwissEph.SEFLG_TOPOCTR;
             if (0 == (helflag & SwissEph.SE_HELFLAG_HIGH_PRECISION))
                 iflag |= SwissEph.SEFLG_NONUT | SwissEph.SEFLG_TRUEPOS;
             for (i = 0; i < 2; i++) {
                 if (SE.swe_calc_ut(tjdrise, ipl, iflag, xx, ref serr) == SwissEph.ERR)
+                {
+                    /*fprintf(stderr, "hev4 tjd=%f, ipl=%d, iflag=%d\n", tjdrise, ipl, iflag);*/
                     return SwissEph.ERR;
+                }
                 SE.swe_azalt(tjdrise, SwissEph.SE_EQU2HOR, dgeo, datm[0], datm[1], xx, xaz);
                 xx[0] -= xx[3] * dfac;
                 xx[1] -= xx[4] * dfac;
@@ -1395,7 +1399,9 @@ namespace SwissEphNet.CPort
         public Int32 swe_vis_limit_mag(double tjdut, double[] dgeo, double[] datm, double[] dobs, string ObjectName, Int32 helflag, double[] dret, ref string serr) {
             Int32 retval = SwissEph.OK, i, scotopic_flag = 0;
             double AltO = 0, AziO = 0, AltM = 0, AziM = 0, AltS = 0, AziS = 0;
-            double sunra = SunRA(tjdut, helflag, ref serr);
+            double sunra;
+            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0);
+            sunra = SunRA(tjdut, helflag, ref serr);
             default_heliacal_parameters(datm, dgeo, dobs, helflag);
             SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
             for (i = 0; i < 7; i++)
@@ -1519,7 +1525,9 @@ namespace SwissEphNet.CPort
         }
 
         public Int32 swe_topo_arcus_visionis(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr) {
-            double sunra = SunRA(tjdut, helflag, ref serr);
+            double sunra;
+            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0);
+            sunra = SunRA(tjdut, helflag, ref serr);
             if (!String.IsNullOrEmpty(serr))
                 return SwissEph.ERR;
             return TopoArcVisionis(mag, dobs, alt_obj, azi_obj, alt_moon, azi_moon, tjdut, azi_sun, sunra, dgeo[1], dgeo[2], datm, helflag, ref dret, ref serr);
@@ -1608,6 +1616,13 @@ namespace SwissEphNet.CPort
         }
 
         public Int32 swe_heliacal_angle(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double azi_sun, double azi_moon, double alt_moon, double[] dret, ref string serr) {
+            if (dgeo[2] < Sweph.SEI_ECL_GEOALT_MIN || dgeo[2] > Sweph.SEI_ECL_GEOALT_MAX)
+            {
+                if (serr != null)
+                    C.sprintf(serr, "location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return SwissEph.ERR;
+            }
+            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0);
             return HeliacalAngle(mag, dobs, azi_obj, alt_moon, azi_moon, tjdut, azi_sun, dgeo, datm, helflag, dret, ref serr);
         }
 
@@ -1770,8 +1785,16 @@ namespace SwissEphNet.CPort
             Int32 retval = SwissEph.OK, RS, Planet;
             bool noriseO = false;
             string ObjectName;
-            double sunra = SunRA(JDNDaysUT, helflag, ref serr);
+            double sunra;
             Int32 iflag = helflag & (SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_MOSEPH);
+            if (dgeo[2] < Sweph.SEI_ECL_GEOALT_MIN || dgeo[2] > Sweph.SEI_ECL_GEOALT_MAX)
+            {
+                if (serr != null)
+                    C.sprintf(serr, "location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return SwissEph.ERR;
+            }
+            SE.SwephLib.swi_set_tid_acc(JDNDaysUT, helflag, 0);
+            sunra = SunRA(JDNDaysUT, helflag, ref serr);
             /* note, the fixed stars functions rewrite the star name. The input string 
                may be too short, so we have to make sure we have enough space */
             strcpy_VBsafe(out ObjectName, ObjectNameIn);
@@ -2697,7 +2720,9 @@ namespace SwissEphNet.CPort
                 case -1:
                     ndays = 300;
                     if (call_swe_fixstar_mag(ObjectName, ref dmag, ref serr) == SwissEph.ERR)
+                    {
                         return SwissEph.ERR;
+                    }
                     daystep = 15;
                     tfac = 10;
                     if (dmag > 2) {
@@ -2720,7 +2745,9 @@ namespace SwissEphNet.CPort
                  tday += daystep * direct_day) {
                 vdelta = -100;
                 if ((retval = my_rise_trans(tday, SwissEph.SE_SUN, "", is_rise_or_set, helflag, dgeo, datm, ref tret, ref serr)) == SwissEph.ERR)
+                {
                     return SwissEph.ERR;
+                }
                 /* sun does not rise: try next day */
                 if (retval == -2) {
                     retval_old = retval;
@@ -3077,7 +3104,9 @@ namespace SwissEphNet.CPort
                 } else {
                     /* find date of conjunction of object with sun */
                     if ((retval = find_conjunct_sun(tjd, ipl, helflag, TypeEvent, ref tjd, ref serr)) == SwissEph.ERR)
+                    {
                         goto swe_heliacal_err;
+                    }
                 }
                 /* find the day and minute on which the object becomes visible */
                 retval = get_heliacal_day(tjd, dgeo, datm, dobs, ObjectName, helflag2, TypeEvent, ref tday, ref serr);
@@ -3260,6 +3289,13 @@ namespace SwissEphNet.CPort
             double tjd0 = JDNDaysUTStart, tjd, dsynperiod, tjdmax, tadd;
             Int32 MaxCountSynodicPeriod = MAX_COUNT_SYNPER;
             string[] sevent = new String[] { "", "morning first", "evening last", "evening first", "morning last", "acronychal rising", "acronychal setting" };
+            if (dgeo[2] < Sweph.SEI_ECL_GEOALT_MIN || dgeo[2] > Sweph.SEI_ECL_GEOALT_MAX)
+            {
+                if (serr_ret != null)
+                    C.sprintf(serr_ret, "location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return SwissEph.ERR;
+            }
+            SE.SwephLib.swi_set_tid_acc(JDNDaysUTStart, helflag, 0);
             if ((helflag & SwissEph.SE_HELFLAG_LONG_SEARCH) != 0)
                 MaxCountSynodicPeriod = MAX_COUNT_SYNPER_MAX;
             /*  if (helflag & SE_HELFLAG_SEARCH_1_PERIOD)

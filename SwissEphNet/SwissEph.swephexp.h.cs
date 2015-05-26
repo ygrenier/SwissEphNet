@@ -261,9 +261,10 @@ namespace SwissEphNet
         public const int SE_SIDM_SS_CITRA = 26;
         public const int SE_SIDM_TRUE_CITRA = 27;
         public const int SE_SIDM_TRUE_REVATI = 28;
+        public const int SE_SIDM_TRUE_PUSHYA = 29;
         public const int SE_SIDM_USER = 255;
 
-        public const int SE_NSIDM_PREDEF = 29;
+        public const int SE_NSIDM_PREDEF = 30;
 
         /* used for swe_nod_aps(): */
         public const int SE_NODBIT_MEAN = 1;   /* mean nodes/apsides */
@@ -429,6 +430,117 @@ namespace SwissEphNet
         public const int SE_SCOTOPIC_FLAG = 1;
         public const int SE_MIXEDOPIC_FLAG = 2;
 
+        /* for swe_set_tid_acc() and ephemeris-dependent delta t:
+         * intrinsic tidal acceleration in the mean motion of the moon,
+         * not given in the parameters list of the ephemeris files but computed
+         * by Chapront/Chapront-TouzÃ©/Francou A&A 387 (2002), p. 705.
+         */
+        public const double SE_TIDAL_DE200 = (-23.8946);
+        public const double SE_TIDAL_DE403 = (-25.580);  /* was (-25.8) until V. 1.76.2 */
+        public const double SE_TIDAL_DE404 = (-25.580);  /* was (-25.8) until V. 1.76.2 */
+        public const double SE_TIDAL_DE405 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
+        public const double SE_TIDAL_DE406 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
+        public const double SE_TIDAL_DE421 = (-25.85);   /* JPL Interoffice Memorandum 14-mar-2008 on DE421 Lunar Orbit */
+        public const double SE_TIDAL_DE430 = (-25.82);   /* JPL Interoffice Memorandum 9-jul-2013 on DE430 Lunar Orbit */
+        public const double SE_TIDAL_DE431 = (-25.80);   /* IPN Progress Report 42-196 â€¢ February 15, 2014, p. 15 */
+        public const double SE_TIDAL_26 = (-26.0);
+        public const double SE_TIDAL_DEFAULT = SE_TIDAL_DE431;
+        public const double SE_TIDAL_AUTOMATIC = 999999;
+        public const double SE_TIDAL_MOSEPH = SE_TIDAL_DE404;
+        public const double SE_TIDAL_SWIEPH = SE_TIDAL_DEFAULT;
+        public const double SE_TIDAL_JPLEPH = SE_TIDAL_DEFAULT;
+
+        public const int SE_MODEL_PREC_LONGTERM = 0;
+        public const int SE_MODEL_PREC_SHORTTERM = 1;
+        public const int SE_MODEL_NUT = 2;
+        public const int SE_MODEL_SIDT = 3;
+        public const int SE_MODEL_BIAS = 4;
+        public const int SE_MODEL_JPLHOR_MODE = 5;
+        public const int SE_MODEL_JPLHORA_MODE = 6;
+        public const int SE_MODEL_DELTAT = 7;
+
+        /* precession models */
+        public const int SEMOD_PREC_IAU_1976 = 1;
+        public const int SEMOD_PREC_IAU_2000 = 2;
+        public const int SEMOD_PREC_IAU_2006 = 3;
+        public const int SEMOD_PREC_BRETAGNON_2003 = 4;
+        public const int SEMOD_PREC_LASKAR_1986 = 5;
+        public const int SEMOD_PREC_SIMON_1994 = 6;
+        public const int SEMOD_PREC_WILLIAMS_1994 = 7;
+        public const int SEMOD_PREC_VONDRAK_2011 = 8;
+        public const int SEMOD_PREC_DEFAULT = SEMOD_PREC_VONDRAK_2011;
+        /* former implementations of the used 
+         * IAU 1976, 2000 and 2006 for a limited time range
+         * in combination with a different model for 
+         * long term precession. 
+        #define SEMOD_PREC_DEFAULT_SHORT SEMOD_PREC_IAU_2000
+         */
+        public const int SEMOD_PREC_DEFAULT_SHORT = SEMOD_PREC_VONDRAK_2011;
+
+        /* nutation models */
+        public const int SEMOD_NUT_IAU_1980 = 1;
+        public const int SEMOD_NUT_IAU_CORR_1987 = 2; /* Herring's (1987) corrections to IAU 1980 
+                            * nutation series. AA (1996) neglects them.*/
+        public const int SEMOD_NUT_IAU_2000A = 3; /* very time consuming ! */
+        public const int SEMOD_NUT_IAU_2000B = 4; /* fast, but precision of milli-arcsec */
+        public const int SEMOD_NUT_DEFAULT = SEMOD_NUT_IAU_2000B;  /* fast, but precision of milli-arcsec */
+
+        /* methods for sidereal time */
+        public const int SEMOD_SIDT_LONGTERM = 1;
+        public const int SEMOD_SIDT_IERS_CONV_2010 = 2;
+        public const int SEMOD_SIDT_PREC_MODEL = 3;
+        public const int SEMOD_SIDT_DEFAULT = SEMOD_SIDT_LONGTERM;
+
+        /* frame bias methods */
+        public const int SEMOD_BIAS_IAU2000 = 1;  /* use frame bias matrix IAU 2000 */
+        public const int SEMOD_BIAS_IAU2006 = 2;  /* use frame bias matrix IAU 2000 */
+        public const int SEMOD_BIAS_DEFAULT = SEMOD_BIAS_IAU2006;
+
+        /* methods of JPL Horizons (iflag & SEFLG_JPLHOR), 
+         * using daily dpsi, deps;  see explanations below */
+        public const int SEMOD_JPLHOR_EXTENDED_1800 = 1;  /* daily dpsi and deps from file are 
+                                             * limited to 1962 - today. JPL uses the
+                             * first and last value for all  dates 
+                             * beyond this time range. */
+        public const int SEMOD_JPLHOR_NOT_EXTENDED = 2;  /* outside the available time range 
+                                             * 1962 - today default to SEFLG_JPLHOR_APROX */
+        public const int SEMOD_JPLHOR_DEFAULT = SEMOD_JPLHOR_EXTENDED_1800;
+        /* SEMOD_JPLHOR_EXTENDED_1800, if combined with SEFLG_JPLHOR provides good 
+         * agreement with JPL Horizons for 1800 - today. However, Horizons uses
+         * correct dpsi and deps only after 20-jan-1962. For all dates before that
+         * it uses dpsi and deps of 20-jan-1962, which provides a continuous
+         * ephemeris, but does not make sense otherwise.
+         * Before 1800, even this option does not provide agreement with Horizons,
+         * because Horizons uses a different precession model (Owen 1986)
+         * before 1800, which is not included in the Swiss Ephemeris.
+         * SEMOD_JPLHOR_NOT_EXTENDED causes the program to default to SEFLG_JPLHOR_APPROX,
+         * if the date is outside the time range 1962 - today, where values
+         * for dpsi and deps are given.
+         * Note that this will result in a non-continuous ephemeris near
+         * 20-jan-1962 and current years.
+         */
+
+        /* methods of approximation of JPL Horizons (iflag & SEFLG_JPLHORA), 
+         * without dpsi, deps; see explanations below */
+        public const int SEMOD_JPLHORA_1 = 1;
+        public const int SEMOD_JPLHORA_2 = 2;
+        public const int SEMOD_JPLHORA_DEFAULT = SEMOD_JPLHORA_1;
+        /* With SEMOD_JPLHORA_1, planetary positions are always calculated 
+         * using a recent precession/nutation model. Frame bias matrix is applied 
+         * with some correction to RA and another correction is added to epsilon.
+         * This provides a very good approximation of JPL Horizons positions. 
+         * With SEMOD_JPLHORA_2, frame bias as r$ecommended by IERS Conventions 2003 
+         * and 2010 is *not* applied. Instead, dpsi_bias and deps_bias are added to 
+         * nutation. This procedure is found in some older astronomical software.
+         * Equatorial apparent positions will be close to JPL Horizons 
+         * (within a few mas) beetween 1962 and current years. Ecl. longitude 
+         * will be good, latitude bad. 
+         */
+
+        public const int SEMOD_DELTAT_ESPENAK_MEEUS_2006 = 1;
+        public const int SEMOD_DELTAT_STEPHENSON_MORRISON_2004 = 2;
+        public const int SEMOD_DELTAT_DEFAULT = SEMOD_DELTAT_ESPENAK_MEEUS_2006;
+
         /// <summary>
         /// 2000 January 1.5
         /// </summary>
@@ -438,32 +550,44 @@ namespace SwissEphNet
          * exported functions
          ***********************************************************/
 
-        public Int32 swe_heliacal_ut(double tjdstart_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName, 
-            Int32 TypeEvent, Int32 iflag, double[] dret, ref string serr) {
+        public Int32 swe_heliacal_ut(double tjdstart_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName,
+            Int32 TypeEvent, Int32 iflag, double[] dret, ref string serr)
+        {
             return SweHel.swe_heliacal_ut(tjdstart_ut, geopos, datm, dobs, ObjectName, TypeEvent, iflag, dret, ref serr);
         }
 
         public Int32 swe_heliacal_pheno_ut(double tjd_ut, double[] geopos, double[] datm, double[] dobs, string ObjectName,
-            Int32 TypeEvent, Int32 helflag, double[] darr, ref string serr) {
+            Int32 TypeEvent, Int32 helflag, double[] darr, ref string serr)
+        {
             return SweHel.swe_heliacal_pheno_ut(tjd_ut, geopos, datm, dobs, ObjectName, TypeEvent, helflag, darr, ref serr);
         }
-        public Int32 swe_vis_limit_mag(double tjdut, double[] geopos, double[] datm, double[] dobs, string ObjectName, 
-            Int32 helflag, double[] dret, ref string serr) {
+        public Int32 swe_vis_limit_mag(double tjdut, double[] geopos, double[] datm, double[] dobs, string ObjectName,
+            Int32 helflag, double[] dret, ref string serr)
+        {
             return SweHel.swe_vis_limit_mag(tjdut, geopos, datm, dobs, ObjectName, helflag, dret, ref serr);
         }
         /* the following are secret, for Victor Reijs' */
         public Int32 swe_heliacal_angle(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag,
-            double azi_obj, double azi_sun, double azi_moon, double alt_moon, double[] dret, ref string serr) {
+            double azi_obj, double azi_sun, double azi_moon, double alt_moon, double[] dret, ref string serr)
+        {
             return SweHel.swe_heliacal_angle(tjdut, dgeo, datm, dobs, helflag, mag, azi_obj, azi_sun, azi_moon, alt_moon, dret, ref serr);
         }
         public Int32 swe_topo_arcus_visionis(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag,
-            double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr) {
+            double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr)
+        {
             return SweHel.swe_topo_arcus_visionis(tjdut, dgeo, datm, dobs, helflag, mag, azi_obj, alt_obj, azi_sun, azi_moon, alt_moon, ref dret, ref serr);
         }
 
         ///*DllImport int32 FAR PASCAL HeliacalAngle(double Magn, double Age, int SN, double AziO, double AltM, double AziM, double JDNDaysUT, double AziS, double Lat, double HeightEye, double Temperature, double Pressure, double RH, double VR, double *dangret, char *serr);
 
         //DllImport int32 FAR PASCAL HeliacalJDut(double JDNDaysUTStart, double Age, int SN, double Lat, double Longitude, double HeightEye, double Temperature, double Pressure, double RH, double VR, char *ObjectName, int TypeEvent, char *AVkind, double *dret, char *serr);*/
+
+        /* the following is secret, for Dieter, allows to test old models of
+         * precession, nutation, etc. Search for SE_MODEL_... in this file */
+        //public void swe_set_astro_models(Int32[] imodel)
+        //{
+        //    return SweHel.swe_set_astro_models(imodel);
+        //}
 
         /**************************** 
          * exports from sweph.c 
@@ -477,32 +601,38 @@ namespace SwissEphNet
         /// <remarks>
         /// DotNet version is the same than the SwissEph version. So we use only Revision part for our version.
         /// </remarks>
-        public string swe_dotnet_version() {
+        public string swe_dotnet_version()
+        {
             var vrs = new System.Reflection.AssemblyName(typeof(SwissEph).Assembly.FullName).Version;
-            return String.Format("{0}.{1:D2}.{2:D2}-net-{3:D4}", vrs.Major, vrs.Minor, vrs.Build, vrs.Revision); 
+            return String.Format("{0}.{1:D2}.{2:D2}-net-{3:D4}", vrs.Major, vrs.Minor, vrs.Build, vrs.Revision);
         }
 
         /// <summary>
         /// planets, moon, nodes etc. 
         /// </summary>
-        public Int32 swe_calc(double tjd, int ipl, Int32 iflag, double[] xx, ref string serr) {
+        public Int32 swe_calc(double tjd, int ipl, Int32 iflag, double[] xx, ref string serr)
+        {
             return Sweph.swe_calc(tjd, ipl, iflag, xx, ref serr);
         }
 
-        public Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] xx, ref string serr) {
+        public Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] xx, ref string serr)
+        {
             return Sweph.swe_calc_ut(tjd_ut, ipl, iflag, xx, ref serr);
         }
 
         /// <summary>
         /// fixed stars
         /// </summary>
-        public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr) {
+        public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr)
+        {
             return Sweph.swe_fixstar(star, tjd, iflag, xx, ref serr);
         }
-        public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr) {
+        public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr)
+        {
             return Sweph.swe_fixstar_ut(star, tjd_ut, iflag, xx, ref serr);
         }
-        public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr) {
+        public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr)
+        {
             return Sweph.swe_fixstar_mag(ref star, ref mag, ref serr);
         }
 
@@ -545,6 +675,7 @@ namespace SwissEphNet
 
         public string swe_get_ayanamsa_name(Int32 isidmode) { return Sweph.swe_get_ayanamsa_name(isidmode); }
 
+        /*ext_def(void) swe_set_timeout(int32 tsec);*/
 
         /**************************** 
          * exports from swedate.c 
@@ -554,35 +685,41 @@ namespace SwissEphNet
                 int y, int m, int d,         /* year, month, day */
                 double utime,   /* universal time in hours (decimal) */
                 char c,         /* calendar g[regorian]|j[ulian] */
-                ref double tjd) {
+                ref double tjd)
+        {
             return SweDate.swe_date_conversion(y, m, d, utime, c, ref tjd);
         }
 
-        public double swe_julday(int year, int mon, int mday, double hour, int gregflag) {
+        public double swe_julday(int year, int mon, int mday, double hour, int gregflag)
+        {
             return SweDate.swe_julday(year, mon, mday, hour, gregflag);
         }
 
-        public void swe_revjul(double jd, int gregflag, ref int year, ref int mon, ref int mday, ref double hour) {
+        public void swe_revjul(double jd, int gregflag, ref int year, ref int mon, ref int mday, ref double hour)
+        {
             SweDate.swe_revjul(jd, gregflag, ref year, ref mon, ref mday, ref hour);
         }
 
         public Int32 swe_utc_to_jd(Int32 iyear, Int32 imonth, Int32 iday,
                 Int32 ihour, Int32 imin, double dsec,
-                Int32 gregflag, double[] dret, ref string serr) {
+                Int32 gregflag, double[] dret, ref string serr)
+        {
             return SweDate.swe_utc_to_jd(iyear, imonth, iday, ihour, imin, dsec, gregflag, dret, ref serr);
         }
 
         public void swe_jdet_to_utc(
                 double tjd_et, Int32 gregflag,
                 ref Int32 iyear, ref Int32 imonth, ref Int32 iday,
-                ref Int32 ihour, ref Int32 imin, ref double dsec) {
+                ref Int32 ihour, ref Int32 imin, ref double dsec)
+        {
             SweDate.swe_jdet_to_utc(tjd_et, gregflag, ref iyear, ref imonth, ref iday, ref ihour, ref imin, ref dsec);
         }
 
         public void swe_jdut1_to_utc(
                 double tjd_ut, Int32 gregflag,
                 ref Int32 iyear, ref Int32 imonth, ref Int32 iday,
-                ref Int32 ihour, ref Int32 imin, ref double dsec) {
+                ref Int32 ihour, ref Int32 imin, ref double dsec)
+        {
             SweDate.swe_jdut1_to_utc(tjd_ut, gregflag, ref iyear, ref imonth, ref iday, ref ihour, ref imin, ref dsec);
         }
 
@@ -591,7 +728,8 @@ namespace SwissEphNet
                 Int32 ihour, Int32 imin, double dsec,
                 double d_timezone,
                 ref Int32 iyear_out, ref Int32 imonth_out, ref Int32 iday_out,
-                ref Int32 ihour_out, ref Int32 imin_out, ref double dsec_out) {
+                ref Int32 ihour_out, ref Int32 imin_out, ref double dsec_out)
+        {
             SweDate.swe_utc_time_zone(
                 iyear, imonth, iday,
                 ihour, imin, dsec,
@@ -604,19 +742,23 @@ namespace SwissEphNet
          * exports from swehouse.c 
          ****************************/
 
-        public int swe_houses(double tjd_ut, double geolat, double geolon, char hsys, double[] cusps, double[] ascmc) {
+        public int swe_houses(double tjd_ut, double geolat, double geolon, char hsys, double[] cusps, double[] ascmc)
+        {
             return SweHouse.swe_houses(tjd_ut, geolat, geolon, hsys, cusps, ascmc);
         }
 
-        public int swe_houses_ex(double tjd_ut, Int32 iflag, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc) {
+        public int swe_houses_ex(double tjd_ut, Int32 iflag, double geolat, double geolon, char hsys, CPointer<double> hcusps, CPointer<double> ascmc)
+        {
             return SweHouse.swe_houses_ex(tjd_ut, iflag, geolat, geolon, hsys, hcusps, ascmc);
         }
 
-        public int swe_houses_armc(double armc, double geolat, double eps, char hsys, double[] cusps, double[] ascmc) {
+        public int swe_houses_armc(double armc, double geolat, double eps, char hsys, double[] cusps, double[] ascmc)
+        {
             return SweHouse.swe_houses_armc(armc, geolat, eps, hsys, cusps, ascmc);
         }
 
-        public double swe_house_pos(double armc, double geolon, double eps, char hsys, double[] xpin, ref string serr) { 
+        public double swe_house_pos(double armc, double geolon, double eps, char hsys, double[] xpin, ref string serr)
+        {
             return SweHouse.swe_house_pos(armc, geolon, eps, hsys, xpin, ref serr);
         }
 
@@ -627,7 +769,8 @@ namespace SwissEphNet
          ****************************/
 
         public Int32 swe_gauquelin_sector(double t_ut, Int32 ipl, String starname, Int32 iflag, Int32 imeth, double[] geopos,
-            double atpress, double attemp, ref double dgsect, ref string serr) {
+            double atpress, double attemp, ref double dgsect, ref string serr)
+        {
             return SweCL.swe_gauquelin_sector(t_ut, ipl, starname, iflag, imeth, geopos, atpress, attemp, ref dgsect, ref serr);
         }
 
@@ -635,111 +778,131 @@ namespace SwissEphNet
         /// computes geographic location and attributes of solar
         /// eclipse at a given tjd
         /// </summary>
-        public Int32 swe_sol_eclipse_where(double tjd, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
+        public Int32 swe_sol_eclipse_where(double tjd, Int32 ifl, double[] geopos, double[] attr, ref string serr)
+        {
             return SweCL.swe_sol_eclipse_where(tjd, ifl, geopos, attr, ref serr);
         }
 
-        public Int32 swe_lun_occult_where(double tjd, Int32 ipl, string starname, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
+        public Int32 swe_lun_occult_where(double tjd, Int32 ipl, string starname, Int32 ifl, double[] geopos, double[] attr, ref string serr)
+        {
             return SweCL.swe_lun_occult_where(tjd, ipl, starname, ifl, geopos, attr, ref serr);
         }
 
         /// <summary>
         /// computes attributes of a solar eclipse for given tjd, geolon, geolat
         /// </summary>
-        public Int32 swe_sol_eclipse_how(double tjd, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
-            return SweCL.swe_sol_eclipse_how(tjd, ifl, geopos, attr, ref serr) ;
+        public Int32 swe_sol_eclipse_how(double tjd, Int32 ifl, double[] geopos, double[] attr, ref string serr)
+        {
+            return SweCL.swe_sol_eclipse_how(tjd, ifl, geopos, attr, ref serr);
         }
-        
+
         /// <summary>
         /// finds time of next occultation globally
         /// </summary>
-        public Int32 swe_lun_occult_when_glob(double tjd_start, Int32 ipl, string starname, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr) {
+        public Int32 swe_lun_occult_when_glob(double tjd_start, Int32 ipl, string starname, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr)
+        {
             return SweCL.swe_lun_occult_when_glob(tjd_start, ipl, starname, ifl, ifltype, tret, backward, ref serr);
         }
 
         /// <summary>
         /// finds time of next local eclipse
         /// </summary>
-        public Int32 swe_sol_eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
+        public Int32 swe_sol_eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, bool backward, ref string serr)
+        {
             return SweCL.swe_sol_eclipse_when_loc(tjd_start, ifl, geopos, tret, attr, backward, ref serr);
         }
 
         public Int32 swe_lun_occult_when_loc(double tjd_start, Int32 ipl, String starname, Int32 ifl, double[] geopos, double[] tret,
-            double[] attr, bool backward, ref string serr) {
-                return SweCL.swe_lun_occult_when_loc(tjd_start, ipl, starname, ifl, geopos, tret, attr, backward, ref serr);
+            double[] attr, bool backward, ref string serr)
+        {
+            return SweCL.swe_lun_occult_when_loc(tjd_start, ipl, starname, ifl, geopos, tret, attr, backward, ref serr);
         }
 
         /// <summary>
         /// finds time of next eclipse globally
         /// </summary>
-        public Int32 swe_sol_eclipse_when_glob(double tjd_start, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr) {
+        public Int32 swe_sol_eclipse_when_glob(double tjd_start, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr)
+        {
             return SweCL.swe_sol_eclipse_when_glob(tjd_start, ifl, ifltype, tret, backward, ref serr);
         }
 
         /// <summary>
         /// computes attributes of a lunar eclipse for given tjd
         /// </summary>
-        public Int32 swe_lun_eclipse_how(double tjd_ut, Int32 ifl, double[] geopos, double[] attr, ref string serr) {
+        public Int32 swe_lun_eclipse_how(double tjd_ut, Int32 ifl, double[] geopos, double[] attr, ref string serr)
+        {
             return SweCL.swe_lun_eclipse_how(tjd_ut, ifl, geopos, attr, ref serr);
         }
 
-        public Int32 swe_lun_eclipse_when(double tjd_start, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr) {
+        public Int32 swe_lun_eclipse_when(double tjd_start, Int32 ifl, Int32 ifltype, double[] tret, bool backward, ref string serr)
+        {
             return SweCL.swe_lun_eclipse_when(tjd_start, ifl, ifltype, tret, backward, ref serr);
         }
 
-        public Int32 swe_lun_eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
+        public Int32 swe_lun_eclipse_when_loc(double tjd_start, Int32 ifl, double[] geopos, double[] tret, double[] attr, bool backward, ref string serr)
+        {
             return SweCL.swe_lun_eclipse_when_loc(tjd_start, ifl, geopos, tret, attr, backward, ref serr);
         }
 
         /// <summary>
         /// planetary phenomena
         /// </summary>
-        public Int32 swe_pheno(double tjd, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
+        public Int32 swe_pheno(double tjd, Int32 ipl, Int32 iflag, double[] attr, ref string serr)
+        {
             return SweCL.swe_pheno(tjd, ipl, iflag, attr, ref serr);
         }
 
-        public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
-            return SweCL.swe_pheno_ut(tjd_ut, ipl, iflag, attr, ref serr); 
+        public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr)
+        {
+            return SweCL.swe_pheno_ut(tjd_ut, ipl, iflag, attr, ref serr);
         }
 
-        public double swe_refrac(double inalt, double atpress, double attemp, Int32 calc_flag) {
+        public double swe_refrac(double inalt, double atpress, double attemp, Int32 calc_flag)
+        {
             return SweCL.swe_refrac(inalt, atpress, attemp, calc_flag);
         }
 
-        public double swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, Int32 calc_flag, double[] dret) {
+        public double swe_refrac_extended(double inalt, double geoalt, double atpress, double attemp, double lapse_rate, Int32 calc_flag, double[] dret)
+        {
             return SweCL.swe_refrac_extended(inalt, geoalt, atpress, attemp, lapse_rate, calc_flag, dret);
         }
 
-        public void swe_set_lapse_rate(double lapse_rate) {
+        public void swe_set_lapse_rate(double lapse_rate)
+        {
             SweCL.swe_set_lapse_rate(lapse_rate);
         }
 
-        public void swe_azalt(double tjd_ut, Int32 calc_flag, double[] geopos, double atpress, double attemp, double[] xin, double[] xaz) { 
-            SweCL.swe_azalt(tjd_ut, calc_flag, geopos, atpress, attemp, xin, xaz); 
+        public void swe_azalt(double tjd_ut, Int32 calc_flag, double[] geopos, double atpress, double attemp, double[] xin, double[] xaz)
+        {
+            SweCL.swe_azalt(tjd_ut, calc_flag, geopos, atpress, attemp, xin, xaz);
         }
 
-        public void swe_azalt_rev(double tjd_ut, Int32 calc_flag, double[] geopos, double[] xin, double[] xout) {
+        public void swe_azalt_rev(double tjd_ut, Int32 calc_flag, double[] geopos, double[] xin, double[] xout)
+        {
             SweCL.swe_azalt_rev(tjd_ut, calc_flag, geopos, xin, xout);
         }
 
         public Int32 swe_rise_trans_true_hor(double tjd_ut, Int32 ipl, string starname,
                    Int32 epheflag, Int32 rsmi, double[] geopos, double atpress, double attemp,
-                   double horhgt, ref double tret, ref string serr) {
+                   double horhgt, ref double tret, ref string serr)
+        {
             return SweCL.swe_rise_trans_true_hor(tjd_ut, ipl, starname,
                    epheflag, rsmi, geopos, atpress, attemp,
                    horhgt, ref tret, ref serr);
         }
 
         public Int32 swe_rise_trans(double tjd_ut, Int32 ipl, string starname, Int32 epheflag, Int32 rsmi,
-            double[] geopos, double atpress, double attemp, ref double tret, ref string serr) {
-                return SweCL.swe_rise_trans(tjd_ut, ipl, starname, epheflag, rsmi, geopos, atpress, attemp, ref tret, ref serr);
+            double[] geopos, double atpress, double attemp, ref double tret, ref string serr)
+        {
+            return SweCL.swe_rise_trans(tjd_ut, ipl, starname, epheflag, rsmi, geopos, atpress, attemp, ref tret, ref serr);
         }
 
         public Int32 swe_nod_aps(double tjd_et, Int32 ipl, Int32 iflag,
                               Int32 method,
                               double[] xnasc, double[] xndsc,
                               double[] xperi, double[] xaphe,
-                              ref string serr) {
+                              ref string serr)
+        {
             return SweCL.swe_nod_aps(tjd_et, ipl, iflag, method, xnasc, xndsc, xperi, xaphe, ref serr);
         }
 
@@ -748,7 +911,8 @@ namespace SwissEphNet
                               Int32 method,
                               double[] xnasc, double[] xndsc,
                               double[] xperi, double[] xaphe,
-                              ref string serr) {
+                              ref string serr)
+        {
             return SweCL.swe_nod_aps_ut(tjd_ut, ipl, iflag, method, xnasc, xndsc, xperi, xaphe, ref serr);
         }
 
@@ -766,11 +930,13 @@ namespace SwissEphNet
         /// equation of time
         /// </summary>
         public int swe_time_equ(double tjd, out double e, ref string serr) { return Sweph.swe_time_equ(tjd, out e, ref serr); }
-        public int swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, ref string serr) {
-            return Sweph.swe_lmt_to_lat(tjd_lmt, geolon, out tjd_lat, ref serr); 
+        public int swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, ref string serr)
+        {
+            return Sweph.swe_lmt_to_lat(tjd_lmt, geolon, out tjd_lat, ref serr);
         }
-        public int swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, ref string serr) {
-            return Sweph.swe_lat_to_lmt(tjd_lat, geolon, out tjd_lmt, ref serr); 
+        public int swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, ref string serr)
+        {
+            return Sweph.swe_lat_to_lmt(tjd_lat, geolon, out tjd_lmt, ref serr);
         }
 
 
@@ -799,7 +965,8 @@ namespace SwissEphNet
         public double swe_rad_midp(double x1, double x0) { return SwephLib.swe_rad_midp(x1, x0); }
         public double swe_deg_midp(double x1, double x0) { return SwephLib.swe_deg_midp(x1, x0); }
 
-        public void swe_split_deg(double ddeg, Int32 roundflag, out Int32 ideg, out Int32 imin, out Int32 isec, out double dsecfr, out Int32 isgn) {
+        public void swe_split_deg(double ddeg, Int32 roundflag, out Int32 ideg, out Int32 imin, out Int32 isec, out double dsecfr, out Int32 isgn)
+        {
             SwephLib.swe_split_deg(ddeg, roundflag, out ideg, out imin, out isec, out dsecfr, out isgn);
         }
 
