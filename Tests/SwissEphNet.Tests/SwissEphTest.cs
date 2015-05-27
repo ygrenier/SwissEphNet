@@ -33,7 +33,7 @@ namespace SwissEphNet.Tests
         public void TestVersion() {
             using (var target = new SwissEph()) {
                 Assert.AreEqual("2.01.00", target.swe_version());
-                Assert.AreEqual("2.00.00-net-0005", target.swe_dotnet_version());
+                Assert.AreEqual("2.01.00-net-0006", target.swe_dotnet_version());
             }
         }
 
