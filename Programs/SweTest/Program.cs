@@ -592,7 +592,7 @@ static string infoexamp = @"\n\
 
         const int SEARCH_RANGE_LUNAR_CYCLES = 20000;
 
-        const int OUTPUT_EXTRA_PRECISION = 0;
+        static int OUTPUT_EXTRA_PRECISION = 0;
 
         static string se_pname = String.Empty;
         static string[] zod_nam = new String[]{"ar", "ta", "ge", "cn", "le", "vi", 
