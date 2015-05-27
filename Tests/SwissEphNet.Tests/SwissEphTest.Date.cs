@@ -295,13 +295,13 @@ namespace SwissEphNet.Tests
                 year = 2030;
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
                 Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2462729.5218584, dret[0], 0.0000001);
+                Assert.AreEqual(2462729.52185329, dret[0], 0.0000001);
                 Assert.AreEqual(2462729.52083333, dret[1], 0.00000001);
                 Assert.AreEqual(null, serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
                 Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2462742.52185908, dret[0], 0.0000001);
+                Assert.AreEqual(2462742.52185396, dret[0], 0.0000001);
                 Assert.AreEqual(2462742.52083333, dret[1], 0.00000001);
                 Assert.AreEqual(null, serr);
 
@@ -385,8 +385,8 @@ namespace SwissEphNet.Tests
                 Assert.AreEqual(8, month);
                 Assert.AreEqual(16, day);
                 Assert.AreEqual(0, hour);
-                Assert.AreEqual(29, min);
-                Assert.AreEqual(59.999812245369, sec, 0.000000000001);
+                Assert.AreEqual(30, min);
+                Assert.AreEqual(0.441692769527435, sec, 0.000000000001);
 
                 swe.swe_jdet_to_utc(2462742.52185908, SwissEph.SE_JUL_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
                 Assert.AreEqual(2030, year);
@@ -394,7 +394,7 @@ namespace SwissEphNet.Tests
                 Assert.AreEqual(16, day);
                 Assert.AreEqual(0, hour);
                 Assert.AreEqual(30, min);
-                Assert.AreEqual(0.00041574239730835, sec, 0.000000000001);
+                Assert.AreEqual(0.442135334014893, sec, 0.000000000001);
 
             }
         }
@@ -536,7 +536,7 @@ namespace SwissEphNet.Tests
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
                 Assert.AreEqual(SwissEph.OK, res);
                 Assert.AreEqual(2458849.50082389, dret[0], 0.0000001);
-                Assert.AreEqual(2458849.50004191, dret[1], 0.00000001);
+                Assert.AreEqual(2458849.50000134, dret[1], 0.00000001);
                 Assert.AreEqual(null, serr);
             }
         }
