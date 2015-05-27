@@ -18,10 +18,8 @@
  |
  | Subroutines for reading JPL ephemerides.
  | derived from testeph.f as contained in DE403 distribution July 1995.
- | works with DE200, DE102, DE403, DE404, DE405, DE406. 
- | (attention, DE102 has 1950 reference frame and also DE4* has slightly
- | different reference frame from DE200. With DE4*, use routine 
- | IERS_FK5().)
+ | works with DE200, DE102, DE403, DE404, DE405, DE406, DE431
+ | (attention, these ephemerides do not have exactly the same reference frame)
 
   Authors: Dieter Koch and Alois Treindl, Astrodienst Zurich
 
@@ -1036,7 +1034,6 @@ namespace SwissEphNet.CPort
         public Int32 swi_get_jpl_denum() {
             return js.eh_denum;
         }
-        //#endif	/* NO_JPL */
 
     }
 }

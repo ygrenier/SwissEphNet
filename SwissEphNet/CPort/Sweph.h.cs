@@ -611,7 +611,7 @@ namespace SwissEphNet.CPort
             public nut nut { get; private set; }
             public nut nut2000 { get; private set; }
             public nut nutv { get; private set; }
-            public topo_data topd { get; private set; }
+            public topo_data topd { get; internal set; }
             public sid_data sidd;
             public string astelem = string.Empty;
             public double ast_G;

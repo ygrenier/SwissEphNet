@@ -2605,7 +2605,7 @@ namespace SwissEphNet.CPort
             double dlon, dhour; double[] xs = new double[6], xobl = new double[6], nutlo = new double[2];
             double dlt = Sweph.AUNIT / Sweph.CLIGHT / 86400.0;
             double t, t2, t3, t4, t5, t6;
-            string sdummy = null;
+            //string sdummy = null;
             eps *= SwissEph.RADTODEG;
             nut *= SwissEph.RADTODEG;
             tjd_et = tjd_ut + swe_deltat(tjd_ut);
