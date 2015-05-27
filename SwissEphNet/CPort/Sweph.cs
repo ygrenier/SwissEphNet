@@ -170,12 +170,15 @@ namespace SwissEphNet.CPort
            "SS Revati",
            "SS Citra",
            "True Citra",
+           "True Revati",
+           "True Pushya",
         };
         //int[] pnoint2jpl = PNOINT2JPL;
         int[] pnoint2jpl = null;        // This field is assigned in constructor
 
         int[] pnoext2int = new int[] { SEI_SUN, SEI_MOON, SEI_MERCURY, SEI_VENUS, SEI_MARS, SEI_JUPITER, SEI_SATURN, SEI_URANUS, SEI_NEPTUNE, SEI_PLUTO, 0, 0, 0, 0, SEI_EARTH, SEI_CHIRON, SEI_PHOLUS, SEI_CERES, SEI_PALLAS, SEI_JUNO, SEI_VESTA, };
 
+        //static int32 swecalc(double tjd, int ipl, int32 iflag, double *x, char *serr);
         //static int do_fread(void *targ, int size, int count, int corrsize, 
         //            FILE *fp, int32 fpos, int freord, int fendian, int ifno, 
         //            char *serr);
@@ -186,7 +189,6 @@ namespace SwissEphNet.CPort
         //        AS_BOOL do_save, 
         //        double *xp, double *xe, double *xs, double *xm, 
         //        char *serr);
-        //static int32 swecalc(double tjd, int ipl, int32 iflag, double *x, char *serr);
         //static int sweplan(double tjd, int ipli, int ifno, int32 iflag, AS_BOOL do_save, 
         //           double *xp, double *xpe, double *xps, double *xpm,
         //           char *serr);
@@ -217,6 +219,7 @@ namespace SwissEphNet.CPort
         //static int app_pos_rest(struct plan_data *pdp, int32 iflag, 
         //    double *xx, double *x2000, struct epsilon *oe, char *serr);
         //static int open_jpl_file(double *ss, char *fname, char *fpath, char *serr);
+        //static void free_planets(void);
 
         //#ifdef TRACE
         //static void trace_swe_calc(int param, double tjd, int ipl, int32 iflag, double *xx, char *serr);
@@ -296,13 +299,6 @@ namespace SwissEphNet.CPort
             trace_swe_calc(1, tjd, ipl, iflag, xx, null);
 #endif //* TRACE */
 
-            //#if NO_JPL
-            //if ((iflag & SwissEph.SEFLG_JPLEPH) != 0) {
-            //    iflag = iflag & ~SwissEph.SEFLG_EPHMASK;
-            //    iflag |= SwissEph.SEFLG_SWIEPH;
-            //}
-            //#endif
-
             /* function calls for Pluto with asteroid number 134340
                * are treated as calls for Pluto as main body SE_PLUTO.
                * Reason: Our numerical integrator takes into account Pluto
@@ -321,7 +317,7 @@ namespace SwissEphNet.CPort
             if ((epheflag & SwissEph.SEFLG_DEFAULTEPH) != 0)
                 epheflag = 0;
             if (epheflag_sv != epheflag && ipl != SwissEph.SE_ECL_NUT) {
-                swe_close();
+                free_planets();
                 epheflag_sv = epheflag;
             }
             /* high precision speed prevails fast speed */
@@ -453,8 +449,12 @@ namespace SwissEphNet.CPort
 
         public Int32 swe_calc_ut(double tjd_ut, Int32 ipl, Int32 iflag,
             double[] xx, ref string serr) {
-            double deltat = SE.SwephLib.swe_deltat(tjd_ut);
-            return swe_calc(tjd_ut + deltat, ipl, iflag, xx, ref serr);
+            double deltat;
+            Int32 retval = OK;
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, iflag, 0);
+            deltat = SE.SwephLib.swe_deltat(tjd_ut);
+            retval = swe_calc(tjd_ut + deltat, ipl, iflag, xx, ref serr);
+            return retval;
         }
 
         Int32 swecalc(double tjd, int ipl, Int32 iflag, CPointer<double> x, out string serr) {
@@ -544,7 +544,6 @@ namespace SwissEphNet.CPort
                 pdp = swed.pldat[ipli];
                 xp = pdp.xreturn;
                 switch (epheflag) {
-                    //#ifndef NO_JPL
                     case SwissEph.SEFLG_JPLEPH:
                         retc = jplplan(tjd, ipli, iflag, DO_SAVE, null, null, null, ref serr);
                         /* read error or corrupt file */
@@ -565,7 +564,6 @@ namespace SwissEphNet.CPort
                                 goto return_error;
                         }
                         break;
-                    //#endif
                     case SwissEph.SEFLG_SWIEPH:
                     sweph_moon:
                         //#if 0
@@ -629,7 +627,6 @@ namespace SwissEphNet.CPort
                 ipli = SEI_SUN;	/* = SEI_EARTH ! */
                 xp = pedp.xreturn;
                 switch (epheflag) {
-                    //#ifndef NO_JPL
                     case SwissEph.SEFLG_JPLEPH:
                         /* open ephemeris, if still closed */
                         if (!swed.jpl_file_is_open) {
@@ -652,7 +649,6 @@ namespace SwissEphNet.CPort
                         }
                         psdp.teval = tjd;
                         break;
-                    //#endif
                     case SwissEph.SEFLG_SWIEPH:
                     sweph_sbar:
                         /* sweplan() provides barycentric sun as a by-product in save area;
@@ -845,6 +841,14 @@ namespace SwissEphNet.CPort
                         x[i] = 0;
                     return iflag;
                 }
+                if (tjd < MOSHLUEPH_START || tjd > MOSHLUEPH_END)
+                {
+                    for (i = 0; i < 24; i++)
+                        x[i] = 0;
+                    serr = C.sprintf("Interpolated apsides are restricted to JD %8.1f - JD %8.1f",
+                            MOSHLUEPH_START, MOSHLUEPH_END);
+                    return ERR;
+                }
                 ndp = swed.nddat[SEI_OSCU_APOG];
                 xp = ndp.xreturn;
                 retc = lunar_osc_elem(tjd, SEI_OSCU_APOG, iflag, ref serr);
@@ -860,6 +864,14 @@ namespace SwissEphNet.CPort
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
                     return iflag;
+                }
+                if (tjd < MOSHLUEPH_START || tjd > MOSHLUEPH_END)
+                {
+                    for (i = 0; i < 24; i++)
+                        x[i] = 0;
+                    serr = C.sprintf("Interpolated apsides are restricted to JD %8.1f - JD %8.1f",
+                            MOSHLUEPH_START, MOSHLUEPH_END);
+                    return ERR;
                 }
                 ndp = swed.nddat[SEI_INTP_APOG];
                 xp = ndp.xreturn;
@@ -925,10 +937,10 @@ namespace SwissEphNet.CPort
                         CHIRON_START, CHIRON_END);
                     return ERR;
                 }
-                if (ipli == SEI_PHOLUS && tjd < PHOLUS_START) {
+                if (ipli == SEI_PHOLUS && (tjd < PHOLUS_START || tjd > PHOLUS_END)) {
                     serr = C.sprintf(
-                        "Pholus's ephemeris is restricted to the time after JD %8.1f",
-                        PHOLUS_START);
+                        "Pholus's ephemeris is restricted to JD %8.1f - JD %8.1f",
+                        PHOLUS_START, PHOLUS_END);
                     return ERR;
                 }
             do_asteroid:
@@ -1031,6 +1043,35 @@ namespace SwissEphNet.CPort
             return ERR;
         }
 
+        void free_planets()
+        {
+            int i;
+            /* free planets data space */
+            for (i = 0; i < Sweph.SEI_NPLANETS; i++)
+            {
+                if (swed.pldat[i].segp != null)
+                {
+                    swed.pldat[i].segp = null;
+                }
+                if (swed.pldat[i].refep != null)
+                {
+                    swed.pldat[i].refep = null;
+                }
+                swed.pldat[i] = new plan_data();
+            }
+            for (i = 0; i <= SwissEph.SE_NPLANETS; i++) /* "<=" is correct! see decl. */
+                swed.savedat[i] = new save_positions();
+            /* clear node data space */
+            for (i = 0; i < Sweph.SEI_NNODE_ETC; i++)
+            {
+                //#if 0
+                //    memset((void *) &swed.nddat[i], 0, sizeof(struct node_data));
+                //#else
+                swed.nddat[i] = new plan_data();
+                //#endif
+            }
+        }
+
         /* closes all open files, frees space of planetary data, 
          * deletes memory of all computed positions 
          */
@@ -1042,37 +1083,34 @@ namespace SwissEphNet.CPort
                     swed.fidat[i].fptr.Dispose();
                 swed.fidat[i] = new file_data();
             }
-            /* free planets data space */
-            for (i = 0; i < Sweph.SEI_NPLANETS; i++) {
-                if (swed.pldat[i].segp != null) {
-                    swed.pldat[i].segp = null;
-                }
-                if (swed.pldat[i].refep != null) {
-                    swed.pldat[i].refep = null;
-                }
-                swed.pldat[i] = new plan_data();
-            }
-            for (i = 0; i <= SwissEph.SE_NPLANETS; i++) /* "<=" is correct! see decl. */
-                swed.savedat[i] = new save_positions();
-            /* clear node data space */
-            for (i = 0; i < Sweph.SEI_NNODE_ETC; i++) {
-                //#if 0
-                //    memset((void *) &swed.nddat[i], 0, sizeof(struct node_data));
-                //#else
-                swed.nddat[i] = new plan_data();
-                //#endif
-            }
+            free_planets();
             swed.Reset(false);
             /* close JPL file */
-            //#ifndef NO_JPL
             SE.SweJPL.swi_close_jpl_file();
-            //#endif
             swed.jpl_file_is_open = false;
             swed.jpldenum = 0;
             /* close fixed stars */
             if (swed.fixfp != null) {
                 swed.fixfp.Dispose();
                 swed.fixfp = null;
+            }
+            SE.SwephLib.swe_set_tid_acc(SwissEph.SE_TIDAL_AUTOMATIC);
+            swed.geopos_is_set = false;
+            swed.ayana_is_set = false;
+            swed.is_old_starfile = false;
+            swed.i_saved_planet_name = 0;
+            swed.saved_planet_name=String.Empty;
+            swed.topd = new topo_data();
+            swed.sidd = new sid_data();
+            swed.timeout = 0;
+            if (swed.dpsi != null) {
+              //free(swed.dpsi);
+              swed.dpsi = null;
+            }
+            if (swed.deps != null)
+            {
+                //free(swed.deps);
+                swed.deps = null;
             }
 #if TRACE
             //#define TRACE_CLOSE FALSE
@@ -1136,7 +1174,7 @@ namespace SwissEphNet.CPort
             iflag = SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_J2000 | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_ICRS;
             swe_calc(J2000, SwissEph.SE_MOON, iflag, xx, ref sdummy);
             if (swed.fidat[SEI_FILE_MOON].fptr != null) {
-                SE.swe_set_tid_acc((double)swed.fidat[SEI_FILE_MOON].sweph_denum);
+                SE.SwephLib.swi_set_tid_acc(0, 0, swed.fidat[SEI_FILE_MOON].sweph_denum);
             }
 #if TRACE
             //  swi_open_trace(NULL);
@@ -1180,6 +1218,16 @@ namespace SwissEphNet.CPort
                 swed.eop_dpsi_loaded = ERR;
                 return;
             }
+            if ((swed.dpsi = new double[Sweph.SWE_DATA_DPSI_DEPS]) == null)
+            {
+                swed.eop_dpsi_loaded = ERR;
+                return;
+            }
+            if ((swed.deps = new double[Sweph.SWE_DATA_DPSI_DEPS]) == null)
+            {
+                swed.eop_dpsi_loaded = ERR;
+                return;
+            }
             swed.eop_tjd_beg_horizons = SwephLib.DPSI_DEPS_IAU1980_TJD0_HORIZONS;
             while ((s = fp.ReadLine()) != null) {
                 cpos = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1214,6 +1262,8 @@ namespace SwissEphNet.CPort
                 mjd = int.Parse(s.Substring(7));
                 if (mjd + TJDOFS <= swed.eop_tjd_end)
                     continue;
+                if (n >= Sweph.SWE_DATA_DPSI_DEPS)
+                    return;
                 /* are data in one-day steps? */
                 if (mjdsv > 0 && mjd - mjdsv != 1) {
                     /* no error, as we do have data; however, if this file is usefull,
@@ -1274,9 +1324,8 @@ namespace SwissEphNet.CPort
                 retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref sdummy);
                 if (retc == OK) {
                     if (swed.jpldenum >= 403) {
-                        if (SwephLib.INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980) {
-                            load_dpsi_deps();
-                        }
+                        /*if (INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980) */
+                        load_dpsi_deps();
                     }
                 }
             }
@@ -1338,7 +1387,6 @@ namespace SwissEphNet.CPort
                        ref string serr) {
             int retc;
             switch (epheflag) {
-                //#ifndef NO_JPL
                 case SwissEph.SEFLG_JPLEPH:
                     retc = jplplan(tjd, ipli, iflag, DO_SAVE, null, null, null, ref serr);
                     /* read error or corrupt file */
@@ -1378,7 +1426,6 @@ namespace SwissEphNet.CPort
                             return ERR;
                     }
                     break;
-                //#endif
                 case SwissEph.SEFLG_SWIEPH:
                 sweph_planet:
                     /* compute barycentric planet (+ earth, sun, moon) */
@@ -1457,7 +1504,6 @@ namespace SwissEphNet.CPort
                        ref string serr) {
             int i, retc;
             switch (epheflag) {
-                //#ifndef NO_JPL
                 case SwissEph.SEFLG_JPLEPH:
                     retc = jplplan(tjd, ipli, iflag, do_save, xp, xe, xs, ref serr);
                     /* read error or corrupt file */
@@ -1470,7 +1516,6 @@ namespace SwissEphNet.CPort
                         goto sweph_planet;
                     }
                     break;
-                //#endif
                 case SwissEph.SEFLG_SWIEPH:
                 sweph_planet:
                     /* compute barycentric planet (+ earth, sun, moon) */
@@ -1733,7 +1778,6 @@ namespace SwissEphNet.CPort
             return (OK);
         }
 
-        //#ifndef NO_JPL
         /* jpl ephemeris.
          * this function computes 
          * 1. a barycentric planet position
@@ -1869,7 +1913,6 @@ namespace SwissEphNet.CPort
                     xpret[i] = xp[i];
             return (OK);
         }
-        //#endif	/* NO_JPL */
 
         /* 
          * this function looks for an ephemeris file, 
@@ -2217,7 +2260,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pedp.teval
                   || swed.topd.teval == 0) {
-                    if (swi_get_observer(pedp.teval, iflag, DO_SAVE, xobs, ref serr) != OK)
+                      if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -2287,7 +2330,6 @@ namespace SwissEphNet.CPort
                         xxsp[i] = pdp.x[i] - xx[i] - xxsp[i];
                 /* new position, accounting for light-time (accurate) */
                 switch (epheflag) {
-                    //#ifndef NO_JPL
                     case SwissEph.SEFLG_JPLEPH:
                         if (ibody >= IS_ANY_BODY)
                             ipl = -1; /* will not be used */ /*pnoint2jpl[SEI_ANYBODY];*/
@@ -2322,7 +2364,6 @@ namespace SwissEphNet.CPort
                             }
                         }
                         break;
-                    //#endif
                     case SwissEph.SEFLG_SWIEPH:
                         if (ibody == IS_PLANET)
                             retc = sweplan(t, ipli, ifno, iflag, NO_SAVE, xx, xearth, xsun, null, ref serr);
@@ -2380,7 +2421,7 @@ namespace SwissEphNet.CPort
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
                     /* observer position for t(light-time) */
                     if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
-                        if (swi_get_observer(t, iflag, NO_SAVE, xobs2, ref serr) != OK)
+                        if (swi_get_observer(t, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs2, ref serr) != OK)
                             return ERR;
                         for (i = 0; i <= 5; i++)
                             xobs2[i] += xearth[i];
@@ -2554,7 +2595,7 @@ namespace SwissEphNet.CPort
                     sip.sid_mode &= ~SwissEph.SE_SIDBIT_SSY_PLANE;
                     sip.sid_mode |= SwissEph.SE_SIDBIT_ECL_T0;
                 }
-                if ((sip.sid_mode & SwissEph.SE_SIDM_TRUE_CITRA) != 0 || (sip.sid_mode & SwissEph.SE_SIDM_TRUE_REVATI) != 0)
+                if (sid_mode == SwissEph.SE_SIDM_TRUE_CITRA || sid_mode == SwissEph.SE_SIDM_TRUE_REVATI)
                     sip.sid_mode &= ~(SwissEph.SE_SIDBIT_ECL_T0 | SwissEph.SE_SIDBIT_SSY_PLANE);
                 if (sid_mode >= SwissEph.SE_NSIDM_PREDEF && sid_mode != SwissEph.SE_SIDM_USER)
                     sip.sid_mode = sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
@@ -2585,15 +2626,21 @@ namespace SwissEphNet.CPort
             if (!swed.ayana_is_set)
                 swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA) {
-                star = "Spica";
+                star = "Spica"; /* Citra */
                 swe_fixstar(star, tjd_et, SwissEph.SEFLG_NONUT, x, ref sdummy);
                 return SE.swe_degnorm(x[0] - 180);
             }
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI) {
-                star = ",zePsc";
+                star = ",zePsc"; /* Revati */
                 swe_fixstar(star, tjd_et, SwissEph.SEFLG_NONUT, x, ref sdummy);
                 return SE.swe_degnorm(x[0]);
                 /*return swe_degnorm(x[0] - 359.83333333334);*/
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA)
+            {
+                star = ",deCnc"; /* Pushya = Asellus Australis */
+                swe_fixstar(star, tjd_et, SwissEph.SEFLG_NONUT, x, ref sdummy);
+                return SE.swe_degnorm(x[0] - 106);
             }
             /* vernal point (tjd), cartesian */
             x[0] = 1;
@@ -2742,7 +2789,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pedp.teval
                   || swed.topd.teval == 0) {
-                    if (swi_get_observer(pedp.teval, iflag, DO_SAVE, xobs, ref serr) != OK)
+                      if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -2827,7 +2874,7 @@ namespace SwissEphNet.CPort
                     if (retc != OK)
                         return (retc);
                     if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
-                        if (swi_get_observer(t, iflag, NO_SAVE, xobs2, ref serr) != OK)
+                        if (swi_get_observer(t, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs2, ref serr) != OK)
                             return ERR;
                         for (i = 0; i <= 5; i++)
                             xobs2[i] += xearth[i];
@@ -2899,7 +2946,10 @@ namespace SwissEphNet.CPort
             epsilon oe;
             double fac, dpre, dpre2, ddummy;
             double tprec = (t - J2000) / 36525.0;
-            if (direction == J2000_TO_J) {
+            int prec_model = swed.astro_models[SwissEph.SE_MODEL_PREC_LONGTERM];
+            if (prec_model == 0) prec_model = SwissEph.SEMOD_PREC_DEFAULT;
+            if (direction == J2000_TO_J)
+            {
                 fac = 1;
                 oe = swed.oec;
             } else {
@@ -2914,7 +2964,7 @@ namespace SwissEphNet.CPort
             SE.SwephLib.swi_coortrf2(xx, xx, oe.seps, oe.ceps);
             SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, oe.seps, oe.ceps);
             SE.SwephLib.swi_cartpol_sp(xx, xx);
-            if (SwephLib.USE_PREC_VONDRAK_2011) {
+            if (prec_model == SwissEph.SEMOD_PREC_VONDRAK_2011) {
                 SE.SwephLib.swi_ldp_peps(t, out dpre, out ddummy);
                 SE.SwephLib.swi_ldp_peps(t + 1, out dpre2, out ddummy);
                 xx[3] += (dpre2 - dpre) * fac;
@@ -3204,7 +3254,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pedp.teval
                   || swed.topd.teval == 0) {
-                    if (swi_get_observer(pedp.teval, iflag, DO_SAVE, xobs, ref serr) != OK)
+                      if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -3268,7 +3318,6 @@ namespace SwissEphNet.CPort
                         switch (pedp.iephe) {
                             /* if geocentric sun, new sun at t' 
                              * if heliocentric or barycentric earth, new earth at t' */
-                            //#ifndef NO_JPL
                             case SwissEph.SEFLG_JPLEPH:
                                 if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
                                     retc = SE.SweJPL.swi_pleph(t, SweJPL.J_EARTH, SweJPL.J_SBARY, xearth, ref serr);
@@ -3280,7 +3329,6 @@ namespace SwissEphNet.CPort
                                     return (retc);
                                 }
                                 break;
-                            //#endif
                             case SwissEph.SEFLG_SWIEPH:
                                 /*
                                   retc = sweph(t, SEI_SUN, SEI_FILE_PLANET, iflag, NULL, NO_SAVE, xearth, serr);
@@ -3400,7 +3448,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pdp.teval
                   || swed.topd.teval == 0) {
-                    if (swi_get_observer(pdp.teval, iflag, DO_SAVE, xobs, ref sdummy) != OK)
+                      if (swi_get_observer(pdp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref sdummy) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -3463,7 +3511,7 @@ namespace SwissEphNet.CPort
                         break;
                 }
                 if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
-                    if (swi_get_observer(t, iflag, NO_SAVE, xobs2, ref sdummy) != OK)
+                    if (swi_get_observer(t, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs2, ref sdummy) != OK)
                         return ERR;
                     for (i = 0; i <= 5; i++)
                         xobs2[i] += xe[i];
@@ -3817,7 +3865,7 @@ namespace SwissEphNet.CPort
             double[] doubles = new double[20];
             plan_data pdp;
             file_data fdp = swed.fidat[ifno];
-            string serr_file_damage = "Ephemeris file %s is damaged. ";
+            string serr_file_damage = "Ephemeris file %s is damaged (0). ";
             int nbytes_ipl = 2;
             fp = fdp.fptr;
             /************************************* 
@@ -4180,7 +4228,7 @@ namespace SwissEphNet.CPort
             /* if no byte reorder has to be done, and read size == return size */
             if (0 == freord && size == corrsize) {
                 if (fp.Read(trg, 0, totsize) == 0) {
-                    serr = C.sprintf("Ephemeris file %s is damaged.", swed.fidat[ifno].fnam);
+                    serr = C.sprintf("Ephemeris file %s is damaged (2).", swed.fidat[ifno].fnam);
                     fp.Dispose();
                     fp = null;
                     return (ERR);
@@ -4188,7 +4236,7 @@ namespace SwissEphNet.CPort
                     return (OK);
             } else {
                 if (fp.Read(space, 0, totsize) == 0) {
-                    serr = C.sprintf("Ephemeris file %s is damaged.", swed.fidat[ifno].fnam);
+                    serr = C.sprintf("Ephemeris file %s is damaged (4).", swed.fidat[ifno].fnam);
                     fp.Dispose();
                     fp = null;
                     return (ERR);
@@ -4567,7 +4615,6 @@ namespace SwissEphNet.CPort
             serr = String.Empty;
         three_positions:
             switch (epheflag) {
-                //#ifndef NO_JPL
                 case SwissEph.SEFLG_JPLEPH:
                     speed_intv = NODE_CALC_INTV;
                     for (i = istart; i <= 2; i++) {
@@ -4616,7 +4663,6 @@ namespace SwissEphNet.CPort
                         retc = swi_plan_for_osc_elem(iflag | SwissEph.SEFLG_SPEED, t, xpos[i]); /* retc is always ok */
                     }
                     break;
-                //#endif	/* NO_JPL */
                 case SwissEph.SEFLG_SWIEPH:
                     //#if 0
                     //      sweph_moon:
@@ -5420,6 +5466,10 @@ namespace SwissEphNet.CPort
         Int32 plaus_iflag(Int32 iflag, Int32 ipl, double tjd, out string serr) {
             Int32 epheflag = 0;
             serr = null;
+            int jplhor_model = swed.astro_models[SwissEph.SE_MODEL_JPLHOR_MODE];
+            int jplhora_model = swed.astro_models[SwissEph.SE_MODEL_JPLHORA_MODE];
+            if (jplhor_model == 0) jplhor_model = SwissEph.SEMOD_JPLHOR_DEFAULT;
+            if (jplhora_model == 0) jplhora_model = SwissEph.SEMOD_JPLHORA_DEFAULT;
             /* either Horizons mode or simplified Horizons mode, not both */
             if ((iflag & SwissEph.SEFLG_JPLHOR) != 0)
                 iflag &= ~SwissEph.SEFLG_JPLHOR_APPROX;
@@ -5455,10 +5505,6 @@ namespace SwissEphNet.CPort
                 epheflag = SwissEph.SEFLG_JPLEPH;
             if (epheflag == 0)
                 epheflag = SwissEph.SEFLG_DEFAULTEPH;
-            //#if NO_JPL
-            //if (epheflag == SwissEph.SEFLG_JPLEPH)
-            //    epheflag = SwissEph.SEFLG_SWIEPH;
-            //#endif
             iflag = (iflag & ~SwissEph.SEFLG_EPHMASK) | epheflag;
             /* SwissEph.SEFLG_JPLHOR only with JPL and Swiss Ephemeeris */
             if ((epheflag & SwissEph.SEFLG_JPLEPH) == 0)
@@ -5473,8 +5519,12 @@ namespace SwissEphNet.CPort
             /* SwissEph.SEFLG_JPLHOR requires SwissEph.SEFLG_ICRS, if calculated with * precession/nutation IAU 1980 and corrections dpsi, deps */
             if ((iflag & SwissEph.SEFLG_JPLHOR) != 0) {
                 if (swed.eop_dpsi_loaded <= 0
-                   || ((tjd < swed.eop_tjd_beg || tjd > swed.eop_tjd_end) && !SwephLib.USE_HORIZONS_METHOD_BEFORE_1980)) {
-                    switch (swed.eop_dpsi_loaded) {
+                   || ((tjd < swed.eop_tjd_beg || tjd > swed.eop_tjd_end)
+                   && jplhor_model != SwissEph.SEMOD_JPLHOR_EXTENDED_1800))
+                {
+                    /*&& !USE_HORIZONS_METHOD_BEFORE_1980)) {*/
+                    switch (swed.eop_dpsi_loaded)
+                    {
                         case 0:
                             serr = "you did not call swe_set_jpl_file(); default to SEFLG_JPLHOR_APPROX";
                             break;
@@ -5495,7 +5545,8 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_JPLHOR) != 0)
                 iflag |= SwissEph.SEFLG_ICRS;
             /*if ((iflag & SwissEph.SEFLG_JPLHOR_APPROX) && FRAME_BIAS_APPROX_HORIZONS) */
-            if ((iflag & SwissEph.SEFLG_JPLHOR_APPROX) != 0 && !SwephLib.APPROXIMATE_HORIZONS_ASTRODIENST)
+            /*if ((iflag & SEFLG_JPLHOR_APPROX) && !APPROXIMATE_HORIZONS_ASTRODIENST)*/
+            if ((iflag & SwissEph.SEFLG_JPLHOR_APPROX)!=0 && jplhora_model != SwissEph.SEMOD_JPLHORA_1)
                 iflag |= SwissEph.SEFLG_ICRS;
             return iflag;
         }
@@ -5778,7 +5829,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pedp.teval
                   || swed.topd.teval == 0) {
-                    if (swi_get_observer(pedp.teval, iflag, DO_SAVE, xobs, ref serr) != OK)
+                      if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -5948,7 +5999,8 @@ namespace SwissEphNet.CPort
 
         public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag,
           double[] xx, ref string serr) {
-            return swe_fixstar(star, tjd_ut + SE.swe_deltat(tjd_ut), iflag, xx, ref serr);
+              SE.SwephLib.swi_set_tid_acc(tjd_ut, iflag, 0);
+              return swe_fixstar(star, tjd_ut + SE.swe_deltat(tjd_ut), iflag, xx, ref serr);
         }
 
         /**********************************************************
@@ -6274,6 +6326,7 @@ namespace SwissEphNet.CPort
         }
 
         public string swe_get_ayanamsa_name(Int32 isidmode) {
+            isidmode %= SwissEph.SE_SIDBITS;
             if (isidmode < SwissEph.SE_NSIDM_PREDEF)
                 return ayanamsa_name[isidmode];
             return null;
@@ -6559,10 +6612,19 @@ namespace SwissEphNet.CPort
             if (retc == OK) {
                 swed.jpldenum = (short)SE.SweJPL.swi_get_jpl_denum();
                 swed.jpl_file_is_open = true;
-                SE.swe_set_tid_acc((double)swed.jpldenum);
+                SE.SwephLib.swi_set_tid_acc(0, 0, swed.jpldenum);
             }
             return retc;
         }
+
+
+        //#if 0
+        //void FAR PASCAL_CONV swe_set_timeout(int32 tsec)
+        //{
+        //  if (tsec < 0) tsec = 0;
+        //  swed.timeout = tsec;
+        //}
+        //#endif
 
         //#if 0
         //int FAR PASCAL_CONV swe_time_equ(double tjd_ut, double *E, char *serr)

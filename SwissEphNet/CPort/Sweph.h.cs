@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.00.00";
+        public const String SE_VERSION = "2.01.00";
 
         /// <summary>
         /// 2000 January 1.5
@@ -150,23 +150,6 @@ namespace SwissEphNet.CPort
         public const string SE_NAME_PLUTO_PICKERING = "Pickering";
         public const string SE_NAME_VULCAN = "Vulcan";
         public const string SE_NAME_WHITE_MOON = "White Moon";
-
-        /* for delta t: intrinsic tidal acceleration in the mean motion of the moon,
-         * not given in the parameters list of the ephemeris files but computed
-         * by Chapront/Chapront-Touzé/Francou A&A 387 (2002), p. 705.
-         */
-        public const double SE_TIDAL_DE200 = (-23.8946);
-        public const double SE_TIDAL_DE403 = (-25.580);  /* was (-25.8) until V. 1.76.2 */
-        public const double SE_TIDAL_DE404 = (-25.580);  /* was (-25.8) until V. 1.76.2 */
-        public const double SE_TIDAL_DE405 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
-        public const double SE_TIDAL_DE406 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
-        public const double SE_TIDAL_DE421 = (-25.85);   /* JPL Interoffice Memorandum 14-mar-2008 on DE421 Lunar Orbit */
-        public const double SE_TIDAL_DE430 = (-25.82);   /* JPL Interoffice Memorandum 9-jul-2013 on DE430 Lunar Orbit */
-        public const double SE_TIDAL_DE431 = (-25.82);   /* waiting for information */
-
-        public const double SE_TIDAL_26 = (-26.0);
-
-        public const double SE_TIDAL_DEFAULT = SE_TIDAL_DE431;
 
         ///*
         // * earlier content
@@ -242,13 +225,18 @@ namespace SwissEphNet.CPort
 
         public const int SEI_NEPHFILES = 7;
         public const int SEI_CURR_FPOS = -1;
+        public const int SEI_NMODELS = 20;
+
+        public const double SEI_ECL_GEOALT_MAX = 25000.0;
+        public const double SEI_ECL_GEOALT_MIN = (-500.0);
 
         /* Chiron's orbit becomes chaotic 
          * before 720 AD and after 4606 AD, because of close encounters
          * with Saturn. Accepting a maximum error of 5 degrees, 
          * the ephemeris is good between the following dates:
          */
-        public const double CHIRON_START = 1958470.5;  	/* 1.1.650 */
+        /*#define CHIRON_START    1958470.5  	* 1.1.650 old limit until v. 2.00 */
+        public const double CHIRON_START = 1967601.5;  	/* 1.1.675 */
         public const double CHIRON_END = 3419437.5;  	/* 1.1.4650 */
 
         /* Pholus's orbit is unstable as well, because he sometimes
@@ -256,7 +244,9 @@ namespace SwissEphNet.CPort
          * Accepting a maximum error of 5 degrees,
          * the ephemeris is good after the following date:
          */
-        public const double PHOLUS_START = 314845.5;  	/* 1.1.-3850 */
+        /* #define PHOLUS_START    314845.5  	* 1.1.-3850  old limit until v. 2.00 */
+        public const double PHOLUS_START    =640648.5;	/* 1.1.-2958 jul */
+        public const double PHOLUS_END = 4390617.5;  	/* 1.1.7309 */
 
         public const double MOSHPLEPH_START = 625000.5;
         public const double MOSHPLEPH_END = 2818000.5;
@@ -307,6 +297,9 @@ namespace SwissEphNet.CPort
         /* #define SUN_EARTH_MRAT=  328900.561400;           Su/(Ea+Mo) AA 2006 K7 */
         public const double SUN_EARTH_MRAT = 332946.050895;           /* Su / (Ea only) AA 2006 K7 */
         public const double EARTH_MOON_MRAT = (1 / 0.0123000383);	/* AA 2006, K7 */
+        //#if 0
+        //#define EARTH_MOON_MRAT 81.30056907419062	/* de431 */
+        //#endif
         //#if 0
         //#define EARTH_MOON_MRAT =81.30056		/* de406 */
         //#endif
@@ -420,9 +413,9 @@ namespace SwissEphNet.CPort
             new aya_init{t0=1903396.7895321,ayan_t0=-0.23763238},/*24: Aryabhata, analogous 22 */
             new aya_init{t0=1903396.8128654,ayan_t0=-0.79167046},/*25: SS, Revati/zePsc at polar long. 359°50'*/
             new aya_init{t0=1903396.8128654, ayan_t0=2.11070444},/*26: SS, Citra/Spica at polar long. 180° */
-            new aya_init{t0=0, ayan_t0=0},	                /*27: True Citra (Spica always exactly at 0 Libra) */
-            new aya_init{t0=0, ayan_t0=0},	                /*28: True Revati (zeta Psc always exactly at 0 Aries) */
-            new aya_init{t0=0, ayan_t0=0},			/*29: - */
+            new aya_init{t0=0, ayan_t0=0},	                /*27: True Citra (Spica exactly at 0 Libra) */
+            new aya_init{t0=0, ayan_t0=0},	                /*28: True Revati (zeta Psc exactly at 0 Aries) */
+            new aya_init{t0=0, ayan_t0=0},			/*29: True Pushya (delta Cnc exactly a 16 Cancer */
             new aya_init{t0=0, ayan_t0=0},	                /*30: - */
             };
 
@@ -444,6 +437,7 @@ namespace SwissEphNet.CPort
         //extern int swi_moshplan(double tjd, int ipli, AS_BOOL do_save, double *xpret, double *xeret, char *serr);
         //extern int swi_moshplan2(double J, int iplm, double *pobj);
         //extern int swi_osc_el_plan(double tjd, double *xp, int ipl, int ipli, double *xearth, double *xsun, char *serr);
+        //extern void swi_set_tid_acc(double tjd_ut, int iflag, int denum);
 
 
         /* nutation */
@@ -561,12 +555,17 @@ namespace SwissEphNet.CPort
             public double t0;
         };
 
+        /* dpsi and deps loaded for 100 years after 1962 */
+        static int SWE_DATA_DPSI_DEPS = 36525;
+
         public class swe_data
         {
-            public swe_data() {
+            public swe_data()
+            {
                 Reset(true);
             }
-            public void Reset(bool full) {
+            public void Reset(bool full)
+            {
                 if (full)
                 {
                     fidat = Enumerable.Range(0, SEI_NEPHFILES).Select(i => new file_data()).ToArray();
@@ -574,8 +573,9 @@ namespace SwissEphNet.CPort
                     pldat = Enumerable.Range(0, SEI_NPLANETS).Select(i => new plan_data()).ToArray();
                     nddat = Enumerable.Range(0, SEI_NNODE_ETC).Select(i => new plan_data()).ToArray();
                     topd = new topo_data();
-                    dpsi = new double[36525];
-                    deps = new double[36525];
+                    //dpsi = new double[36525];
+                    //deps = new double[36525];
+                    astro_models = new Int32[Sweph.SEI_NMODELS];
                 }
                 oec = new epsilon();
                 oec2000 = new epsilon();
@@ -611,7 +611,7 @@ namespace SwissEphNet.CPort
             public nut nut { get; private set; }
             public nut nut2000 { get; private set; }
             public nut nutv { get; private set; }
-            public topo_data topd { get; private set; }
+            public topo_data topd { get; internal set; }
             public sid_data sidd;
             public string astelem = string.Empty;
             public double ast_G;
@@ -619,8 +619,12 @@ namespace SwissEphNet.CPort
             public double ast_diam;
             public int i_saved_planet_name;
             public string saved_planet_name;
-            public double[] dpsi { get; private set; }  /* works for 100 years after 1962 */
-            public double[] deps { get; private set; }
+            //public double[] dpsi { get; private set; }  /* works for 100 years after 1962 */
+            //public double[] deps { get; private set; }
+            public double[] dpsi;
+            public double[] deps;
+            public Int32[] astro_models { get; private set; }
+            public Int32 timeout;
         }
 
         //extern struct swe_data FAR swed;

@@ -82,44 +82,10 @@ namespace SwissEphNet.CPort
     partial class SwephLib
     {
 
-        public const int PREC_IAU_1976 = 1;
-        public const int PREC_IAU_2000 = 2;
-        public const int PREC_IAU_2006 = 3;
-        public const int PREC_BRETAGNON_2003 = 4;
-        public const int PREC_LASKAR_1986 = 5;
-        public const int PREC_SIMON_1994 = 6;
-        public const int PREC_WILLIAMS_1994 = 7;
-        public const int PREC_VONDRAK_2011 = 8;
-
-        /* Precession coefficients for remote past and future.
-         * One of the following four defines must be true.
-         */
-        public static bool USE_PREC_VONDRAK_2011 = true;
-        public static bool USE_PREC_WILLIAMS_1994 = false;
-        public static bool USE_PREC_SIMON_1994 = false;
-        public static bool USE_PREC_LASKAR_1986 = false;
-        public static bool USE_PREC_BRETAGNON_2003 = false;
-        /* IAU precession 1976 or 2003 for recent centuries.
-         * only one of the following two defines may be TRUE */
-        bool USE_PREC_IAU_1976 = false;
-        bool USE_PREC_IAU_2000 = false;
-        bool USE_PREC_IAU_2006 = false;  /* precession model P03 */
         const double PREC_IAU_1976_CTIES = 2.0; 	/* J2000 +/- two centuries */
         const double PREC_IAU_2000_CTIES = 2.0; 	/* J2000 +/- two centuries */
         /* we use P03 for whole ephemeris */
         const double PREC_IAU_2006_CTIES = 75.0; 	/* J2000 +/- 75 centuries */
-
-        /* choose between the following nutation models */
-        bool NUT_IAU_1980 = false;
-        bool NUT_IAU_2000A = false;   /* very time consuming ! */
-        bool NUT_IAU_2000B = true;  /* fast, but precision of milli-arcsec */
-        /* Set TRUE, to include Herring's (1987) corrections to IAU 1980 
-         * nutation series. AA (1996) neglects them.  */
-        //bool NUT_CORR_1987 = false;
-
-        /* frame bias */
-        bool FRAME_BIAS_IAU2006 = true;  /* if false, frame bias iau2000 will be used
-                                             * difference is minimal. */
 
         /* For reproducing JPL Horizons to 2 mas (SEFLG_JPLHOR): 
          * The user has to keep the following files up to date which contain
@@ -134,7 +100,10 @@ namespace SwissEphNet.CPort
         public const string DPSI_DEPS_IAU1980_FILE_FINALS = "eop_finals.txt";
         public const double DPSI_DEPS_IAU1980_TJD0_HORIZONS = 2437684.5;
         public const double HORIZONS_TJD0_DPSI_DEPS_IAU1980 = 2437684.5;
-        public const bool INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980 = true;
+        //public const bool INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980 = true;
+        /*#define INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980   TRUE*/
+
+        /*#define INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980   TRUE  */
         /* You can set the latter false if you do not want to compile the
          * code required to reproduce JPL Horizons.
          * Keep it TRUE in order to reproduce JPL Horizons following
@@ -163,9 +132,9 @@ namespace SwissEphNet.CPort
          * JPL Horizons is even better. Frame bias matrix is applied with
          * some correction to RA and another correction is added to epsilon.
          */
-        public static bool APPROXIMATE_HORIZONS_ASTRODIENST = true;
+        //public static bool APPROXIMATE_HORIZONS_ASTRODIENST = true;
 
-        public static bool USE_HORIZONS_METHOD_BEFORE_1980 = true;   /* Horizons method before 20-jan-1962 */
+        //public static bool USE_HORIZONS_METHOD_BEFORE_1980 = true;   /* Horizons method before 20-jan-1962 */
         /* The latter, if combined with SEFLG_JPLHOR provides good agreement 
          * with JPL Horizons for 1800 - today. However, Horizons uses correct
          * dpsi and deps only after 20-jan-1962. For all dates before that

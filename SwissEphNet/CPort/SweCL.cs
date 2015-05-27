@@ -585,6 +585,7 @@ namespace SwissEphNet.CPort
             Int32 retflag, retflag2;
             double[] dcore = new double[10];
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, ifl, 0);
             if ((retflag = eclipse_where(tjd_ut, SwissEph.SE_SUN, null, ifl, geopos, dcore, ref serr)) < 0)
                 return retflag;
             if ((retflag2 = eclipse_how(tjd_ut, SwissEph.SE_SUN, null, ifl, geopos[0], geopos[1], 0, attr, ref serr)) == SwissEph.ERR)
@@ -603,7 +604,9 @@ namespace SwissEphNet.CPort
                 ref string serr) {
             Int32 retflag, retflag2;
             double[] dcore = new double[10];
+            if (ipl < 0) ipl = 0;
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, ifl, 0);
             /* function calls for Pluto with asteroid number 134340
              * are treated as calls for Pluto as main body SE_PLUTO */
             if (ipl == SwissEph.SE_AST_OFFSET + 134340)
@@ -924,7 +927,14 @@ namespace SwissEphNet.CPort
             Int32 retflag, retflag2;
             double[] dcore = new double[10], ls = new double[6], xaz = new double[6];
             double[] geopos2 = new double[20];
+            if (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX)
+            {
+                if (serr != null)
+                    serr = C.sprintf("location for eclipses must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return Sweph.ERR;
+            }
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, ifl, 0);
             if ((retflag = eclipse_how(tjd_ut, SwissEph.SE_SUN, null, ifl, geopos[0], geopos[1], geopos[2], attr, ref serr)) == SwissEph.ERR)
                 return retflag;
             if ((retflag2 = eclipse_where(tjd_ut, SwissEph.SE_SUN, null, ifl, geopos2, dcore, ref serr)) == SwissEph.ERR)
@@ -1179,6 +1189,7 @@ namespace SwissEphNet.CPort
             bool dont_times = false;
             Int32 iflag, iflagcart;
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_start, ifl, 0);
             iflag = SwissEph.SEFLG_EQUATORIAL | ifl;
             iflagcart = iflag | SwissEph.SEFLG_XYZ;
             if (ifltype == (SwissEph.SE_ECL_PARTIAL | SwissEph.SE_ECL_CENTRAL)) {
@@ -1235,7 +1246,7 @@ namespace SwissEphNet.CPort
              * the functions eclipse_where() and _how().
              */
             dtstart = 1;
-            if (tjd < 2000000)
+            if (tjd < 2000000 || tjd > 2500000)
                 dtstart = 5;
             dtdiv = 4;
             for (dt = dtstart;
@@ -1262,7 +1273,9 @@ namespace SwissEphNet.CPort
                 find_maximum(dc[0], dc[1], dc[2], dt, out dtint, out dctr);
                 tjd += dtint + dt;
             }
-            tjds = tjd = tjd - SE.swe_deltat(tjd);
+            tjds = tjd - SE.swe_deltat(tjd);
+            tjds = tjd - SE.swe_deltat(tjds);
+            tjds = tjd = tjd - SE.swe_deltat(tjds);
             if ((retflag = eclipse_where(tjd, SwissEph.SE_SUN, null, ifl, geopos, dcore, ref serr)) == SwissEph.ERR)
                 return retflag;
             retflag2 = retflag;
@@ -1538,22 +1551,21 @@ namespace SwissEphNet.CPort
             Int32 retflag = 0, retflag2 = 0;
             double de = 6378.140, a;
             double t, tt, tjd = 0, tjds, dt, dtint, dta, dtb;
-            double drad;
+            double drad, dl;
             double[] xs = new double[6], xm = new double[6], ls = new double[6], lm = new double[6];
             double rmoon, rsun; double[] dcore = new double[10];
             double[] dc = new double[20]; double dctr;
             double twohr = 2.0 / 24.0;
             double tenmin = 10.0 / 24.0 / 60.0;
-            double dt1 = 0, dt2 = 0, dadd2 = 6;
-            int nstartpos = 10;
+            double dt1 = 0, dt2 = 0, dadd2 = 1;
             double[] geopos = new double[20];
             double dtstart, dtdiv;
             int direction = 1;
-            string s;
             Int32 iflag, iflagcart;
             bool dont_times = false;
             int backward = b_backward ? 1 : 0;
             Int32 one_try = backward & SwissEph.SE_ECL_ONE_TRY;
+            if (ipl < 0) ipl = 0;
             /*if (backward & SEI_OCC_FAST)
                 dont_times = TRUE; */
             /* function calls for Pluto with asteroid number 134340
@@ -1561,6 +1573,7 @@ namespace SwissEphNet.CPort
             if (ipl == SwissEph.SE_AST_OFFSET + 134340)
                 ipl = SwissEph.SE_PLUTO;
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_start, ifl, 0);
             iflag = SwissEph.SEFLG_EQUATORIAL | ifl;
             iflagcart = iflag | SwissEph.SEFLG_XYZ;
             backward &= 1;
@@ -1579,33 +1592,49 @@ namespace SwissEphNet.CPort
                 tret[i] = 0;
             if (backward != 0)
                 direction = -1;
-            t = tjd_start - direction * 0.001;
+            t = tjd_start;
             tjd_start = t;
             tjd = t;
         next_try:
-            for (i = 0; i < nstartpos; i++, t += direction * dadd2) {
-                if (calc_planet_star(t, ipl, starname, iflagcart, xs, ref serr) == SwissEph.ERR)
+            if (calc_planet_star(t, ipl, starname, ifl, ls, ref serr) == SwissEph.ERR)
+                return SwissEph.ERR;
+            /* fixed stars with an ecliptic latitude > 7  or < -7 cannot have 
+             * an occultation. Even lunar parallax andd proper motion of star
+             * will never allow it. */
+            if (Math.Abs(ls[1]) > 7 && !String.IsNullOrWhiteSpace(starname))
+            {
+                serr = C.sprintf("occultation never occurs: star %s has ecl. lat. %.1f", starname, ls[1]);
+                return SwissEph.ERR;
+            }
+            if (SE.swe_calc(t, SwissEph.SE_MOON, ifl, lm, ref serr) == SwissEph.ERR)
+                return SwissEph.ERR;
+            dl = SE.swe_degnorm(ls[0] - lm[0]);
+            if (direction < 0)
+                dl -= 360;
+            /* get rough conjunction in ecliptic longitude */
+            while (Math.Abs(dl) > 0.1)
+            {
+                t += dl / 13;
+                if (calc_planet_star(t, ipl, starname, ifl, ls, ref serr) == SwissEph.ERR)
                     return SwissEph.ERR;
-                if (SE.swe_calc(t, SwissEph.SE_MOON, iflagcart, xm, ref serr) == SwissEph.ERR)
+                if (SE.swe_calc(t, SwissEph.SE_MOON, ifl, lm, ref serr) == SwissEph.ERR)
                     return SwissEph.ERR;
-                dc[i] = Math.Acos(SE.SwephLib.swi_dot_prod_unit(xs, xm)) * SwissEph.RADTODEG;
-                if (i > 1 && dc[i] > dc[i - 1] && dc[i - 2] > dc[i - 1]) {
-                    tjd = t - direction * dadd2;
-                    t = tjd;
-                    break;
-                } else if (Math.Abs(tjd - t) > (30 - dadd2 * 0.8)) {
-                    t = tjd;
-                } else if (i == nstartpos - 1) {
-                    /*for (j = 0; j < nstartpos; j++)
-                      printf("%f ", dc[j]);*/
-                    if (!String.IsNullOrEmpty(starname)) {
-                        s = starname;
-                    } else {
-                        s = SE.swe_get_planet_name(ipl);
-                    }
-                    serr = C.sprintf("error in swe_lun_occult_when_glob(): conjunction of moon with planet %s not found\n", s);
-                    return SwissEph.ERR;
+                dl = SE.swe_degnorm(ls[0] - lm[0]);
+                if (dl > 180) dl -= 360;
+            }
+            tjd = t;
+            /* difference in latitude too big for an occultation */
+            drad = Math.Abs(ls[1] - lm[1]);
+            if (drad > 2)
+            {
+                if (one_try != 0)
+                {
+                    tret[0] = t + direction; /* return a date suitable for next try */
+                    return 0;
                 }
+                t += direction * 20;
+                tjd = t;
+                goto next_try;
             }
             /*
              * radius of planet disk in AU
@@ -1659,7 +1688,9 @@ namespace SwissEphNet.CPort
               return retflag2; */
             if (retflag2 == 0) {
                 /* only one try! */
-                if (one_try != 0) {
+                /* if (one_try && ((direction == 1 && tjd > tjd_start) || (direction == -1 && tjd < tjd_start))) {*/
+                if (one_try != 0)
+                {
                     tret[0] = tjd;
                     return 0;
                 }
@@ -1669,6 +1700,7 @@ namespace SwissEphNet.CPort
                 goto next_try;
             }
             tret[0] = tjd;
+            /* should not happen anymore Version 2.01 */
             if ((backward != 0 && tret[0] >= tjd_start - 0.0001)
               || (0 == backward && tret[0] <= tjd_start + 0.0001)) {
                 /*t= tjd + direction * dadd;*/
@@ -1694,6 +1726,11 @@ namespace SwissEphNet.CPort
             if (0 == (ifltype & SwissEph.SE_ECL_NONCENTRAL) && (retflag & SwissEph.SE_ECL_NONCENTRAL) != 0) {
                 /*t= tjd + direction * dadd;*/
                 t = tjd + direction * 20;
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 tjd = t;
                 goto next_try;
             }
@@ -1701,6 +1738,11 @@ namespace SwissEphNet.CPort
             if (0 == (ifltype & SwissEph.SE_ECL_CENTRAL) && (retflag & SwissEph.SE_ECL_CENTRAL) != 0) {
                 /*t= tjd + direction * dadd;*/
                 t = tjd + direction * 20;
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 tjd = t;
                 goto next_try;
             }
@@ -1708,6 +1750,11 @@ namespace SwissEphNet.CPort
             if (0 == (ifltype & SwissEph.SE_ECL_ANNULAR) && (retflag & SwissEph.SE_ECL_ANNULAR) != 0) {
                 /*t= tjd + direction * dadd;*/
                 t = tjd + direction * 20;
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 tjd = t;
                 goto next_try;
             }
@@ -1715,6 +1762,11 @@ namespace SwissEphNet.CPort
             if (0 == (ifltype & SwissEph.SE_ECL_PARTIAL) && (retflag & SwissEph.SE_ECL_PARTIAL) != 0) {
                 /*t= tjd + direction * dadd;*/
                 t = tjd + direction * 20;
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 tjd = t;
                 goto next_try;
             }
@@ -1722,6 +1774,11 @@ namespace SwissEphNet.CPort
             if (0 == (ifltype & (SwissEph.SE_ECL_TOTAL | SwissEph.SE_ECL_ANNULAR_TOTAL)) && (retflag & SwissEph.SE_ECL_TOTAL) != 0) {
                 /*t= tjd + direction * dadd;*/
                 t = tjd + direction * 20;
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 tjd = t;
                 goto next_try;
             }
@@ -1809,6 +1866,11 @@ namespace SwissEphNet.CPort
             if (0 == (ifltype & SwissEph.SE_ECL_TOTAL) && (retflag & SwissEph.SE_ECL_TOTAL) != 0) {
                 /*t= tjd + direction * dadd;*/
                 t = tjd + direction * 20;
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 tjd = t;
                 goto next_try;
             }
@@ -1816,6 +1878,11 @@ namespace SwissEphNet.CPort
             if (0 == (ifltype & SwissEph.SE_ECL_ANNULAR_TOTAL) && (retflag & SwissEph.SE_ECL_ANNULAR_TOTAL) != 0) {
                 /*t= tjd + direction * dadd;*/
                 t = tjd + direction * 20;
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 tjd = t;
                 goto next_try;
             }
@@ -1922,7 +1989,13 @@ namespace SwissEphNet.CPort
              double[] geopos, double[] tret, double[] attr, bool backward, ref string serr) {
             Int32 retflag = 0, retflag2 = 0;
             double[] geopos2 = new double[20], dcore = new double[10];
+            if (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX)
+            {
+                serr = C.sprintf("location for eclipses must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return Sweph.ERR;
+            }
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_start, ifl, 0);
             if ((retflag = eclipse_when_loc(tjd_start, ifl, geopos, tret, attr, backward, ref serr)) <= 0)
                 return retflag;
             /* 
@@ -1969,9 +2042,16 @@ namespace SwissEphNet.CPort
             double[] geopos2 = new double[20], dcore = new double[10];
             /* function calls for Pluto with asteroid number 134340
              * are treated as calls for Pluto as main body SE_PLUTO */
+            if (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX)
+            {
+                serr = C.sprintf("location for occultations must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return Sweph.ERR;
+            }
+            if (ipl < 0) ipl = 0;
             if (ipl == SwissEph.SE_AST_OFFSET + 134340)
                 ipl = SwissEph.SE_PLUTO;
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_start, ifl, 0);
             if ((retflag = occult_when_loc(tjd_start, ipl, starname, ifl, geopos, tret, attr, backward ? 1 : 0, ref serr)) <= 0)
                 return retflag;
             /* 
@@ -2050,7 +2130,7 @@ namespace SwissEphNet.CPort
             SE.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             dtdiv = 2;
             dtstart = 0.5;
-            if (tjd < 1900000)	/* because above formula is not good (delta t?) */
+            if (tjd < 1900000 || tjd > 2500000)	/* because above formula is not good (delta t?) */
                 dtstart = 2;
             for (dt = dtstart;
                  dt > 0.00001;
@@ -2100,6 +2180,7 @@ namespace SwissEphNet.CPort
                 goto next_try;
             }
             tret[0] = tjd - SE.swe_deltat(tjd);
+            tret[0] = tjd - SE.swe_deltat(tret[0]);
             if ((backward && tret[0] >= tjd_start - 0.0001)
               || (!backward && tret[0] <= tjd_start + 0.0001)) {
                 if (backward)
@@ -2258,11 +2339,20 @@ namespace SwissEphNet.CPort
                 goto next_try;
             }
             //#endif
-            if (swe_rise_trans(tret[1] - 0.1, SwissEph.SE_SUN, null, iflag, SwissEph.SE_CALC_RISE | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjdr, ref serr) == SwissEph.ERR)
+            if (swe_rise_trans(tret[1] - 0.001, SwissEph.SE_SUN, null, iflag, SwissEph.SE_CALC_RISE | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjdr, ref serr) == SwissEph.ERR)
                 return SwissEph.ERR;
-            if (swe_rise_trans(tret[1] - 0.1, SwissEph.SE_SUN, null, iflag, SwissEph.SE_CALC_SET | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjds, ref serr) == SwissEph.ERR)
+            if (swe_rise_trans(tret[1] - 0.001, SwissEph.SE_SUN, null, iflag, SwissEph.SE_CALC_SET | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjds, ref serr) == SwissEph.ERR)
                 return SwissEph.ERR;
-            if (tjdr > tret[1] && tjdr < tret[4]) {
+            if (tjds < tret[1] || (tjds > tjdr && tjdr > tret[4]))
+            {
+                if (backward)
+                    K--;
+                else
+                    K++;
+                goto next_try;
+            }
+            if (tjdr > tret[1] && tjdr < tret[4])
+            {
                 tret[5] = tjdr;
                 if (0 == (retflag & SwissEph.SE_ECL_MAX_VISIBLE)) {
                     tret[0] = tjdr;
@@ -2301,13 +2391,11 @@ namespace SwissEphNet.CPort
             double twohr = 2.0 / 24.0;
             double tenmin = 10.0 / 24.0 / 60.0;
             double dt1 = 0, dt2 = 0, dtdiv, dtstart;
-            double dadd2 = 6;
-            int nstartpos = 10;
-            double drad;
+            double dadd2 = 1;
+            double drad, dl;
             Int32 iflag = SwissEph.SEFLG_TOPOCTR | ifl;
             Int32 iflaggeo = iflag & ~SwissEph.SEFLG_TOPOCTR;
             Int32 iflagcart = iflag | SwissEph.SEFLG_XYZ;
-            Int32 iflagcartgeo = iflaggeo | SwissEph.SEFLG_XYZ;
             int direction = 1;
             Int32 one_try = backward & SwissEph.SE_ECL_ONE_TRY;
             bool stop_after_this = false;
@@ -2318,29 +2406,50 @@ namespace SwissEphNet.CPort
                 tret[i] = 0;
             if (backward != 0)
                 direction = -1;
-            t = tjd_start - direction * 0.1;
-            tjd_start = t;
+            //t = tjd_start - direction * 0.1;
+            //tjd_start = t;
+            t = tjd_start;
             tjd = tjd_start;
         next_try:
-            for (i = 0; i < nstartpos; i++, t += direction * dadd2) {
-                if (calc_planet_star(t, ipl, starname, iflagcartgeo, xs, ref serr) == SwissEph.ERR)
+            if (calc_planet_star(t, ipl, starname, iflaggeo, ls, ref serr) == SwissEph.ERR)
+                return SwissEph.ERR;
+            /* fixed stars with an ecliptic latitude > 7  or < -7 cannot have 
+             * an occultation. Even lunar parallax andd proper motion of star
+             * will never allow it. */
+            if (Math.Abs(ls[1]) > 7 && !String.IsNullOrWhiteSpace(starname))
+            {
+                serr = C.sprintf("occultation never occurs: star %s has ecl. lat. %.1f", starname, ls[1]);
+                return SwissEph.ERR;
+            }
+            if (SE.swe_calc(t, SwissEph.SE_MOON, iflaggeo, lm, ref serr) == SwissEph.ERR)
+                return SwissEph.ERR;
+            dl = SE.swe_degnorm(ls[0] - lm[0]);
+            if (direction < 0)
+                dl -= 360;
+            /* get rough conjunction in ecliptic longitude */
+            while (Math.Abs(dl) > 0.1)
+            {
+                t += dl / 13;
+                if (calc_planet_star(t, ipl, starname, iflaggeo, ls, ref serr) == SwissEph.ERR)
                     return SwissEph.ERR;
-                if (SE.swe_calc(t, SwissEph.SE_MOON, iflagcartgeo, xm, ref serr) == SwissEph.ERR)
+                if (SE.swe_calc(t, SwissEph.SE_MOON, iflaggeo, lm, ref serr) == SwissEph.ERR)
                     return SwissEph.ERR;
-                dc[i] = Math.Acos(SE.SwephLib.swi_dot_prod_unit(xs, xm)) * SwissEph.RADTODEG;
-                if (i > 1 && dc[i] > dc[i - 1] && dc[i - 2] > dc[i - 1]) {
-                    tjd = t - direction * dadd2;
-                    t = tjd;
-                    break;
-                } else if (Math.Abs(tjd - t) > (30 - dadd2 * 0.8)) {
-                    t = tjd;
-                    break; /* use initial tjd */
-                } else if (i == nstartpos - 1) {
-                    for (j = 0; j < nstartpos; j++)
-                        trace("%f ", dc[j]);
-                    serr = "swe_lun_occult_when_loc(): problem planet\n";
-                    return SwissEph.ERR;
+                dl = SE.swe_degnorm(ls[0] - lm[0]);
+                if (dl > 180) dl -= 360;
+            }
+            tjd = t;
+            /* difference in latitude too big for an occultation */
+            drad = Math.Abs(ls[1] - lm[1]);
+            if (drad > 2)
+            {
+                if (one_try != 0)
+                {
+                    tret[0] = t + direction; /* return a date suitable for next try */
+                    return 0;
                 }
+                t += direction * 20;
+                tjd = t;
+                goto next_try;
             }
             /*
              * radius of planet disk in AU
@@ -2360,7 +2469,7 @@ namespace SwissEphNet.CPort
                  dt > 0.00001;
                  dt /= dtdiv) {
                 if (dt < 0.01)
-                    dtdiv = 3;
+                    dtdiv = 2;
                 for (i = 0, t = tjd - dt; i <= 2; i++, t += dt) {
                     /* this takes some time, but is necessary to avoid
                      * missing an eclipse */
@@ -2372,8 +2481,8 @@ namespace SwissEphNet.CPort
                         return SwissEph.ERR;
                     if (SE.swe_calc(t, SwissEph.SE_MOON, iflag, lm, ref serr) == SwissEph.ERR)
                         return SwissEph.ERR;
-                    if (dt < 1 && Math.Abs(ls[1] - lm[1]) > 2) {
-                        if (one_try != 0) {
+                    if (dt < 0.1 && Math.Abs(ls[1] - lm[1]) > 2) {
+                        if (one_try != 0 || stop_after_this) {
                             stop_after_this = true;
                         } else {
                             /*t = tjd + direction * 2;*/
@@ -2418,9 +2527,15 @@ namespace SwissEphNet.CPort
                 goto next_try;
             }
             tret[0] = tjd - SE.swe_deltat(tjd);
+            tret[0] = tjd - SE.swe_deltat(tret[0]);
             if ((backward != 0 && tret[0] >= tjd_start - 0.0001)
               || (0 == backward && tret[0] <= tjd_start + 0.0001)) {
                 /* t = tjd + direction;*/
+                if (one_try!=0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 t = tjd + direction * 20;
                 tjd = t;
                 goto next_try;
@@ -2433,11 +2548,12 @@ namespace SwissEphNet.CPort
                 retflag = SwissEph.SE_ECL_PARTIAL;
             dctrmin = dctr;
             /* contacts 2 and 3 */
-            if (dctr > Math.Abs(rsminusrm))  /* partial, no 2nd and 3rd contact */
+            if (dctr > Math.Abs(rsminusrm)) { /* partial, no 2nd and 3rd contact */
                 tret[2] = tret[3] = 0;
-            else {
+            } else {
                 dc[1] = Math.Abs(rsminusrm) - dctrmin;
-                for (i = 0, t = tjd - twomin; i <= 2; i += 2, t = tjd + twomin) {
+                for (i = 0, t = tjd - twomin; i <= 2; i += 2, t = tjd + twomin)
+                {
                     if (calc_planet_star(t, ipl, starname, iflagcart, xs, ref serr) == SwissEph.ERR)
                         return SwissEph.ERR;
                     if (SE.swe_calc(t, SwissEph.SE_MOON, iflagcart, xm, ref serr) == SwissEph.ERR)
@@ -2448,7 +2564,8 @@ namespace SwissEphNet.CPort
                     rmoon *= 0.99916; /* gives better accuracy for 2nd/3rd contacts */
                     rsun = Math.Asin(drad / ds) * SwissEph.RADTODEG;
                     rsminusrm = rsun - rmoon;
-                    for (k = 0; k < 3; k++) {
+                    for (k = 0; k < 3; k++)
+                    {
                         x1[k] = xs[k] / ds /*ls[2]*/;
                         x2[k] = xm[k] / dm /*lm[2]*/;
                     }
@@ -2458,15 +2575,20 @@ namespace SwissEphNet.CPort
                 find_zero(dc[0], dc[1], dc[2], twomin, out dt1, out dt2);
                 tret[2] = tjd + dt1 + twomin;
                 tret[3] = tjd + dt2 + twomin;
-                for (m = 0, dt = tensec; m < 2; m++, dt /= 10) {
-                    for (j = 2; j <= 3; j++) {
+                for (m = 0, dt = tensec; m < 2; m++, dt /= 10)
+                {
+                    for (j = 2; j <= 3; j++)
+                    {
                         if (calc_planet_star(tret[j], ipl, starname, iflagcart | SwissEph.SEFLG_SPEED, xs, ref serr) == SwissEph.ERR)
                             return SwissEph.ERR;
                         if (SE.swe_calc(tret[j], SwissEph.SE_MOON, iflagcart | SwissEph.SEFLG_SPEED, xm, ref serr) == SwissEph.ERR)
                             return SwissEph.ERR;
-                        for (i = 0; i < 2; i++) {
-                            if (i == 1) {
-                                for (k = 0; k < 3; k++) {
+                        for (i = 0; i < 2; i++)
+                        {
+                            if (i == 1)
+                            {
+                                for (k = 0; k < 3; k++)
+                                {
                                     xs[k] -= xs[k + 3] * dt;
                                     xm[k] -= xm[k + 3] * dt;
                                 }
@@ -2477,7 +2599,8 @@ namespace SwissEphNet.CPort
                             rmoon *= 0.99916; /* gives better accuracy for 2nd/3rd contacts */
                             rsun = Math.Asin(drad / ds) * SwissEph.RADTODEG;
                             rsminusrm = rsun - rmoon;
-                            for (k = 0; k < 3; k++) {
+                            for (k = 0; k < 3; k++)
+                            {
                                 x1[k] = xs[k] / ds /*ls[2]*/;
                                 x2[k] = xm[k] / dm /*lm[2]*/;
                             }
@@ -2569,6 +2692,11 @@ namespace SwissEphNet.CPort
             //#if 1
             if (0 == (retflag & SwissEph.SE_ECL_VISIBLE)) {
                 /* t = tjd + direction;*/
+                if (one_try != 0)
+                {
+                    tret[0] = tjd;
+                    return 0;
+                }
                 t = tjd + direction * 20;
                 tjd = t;
                 goto next_try;
@@ -3021,11 +3149,18 @@ namespace SwissEphNet.CPort
             /* attention: geopos[] is not used so far; may be NULL */
             if (geopos != null)
                 geopos[0] = geopos[0]; /* to shut up mint */
+            if (geopos != null && (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX))
+            {
+                serr = C.sprintf("location for eclipses must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return Sweph.ERR;
+            }
             ifl = ifl & ~SwissEph.SEFLG_TOPOCTR;
             ifl &= ~(SwissEph.SEFLG_JPLHOR | SwissEph.SEFLG_JPLHOR_APPROX);
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, ifl, 0);
             retc = lun_eclipse_how(tjd_ut, ifl, attr, dcore, ref serr);
-            if (geopos == null)
+            if (geopos == null) {
                 return retc;
+            }
             /* 
              * azimuth and altitude of moon
              */
@@ -3190,7 +3325,7 @@ namespace SwissEphNet.CPort
              double[] tret, bool backward, ref string serr) {
             int i, j, m, n, o, i1 = 0, i2 = 0;
             Int32 retflag = 0, retflag2 = 0;
-            double t, tjd, dt, dtint, dta, dtb;
+            double t, tjd, tjd2, dt, dtint, dta, dtb;
             double T, T2, T3, T4, K, F, M, Mm;
             double E, Ff, F1, A1, Om;
             double[] xs = new double[6], xm = new double[6]; double dm, ds;
@@ -3207,6 +3342,7 @@ namespace SwissEphNet.CPort
             Int32 iflag;
             Int32 iflagcart;
             ifl &= SEFLG_EPHMASK;
+            SE.SwephLib.swi_set_tid_acc(tjd_start, ifl, 0);
             iflag = SwissEph.SEFLG_EQUATORIAL | ifl;
             iflagcart = iflag | SwissEph.SEFLG_XYZ;
             if (ifltype == 0)
@@ -3281,7 +3417,7 @@ namespace SwissEphNet.CPort
              * the function lun_eclipse_how().
              */
             dtstart = 0.1;
-            if (tjd < 2000000)
+            if (tjd < 2000000 || tjd > 2500000)
                 dtstart = 5;
             dtdiv = 4;
             for (j = 0, dt = dtstart;
@@ -3310,7 +3446,9 @@ namespace SwissEphNet.CPort
                 find_maximum(dc[0], dc[1], dc[2], dt, out dtint, out dctr);
                 tjd += dtint + dt;
             }
-            tjd = tjd - SE.swe_deltat(tjd);
+            tjd2 = tjd - SE.swe_deltat(tjd);
+            tjd2 = tjd - SE.swe_deltat(tjd2);
+            tjd = tjd - SE.swe_deltat(tjd2);
             if ((retflag = swe_lun_eclipse_how(tjd, ifl, null, attr, ref serr)) == SwissEph.ERR)
                 return retflag;
             if (retflag == 0) {
@@ -3432,6 +3570,11 @@ namespace SwissEphNet.CPort
             Int32 retflag = 0, retflag2 = 0;
             double tjdr = 0, tjds = 0, tjd_max = 0;
             int i;
+            if (geopos != null && (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX))
+            {
+                serr = C.sprintf("location for eclipses must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return Sweph.ERR;
+            }
             ifl &= ~(SwissEph.SEFLG_JPLHOR | SwissEph.SEFLG_JPLHOR_APPROX);
         next_lun_ecl:
             if ((retflag = swe_lun_eclipse_when(tjd_start, ifl, 0, tret, backward, ref serr)) == SwissEph.ERR) {
@@ -3468,10 +3611,18 @@ namespace SwissEphNet.CPort
                 goto next_lun_ecl;
             }
             /* moon rise and moon set */
-            if (swe_rise_trans(tret[6] - 0.1, SwissEph.SE_MOON, null, ifl, SwissEph.SE_CALC_RISE | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjdr, ref serr) == SwissEph.ERR)
+            if (swe_rise_trans(tret[6] - 0.001, SwissEph.SE_MOON, null, ifl, SwissEph.SE_CALC_RISE | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjdr, ref serr) == SwissEph.ERR)
                 return SwissEph.ERR;
-            if (swe_rise_trans(tret[6] - 0.1, SwissEph.SE_MOON, null, ifl, SwissEph.SE_CALC_SET | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjds, ref serr) == SwissEph.ERR)
+            if (swe_rise_trans(tret[6] - 0.001, SwissEph.SE_MOON, null, ifl, SwissEph.SE_CALC_SET | SwissEph.SE_BIT_DISC_BOTTOM, geopos, 0, 0, ref tjds, ref serr) == SwissEph.ERR)
                 return SwissEph.ERR;
+            if (tjds < tret[6] || (tjds > tjdr && tjdr > tret[7]))
+            {
+                if (backward)
+                    tjd_start = tret[0] - 25;
+                else
+                    tjd_start = tret[0] + 25;
+                goto next_lun_ecl;
+            }
             tjd_max = tret[0];
             if (tjdr > tret[6] && tjdr < tret[7]) {
                 tret[6] = 0;
@@ -3498,6 +3649,14 @@ namespace SwissEphNet.CPort
             tret[0] = tjd_max;
             if ((retflag2 = swe_lun_eclipse_how(tjd_max, ifl, geopos, attr, ref serr)) == SwissEph.ERR)
                 return SwissEph.ERR;
+            if (retflag2 == 0)
+            {
+                if (backward)
+                    tjd_start = tret[0] - 25;
+                else
+                    tjd_start = tret[0] + 25;
+                goto next_lun_ecl;
+            }
             retflag |= (retflag2 & SwissEph.SE_ECL_ALLTYPES_LUNAR);
             return retflag;
         }
@@ -3762,6 +3921,7 @@ namespace SwissEphNet.CPort
         }
 
         public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, iflag, 0);
             return swe_pheno(tjd_ut + SE.swe_deltat(tjd_ut), ipl, iflag, attr, ref serr);
         }
 
@@ -3857,6 +4017,12 @@ namespace SwissEphNet.CPort
             double t, te, tt, dt, twohrs = 1.0 / 12.0;
             double curdist;
             bool do_fixstar = !String.IsNullOrEmpty(starname);
+            if (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX)
+            {
+                serr = C.sprintf("location for swe_rise_trans() must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                return Sweph.ERR;
+            }
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, epheflag, 0);
             /* function calls for Pluto with asteroid number 134340
              * are treated as calls for Pluto as main body SE_PLUTO */
             if (ipl == SwissEph.SE_AST_OFFSET + 134340)
@@ -5013,11 +5179,15 @@ namespace SwissEphNet.CPort
                 /********************** 
                  * radians to degrees *
                  **********************/
-                for (j = 0; j < 2; j++) {
-                    pldat.xreturn[j] *= SwissEph.RADTODEG;		/* ecliptic */
-                    pldat.xreturn[j + 3] *= SwissEph.RADTODEG;
-                    pldat.xreturn[j + 12] *= SwissEph.RADTODEG;	/* equator */
-                    pldat.xreturn[j + 15] *= SwissEph.RADTODEG;
+                if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
+                {
+                    for (j = 0; j < 2; j++)
+                    {
+                        pldat.xreturn[j] *= SwissEph.RADTODEG;		/* ecliptic */
+                        pldat.xreturn[j + 3] *= SwissEph.RADTODEG;
+                        pldat.xreturn[j + 12] *= SwissEph.RADTODEG;	/* equator */
+                        pldat.xreturn[j + 15] *= SwissEph.RADTODEG;
+                    }
                 }
                 if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0) {
                     for (j = 0; j <= 5; j++)
@@ -5049,6 +5219,7 @@ namespace SwissEphNet.CPort
                               double[] xnasc, double[] xndsc,
                               double[] xperi, double[] xaphe,
                               ref string serr) {
+            SE.SwephLib.swi_set_tid_acc(tjd_ut, iflag, 0);
             return swe_nod_aps(tjd_ut + SE.swe_deltat(tjd_ut),
                                 ipl, iflag, method, xnasc, xndsc, xperi, xaphe,
                                 ref serr);

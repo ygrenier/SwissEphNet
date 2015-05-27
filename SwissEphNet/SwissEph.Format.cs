@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SwissEphNet
 {
-	/// <summary>
-	/// Some value formats
-	/// </summary>
+    /// <summary>
+    /// Some value formats
+    /// </summary>
     partial class SwissEph
     {
 
@@ -26,9 +26,9 @@ namespace SwissEphNet
             "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
         };
 
-		/// <summary>
-		/// Format to Degrees Minutes Seconds like dms() function in swewin.exe and swetest.exe.
-		/// </summary>
+        /// <summary>
+        /// Format to Degrees Minutes Seconds like dms() function in swewin.exe and swetest.exe.
+        /// </summary>
         public String DMS(double value, int iFlag, bool outputExtraPrecision = false) {
             if (double.IsNaN(value)) return "nan";
             int izod;
@@ -125,8 +125,8 @@ namespace SwissEphNet
         }
 
         /// <summary>
-		/// Format value to degrees/minutes/seconds
-		/// </summary>
+        /// Format value to degrees/minutes/seconds
+        /// </summary>
         /// <remarks>
         /// <list type="bullet">
         /// <item>d : Degrees</item>
@@ -177,7 +177,7 @@ namespace SwissEphNet
                 case "Z1": format = "gg zz mm'ss.pppp"; break;
                 case "Z2": format = "gg zz mm'ss\""; break;
             }
-			// Elements calculation
+            // Elements calculation
             var sgn = Math.Sign(value);
             double avalue = Math.Abs(value);
             int deg = (int)value;
@@ -241,7 +241,7 @@ namespace SwissEphNet
                         switch (l) {
                             case 1:
                                 result.Append(ZodiacSymbols[znum % 12]);
-								break;
+                                break;
                             case 2:
                                 result.Append(ZodiacShortNames[znum % 12]);
                                 break;

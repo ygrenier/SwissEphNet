@@ -190,11 +190,41 @@ static string infocmd3 = @"\
         commas separated, + for east and north. If none are given,\n\
         Greenwich is used: 0,51.5,0\n\
      sidereal astrology:\n\
-    -ay..   ayanamsa, with number of method, e.g. ay0 for Fagan/Bradley\n\
-    -sid..    sidereal, with number of method; 'sid0' for Fagan/Bradley\n\
-                                               'sid1' for Lahiri\n\
+    -ay..   ayanamsha, with number of method, e.g. ay0 for Fagan/Bradley\n\
+    -sid..    sidereal, with number of method (see below)\n\
     -sidt0..  sidereal, projection on ecliptic of t0 \n\
     -sidsp..  sidereal, projection on solar system plane \n\
+           number of ayanamsha method:\n\
+       0 for Fagan/Bradley\n\
+       1 for Lahiri\n\
+       2 for De Luce\n\
+       3 for Raman\n\
+       4 for Ushashashi\n\
+       5 for Krishnamurti\n\
+       6 for Djwhal Khul\n\
+       7 for Yukteshwar\n\
+       8 for J.N. Bhasin\n\
+       9 for Babylonian/Kugler 1\n\
+       10 for Babylonian/Kugler 2\n\
+       11 for Babylonian/Kugler 3\n\
+       12 for Babylonian/Huber\n\
+       13 for Babylonian/Eta Piscium\n\
+       14 for Babylonian/Aldebaran = 15 Tau\n\
+       15 for Hipparchos\n\
+       16 for Sassanian\n\
+       17 for Galact. Center = 0 Sag\n\
+       18 for J2000\n\
+       19 for J1900\n\
+       20 for B1950\n\
+       21 for Suryasiddhanta\n\
+       22 for Suryasiddhanta, mean Sun\n\
+       23 for Aryabhata\n\
+       24 for Aryabhata, mean Sun\n\
+       25 for SS Citra\n\
+       26 for SS Revati\n\
+       27 for True Citra\n\
+       28 for True Revati\n\
+       29 for True Pushya\n\
      ephemeris specifications:\n\
         -edirPATH change the directory of the ephemeris files \n\
         -eswe   swiss ephemeris\n\
@@ -208,6 +238,8 @@ static string infocmd3 = @"\
         -j2000            no precession (i.e. J2000 positions)\n\
         -icrs             ICRS (use Internat. Celestial Reference System)\n\
         -nonut            no nutation \n\
+";
+static string infocmd4 = @"\
         -speed            calculate high precision speed \n\
         -speed3           'low' precision speed from 3 positions \n\
                           do not use this option. -speed parameter\n\
@@ -221,8 +253,6 @@ static string infocmd3 = @"\
         -testaa97\n\
         -roundsec         round to seconds\n\
         -roundmin         round to minutes\n\
-";
-static string infocmd4 = @"\
      observer position:\n\
         -hel    compute heliocentric positions\n\
         -bary   compute barycentric positions (bar. earth instead of node) \n\
@@ -249,6 +279,8 @@ static string infocmd4 = @"\
         -occult occultation of planet or star by the moon. Use -p to \n\
                 specify planet (-pf -xfAldebaran for stars) \n\
                 output format same as with -solecl\n\
+";
+static string infocmd5 = @"\
         -lunecl lunar eclipse\n\
                 output 1st line:\n\
                   eclipse date,\n\
@@ -257,8 +289,6 @@ static string infocmd4 = @"\
                 output 2nd line:\n\
                   6 contacts for start and end of penumbral, partial, and\n\
                   total phase\n\
-";
-static string infocmd5 = @"\
         -local  only with -solecl or -occult, if the next event of this\n\
                 kind is wanted for a given geogr. position.\n\
                 Use -geopos[long,lat,elev] to specify that position.\n\
@@ -289,12 +319,13 @@ static string infocmd5 = @"\
         -penumbral penumbral lunar eclipse (only with -lunecl)\n\
         -central central eclipse (only with -solecl, nonlocal)\n\
         -noncentral non-central eclipse (only with -solecl, nonlocal)\n\
+";
+static string infocmd6 = @"\
      specifications for risings and settings:\n\
         -norefrac   neglect refraction (with option -rise)\n\
         -disccenter find rise of disc center (with option -rise)\n\
+        -discbottom find rise of disc center (with option -rise)\n\
     -hindu      hindu version of sunrise (with option -rise)\n\
-";
-static string infocmd6 = @"\
      specifications for heliacal events:\n\
         -at[press,temp,rhum,visr]:\n\
                 pressure in hPa\n\
@@ -559,6 +590,10 @@ static string infoexamp = @"\n\
         const int MODE_HOUSE = 1;
         const int MODE_LABEL = 2;
 
+        const int SEARCH_RANGE_LUNAR_CYCLES = 20000;
+
+        static int OUTPUT_EXTRA_PRECISION = 0;
+
         static string se_pname = String.Empty;
         static string[] zod_nam = new String[]{"ar", "ta", "ge", "cn", "le", "vi", 
                                   "li", "sc", "sa", "cp", "aq", "pi"};
@@ -616,6 +651,10 @@ static string infoexamp = @"\n\
         static Int32 norefrac = 0;
         static Int32 disccenter = 0;
         static string ephepath = String.Empty;
+        static Int32 discbottom = 0;
+        /* for test of old models only */
+        static Int32[] astro_models = new Int32[20] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        static bool do_set_astro_models = false;
 
         const int SP_LUNAR_ECLIPSE = 1;
         const int SP_SOLAR_ECLIPSE = 2;
@@ -668,7 +707,6 @@ static string infoexamp = @"\n\
             datm[0] = 0; datm[1] = 0; datm[2] = 0; datm[3] = 0;
             dobs[0] = 0; dobs[1] = 0;
             dobs[2] = 0; dobs[3] = 0; dobs[4] = 0; dobs[5] = 0;
-            /*  swe_set_tid_acc(-25.858); * to test delta t output */
             serr = serr_save = serr_warn = sdate_save = String.Empty;
             //# ifdef MACOS
             //  argc = ccommand(&argv); /* display the arguments window */    
@@ -707,26 +745,26 @@ static string infoexamp = @"\n\
                     } else if (argv[i].StartsWith("-ay")) {
                         do_ayanamsa = true;
                         sid_mode = int.Parse(argv[i] + 3);
-                        sweph.swe_set_sid_mode(sid_mode, 0, 0);
+                        //sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (argv[i].StartsWith("-sidt0")) {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 6);
                         if (sid_mode == 0)
                             sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                         sid_mode |= SwissEph.SE_SIDBIT_ECL_T0;
-                        sweph.swe_set_sid_mode(sid_mode, 0, 0);
+                        //sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (argv[i].StartsWith("-sidsp")) {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 6);
                         if (sid_mode == 0)
                             sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                         sid_mode |= SwissEph.SE_SIDBIT_SSY_PLANE;
-                        sweph.swe_set_sid_mode(sid_mode, 0, 0);
+                        //sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (argv[i].StartsWith("-sid")) {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 4);
-                        if (sid_mode > 0)
-                            sweph.swe_set_sid_mode(sid_mode, 0, 0);
+                        //if (sid_mode > 0)
+                        //    sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     } else if (String.Compare(argv[i], "-jplhora") == 0) {
                         iflag |= SwissEph.SEFLG_JPLHOR_APPROX;
                     } else if (String.Compare(argv[i], "-jplhor") == 0) {
@@ -847,10 +885,33 @@ static string infoexamp = @"\n\
                     } else if (String.Compare(argv[i], "-hindu") == 0) {
                         norefrac = 1;
                         disccenter = 1;
+                    } else if (String.Compare(argv[i], "-discbottom") == 0) {
+                        discbottom = 1;
                     } else if (String.Compare(argv[i], "-metr") == 0) {
                         special_event = SP_MERIDIAN_TRANSIT;
                         have_geopos = true;
-                    } else if (argv[i].StartsWith("-hev")) {
+                        /* secret test feature for dieter */
+                    } else if (argv[i].StartsWith("-prec")) {
+                        j = 0;
+                        //astro_models[j] = atoi(argv[i] + 5);
+                        //sp = argv[i];
+                        //while ((sp2 = strchr(sp, ',')) != NULL)
+                        //{
+                        //    sp = sp2 + 1;
+                        //    j++;
+                        //    astro_models[j] = atoi(sp);
+                        //}
+                        var parts = argv[i].Substring(5).Split(',');
+                        foreach (var p in parts)
+                        {
+                            int xx = 0;
+                            int.TryParse(p, out xx);
+                            j++;
+                            astro_models[j] = xx;
+                        }
+                        do_set_astro_models = true;
+                    } else if (argv[i].StartsWith("-hev"))
+                    {
                         special_event = SP_HELIACAL;
                         search_flag = 0;
                         if (argv[i].Length > 4)
@@ -919,7 +980,11 @@ static string infoexamp = @"\n\
                         round_flag |= BIT_ROUND_SEC;
                     } else if (String.Compare(argv[i], "-roundmin") == 0) {
                         round_flag |= BIT_ROUND_MIN;
-                    } else if (argv[i].StartsWith("-t")) {
+                    /*} else if (strncmp(argv[i], "-timeout", 8) == 0) {
+                          swe_set_timeout(atoi(argv[i]) + 8);*/
+                    }
+                    else if (argv[i].StartsWith("-t"))
+                    {
                         if (argv[i].Length > 2) {
                             s1 = argv[i].Substring(2);
                             if ((spi = s1.IndexOf(':')) >= 0) {
@@ -978,10 +1043,6 @@ static string infoexamp = @"\n\
                     if (special_event == SP_OCCULTATION && ipl == 1)
                         ipl = 2; /* no occultation of moon by moon */
                 }
-                geopos[0] = top_long;
-                geopos[1] = top_lat;
-                geopos[2] = top_elev;
-                sweph.swe_set_topo(top_long, top_lat, top_elev);
                 //#if HPUNIX
                 //  gethostname (hostname, 80);
                 //  if (strstr(hostname, "as10") != NULL) 
@@ -994,7 +1055,7 @@ static string infoexamp = @"\n\
                     }
                 }
                 iflag = (iflag & ~SEFLG_EPHMASK) | whicheph;
-                if (fmt.IndexOfAny("SsQ".ToCharArray()) >= 0)
+                if (fmt.IndexOfAny("SsQ".ToCharArray()) >= 0 && (iflag & SwissEph.SEFLG_SPEED3) == 0)
                     iflag |= SwissEph.SEFLG_SPEED;
                 if (String.IsNullOrEmpty(ephepath)) {
                     if (make_ephemeris_path(iflag, argv[0], ref ephepath) == SwissEph.ERR) {
@@ -1005,7 +1066,18 @@ static string infoexamp = @"\n\
                 sweph.swe_set_ephe_path(ephepath);
                 if ((whicheph & SwissEph.SEFLG_JPLEPH) != 0)
                     sweph.swe_set_jpl_file(fname);
-                while (true) {
+                /* the following is only a test feature */
+                if (do_set_astro_models)
+                    sweph.swe_set_astro_models(astro_models); /* secret test feature for dieter */
+                if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0 || do_ayanamsa)
+                    sweph.swe_set_sid_mode(sid_mode, 0, 0);
+                geopos[0] = top_long;
+                geopos[1] = top_lat;
+                geopos[2] = top_elev;
+                sweph.swe_set_topo(top_long, top_lat, top_elev);
+                /*swe_set_tid_acc(-25.82);  * to test delta t output */
+                while (true)
+                {
                     serr = serr_save = serr_warn = String.Empty;
                     if (begindate == null) {
                         Console.Write("\nDate ?");
@@ -1151,7 +1223,7 @@ static string infoexamp = @"\n\
                             printf("\nET: %.11f", te);
                             if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
                                 daya = sweph.swe_get_ayanamsa(te);
-                                printf("   ayanamsa = %s", dms(daya, round_flag));
+                                printf("   ayanamsa = %s (%s)", dms(daya, round_flag), sweph.swe_get_ayanamsa_name(sid_mode));
                             }
                             if (have_geopos) {
                                 printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
@@ -1593,7 +1665,10 @@ static string infoexamp = @"\n\
                     case 'l':
                         if (is_label) { printf("long"); break; }
                     ldec:
-                        printf("%# 11.7f", x[0]);
+                        if (OUTPUT_EXTRA_PRECISION != 0)
+                            printf("%# 11.9f", x[0]);
+                        else
+                            printf("%# 11.7f", x[0]);
                         break;
                     case 'G':
                         if (is_label) { printf("housPos"); break; }
@@ -1719,7 +1794,10 @@ static string infoexamp = @"\n\
                         break;
                     case 'b':
                         if (is_label) { printf("lat"); break; }
-                        printf("%# 11.7f", x[1]);
+                        if (OUTPUT_EXTRA_PRECISION != 0)
+                            printf("%# 11.9f", x[1]);
+                        else
+                            printf("%# 11.7f", x[1]);
                         break;
                     case 'A':     /* right ascension */
                         if (is_label) { printf("RA"); break; }
@@ -1727,7 +1805,10 @@ static string infoexamp = @"\n\
                         break;
                     case 'a':     /* right ascension */
                         if (is_label) { printf("RA"); break; }
-                        printf("%# 11.7f", xequ[0]);
+                        if (OUTPUT_EXTRA_PRECISION != 0)
+                            printf("%# 11.9f", xequ[0]);
+                        else
+                            printf("%# 11.7f", xequ[0]);
                         break;
                     case 'D':     /* declination */
                         if (is_label) { printf("decl"); break; }
@@ -1735,7 +1816,10 @@ static string infoexamp = @"\n\
                         break;
                     case 'd':     /* declination */
                         if (is_label) { printf("decl"); break; }
-                        printf("%# 11.7f", xequ[1]);
+                        if (OUTPUT_EXTRA_PRECISION != 0)
+                            printf("%# 11.9f", xequ[1]);
+                        else
+                            printf("%# 11.7f", xequ[1]);
                         break;
                     case 'I':     /* azimuth */
                         if (is_label) { printf("azimuth"); break; }
@@ -1922,7 +2006,6 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static int OUTPUT_EXTRA_PRECISION = 0;
         static string dms(double xv, Int32 iflg) {
             int izod;
             Int32 k, kdeg, kmin, ksec;
@@ -1930,19 +2013,28 @@ static string infoexamp = @"\n\
             string /*sp,*/ s1 = string.Empty;
             string s;
             int sgn;
+            /* rounding 0.9999999999 to 1 */
+            if (OUTPUT_EXTRA_PRECISION != 0)
+              xv += 0.000000005 / 3600.0;
+            else
+              xv += 0.00005 / 3600.0;
             if (double.IsNaN(xv))
                 return "nan";
             s = string.Empty;
             if ((iflg & SwissEph.SEFLG_EQUATORIAL) != 0)
                 c = "h";
-            if (xv < 0) {
+            if (xv < 0)
+            {
                 xv = -xv;
                 sgn = -1;
-            } else
+            }
+            else
+            {
                 sgn = 1;
+            }
             if ((iflg & BIT_ROUND_MIN) != 0)
                 xv = sweph.swe_degnorm(xv + 0.5 / 60);
-            if ((iflg & BIT_ROUND_SEC) != 0)
+            else if ((iflg & BIT_ROUND_SEC) != 0)
                 xv = sweph.swe_degnorm(xv + 0.5 / 3600);
             if ((iflg & BIT_ZODIAC) != 0) {
                 izod = (int)(xv / 30);
@@ -1977,10 +2069,10 @@ static string infoexamp = @"\n\
                 goto return_dms;
             xv -= ksec;
             if (OUTPUT_EXTRA_PRECISION != 0) {
-                k = (Int32)(xv * 100000 + 0.5);
-                s1 = C.sprintf(".%05d", k);
+                k = (Int32)(xv * 100000000);
+                s1 = C.sprintf(".%08d", k);
             } else {
-                k = (Int32)(xv * 10000 + 0.5);
+                k = (Int32)(xv * 10000);
                 s1 = C.sprintf(".%04d", k);
             }
             s += s1;
@@ -2057,7 +2149,9 @@ static string infoexamp = @"\n\
                     rsmi = SwissEph.SE_CALC_RISE;
                     if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
                     if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[0]), ref serr) != SwissEph.OK) {
+                    if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[0]), ref serr) != SwissEph.OK)
+                    {
                         do_printf(serr);
                         Environment.Exit(0);
                     }
@@ -2065,7 +2159,9 @@ static string infoexamp = @"\n\
                     rsmi = SwissEph.SE_CALC_SET;
                     if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
                     if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[1]), ref serr) != SwissEph.OK) {
+                    if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, 1013.25, 10, ref (tret[1]), ref serr) != SwissEph.OK)
+                    {
                         do_printf(serr);
                         Environment.Exit(0);
                     }
@@ -2209,7 +2305,7 @@ static string infoexamp = @"\n\
                     /* short output: 
                      * date, time of day, umbral magnitude, umbral duration, saros series, member number */
                     sout_short = C.sprintf("%s\t%2d.%2d.%4d\t%s\t%.3f\t%s\t%d\t%d\n", sout, jday, jmon, jyear, hms(jut, 0), attr[8], s1, (int)attr[9], (int)attr[10]);
-                    sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[0], attr[1], (int)attr[9], (int)attr[10], t_ut);
+                    sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f\tsaros %d/%d\t%.6f\tdt=%.2f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[0], attr[1], (int)attr[9], (int)attr[10], t_ut, sweph.swe_deltat(t_ut) * 86400);
                     /* second line:
                      * eclipse times, penumbral, partial, total begin and end */
                     if ((eclflag & SwissEph.SE_ECL_PENUMBBEG_VISIBLE) != 0)
@@ -2479,6 +2575,7 @@ static string infoexamp = @"\n\
             double dt; double[] tret = new double[30], attr = new double[30], geopos_max = new double[3];
             string s1 = String.Empty, s2 = String.Empty;
             bool has_found = false;
+            int nloops = 0;
             /* no selective eclipse type set, set all */
             if ((search_flag & SwissEph.SE_ECL_ALLTYPES_SOLAR) == 0)
                 search_flag |= SwissEph.SE_ECL_ALLTYPES_SOLAR;
@@ -2488,11 +2585,27 @@ static string infoexamp = @"\n\
             do_printf("\n");
             for (ii = 0; ii < nstep; ii++) {
                 sout = String.Empty;
-                if ((special_mode & SP_MODE_LOCAL) != 0) {
-                    if ((eclflag = sweph.swe_lun_occult_when_loc(t_ut, ipl, star, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR) {
+                nloops++;
+                if (nloops > SEARCH_RANGE_LUNAR_CYCLES)
+                {
+                    serr = C.sprintf("event search ended after %d lunar cycles at jd=%f\n", SEARCH_RANGE_LUNAR_CYCLES, t_ut);
+                    do_printf(serr);
+                    return SwissEph.ERR;
+                }
+                if ((special_mode & SP_MODE_LOCAL) != 0)
+                {
+                    /* * local search for occultation, test one lunar cycle only (SE_ECL_ONE_TRY) */
+                    if ((eclflag = sweph.swe_lun_occult_when_loc(t_ut, ipl, star, whicheph, geopos, tret, attr, direction_flag/*|SwissEph.SE_ECL_ONE_TRY*/, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
-                    } else {
+                    }
+                    else if (eclflag == 0)
+                    {  /* event not found, try next conjunction */
+                        t_ut = tret[0] + direction * 10;  /* try again with start date increased by 10 */
+                        ii--;
+                    }
+                    else
+                    {
                         t_ut = tret[0];
                         if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
                             for (i = 0; i < 10; i++) {
@@ -2565,12 +2678,19 @@ static string infoexamp = @"\n\
                     }
                 }   /* endif search_local */
                 if (0 == (special_mode & SP_MODE_LOCAL)) {
-                    /* * global search for occultations */
-                    if ((eclflag = sweph.swe_lun_occult_when_glob(t_ut, ipl, star, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR) {
+                    /* * global search for occultations, test one lunar cycle only (SE_ECL_ONE_TRY) */
+                    if ((eclflag = sweph.swe_lun_occult_when_glob(t_ut, ipl, star, whicheph, search_flag, tret, direction_flag/*|SE_ECL_ONE_TRY*/, ref serr)) == SwissEph.ERR) {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0) {
+                    if (eclflag == 0)
+                    { /* no occltation was found at next conjunction, try next conjunction */
+                        t_ut = tret[0] + direction;
+                        ii--;
+                        continue;
+                    }
+                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0)
+                    {
                         sout = ("total   ");
                         ecl_type = ECL_SOL_TOTAL;
                     }

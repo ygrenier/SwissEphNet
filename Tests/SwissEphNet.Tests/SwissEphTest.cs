@@ -26,15 +26,14 @@ namespace SwissEphNet.Tests
         [TestMethod]
         public void TestConstructor() {
             using (var target = new SwissEph()) {
-                Assert.AreEqual(true, target.ESPENAK_MEEUS_2006);
             }
         }
 
         [TestMethod]
         public void TestVersion() {
             using (var target = new SwissEph()) {
-                Assert.AreEqual("2.00.00", target.swe_version());
-                Assert.AreEqual("2.00.00-net-0005", target.swe_dotnet_version());
+                Assert.AreEqual("2.01.00", target.swe_version());
+                Assert.AreEqual("2.01.00-net-0006", target.swe_dotnet_version());
             }
         }
 

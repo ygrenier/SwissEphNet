@@ -13,8 +13,8 @@ namespace SwissEphNet.Tests
                 double[] xin = new double[] { 249.64242931513104, -32.8340765334715 }; 
                 double[] xaz = new double[6];
                 swe.swe_azalt_rev(tjd, SwissEph.SE_ECL2HOR, geopos, xin, xaz);
-                Assert.AreEqual(142.779824404441, xaz[0], 0.000000000001);
-                Assert.AreEqual(-1.93084572176467E-05, xaz[1], 0.0000000000001);
+                Assert.AreEqual(142.779825047858, xaz[0], 0.000000000001);
+                Assert.AreEqual(-1.90862916755642E-05, xaz[1], 0.0000000000001);
                 Assert.AreEqual(0, xaz[2], 0.0000000000001);
             }
         }

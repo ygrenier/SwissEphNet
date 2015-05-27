@@ -298,7 +298,7 @@ namespace SwissEphNet.CPort
          */
 
         /* Leap seconds were inserted at the end of the following days:*/
-        const int NLEAP_SECONDS = 24;
+        const int NLEAP_SECONDS = 26;
         const int NLEAP_SECONDS_SPACE = 100;
         int[] leap_seconds = new int[]{
         19720630,
@@ -325,6 +325,8 @@ namespace SwissEphNet.CPort
         19981231,
         20051231,
         20081231,
+        20120630,
+        20150630,
         0  /* keep this 0 as end mark */
         };
         const double J1972 = 2441317.5;
@@ -483,6 +485,7 @@ namespace SwissEphNet.CPort
             tjd_et = tjd_et_1972 + d + ((double)(nleap - NLEAP_INIT)) / 86400.0;
             d = SE.SwephLib.swe_deltat(tjd_et);
             tjd_ut1 = tjd_et - SE.SwephLib.swe_deltat(tjd_et - d);
+            tjd_ut1 = tjd_et - SE.SwephLib.swe_deltat(tjd_ut1);
             dret[0] = tjd_et;
             dret[1] = tjd_ut1;
             return SwissEph.OK;
@@ -514,7 +517,9 @@ namespace SwissEphNet.CPort
             tjd_et_1972 = J1972 + (32.184 + NLEAP_INIT) / 86400.0;
             d = SE.SwephLib.swe_deltat(tjd_et);
             tjd_ut = tjd_et - SE.SwephLib.swe_deltat(tjd_et - d);
-            if (tjd_et < tjd_et_1972) {
+            tjd_ut = tjd_et - SE.SwephLib.swe_deltat(tjd_ut);
+            if (tjd_et < tjd_et_1972)
+            {
                 swe_revjul(tjd_ut, gregflag, ref iyear, ref imonth, ref iday, ref d);
                 ihour = (Int32)d;
                 d -= (double)ihour;
