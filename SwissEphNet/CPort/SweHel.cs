@@ -1618,8 +1618,7 @@ namespace SwissEphNet.CPort
         public Int32 swe_heliacal_angle(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double azi_sun, double azi_moon, double alt_moon, double[] dret, ref string serr) {
             if (dgeo[2] < Sweph.SEI_ECL_GEOALT_MIN || dgeo[2] > Sweph.SEI_ECL_GEOALT_MAX)
             {
-                if (serr != null)
-                    C.sprintf(serr, "location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                serr = C.sprintf("location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
                 return SwissEph.ERR;
             }
             SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0);
@@ -1789,8 +1788,7 @@ namespace SwissEphNet.CPort
             Int32 iflag = helflag & (SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_MOSEPH);
             if (dgeo[2] < Sweph.SEI_ECL_GEOALT_MIN || dgeo[2] > Sweph.SEI_ECL_GEOALT_MAX)
             {
-                if (serr != null)
-                    C.sprintf(serr, "location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                serr = C.sprintf("location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
                 return SwissEph.ERR;
             }
             SE.SwephLib.swi_set_tid_acc(JDNDaysUT, helflag, 0);
@@ -3291,8 +3289,7 @@ namespace SwissEphNet.CPort
             string[] sevent = new String[] { "", "morning first", "evening last", "evening first", "morning last", "acronychal rising", "acronychal setting" };
             if (dgeo[2] < Sweph.SEI_ECL_GEOALT_MIN || dgeo[2] > Sweph.SEI_ECL_GEOALT_MAX)
             {
-                if (serr_ret != null)
-                    C.sprintf(serr_ret, "location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                serr_ret = C.sprintf("location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
                 return SwissEph.ERR;
             }
             SE.SwephLib.swi_set_tid_acc(JDNDaysUTStart, helflag, 0);

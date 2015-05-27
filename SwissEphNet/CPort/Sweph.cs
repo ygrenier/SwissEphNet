@@ -845,8 +845,7 @@ namespace SwissEphNet.CPort
                 {
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
-                    if (serr != null)
-                        C.sprintf(serr, "Interpolated apsides are restricted to JD %8.1f - JD %8.1f",
+                    serr = C.sprintf("Interpolated apsides are restricted to JD %8.1f - JD %8.1f",
                             MOSHLUEPH_START, MOSHLUEPH_END);
                     return ERR;
                 }
@@ -870,8 +869,7 @@ namespace SwissEphNet.CPort
                 {
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
-                    if (serr != null)
-                        C.sprintf(serr, "Interpolated apsides are restricted to JD %8.1f - JD %8.1f",
+                    serr = C.sprintf("Interpolated apsides are restricted to JD %8.1f - JD %8.1f",
                             MOSHLUEPH_START, MOSHLUEPH_END);
                     return ERR;
                 }

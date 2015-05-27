@@ -4019,7 +4019,7 @@ namespace SwissEphNet.CPort
             bool do_fixstar = !String.IsNullOrEmpty(starname);
             if (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX)
             {
-                serr = C.sprintf(serr, "location for swe_rise_trans() must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                serr = C.sprintf("location for swe_rise_trans() must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
                 return Sweph.ERR;
             }
             SE.SwephLib.swi_set_tid_acc(tjd_ut, epheflag, 0);

@@ -22,7 +22,7 @@
   Output: Planet positions at midnight Universal time, ecliptic coordinates,
           geocentric apparent positions relative to true equinox of date, as 
           usual in western astrology.
-		
+        
    
   Authors: Dieter Koch and Alois Treindl, Astrodienst Zurich
 

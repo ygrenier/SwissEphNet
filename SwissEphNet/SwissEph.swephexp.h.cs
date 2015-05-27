@@ -584,10 +584,10 @@ namespace SwissEphNet
 
         /* the following is secret, for Dieter, allows to test old models of
          * precession, nutation, etc. Search for SE_MODEL_... in this file */
-        //public void swe_set_astro_models(Int32[] imodel)
-        //{
-        //    return SweHel.swe_set_astro_models(imodel);
-        //}
+        public void swe_set_astro_models(Int32[] imodel)
+        {
+            SwephLib.swe_set_astro_models(imodel);
+        }
 
         /**************************** 
          * exports from sweph.c 
