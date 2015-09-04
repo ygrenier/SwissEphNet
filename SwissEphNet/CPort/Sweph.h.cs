@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.01.00";
+        public const String SE_VERSION = "2.02.00";
 
         /// <summary>
         /// 2000 January 1.5
@@ -437,7 +437,9 @@ namespace SwissEphNet.CPort
         //extern int swi_moshplan(double tjd, int ipli, AS_BOOL do_save, double *xpret, double *xeret, char *serr);
         //extern int swi_moshplan2(double J, int iplm, double *pobj);
         //extern int swi_osc_el_plan(double tjd, double *xp, int ipl, int ipli, double *xearth, double *xsun, char *serr);
-        //extern void swi_set_tid_acc(double tjd_ut, int iflag, int denum);
+        //extern int32 swi_init_swed_if_start(void);
+        //extern int32 swi_set_tid_acc(double tjd_ut, int32 iflag, int32 denum, char *serr);
+        //extern int32 swi_get_tid_acc(double tjd_ut, int32 iflag, int32 denum, int32 *denumret, double *tid_acc, char *serr);
 
 
         /* nutation */
@@ -558,6 +560,7 @@ namespace SwissEphNet.CPort
         /* dpsi and deps loaded for 100 years after 1962 */
         static int SWE_DATA_DPSI_DEPS = 36525;
 
+        /* if this is changed, then also update initialisation in sweph.c */
         public class swe_data
         {
             public swe_data()
@@ -588,15 +591,19 @@ namespace SwissEphNet.CPort
             public CFile fixfp;/* fixed stars file pointer */
             public string ephepath = String.Empty;
             public string jplfnam = String.Empty;
-            public short jpldenum;
+            public Int32 jpldenum;
+            public Int32 last_epheflag;
+            public bool geopos_is_set;
+            public bool ayana_is_set;
+            public bool is_old_starfile;
             public double eop_tjd_beg = 0;
             public double eop_tjd_beg_horizons = 0;
             public double eop_tjd_end = 0;
             public double eop_tjd_end_add = 0;
             public int eop_dpsi_loaded = 0;
-            public bool geopos_is_set;
-            public bool ayana_is_set;
-            public bool is_old_starfile;
+            public double tid_acc;
+            public bool is_tid_acc_manual;
+            public bool init_dt_done;
             public file_data[] fidat { get; private set; }
             public gen_const gcdat;
             public plan_data[] pldat { get; private set; }
@@ -606,11 +613,11 @@ namespace SwissEphNet.CPort
             public plan_data[] nddat { get; private set; }
             //#endif
             public save_positions[] savedat { get; private set; }
-            public epsilon oec { get; private set; }
-            public epsilon oec2000 { get; private set; }
-            public nut nut { get; private set; }
-            public nut nut2000 { get; private set; }
-            public nut nutv { get; private set; }
+            public epsilon oec { get; internal set; }
+            public epsilon oec2000 { get; internal set; }
+            public nut nut { get; internal set; }
+            public nut nut2000 { get; internal set; }
+            public nut nutv { get; internal set; }
             public topo_data topd { get; internal set; }
             public sid_data sidd;
             public string astelem = string.Empty;
@@ -623,7 +630,7 @@ namespace SwissEphNet.CPort
             //public double[] deps { get; private set; }
             public double[] dpsi;
             public double[] deps;
-            public Int32[] astro_models { get; private set; }
+            public Int32[] astro_models { get; internal set; }
             public Int32 timeout;
         }
 

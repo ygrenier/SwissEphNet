@@ -91,7 +91,7 @@ namespace SwissEphNet.CPort
         //#include "swephexp.h"
         //#include "sweph.h"
         //#include "swephlib.h"
-        //#include "swemptab.c"
+        //#include "swemptab.h"
 
         const double TIMESCALE = 3652500.0;
 
@@ -781,6 +781,7 @@ namespace SwissEphNet.CPort
                         //      if (serr != NULL) {
                         serr = C.sprintf("%s nine elements required", serri);
                         //      }
+                        //goto return_err;
                         return SwissEph.ERR;
                     }
                     iplan++;

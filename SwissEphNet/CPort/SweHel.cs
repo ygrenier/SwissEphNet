@@ -116,14 +116,14 @@ namespace SwissEphNet.CPort
         const double M2S = 60.0; /*[sec]*/
 
         /* Determines which algorimths are used*/
-        int USE_DELTA_T_VR = 0;
+        //int USE_DELTA_T_VR = 0;
         const int REFR_SINCLAIR = 0;
         const int REFR_BENNETTH = 1;
         const int FormAstroRefrac = REFR_SINCLAIR; /*for Astronomical refraction can be "bennetth" or "sinclair"*/
         const int GravitySource = 2; /*0=RGO, 1=Wikipedia,2=Exp. Suppl. 1992,3=van der Werf*/
         const int REarthSource = 1; /*0=RGO (constant), 1=WGS84 method*/
 
-        static int StartYear = 1820; /*[year]*/
+        //static int StartYear = 1820; /*[year]*/
         const double Average = 1.80546834626888; /*[msec/cy]*/
         const double Periodicy = 1443.67123144531; /*[year]*/
         const double Amplitude = 3.75606495492684; /*[msec]*/
@@ -546,8 +546,9 @@ namespace SwissEphNet.CPort
                     Int32 epheflag = helflag & (SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_MOSEPH);
                     Int32 iflag = epheflag | SwissEph.SEFLG_EQUATORIAL;
                     iflag |= SwissEph.SEFLG_NONUT | SwissEph.SEFLG_TRUEPOS;
-                    tjd_tt = JDNDaysUT + SE.swe_deltat(JDNDaysUT);
-                    if (SE.swe_calc(tjd_tt, SwissEph.SE_SUN, iflag, x, ref serr) != SwissEph.ERR) {
+                    tjd_tt = JDNDaysUT + SE.swe_deltat_ex(JDNDaysUT, epheflag, ref serr);
+                    if (SE.swe_calc(tjd_tt, SwissEph.SE_SUN, iflag, x, ref serr) != SwissEph.ERR)
+                    {
                         SunRA_ralast = x[0];
                         SunRA_tjdlast = JDNDaysUT;
                         return SunRA_ralast;
@@ -647,57 +648,6 @@ namespace SwissEphNet.CPort
         }
 
         /*###################################################################
-        ' JDNDays [Days]
-        ' COD [msec/cy]
-        ' DeltaTSE [Sec]
-        */
-        double DeltaTSE(double JDNDays, int COD) {
-            double OffSetYear;
-            int gregflag = SwissEph.SE_GREG_CAL;
-            if (StartYear < 1583)
-                gregflag = SwissEph.SE_JUL_CAL;
-            /* from Swiss Emphemeris */
-            if (COD != 0) {
-                /* Determined by V. Reijs*/
-                OffSetYear = (SE.swe_julday((int)StartYear, 1, 1, 0, gregflag) - JDNDays) / 365.25;
-                return (OffSetYear * OffSetYear / 100.0 / 2.0 * COD * Y2D) / 1000.0;
-            }
-            return SE.swe_deltat(JDNDays) * D2S;
-        }
-
-        /*###################################################################
-        ' JDNDays [Day]
-        ' COD [msec/cy]
-        ' DeltaTVR [Sec]
-        */
-        double DeltaTVR(double JDNDays, int COD) {
-            /* Determined by V. Reijs */
-            double DeltaTVR;
-            int gregflag = SwissEph.SE_GREG_CAL;
-            double OffSetYear;
-            if (StartYear < 1583)
-                gregflag = SwissEph.SE_JUL_CAL;
-            OffSetYear = (SE.swe_julday((int)StartYear, 1, 1, 0, gregflag) - JDNDays) / 365.25;
-            if (COD == 0) {
-                DeltaTVR = (OffSetYear * OffSetYear / 100.0 / 2.0 * Average + Periodicy / 2.0 / Math.PI * Amplitude * (Math.Cos((2 * Math.PI * OffSetYear / Periodicy)) - 1)) * Y2D;
-            } else {
-                DeltaTVR = OffSetYear * OffSetYear / 100.0 / 2.0 * COD * Y2D;
-            }
-            return DeltaTVR / 1000.0;
-        }
-
-        /*###################################################################
-        ' JDNDays [Days]
-        ' COD [msec/cy]
-        ' DeltaT [Sec]
-        */
-        double DeltaT(double JDNDays, int COD) {
-            if (USE_DELTA_T_VR != 0)
-                return DeltaTVR(JDNDays, COD);
-            return DeltaTSE(JDNDays, COD);
-        }
-
-        /*###################################################################
         ' JDNDaysUT [Days]
         ' dgeo [array: longitude, latitude, eye height above sea m]
         ' TempE [C]
@@ -717,7 +667,7 @@ namespace SwissEphNet.CPort
                 iflag |= SwissEph.SEFLG_NONUT | SwissEph.SEFLG_TRUEPOS;
             if (Angle < 5) iflag = iflag | SwissEph.SEFLG_TOPOCTR;
             if (Angle == 7) Angle = 0;
-            tjd_tt = JDNDaysUT + DeltaT(JDNDaysUT, 0) / D2S;
+            tjd_tt = JDNDaysUT + SE.swe_deltat_ex(JDNDaysUT, epheflag, ref serr);
             Planet = DeterObject(ObjectName);
             if (Planet != -1) {
                 if (SE.swe_calc(tjd_tt, Planet, iflag, x, ref serr) == SwissEph.ERR)
@@ -769,7 +719,7 @@ namespace SwissEphNet.CPort
             if (0 == (helflag & SwissEph.SE_HELFLAG_HIGH_PRECISION))
                 iflag |= SwissEph.SEFLG_NONUT | SwissEph.SEFLG_TRUEPOS;
             iflag = iflag | SwissEph.SEFLG_TOPOCTR;
-            tjd_tt = JDNDaysUT + DeltaT(JDNDaysUT, 0) / D2S;
+            tjd_tt = JDNDaysUT + SE.swe_deltat_ex(JDNDaysUT, epheflag, ref serr);
             Planet = DeterObject(ObjectName);
             if (Planet != -1) {
                 if (SE.swe_calc(tjd_tt, Planet, iflag, x, ref serr) == SwissEph.ERR)
@@ -1400,12 +1350,17 @@ namespace SwissEphNet.CPort
             Int32 retval = SwissEph.OK, i, scotopic_flag = 0;
             double AltO = 0, AziO = 0, AltM = 0, AziM = 0, AltS = 0, AziS = 0;
             double sunra;
-            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0);
+            for (i = 0; i < 7; i++)
+                dret[i] = 0;
+            if (DeterObject(ObjectName) == SwissEph.SE_SUN)
+            {
+                serr = "it makes no sense to call swe_vis_limit_mag() for the Sun";
+                return SwissEph.ERR;
+            }
+            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0, ref serr);
             sunra = SunRA(tjdut, helflag, ref serr);
             default_heliacal_parameters(datm, dgeo, dobs, helflag);
             SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
-            for (i = 0; i < 7; i++)
-                dret[i] = 0;
             if (ObjectLoc(tjdut, dgeo, datm, ObjectName, 0, helflag, ref AltO, ref serr) == SwissEph.ERR)
                 return SwissEph.ERR;
             if (AltO < 0) {
@@ -1526,7 +1481,7 @@ namespace SwissEphNet.CPort
 
         public Int32 swe_topo_arcus_visionis(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag, double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr) {
             double sunra;
-            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0);
+            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0, ref serr);
             sunra = SunRA(tjdut, helflag, ref serr);
             if (!String.IsNullOrEmpty(serr))
                 return SwissEph.ERR;
@@ -1621,7 +1576,7 @@ namespace SwissEphNet.CPort
                 serr = C.sprintf("location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
                 return SwissEph.ERR;
             }
-            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0);
+            SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0, ref serr);
             return HeliacalAngle(mag, dobs, azi_obj, alt_moon, azi_moon, tjdut, azi_sun, dgeo, datm, helflag, dret, ref serr);
         }
 
@@ -1791,7 +1746,7 @@ namespace SwissEphNet.CPort
                 serr = C.sprintf("location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
                 return SwissEph.ERR;
             }
-            SE.SwephLib.swi_set_tid_acc(JDNDaysUT, helflag, 0);
+            SE.SwephLib.swi_set_tid_acc(JDNDaysUT, helflag, 0, ref serr);
             sunra = SunRA(JDNDaysUT, helflag, ref serr);
             /* note, the fixed stars functions rewrite the star name. The input string 
                may be too short, so we have to make sure we have enough space */
@@ -2201,7 +2156,7 @@ namespace SwissEphNet.CPort
                         if ((retval = my_rise_trans(JDNDaysUTstep, SwissEph.SE_SUN, "", eventtype, helflag, dgeo, datm, ref tret, ref serr)) == SwissEph.ERR)
                             goto swe_heliacal_err;
                         /* determine time compensation to get Sun's altitude at heliacal rise */
-                        tjd_tt = tret + DeltaT(tret, 0) / D2S;
+                        tjd_tt = tret + SE.swe_deltat_ex(tret, epheflag, ref serr);
                         if ((retval = SE.swe_calc(tjd_tt, SwissEph.SE_SUN, iflag, x, ref serr)) == SwissEph.ERR)
                             goto swe_heliacal_err;
                         xin[0] = x[0];
@@ -2216,7 +2171,7 @@ namespace SwissEphNet.CPort
                         if (TypeEvent == 2 || TypeEvent == 3) Tdelta = -Tdelta;
                         /* determine appr.time when sun is at the wanted Sun's altitude */
                         JDNarcvisUT = tret - Tdelta / 24;
-                        tjd_tt = JDNarcvisUT + DeltaT(JDNarcvisUT, 0) / D2S;
+                        tjd_tt = JDNarcvisUT + SE.swe_deltat_ex(JDNarcvisUT, epheflag, ref serr);
                         /* determine Sun's position */
                         if ((retval = SE.swe_calc(tjd_tt, SwissEph.SE_SUN, iflag, x, ref serr)) == SwissEph.ERR)
                             goto swe_heliacal_err;
@@ -2328,8 +2283,9 @@ namespace SwissEphNet.CPort
                 do {
                     OudeDatum = JDNarcvisUT;
                     JDNarcvisUT = JDNarcvisUT - direct;
-                    tjd_tt = JDNarcvisUT + DeltaT(JDNarcvisUT, 0) / D2S;
-                    if (Planet != -1) {
+                    tjd_tt = JDNarcvisUT + SE.swe_deltat_ex(JDNarcvisUT, epheflag, ref serr);
+                    if (Planet != -1)
+                    {
                         if ((retval = SE.swe_calc(tjd_tt, Planet, iflag, x, ref serr)) == SwissEph.ERR)
                             goto swe_heliacal_err;
                     } else {
@@ -2803,65 +2759,6 @@ namespace SwissEphNet.CPort
             return -2;
         }
 
-        //#if 0
-        //static int32 get_acronychal_day_new(double tjd, double *dgeo, double *datm, double *dobs, char *ObjectName, int32 helflag, int32 TypeEvent, double *thel, char *serr) {
-        //  double tjdc = tjd, tret, x[6], xaz[6], AltO = -10;
-        //  int32 retval, is_rise_or_set, iter_day;
-        //  int32 ipl = DeterObject(ObjectName);
-        //  int32 epheflag = helflag & (SEFLG_JPLEPH|SEFLG_SWIEPH|SEFLG_MOSEPH);
-        //  int32 iflag = epheflag | SEFLG_EQUATORIAL | SEFLG_TOPOCTR;
-        //  if ((retval = my_rise_trans(tret, 0, ObjectName, SE_CALC_RISE, helflag, dgeo, datm, &tret, serr)) == ERR) return ERR;
-        //  trise = tret;
-        //  tret += 0.01
-        //  if ((retval = my_rise_trans(tret, 0, ObjectName, SE_CALC_SET, helflag, dgeo, datm, &tret, serr)) == ERR) return ERR;
-        //  trise = tset;
-
-        //  *thel = tret;
-        //  return OK;
-        //}
-        //#endif
-
-        //#if 0
-        //static int32 get_acronychal_day_old(double tjd, double *dgeo, double *datm, double *dobs, char *ObjectName, int32 helflag, int32 TypeEvent, double *thel, char *serr) {
-        //  double tjdc = tjd, tret, x[6], xaz[6], AltO = -10;
-        //  int32 retval, is_rise_or_set, iter_day;
-        //  int32 ipl = DeterObject(ObjectName);
-        //  int32 epheflag = helflag & (SEFLG_JPLEPH|SEFLG_SWIEPH|SEFLG_MOSEPH);
-        //  int32 iflag = epheflag | SEFLG_EQUATORIAL | SEFLG_TOPOCTR;
-        //  if (TypeEvent == 3) {
-        //    is_rise_or_set = SE_CALC_SET; 
-        //    tret = tjdc - 3;
-        //    if (ipl >= SE_MARS)
-        //      tret = tjdc - 3;
-        //    iter_day = 1;
-        //  } else {
-        //    is_rise_or_set = SE_CALC_RISE; 
-        //    tret = tjdc + 3;
-        //    if (ipl >= SE_MARS)
-        //      tret = tjdc + 3;
-        //    iter_day = -1;
-        //  }
-        //  while (AltO < 0) {
-        //    tret += 0.3 * iter_day;
-        //    if (iter_day == -1)
-        //      tret -= 1;
-        //    retval = my_rise_trans(tret, SE_SUN, "", is_rise_or_set, helflag, dgeo, datm, &tret, serr);
-        //    if (retval != OK)
-        //      return retval;
-        //    /* determine object's position */
-        //    if (ipl == -1)
-        //      retval = call_swe_fixstar(ObjectName, tret+swe_deltat(tret), iflag, x, serr);
-        //    else 
-        //      retval = swe_calc(tret+swe_deltat(tret), ipl, iflag, x, serr);
-        //    if (retval == ERR) return ERR;
-        //    swe_azalt(tret, SE_EQU2HOR, dgeo, datm[0], datm[1], x, xaz);
-        //    AltO = xaz[2];
-        //  }
-        //  *thel = tret;
-        //  return OK;
-        //}
-        //#endif
-
         Int32 time_optimum_visibility(double tjd, double[] dgeo, double[] datm, double[] dobs, string ObjectName, Int32 helflag, ref double tret, ref string serr) {
             Int32 retval, retval_sv, i;
             double d, vl, phot_scot_opic, phot_scot_opic_sv; double[] darr = new double[10];
@@ -2982,9 +2879,12 @@ namespace SwissEphNet.CPort
                 retval = my_rise_trans(tjd, ipl, ObjectName, is_rise_or_set, helflag, dgeo, datm, ref tjd, ref serr);
                 if (retval == SwissEph.ERR) return SwissEph.ERR;
                 retval = swe_vis_limit_mag(tjd, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr);
-                while (darr[0] < darr[7]) {
+                if (retval == SwissEph.ERR) return SwissEph.ERR;
+                while (darr[0] < darr[7])
+                {
                     tjd += 10.0 / 1440.0 * -direct;
                     retval = swe_vis_limit_mag(tjd, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr);
+                    if (retval == SwissEph.ERR) return SwissEph.ERR;
                 }
                 retval = time_limit_invisible(tjd, dgeo, datm, dobs, ObjectName, helflag | SwissEph.SE_HELFLAG_VISLIM_DARK, direct, ref tret_dark, ref serr);
                 if (retval == SwissEph.ERR) return SwissEph.ERR;
@@ -3289,10 +3189,10 @@ namespace SwissEphNet.CPort
             string[] sevent = new String[] { "", "morning first", "evening last", "evening first", "morning last", "acronychal rising", "acronychal setting" };
             if (dgeo[2] < Sweph.SEI_ECL_GEOALT_MIN || dgeo[2] > Sweph.SEI_ECL_GEOALT_MAX)
             {
-                serr_ret = C.sprintf("location for heliacal events must be between %.0f and %.0f m above sea", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
+                serr_ret = C.sprintf("location for heliacal events must be between %.0f and %.0f m above sea\n", Sweph.SEI_ECL_GEOALT_MIN, Sweph.SEI_ECL_GEOALT_MAX);
                 return SwissEph.ERR;
             }
-            SE.SwephLib.swi_set_tid_acc(JDNDaysUTStart, helflag, 0);
+            SE.SwephLib.swi_set_tid_acc(JDNDaysUTStart, helflag, 0, ref serr);
             if ((helflag & SwissEph.SE_HELFLAG_LONG_SEARCH) != 0)
                 MaxCountSynodicPeriod = MAX_COUNT_SYNPER_MAX;
             /*  if (helflag & SE_HELFLAG_SEARCH_1_PERIOD)
@@ -3305,6 +3205,11 @@ namespace SwissEphNet.CPort
             default_heliacal_parameters(datm, dgeo, dobs, helflag);
             SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
             Planet = DeterObject(ObjectName);
+            if (Planet == SwissEph.SE_SUN)
+            {
+                serr_ret = "the sun has no heliacal rising or setting\n";
+                return SwissEph.ERR;
+            }
             /* 
              * Moon events
              */
