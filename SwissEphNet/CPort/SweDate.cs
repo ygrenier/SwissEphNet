@@ -402,6 +402,7 @@ namespace SwissEphNet.CPort
             double tjd_ut1, tjd_et, tjd_et_1972, dhour, d = 0;
             int iyear2 = 0, imonth2 = 0, iday2 = 0;
             int i, j, ndat, nleap, tabsiz_nleap;
+            String sdummy = null;
             /* 
              * error handling: invalid iyear etc. 
              */
@@ -424,7 +425,7 @@ namespace SwissEphNet.CPort
              */
             if (tjd_ut1 < J1972) {
                 dret[1] = swe_julday(iyear, imonth, iday, dhour, gregflag);
-                dret[0] = dret[1] + SE.SwephLib.swe_deltat(dret[1]);
+                dret[0] = dret[1] + SE.SwephLib.swe_deltat_ex(dret[1], -1, ref sdummy);
                 return SwissEph.OK;
             }
             /* 
@@ -451,10 +452,10 @@ namespace SwissEphNet.CPort
              * input time as UT1, not as UTC. How do we find out? 
              * Check, if delta_t - nleap - 32.184 > 0.9
              */
-            d = SE.SwephLib.swe_deltat(tjd_ut1) * 86400.0;
+            d = SE.SwephLib.swe_deltat_ex(tjd_ut1, -1, ref sdummy) * 86400.0;
             if (d - (double)nleap - 32.184 >= 1.0) {
                 dret[1] = tjd_ut1 + dhour / 24.0;
-                dret[0] = dret[1] + SE.SwephLib.swe_deltat(dret[1]);
+                dret[0] = dret[1] + SE.SwephLib.swe_deltat_ex(dret[1], -1, ref sdummy);
                 return SwissEph.OK;
             }
             /* 
@@ -483,9 +484,9 @@ namespace SwissEphNet.CPort
             /* ET (TT) */
             tjd_et_1972 = J1972 + (32.184 + NLEAP_INIT) / 86400.0;
             tjd_et = tjd_et_1972 + d + ((double)(nleap - NLEAP_INIT)) / 86400.0;
-            d = SE.SwephLib.swe_deltat(tjd_et);
-            tjd_ut1 = tjd_et - SE.SwephLib.swe_deltat(tjd_et - d);
-            tjd_ut1 = tjd_et - SE.SwephLib.swe_deltat(tjd_ut1);
+            d = SE.SwephLib.swe_deltat_ex(tjd_et, -1, ref sdummy);
+            tjd_ut1 = tjd_et - SE.SwephLib.swe_deltat_ex(tjd_et - d, -1, ref sdummy);
+            tjd_ut1 = tjd_et - SE.SwephLib.swe_deltat_ex(tjd_ut1, -1, ref sdummy);
             dret[0] = tjd_et;
             dret[1] = tjd_ut1;
             return SwissEph.OK;
@@ -515,9 +516,9 @@ namespace SwissEphNet.CPort
              * if tjd_et is before 1 jan 1972 UTC, return UT1
              */
             tjd_et_1972 = J1972 + (32.184 + NLEAP_INIT) / 86400.0;
-            d = SE.SwephLib.swe_deltat(tjd_et);
-            tjd_ut = tjd_et - SE.SwephLib.swe_deltat(tjd_et - d);
-            tjd_ut = tjd_et - SE.SwephLib.swe_deltat(tjd_ut);
+            d = SE.SwephLib.swe_deltat_ex(tjd_et, -1, ref sdummy);
+            tjd_ut = tjd_et - SE.SwephLib.swe_deltat_ex(tjd_et - d, -1, ref sdummy);
+            tjd_ut = tjd_et - SE.SwephLib.swe_deltat_ex(tjd_ut, -1, ref sdummy);
             if (tjd_et < tjd_et_1972)
             {
                 swe_revjul(tjd_ut, gregflag, ref iyear, ref imonth, ref iday, ref d);
@@ -573,8 +574,8 @@ namespace SwissEphNet.CPort
              * input time as UT1, not as UTC. How do we find out? 
              * Check, if delta_t - nleap - 32.184 > 0.9
              */
-            d = SE.SwephLib.swe_deltat(tjd_et);
-            d = SE.SwephLib.swe_deltat(tjd_et - d);
+            d = SE.SwephLib.swe_deltat_ex(tjd_et, -1, ref sdummy);
+            d = SE.SwephLib.swe_deltat_ex(tjd_et - d, -1, ref sdummy);
             if (d * 86400.0 - (double)(nleap + NLEAP_INIT) - 32.184 >= 1.0) {
                 swe_revjul(tjd_et - d, SwissEph.SE_GREG_CAL, ref iyear, ref imonth, ref iday, ref d);
                 ihour = (Int32)d;
@@ -604,7 +605,8 @@ namespace SwissEphNet.CPort
          *   updated for a long time.
          */
         public void swe_jdut1_to_utc(double tjd_ut, Int32 gregflag, ref Int32 iyear, ref Int32 imonth, ref Int32 iday, ref Int32 ihour, ref Int32 imin, ref double dsec) {
-            double tjd_et = tjd_ut + SE.SwephLib.swe_deltat(tjd_ut);
+            String sdummy = null;
+            double tjd_et = tjd_ut + SE.SwephLib.swe_deltat_ex(tjd_ut, -1, ref sdummy);
             swe_jdet_to_utc(tjd_et, gregflag, ref iyear, ref imonth, ref iday, ref ihour, ref imin, ref dsec);
         }
 

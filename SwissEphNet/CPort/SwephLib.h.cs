@@ -175,6 +175,8 @@ namespace SwissEphNet.CPort
         //extern int swi_precess(double *R, double J, int32 iflag, int direction );
         //extern void swi_precess_speed(double *xx, double t, int32 iflag, int direction);
 
+        //extern int32 swi_guess_ephe_flag();
+
         ///* from sweph.c, light deflection, aberration, etc. */
         //extern void swi_deflect_light(double *xx, double dt, int32 iflag);
         //extern void swi_aberr_light(double *xx, double *xe, int32 iflag);

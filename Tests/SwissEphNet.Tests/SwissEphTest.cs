@@ -32,8 +32,8 @@ namespace SwissEphNet.Tests
         [TestMethod]
         public void TestVersion() {
             using (var target = new SwissEph()) {
-                Assert.AreEqual("2.01.00", target.swe_version());
-                Assert.AreEqual("2.01.00-net-0006", target.swe_dotnet_version());
+                Assert.AreEqual("2.02.00", target.swe_version());
+                Assert.AreEqual("2.02.00-net-0007", target.swe_dotnet_version());
             }
         }
 

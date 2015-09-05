@@ -26,5 +26,15 @@ namespace SwissEphNet.Tests
             Assert.AreEqual(-1.2, C.atof("-1.2"));
         }
 
+        [TestMethod]
+        public void TestFmod()
+        {
+            Assert.AreEqual(1.0, C.fmod(3, 2), 0.0000001);
+            Assert.AreEqual(1.3, C.fmod(5.3, 2), 0.0000001);
+            Assert.AreEqual(1.7, C.fmod(18.5, 4.2), 0.0000001);
+            Assert.AreEqual(0.5, C.fmod(18.5, 1), 0.0000001);
+            Assert.AreEqual(0.5, C.fmod(5.7, 1.3), 0.0000001);
+        }
+
     }
 }
