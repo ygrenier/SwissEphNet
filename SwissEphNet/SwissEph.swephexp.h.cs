@@ -441,8 +441,9 @@ namespace SwissEphNet
         public const double SE_TIDAL_DE405 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
         public const double SE_TIDAL_DE406 = (-25.826);  /* was (-25.7376) until V. 1.76.2 */
         public const double SE_TIDAL_DE421 = (-25.85);   /* JPL Interoffice Memorandum 14-mar-2008 on DE421 Lunar Orbit */
+        public const double SE_TIDAL_DE422 = (-25.85);   /* JPL Interoffice Memorandum 14-mar-2008 on DE421 Lunar Orbit */
         public const double SE_TIDAL_DE430 = (-25.82);   /* JPL Interoffice Memorandum 9-jul-2013 on DE430 Lunar Orbit */
-        public const double SE_TIDAL_DE431 = (-25.80);   /* IPN Progress Report 42-196 â€¢ February 15, 2014, p. 15 */
+        public const double SE_TIDAL_DE431 = (-25.80);   /* IPN Progress Report 42-196 â€¢ February 15, 2014, p. 15; was (-25.82) in V. 2.00.00 */
         public const double SE_TIDAL_26 = (-26.0);
         public const double SE_TIDAL_DEFAULT = SE_TIDAL_DE431;
         public const double SE_TIDAL_AUTOMATIC = 999999;
@@ -489,7 +490,9 @@ namespace SwissEphNet
         public const int SEMOD_SIDT_LONGTERM = 1;
         public const int SEMOD_SIDT_IERS_CONV_2010 = 2;
         public const int SEMOD_SIDT_PREC_MODEL = 3;
+        public const int SEMOD_SIDT_IAU_1976 = 4;
         public const int SEMOD_SIDT_DEFAULT = SEMOD_SIDT_LONGTERM;
+        //#define SEMOD_SIDT_DEFAULT          SEMOD_SIDT_IERS_CONV_2010
 
         /* frame bias methods */
         public const int SEMOD_BIAS_IAU2000 = 1;  /* use frame bias matrix IAU 2000 */
@@ -669,6 +672,8 @@ namespace SwissEphNet
         /// <summary>
         /// get ayanamsa 
         /// </summary>
+        public Int32 swe_get_ayanamsa_ex(double tjd_et, Int32 iflag, out double daya, ref string serr) { return Sweph.swe_get_ayanamsa_ex(tjd_et, iflag, out daya, ref serr); }
+        public Int32 swe_get_ayanamsa_ex_ut(double tjd_ut, Int32 iflag, out double daya, ref string serr) { return Sweph.swe_get_ayanamsa_ex_ut(tjd_ut, iflag, out daya, ref serr); }
         public double swe_get_ayanamsa(double tjd_et) { return Sweph.swe_get_ayanamsa(tjd_et); }
 
         public double swe_get_ayanamsa_ut(double tjd_ut) { return Sweph.swe_get_ayanamsa_ut(tjd_ut); }
@@ -925,6 +930,7 @@ namespace SwissEphNet
         /// delta t
         /// </summary>
         public double swe_deltat(double tjd) { return SwephLib.swe_deltat(tjd); }
+        public double swe_deltat_ex(double tjd, Int32 iflag, ref string serr) { return SwephLib.swe_deltat_ex(tjd, iflag, ref serr); }
 
         /// <summary>
         /// equation of time

@@ -142,7 +142,8 @@ namespace SwissEphNet.CPort
                         double[] ascmc) {
             int i, retc = 0;
             double armc, eps; double[] nutlo = new double[2];
-            double tjde = tjd_ut + SE.swe_deltat(tjd_ut);
+            String sdummy = null;
+            double tjde = tjd_ut + SE.swe_deltat_ex(tjd_ut, -1, ref sdummy);
             eps = SE.SwephLib.swi_epsiln(tjde, 0) * SwissEph.RADTODEG;
             SE.SwephLib.swi_nutation(tjde, 0, nutlo);
             for (i = 0; i < 2; i++)
@@ -192,7 +193,8 @@ namespace SwissEphNet.CPort
                         CPointer<double> ascmc) {
             int i, retc = 0;
             double armc, eps_mean; double[] nutlo = new double[2];
-            double tjde = tjd_ut + SE.swe_deltat(tjd_ut);
+            String sdummy = null;
+            double tjde = tjd_ut + SE.swe_deltat_ex(tjd_ut, iflag, ref sdummy);
             Sweph.sid_data sip = swed.sidd;
             int ito;
             if (Char.ToUpper(hsys) == 'G')

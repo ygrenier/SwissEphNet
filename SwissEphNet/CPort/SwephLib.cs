@@ -110,16 +110,15 @@ namespace SwissEphNet.CPort
         Int16[] npl;
         Int16[] icpl;
         Sweph.swe_data swed;
-        static double tid_acc = SwissEph.SE_TIDAL_DEFAULT;
-        static bool is_tid_acc_manual = false;
-        static bool init_dt_done = false;
         //static void init_crc32(void);
         //static int init_dt(void);
-        //static double adjust_for_tidacc(double ans, double Y);
-        //static double deltat_espenak_meeus_1620(double tjd);
+        //static double adjust_for_tidacc(double ans, double Y, double tid_acc);
+        //static double deltat_espenak_meeus_1620(double tjd, double tid_acc);
         //static double deltat_longterm_morrison_stephenson(double tjd);
-        //static double deltat_stephenson_morrison_1600(double tjd);
-        //static double deltat_aa(double tjd);
+        //static double deltat_stephenson_morrison_1600(double tjd, double tid_acc);
+        //static double deltat_aa(double tjd, double tid_acc);
+
+        const int SEFLG_EPHMASK = (SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_MOSEPH);
 
         /* Reduce x modulo 360 degrees
          */
@@ -1494,10 +1493,6 @@ namespace SwissEphNet.CPort
             /* Save answers, expressed in radians */
             nutlo[0] = SwissEph.DEGTORAD * C / 3600.0;
             nutlo[1] = SwissEph.DEGTORAD * D / 3600.0;
-            /*  nutlo[0] += (-0.071590 / 3600.0) * DEGTORAD;
-              nutlo[1] += (-0.008000 / 3600.0) * DEGTORAD;*/
-            /* nutlo[0] += (-0.047878 / 3600.0) * DEGTORAD;
-              nutlo[1] += (-0.004035 / 3600.0) * DEGTORAD;*/
             return (0);
         }
 
@@ -2158,15 +2153,48 @@ namespace SwissEphNet.CPort
                1570, 1090,  740,  490,  320,  200,  120,  
         };
         /* returns DeltaT (ET - UT) in days
-         * double tjd 	= 	julian day in UT
-         */
+        * double tjd 	= 	julian day in UT
+        * delta t is adjusted to the tidal acceleration that is compatible 
+        * with the ephemeris flag contained in iflag and with the ephemeris
+        * files made accessible through swe_set_ephe_path() or swe_set_jplfile().
+        * If iflag = -1, then the default tidal acceleration is ussed (i.e.
+        * that of DE431).
+        */
         //#define DEMO 0
-        public double swe_deltat(double tjd) {
+        Int32 calc_deltat(double tjd, Int32 iflag, out double deltat, ref string serr){
             double ans = 0;
             double B, Y, Ygreg, dd;
             int iy;
+            Int32 retc;
             int deltat_model = swed.astro_models[SwissEph.SE_MODEL_DELTAT];
+            double tid_acc;
+            Int32 denumret = 0;
+            Int32 epheflag, otherflag;
             if (deltat_model == 0) deltat_model = SwissEph.SEMOD_DELTAT_DEFAULT;
+            epheflag = iflag & SEFLG_EPHMASK;
+            otherflag = iflag & ~SEFLG_EPHMASK;
+            /* with iflag == -1, we use default tid_acc */
+            if (iflag == -1)
+            {
+                retc = swi_get_tid_acc(tjd, 0, 9999, ref denumret, out tid_acc, ref serr); /* for default tid_acc */
+                /* otherwise we use tid_acc consistent with epheflag */
+            }
+            else
+            {
+                if (SE.Sweph.swi_init_swed_if_start() == 1 && 0==(epheflag & SwissEph.SEFLG_MOSEPH))
+                {
+                    if (serr != null)
+                        serr = "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_deltat_ex()";
+                    String sdummy = null;
+                    retc = swi_set_tid_acc(tjd, epheflag, 0, ref  sdummy);  /* _set_ saves tid_acc in swed */
+                }
+                else
+                {
+                    retc = swi_set_tid_acc(tjd, epheflag, 0, ref serr);  /* _set_ saves tid_acc in swed */
+                }
+                tid_acc = swed.tid_acc;
+            }
+            iflag = otherflag | retc;
             /* read additional values from swedelta.txt */
             //bool use_espenak_meeus = ESPENAK_MEEUS_2006;
             Y = 2000.0 + (tjd - Sweph.J2000) / 365.25;
@@ -2178,10 +2206,11 @@ namespace SwissEphNet.CPort
              * However, they use the long-term formula of Morrison & Stephenson,
              * which can be used even for the remoter past.
              */
-            /*if (use_espenak_meeus && tjd < 2317746.13090277789) {*/
+            /*if (use_espenak_meeus && tjd < 2317746.13090277789) */
             if (deltat_model == SwissEph.SEMOD_DELTAT_ESPENAK_MEEUS_2006 && tjd < 2317746.13090277789)
             {
-                return deltat_espenak_meeus_1620(tjd);
+                deltat = deltat_espenak_meeus_1620(tjd, tid_acc);
+                return iflag;
             }
             /* If the macro DELTAT_ESPENAK_MEEUS_2006 is FALSE:
              * Before 1620, we follow Stephenson & Morrsion 2004. For the tabulated 
@@ -2189,8 +2218,11 @@ namespace SwissEphNet.CPort
              */
             if (Y < TABSTART) {
                 if (Y < TAB2_END) {
-                    return deltat_stephenson_morrison_1600(tjd);
-                } else {
+                    deltat = deltat_stephenson_morrison_1600(tjd, tid_acc);
+                    return iflag;
+                }
+                else
+                {
                     /* between 1600 and 1620:
                      * linear interpolation between 
                      * end of table dt2 and start of table dt */
@@ -2200,8 +2232,9 @@ namespace SwissEphNet.CPort
                         dd = (Y - TAB2_END) / B;
                         /*ans = dt2[iy] + dd * (dt[0] / 100.0 - dt2[iy]);*/
                         ans = dt2[iy] + dd * (dt[0] - dt2[iy]);
-                        ans = adjust_for_tidacc(ans, Ygreg);
-                        return ans / 86400.0;
+                        ans = adjust_for_tidacc(ans, Ygreg, tid_acc);
+                        deltat = ans / 86400.0;
+                        return iflag;
                     }
                 }
             }
@@ -2210,16 +2243,34 @@ namespace SwissEphNet.CPort
              * See AA page K11.
              */
             if (Y >= TABSTART) {
-                return deltat_aa(tjd);
+                deltat = deltat_aa(tjd, tid_acc);
+                return iflag;
             }
 #if TRACE
             trace("swe_deltat: %f\t%f\t", tjd, ans);
+            //fprintf(swi_fp_trace_c, "  iflag = %d;", tjd);
+            //fprintf(swi_fp_trace_c, " t = swe_deltat_ex(tjd, iflag, NULL);\n");
 #endif
-            return ans / 86400.0;
+            deltat = ans / 86400.0;
+            return iflag;
+        }
+
+        public double swe_deltat_ex(double tjd, Int32 iflag, ref string serr)
+        {
+            double deltat;
+            calc_deltat(tjd, iflag, out deltat, ref serr);
+            return deltat;
+        }
+
+        public double swe_deltat(double tjd)
+        {
+            Int32 iflag = swi_guess_ephe_flag();
+            String sdummy = null;
+            return swe_deltat_ex(tjd, iflag, ref sdummy); /* with default tidal acceleration/default ephemeris */
         }
 
         /*static*/
-        double deltat_aa(double tjd) {
+        double deltat_aa(double tjd, double tid_acc) {
             double ans = 0, ans2, ans3;
             double p, B, B2, Y, dd;
             double[] d = new double[6];
@@ -2283,7 +2334,7 @@ namespace SwissEphNet.CPort
                 printf( "B %.4lf, ans %.4lf\n", B, ans );
 #endif
             done:
-                ans = adjust_for_tidacc(ans, Y);
+                ans = adjust_for_tidacc(ans, Y, tid_acc);
                 return ans / 86400.0;
             }
             /* today - : 
@@ -2313,7 +2364,7 @@ namespace SwissEphNet.CPort
         }
 
         /*static*/
-        double deltat_stephenson_morrison_1600(double tjd) {
+        double deltat_stephenson_morrison_1600(double tjd, double tid_acc) {
             double ans = 0, ans2, ans3;
             double p, B, dd;
             double tjd0;
@@ -2328,17 +2379,17 @@ namespace SwissEphNet.CPort
                 /*B = (Y - LTERM_EQUATION_YSTART) * 0.01;
                 ans = -20 + LTERM_EQUATION_COEFF * B * B;*/
                 ans = deltat_longterm_morrison_stephenson(tjd);
-                ans = adjust_for_tidacc(ans, Y);
+                ans = adjust_for_tidacc(ans, Y, tid_acc);
                 /* transition from formula to table over 100 years */
                 if (Y >= TAB2_START - 100) {
                     /* starting value of table dt2: */
-                    ans2 = adjust_for_tidacc(dt2[0], TAB2_START);
+                    ans2 = adjust_for_tidacc(dt2[0], TAB2_START, tid_acc);
                     /* value of formula at epoch TAB2_START */
                     /* B = (TAB2_START - LTERM_EQUATION_YSTART) * 0.01;
                     ans3 = -20 + LTERM_EQUATION_COEFF * B * B;*/
                     tjd0 = (TAB2_START - 2000) * 365.2425 + Sweph.J2000;
                     ans3 = deltat_longterm_morrison_stephenson(tjd0);
-                    ans3 = adjust_for_tidacc(ans3, Y);
+                    ans3 = adjust_for_tidacc(ans3, Y, tid_acc);
                     dd = ans3 - ans2;
                     B = (Y - (TAB2_START - 100)) * 0.01;
                     /* fit to starting point of table dt2. */
@@ -2354,14 +2405,14 @@ namespace SwissEphNet.CPort
                 dd = (Yjul - (TAB2_START + TAB2_STEP * iy)) / TAB2_STEP;
                 ans = dt2[iy] + (dt2[iy + 1] - dt2[iy]) * dd;
                 /* correction for tidal acceleration used by our ephemeris */
-                ans = adjust_for_tidacc(ans, Y);
+                ans = adjust_for_tidacc(ans, Y, tid_acc);
             }
             ans /= 86400.0;
             return ans;
         }
 
         /*static*/
-        double deltat_espenak_meeus_1620(double tjd) {
+        double deltat_espenak_meeus_1620(double tjd, double tid_acc) {
             double ans = 0;
             double Ygreg;
             double u;
@@ -2403,7 +2454,7 @@ namespace SwissEphNet.CPort
                 u = Ygreg - 2000;
                 ans = ((((0.00002373599 * u + 0.000651814) * u + 0.0017275) * u - 0.060374) * u + 0.3345) * u + 63.86;
             }
-            ans = adjust_for_tidacc(ans, Ygreg);
+            ans = adjust_for_tidacc(ans, Ygreg, tid_acc);
             ans /= 86400.0;
             return ans;
         }
@@ -2419,8 +2470,8 @@ namespace SwissEphNet.CPort
             int i;
             string sdummy = null;
             string s, sp;
-            if (!init_dt_done) {
-                init_dt_done = true;
+            if (!swed.init_dt_done) {
+                swed.init_dt_done = true;
                 /* no error message if file is missing */
                 if ((fp = SE.Sweph.swi_fopen(-1, "swe_deltat.txt", swed.ephepath, ref sdummy)) == null
                   && (fp = SE.Sweph.swi_fopen(-1, "sedeltat.txt", swed.ephepath, ref sdummy)) == null)
@@ -2466,7 +2517,7 @@ namespace SwissEphNet.CPort
          * are not affected by errors in Lunar or planetary theory.
          */
         /*static*/
-        double adjust_for_tidacc(double ans, double Y) {
+        double adjust_for_tidacc(double ans, double Y, double tid_acc) {
             double B;
             if (Y < 1955.0) {
                 B = (Y - 1955.0);
@@ -2475,15 +2526,14 @@ namespace SwissEphNet.CPort
             return ans;
         }
 
-        /* returns tidal acceleration used in swe_deltat() */
-        public static double swe_get_tid_acc() {
-            return tid_acc;
+        /* returns tidal acceleration used in swe_deltat() and swe_deltat_ex() */
+        public double swe_get_tid_acc() {
+            return swed.tid_acc;
         }
 
         /* function sets tidal acceleration of the Moon.
          * t_acc can be either
          * - the value of the tidal acceleration in arcsec/cty^2
-         * - the DE number of an ephemeris; in this case the tidal acceleration
          *   of the Moon will be set consistent with that ephemeris.
          * - SE_TIDAL_AUTOMATIC, 
          */
@@ -2491,28 +2541,55 @@ namespace SwissEphNet.CPort
         {
             if (t_acc == SwissEph.SE_TIDAL_AUTOMATIC)
             {
-                tid_acc = SwissEph.SE_TIDAL_DEFAULT;
-                is_tid_acc_manual = false;
+                swed.tid_acc = SwissEph.SE_TIDAL_DEFAULT;
+                swed.is_tid_acc_manual = false;
                 return;
             }
-            tid_acc = t_acc;
-            is_tid_acc_manual = true;
+            swed.tid_acc = t_acc;
+            swed.is_tid_acc_manual = true;
         }
 
-        internal void swi_set_tid_acc(double tjd_ut, int iflag, int denum)
+        internal Int32 swi_guess_ephe_flag()
         {
-            double[] xx = new double[6];
-            double tjd_et;
-            int retval = 0; string sdummy = null;
-            /* manual tid_acc overrides automatic tid_acc */
-            if (is_tid_acc_manual)
-                return;
+            Int32 iflag = SwissEph.SEFLG_MOSEPH;
+            /* if jpl file is open, assume SEFLG_JPLEPH */
+            if (swed.jpl_file_is_open)
+            {
+                iflag = SwissEph.SEFLG_JPLEPH;
+                /* if semo* or sepl* file were found already, assume SEFLG_SWIEPH */
+            }
+            else if (!String.IsNullOrWhiteSpace(swed.fidat[Sweph.SEI_FILE_MOON].fnam) || !String.IsNullOrWhiteSpace(swed.fidat[Sweph.SEI_FILE_PLANET].fnam))
+            {
+                iflag = SwissEph.SEFLG_SWIEPH;
+                /* if swe_set_ephe_path() has not been called yet, call it now to check the availability
+                 * of semo* file. If it is available, assume SEFLG_SWIEPH */
+            }
+            else if (!swed.ephe_path_is_set)
+            {
+                SE.swe_set_ephe_path(null);
+                if (!String.IsNullOrWhiteSpace(swed.fidat[Sweph.SEI_FILE_MOON].fnam))
+                    iflag = SwissEph.SEFLG_SWIEPH;
+                /* ... otherwise assume SEFLG_MOSEPH */
+            }
+            return iflag;
+        }
+
+        Int32 swi_get_tid_acc(double tjd_ut, Int32 iflag, Int32 denum, ref Int32 denumret, out double tid_acc, ref string serr)
+        {
+            double[] xx = new double[6]; double tjd_et;
+            iflag &= SEFLG_EPHMASK;
+            if (swed.is_tid_acc_manual)
+            {
+                tid_acc = swed.tid_acc;
+                return iflag;
+            }
             if (denum == 0)
             {
                 if ((iflag & SwissEph.SEFLG_MOSEPH) != 0)
                 {
                     tid_acc = SwissEph.SE_TIDAL_DE404;
-                    return;
+                    denumret = 404;
+                    return iflag;
                 }
                 if ((iflag & SwissEph.SEFLG_JPLEPH) != 0)
                 {
@@ -2522,10 +2599,12 @@ namespace SwissEphNet.CPort
                     }
                     else
                     {
-                        tjd_et = tjd_ut + swe_deltat(tjd_ut);
+                        tjd_et = tjd_ut; /* + swe_deltat_ex(tjd_ut, 0, NULL); we do not add 
+                                                  delta t, because it would result in a recursive 
+                                                  call of swi_set_tid_acc() */
                         iflag = SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_J2000 | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_ICRS | SwissEph.SEFLG_BARYCTR;
-                        retval = SE.swe_calc(tjd_et, SwissEph.SE_JUPITER, iflag, xx, ref sdummy);
-                        if (swed.jpl_file_is_open && (retval & SwissEph.SEFLG_JPLEPH) != 0)
+                        iflag = SE.swe_calc(tjd_et, SwissEph.SE_JUPITER, iflag, xx, ref serr);
+                        if (swed.jpl_file_is_open && (iflag & SwissEph.SEFLG_JPLEPH) != 0)
                         {
                             denum = swed.jpldenum;
                         }
@@ -2534,13 +2613,15 @@ namespace SwissEphNet.CPort
                 /* SEFLG_SWIEPH wanted or SEFLG_JPLEPH failed: */
                 if (denum == 0)
                 {
-                    tjd_et = tjd_ut + swe_deltat(tjd_ut);
+                    tjd_et = tjd_ut; /* + swe_deltat_ex(tjd_ut, 0, NULL); we do not add 
+                                              delta t, because it would result in a recursive 
+                                              call of swi_set_tid_acc() */
                     if (swed.fidat[Sweph.SEI_FILE_MOON].fptr == null ||
                         tjd_et < swed.fidat[Sweph.SEI_FILE_MOON].tfstart + 1 ||
                     tjd_et > swed.fidat[Sweph.SEI_FILE_MOON].tfend - 1)
                     {
                         iflag = SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_J2000 | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_ICRS;
-                        SE.swe_calc(tjd_et, SwissEph.SE_MOON, iflag, xx, ref sdummy);
+                        iflag = SE.swe_calc(tjd_et, SwissEph.SE_MOON, iflag, xx, ref serr);
                     }
                     if (swed.fidat[Sweph.SEI_FILE_MOON].fptr != null)
                     {
@@ -2561,29 +2642,44 @@ namespace SwissEphNet.CPort
                 case 405: tid_acc = SwissEph.SE_TIDAL_DE405; break;
                 case 406: tid_acc = SwissEph.SE_TIDAL_DE406; break;
                 case 421: tid_acc = SwissEph.SE_TIDAL_DE421; break;
+                case 422: tid_acc = SwissEph.SE_TIDAL_DE422; break;
                 case 430: tid_acc = SwissEph.SE_TIDAL_DE430; break;
                 case 431: tid_acc = SwissEph.SE_TIDAL_DE431; break;
-                default: tid_acc = SwissEph.SE_TIDAL_DEFAULT; break;
+                default: denum = SwissEph.SE_DE_NUMBER; tid_acc = SwissEph.SE_TIDAL_DEFAULT; break;
             }
+            denumret = denum;
+            iflag &= SEFLG_EPHMASK;
+            return iflag;
+        }
+
+        internal Int32 swi_set_tid_acc(double tjd_ut, Int32 iflag, Int32 denum, ref string serr)
+        {
+          Int32 retc = iflag;
+          /* manual tid_acc overrides automatic tid_acc */
+          if (swed.is_tid_acc_manual)
+            return retc;
+          retc = swi_get_tid_acc(tjd_ut, iflag, denum, ref swed.jpldenum, out swed.tid_acc, ref serr);
 #if TRACE
             //swi_open_trace(NULL);
             //if (swi_trace_count < TRACE_COUNT_MAX) {
             //  if (swi_fp_trace_c != NULL) {
             //    fputs("\n/*SWE_SET_TID_ACC*/\n", swi_fp_trace_c);
-            //    fprintf(swi_fp_trace_c, "  t = %.9f;\n", tid_acc);
+            //    fprintf(swi_fp_trace_c, "  t = %.9f;\n", swed.tid_acc);
             //    fprintf(swi_fp_trace_c, "  swe_set_tid_acc(t);\n");
             //    fputs("  printf(\"swe_set_tid_acc: %f\\t\\n\", ", swi_fp_trace_c);
             //    fputs("t);\n", swi_fp_trace_c);
             //    fflush(swi_fp_trace_c);
             //  }
             //  if (swi_fp_trace_out != NULL) {
-            //    fprintf(swi_fp_trace_out, "swe_set_tid_acc: %f\t\n", tid_acc);
-            trace("swe_set_tid_acc: %f\t", tid_acc);
+            //    fprintf(swi_fp_trace_out, "swe_set_tid_acc: %f\t\n", swed.tid_acc);
+            trace("swe_set_tid_acc: %f\t", swed.tid_acc);
             //    fflush(swi_fp_trace_out);
             //  }
             //}
 #endif
+            return retc;
         }
+        //internal void swi_set_tid_acc(double tjd_ut, int iflag, int denum)
 
         /*
          * The time range of DE431 requires a new calculation of sidereal time that 
@@ -2605,10 +2701,8 @@ namespace SwissEphNet.CPort
             double dlon, dhour; double[] xs = new double[6], xobl = new double[6], nutlo = new double[2];
             double dlt = Sweph.AUNIT / Sweph.CLIGHT / 86400.0;
             double t, t2, t3, t4, t5, t6;
-            //string sdummy = null;
-            eps *= SwissEph.RADTODEG;
-            nut *= SwissEph.RADTODEG;
-            tjd_et = tjd_ut + swe_deltat(tjd_ut);
+            string sdummy = null;
+            tjd_et = tjd_ut + swe_deltat_ex(tjd_ut, -1, ref sdummy);
             t = (tjd_et - Sweph.J2000) / 365250.0;
             t2 = t * t; t3 = t * t2; t4 = t * t3; t5 = t * t4; t6 = t * t5;
             /* mean longitude of earth J2000 */
@@ -2618,7 +2712,7 @@ namespace SwissEphNet.CPort
             xs[0] = dlon * SwissEph.DEGTORAD; xs[1] = 0; xs[2] = 1;
             /* to mean equator J2000, cartesian */
             xobl[0] = 23.45; xobl[1] = 23.45;
-            xobl[1] = swi_epsiln(Sweph.J2000 + swe_deltat(Sweph.J2000), 0) * SwissEph.RADTODEG;
+            xobl[1] = swi_epsiln(Sweph.J2000 + swe_deltat_ex(Sweph.J2000, -1, ref sdummy), 0) * SwissEph.RADTODEG;
             swi_polcart(xs, xs);
             swi_coortrf(xs, xs, -xobl[1] * SwissEph.DEGTORAD);
             /* precess to mean equinox of date */
@@ -2772,20 +2866,20 @@ namespace SwissEphNet.CPort
         /* sidtime_long_term() is not used between the following two dates */
         const double SIDT_LTERM_T0 = 2396758.5;  /* 1 Jan 1850  */
         const double SIDT_LTERM_T1 = 2469807.5;  /* 1 Jan 2050  */
-        //const double SIDT_LTERM_OFS0 = (0.09081674334 / 3600);
-        //const double SIDT_LTERM_OFS1 = (0.337962821868 / 3600);
-        const double SIDT_LTERM_OFS0 = (0.032828635 / 15.0);
-        const double SIDT_LTERM_OFS1 = (-0.065393299 / 15.0);
+        const double SIDT_LTERM_OFS0 = (0.000378172 / 15.0);
+        const double SIDT_LTERM_OFS1 = (0.001385646 / 15.0);
         public double swe_sidtime0(double tjd, double eps, double nut)
         {
             double jd0;    	/* Julian day at midnight Universal Time */
             double secs;   	/* Time of day, UT seconds since UT midnight */
             double eqeq, jd, tu, tt, msday, jdrel;
             double gmst, dadd;
+            string sdummy = null;
             int prec_model_short = swed.astro_models[SwissEph.SE_MODEL_PREC_SHORTTERM];
             int sidt_model = swed.astro_models[SwissEph.SE_MODEL_SIDT];
             if (prec_model_short == 0) prec_model_short = SwissEph.SEMOD_PREC_DEFAULT_SHORT;
             if (sidt_model == 0) sidt_model = SwissEph.SEMOD_SIDT_DEFAULT;
+            SE.Sweph.swi_init_swed_if_start();
             if (/*1 &&*/ sidt_model == SwissEph.SEMOD_SIDT_LONGTERM)
             {
                 if (tjd <= SIDT_LTERM_T0 || tjd >= SIDT_LTERM_T1)
@@ -2813,12 +2907,12 @@ namespace SwissEphNet.CPort
             }
             secs *= 86400.0;
             tu = (jd0 - Sweph.J2000) / 36525.0; /* UT1 in centuries after J2000 */
-            if (sidt_model == SwissEph.SEMOD_SIDT_IERS_CONV_2010)
+            if (sidt_model == SwissEph.SEMOD_SIDT_IERS_CONV_2010 || sidt_model == SwissEph.SEMOD_SIDT_LONGTERM)
             {
                 /*  ERA-based expression for for Greenwich Sidereal Time (GST) based 
                  *  on the IAU 2006 precession */
                 jdrel = tjd - Sweph.J2000;
-                tt = (tjd + swe_deltat(tjd) - Sweph.J2000) / 36525.0;
+                tt = (tjd + swe_deltat_ex(tjd, -1, ref sdummy) - Sweph.J2000) / 36525.0;
                 gmst = swe_degnorm((0.7790572732640 + 1.00273781191135448 * jdrel) * 360);
                 gmst += (0.014506 + tt * (4612.156534 + tt * (1.3915817 + tt * (-0.00000044 + tt * (-0.000029956 + tt * -0.0000000368))))) / 3600.0;
                 dadd = sidtime_non_polynomial_part(tt);
@@ -2829,13 +2923,16 @@ namespace SwissEphNet.CPort
             }
             else if (prec_model_short >= SwissEph.SEMOD_PREC_IAU_2006)
             {
-                tt = (jd0 + swe_deltat(jd0) - Sweph.J2000) / 36525.0; /* TT in centuries after J2000 */
+                tt = (jd0 + swe_deltat_ex(jd0, -1, ref sdummy) - Sweph.J2000) / 36525.0; /* TT in centuries after J2000 */
                 gmst = (((-0.000000002454 * tt - 0.00000199708) * tt - 0.0000002926) * tt + 0.092772110) * tt * tt + 307.4771013 * (tt - tu) + 8640184.79447825 * tu + 24110.5493771;
                 /* mean solar days per sidereal day at date tu;
                  * for the derivative of gmst, we can assume UT1 =~ TT */
                 msday = 1 + ((((-0.000000012270 * tt - 0.00000798832) * tt - 0.0000008778) * tt + 0.185544220) * tt + 8640184.79447825) / (86400.0 * 36525.0);
                 gmst += msday * secs;
-            } else {  /* IAU 1976 formula */
+                /* SEMOD_SIDT_IAU_1976 */
+            }
+            else
+            {  /* IAU 1976 formula */
                 /* Greenwich Mean Sidereal Time at 0h UT of date */
                 gmst = ((-6.2e-6 * tu + 9.3104e-2) * tu + 8640184.812866) * tu + 24110.54841;
                 /* mean solar days per sidereal day at date tu, = 1.00273790934 in 1986 */
@@ -2881,7 +2978,11 @@ namespace SwissEphNet.CPort
         public double swe_sidtime(double tjd_ut) {
             int i;
             double eps, tsid; double[] nutlo = new double[2];
-            double tjde = tjd_ut + swe_deltat(tjd_ut);
+            double tjde;
+            string sdummy = null;
+            /* delta t adjusted to default tidal acceleration of the moon */
+            tjde = tjd_ut + swe_deltat_ex(tjd_ut, -1, ref sdummy);
+            SE.Sweph.swi_init_swed_if_start();
             eps = swi_epsiln(tjde, 0) * SwissEph.RADTODEG;
             swi_nutation(tjde, 0, nutlo);
             for (i = 0; i < 2; i++)
@@ -3355,7 +3456,8 @@ namespace SwissEphNet.CPort
         public void swe_set_astro_models(Int32[] imodel)
         {
           //int *pmodel = &(swed.astro_models[0]);
-          //memcpy(pmodel, imodel, SEI_NMODELS * sizeof(int32));
+            SE.Sweph.swi_init_swed_if_start();
+            //memcpy(pmodel, imodel, SEI_NMODELS * sizeof(int32));
             Array.Copy(imodel, swed.astro_models, Sweph.SEI_NMODELS);
         }
 
