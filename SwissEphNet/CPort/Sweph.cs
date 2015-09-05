@@ -1134,7 +1134,7 @@ namespace SwissEphNet.CPort
             /* initialisation of swed, when called first time from */
             if (!swed.ephe_path_is_set)
             {
-                swed = new swe_data();
+                //swed = new swe_data();
                 swed.ephepath = SwissEph.SE_EPHE_PATH;
                 swed.jplfnam = SwissEph.SE_FNAME_DFT;
                 SE.swe_set_tid_acc(SwissEph.SE_TIDAL_AUTOMATIC);
@@ -1435,13 +1435,11 @@ namespace SwissEphNet.CPort
             sp = spi < 0 ? fname : fname.Substring(spi + 1);
             swed.jplfnam = sp;
             /* open ephemeris, if still closed */
-            if (true /*|| !swed.jpl_file_is_open*/) {
-                retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref sdummy);
-                if (retc == OK) {
-                    if (swed.jpldenum >= 403) {
-                        /*if (INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980) */
-                        load_dpsi_deps();
-                    }
+            retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref sdummy);
+            if (retc == OK) {
+                if (swed.jpldenum >= 403) {
+                    /*if (INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980) */
+                    load_dpsi_deps();
                 }
             }
 #if TRACE
@@ -2633,6 +2631,7 @@ namespace SwissEphNet.CPort
                                ref epsilon oe, ref string serr) {
             int i;
             double daya;
+            double[] xxsv = new double[24];
             /************************************************
              * nutation                                     *
              ************************************************/
@@ -2672,8 +2671,16 @@ namespace SwissEphNet.CPort
                 } else {
                     /* traditional algorithm */
                     SE.SwephLib.swi_cartpol_sp(pdp.xreturn.GetPointer(6), pdp.xreturn);
+                    /* note, swe_get_ayanamsa_ex() disturbs present calculations, if sun is calculated with 
+                     * TRUE_CHITRA ayanamsha, because the ayanamsha also calculates the sun.
+                     * Therefore current values are saved... */
+                    for (i = 0; i < 24; i++)
+                        xxsv[i] = pdp.xreturn[i];
                     if (SE.swe_get_ayanamsa_ex(pdp.teval, iflag, out daya, ref serr) == ERR)
                         return ERR;
+                    /* ... and restored */
+                    for (i = 0; i < 24; i++)
+                        pdp.xreturn[i] = xxsv[i];
                     pdp.xreturn[0] -= daya * SwissEph.DEGTORAD;
                     SE.SwephLib.swi_polcart_sp(pdp.xreturn, pdp.xreturn.GetPointer(6));
                 }
@@ -5893,10 +5900,14 @@ namespace SwissEphNet.CPort
                         {
                             s = "Revati,zePsc,ICRS,01,13,43.8857,7,34,31.274,141.66,-55.62,0.0,22.09,5.204,06,174";
                             /* Ayanamsha SE_SIDM_TRUE_PUSHYA */
+                            sstar = "revati";
+                            goto found;
                         }
                         else if (star.Contains(",deCnc") || star.StartsWith("Pushya"))
                         {
                             s = "Pushya,deCnc,ICRS,08,44,41.0996,+18,09,15.511,-17.10,-228.46,17.14,23.97,3.94,18,2027";
+                            sstar = "pushya";
+                            goto found;
                         }
                         retc = ERR;
                         goto return_err;

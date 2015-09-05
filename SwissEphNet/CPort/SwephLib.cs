@@ -2551,25 +2551,15 @@ namespace SwissEphNet.CPort
 
         internal Int32 swi_guess_ephe_flag()
         {
-            Int32 iflag = SwissEph.SEFLG_MOSEPH;
+            Int32 iflag = SwissEph.SEFLG_SWIEPH;
             /* if jpl file is open, assume SEFLG_JPLEPH */
             if (swed.jpl_file_is_open)
             {
                 iflag = SwissEph.SEFLG_JPLEPH;
-                /* if semo* or sepl* file were found already, assume SEFLG_SWIEPH */
             }
-            else if (!String.IsNullOrWhiteSpace(swed.fidat[Sweph.SEI_FILE_MOON].fnam) || !String.IsNullOrWhiteSpace(swed.fidat[Sweph.SEI_FILE_PLANET].fnam))
+            else
             {
                 iflag = SwissEph.SEFLG_SWIEPH;
-                /* if swe_set_ephe_path() has not been called yet, call it now to check the availability
-                 * of semo* file. If it is available, assume SEFLG_SWIEPH */
-            }
-            else if (!swed.ephe_path_is_set)
-            {
-                SE.swe_set_ephe_path(null);
-                if (!String.IsNullOrWhiteSpace(swed.fidat[Sweph.SEI_FILE_MOON].fnam))
-                    iflag = SwissEph.SEFLG_SWIEPH;
-                /* ... otherwise assume SEFLG_MOSEPH */
             }
             return iflag;
         }
