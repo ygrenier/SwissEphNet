@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.02.00";
+        public const String SE_VERSION = "2.02.01";
 
         /// <summary>
         /// 2000 January 1.5
