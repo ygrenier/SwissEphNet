@@ -1,7 +1,7 @@
 # SwissEphNet
 
 This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from 
-C (version 2.01.00) to C# in a PCL project for cross platform usage.
+C (version 2.02.01) to C# in a PCL project for cross platform usage.
 
 # Projects splitted (2014-06-06)
 
