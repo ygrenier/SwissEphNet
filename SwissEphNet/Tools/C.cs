@@ -21,6 +21,14 @@ namespace SwissEphNet
             return 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static double fmod(double numer, double denom)
+        {
+            return numer % denom;
+        }
+
     }
 
 }
