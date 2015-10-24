@@ -93,7 +93,7 @@ namespace SwissEphNet.CPort
         //            double *dxret, double *dxret2);
         //static double calc_dip(double geoalt, double atpress, double attemp, double lapse_rate);
         //static double calc_astronomical_refr(double geoalt,double atpress, double attemp);
-        static double const_lapse_rate = Sweph.SE_LAPSE_RATE;  /* for refraction */
+        double const_lapse_rate = Sweph.SE_LAPSE_RATE;  /* for refraction */
 
         //#if 0
         //#define DSUN 	(1391978489.9 / AUNIT)	/* this value is consistent with
@@ -3143,7 +3143,7 @@ namespace SwissEphNet.CPort
          * double attemp       * atmospheric temperature degrees C *
          * returns double r in degrees
         */
-        static double calc_astronomical_refr(double inalt, double atpress, double attemp) {
+        double calc_astronomical_refr(double inalt, double atpress, double attemp) {
             //#if 0
             //  /* formula based on G.G. Bennett, The calculation of astronomical refraction in marine navigation,
             //  * Journal of Inst. Navigation, No. 35, page 255-259, 1982,
@@ -3176,7 +3176,7 @@ namespace SwissEphNet.CPort
          * double lapse_rate   * (dT/dh) [deg K/m]
          * returns dip in degrees
          */
-        static double calc_dip(double geoalt, double atpress, double attemp, double lapse_rate) {
+        double calc_dip(double geoalt, double atpress, double attemp, double lapse_rate) {
             /* below formula is based on A. Thom, Megalithic lunar observations, 1973 (page 32).
             * conversion to metric has been done by
             * V. Reijs, 2000, http://www.iol.ie/~geniet/eng/refract.htm
@@ -3775,19 +3775,23 @@ namespace SwissEphNet.CPort
          */
         const double EULER = 2.718281828459;
         const int NMAG_ELEM = (SwissEph.SE_VESTA + 1);
-        static double[,] mag_elem = new double[NMAG_ELEM, 4] {
+//#define MAG_IAU_1986
+        static readonly double[,] mag_elem = new double[NMAG_ELEM, 4] {
                 /* DTV-Atlas Astronomie, p. 32 */
-                {-26.86, 0, 0, 0},
-                {-12.55, 0, 0, 0},
+                {-26.86, 0, 0, 0}, /* Sun */
+                {-12.55, 0, 0, 0}, /* Moon */
+//#ifdef MAG_IAU_1986
                 /* IAU 1986 */
-                {-0.42, 3.80, -2.73, 2.00},
-                {-4.40, 0.09, 2.39, -0.65},
+                {-0.42, 3.80, -2.73, 2.00}, /* Mercury */
+                {-4.40, 0.09, 2.39, -0.65}, /* Venus */
                 {- 1.52, 1.60, 0, 0},   /* Mars */
                 {- 9.40, 0.5, 0, 0},    /* Jupiter */
                 {- 8.88, -2.60, 1.25, 0.044},   /* Saturn */
                 {- 7.19, 0.0, 0, 0},    /* Uranus */
                 {- 6.87, 0.0, 0, 0},    /* Neptune */
                 {- 1.00, 0.0, 0, 0},    /* Pluto */
+//#else
+//#endif
                 {99, 0, 0, 0},          /* nodes and apogees */
                 {99, 0, 0, 0},
                 {99, 0, 0, 0},
@@ -3935,11 +3939,14 @@ namespace SwissEphNet.CPort
                                 + mag_elem[ipl, 3] * du
                                 + mag_elem[ipl, 0];
                 } else if (ipl < SwissEph.SE_CHIRON) {
+                    // #ifdef MAG_IAU_1986
                     attr[4] = 5 * Math.Log10(lbr2[2] * lbr[2])
                               + mag_elem[ipl, 1] * attr[0] / 100.0
                               + mag_elem[ipl, 2] * attr[0] * attr[0] / 10000.0
                               + mag_elem[ipl, 3] * attr[0] * attr[0] * attr[0] / 1000000.0
                               + mag_elem[ipl, 0];
+                    //#else
+                    //#endif
                 } else if (ipl < NMAG_ELEM || ipl > SwissEph.SE_AST_OFFSET) { /* asteroids */
                     ph1 = Math.Pow(EULER, -3.33 * Math.Pow(Math.Tan(attr[0] * SwissEph.DEGTORAD / 2), 0.63));
                     ph2 = Math.Pow(EULER, -1.87 * Math.Pow(Math.Tan(attr[0] * SwissEph.DEGTORAD / 2), 1.22));
@@ -4035,7 +4042,7 @@ namespace SwissEphNet.CPort
             return retflag;
         }
 
-        static int find_maximum(double y00, double y11, double y2, double dx,
+        int find_maximum(double y00, double y11, double y2, double dx,
                                 out double dxret, out double yret) {
             double a, b, c, x, y;
             c = y11;
@@ -4048,7 +4055,7 @@ namespace SwissEphNet.CPort
             return SwissEph.OK;
         }
 
-        static int find_zero(double y00, double y11, double y2, double dx,
+        int find_zero(double y00, double y11, double y2, double dx,
                                 out double dxret, out double dxret2) {
             double a, b, c, x1, x2;
             dxret = dxret2 = 0;
@@ -4682,7 +4689,7 @@ namespace SwissEphNet.CPort
          *                 be returned instead of the aphelia.
          */
         /* mean elements for Mercury - Neptune from VSOP87 (mean equinox of date) */
-        static double[][] el_node = CreateArray(new double[8, 4]
+        static readonly double[][] el_node = CreateArray(new double[8, 4]
           {{ 48.330893,  1.1861890,  0.00017587,  0.000000211,}, /* Mercury */
           { 76.679920,  0.9011190,  0.00040665, -0.000000080,}, /* Venus   */
           {  0       ,  0        ,  0         ,  0          ,}, /* Earth   */
@@ -4692,7 +4699,7 @@ namespace SwissEphNet.CPort
           { 74.005947,  0.5211258,  0.00133982,  0.000018516,}, /* Uranus  */
           {131.784057,  1.1022057,  0.00026006, -0.000000636,}, /* Neptune */
           });
-        static double[][] el_peri = CreateArray(new double[8, 4] 
+        static readonly double[][] el_peri = CreateArray(new double[8, 4] 
           {{ 77.456119,  1.5564775,  0.00029589,  0.000000056,}, /* Mercury */
           {131.563707,  1.4022188, -0.00107337, -0.000005315,}, /* Venus   */
           {102.937348,  1.7195269,  0.00045962,  0.000000499,}, /* Earth   */
@@ -4702,7 +4709,7 @@ namespace SwissEphNet.CPort
           {173.005159,  1.4863784,  0.00021450,  0.000000433,}, /* Uranus  */
           { 48.123691,  1.4262677,  0.00037918, -0.000000003,}, /* Neptune */
           });
-        static double[][] el_incl = CreateArray(new double[8, 4] 
+        static readonly double[][] el_incl = CreateArray(new double[8, 4] 
           {{  7.004986,  0.0018215, -0.00001809,  0.000000053,}, /* Mercury */
           {  3.394662,  0.0010037, -0.00000088, -0.000000007,}, /* Venus   */
           {  0,         0,          0,           0          ,}, /* Earth   */
@@ -4712,7 +4719,7 @@ namespace SwissEphNet.CPort
           {  0.773196,  0.0007744,  0.00003749, -0.000000092,}, /* Uranus  */
           {  1.769952, -0.0093082, -0.00000708,  0.000000028,}, /* Neptune */
           });
-        static double[][] el_ecce = CreateArray(new double[8, 4] 
+        static readonly double[][] el_ecce = CreateArray(new double[8, 4] 
           {{  0.20563175,  0.000020406, -0.0000000284, -0.00000000017,}, /* Mercury */
           {  0.00677188, -0.000047766,  0.0000000975,  0.00000000044,}, /* Venus   */
           {  0.01670862, -0.000042037, -0.0000001236,  0.00000000004,}, /* Earth   */
@@ -4722,7 +4729,7 @@ namespace SwissEphNet.CPort
           {  0.04629590, -0.000027337,  0.0000000790,  0.00000000025,}, /* Uranus  */
           {  0.00898809,  0.000006408, -0.0000000008, -0.00000000005,}, /* Neptune */
           });
-        static double[][] el_sema = CreateArray(new double[8, 4] 
+        static readonly double[][] el_sema = CreateArray(new double[8, 4] 
           {{  0.387098310,  0.0,  0.0,  0.0,}, /* Mercury */
           {  0.723329820,  0.0,  0.0,  0.0,}, /* Venus   */
           {  1.000001018,  0.0,  0.0,  0.0,}, /* Earth   */
@@ -4733,7 +4740,7 @@ namespace SwissEphNet.CPort
           { 30.110386869, -0.0000001663,  0.00000000069,  0.0,}, /* Neptune */
           });
         /* Ratios of mass of Sun to masses of the planets */
-        static double[] plmass = new double[9]  {
+        static readonly double[] plmass = new double[9]  {
             6023600,        /* Mercury */
              408523.5,      /* Venus */
              328900.5,      /* Earth and Moon */
@@ -4744,7 +4751,7 @@ namespace SwissEphNet.CPort
               19314,        /* Neptune */
           130000000,        /* Pluto */
         };
-        static int[] ipl_to_elem = new int[15] { 2, 0, 0, 1, 3, 4, 5, 6, 7, 0, 0, 0, 0, 0, 2, };
+        static readonly int[] ipl_to_elem = new int[15] { 2, 0, 0, 1, 3, 4, 5, 6, 7, 0, 0, 0, 0, 0, 2, };
         public Int32 swe_nod_aps(double tjd_et, Int32 ipl, Int32 iflag,
                               Int32 method,
                               double[] xnasc, double[] xndsc,
@@ -5258,11 +5265,11 @@ namespace SwissEphNet.CPort
                 if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
                     /* project onto ecliptic t0 */
                     if ((SE.Sweph.swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0) {
-                        if (SE.Sweph.swi_trop_ra2sid_lon(x2000, pldat.xreturn.GetPointer(6), pldat.xreturn.GetPointer(18), iflag, ref serr) != SwissEph.OK)
+                        if (SE.Sweph.swi_trop_ra2sid_lon(x2000, pldat.xreturn.GetPointer(6), pldat.xreturn.GetPointer(18), iflag) != SwissEph.OK)
                             return SwissEph.ERR;
                         /* project onto solar system equator */
                     } else if ((SE.Sweph.swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0) {
-                        if (SE.Sweph.swi_trop_ra2sid_lon_sosy(x2000, pldat.xreturn.GetPointer(6), pldat.xreturn.GetPointer(18), iflag, ref  serr) != SwissEph.OK)
+                        if (SE.Sweph.swi_trop_ra2sid_lon_sosy(x2000, pldat.xreturn.GetPointer(6), iflag) != SwissEph.OK)
                             return SwissEph.ERR;
                     } else {
                         /* traditional algorithm */

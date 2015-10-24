@@ -669,9 +669,9 @@ namespace SwissEphNet.CPort
          |            default value = FALSE  (km determines time unit 
          |            for nutations and librations.  angle unit is always radians.)
          */
-        static Int32 irecsz;
-        static Int32 nrl, ncoeffs;
-        static int[] lpt = new int[3];
+        Int32 irecsz;
+        Int32 nrl, ncoeffs;
+        int[] lpt = new int[3];
         int state(double et, Int32[] list, bool do_bary,
               CPointer<double> pv, CPointer<double> pvsun, CPointer<double> nut, ref string serr) {
             int i, j, k;

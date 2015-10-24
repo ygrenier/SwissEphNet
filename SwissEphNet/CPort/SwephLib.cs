@@ -469,7 +469,7 @@ namespace SwissEphNet.CPort
         /* for pre_peps(): */
         /* polynomials */
         //static double pepol[NPOL_PEPS,2] = {
-        static double[,] pepol = new double[,]{
+        static readonly double[,] pepol = new double[,]{
           {+8134.017132, +84028.206305},
           {+5043.0520035, +0.3624445},
           {-0.00710733, -0.00004039},
@@ -478,7 +478,7 @@ namespace SwissEphNet.CPort
 
         /* periodics */
         //static double peper[5,NPER_PEPS] = {
-        static double[,] peper = new double[,]{
+        static readonly double[,] peper = new double[,]{
           {+409.90, +396.15, +537.22, +402.90, +417.15, +288.92, +4043.00, +306.00, +277.00, +203.00},
           {-6908.287473, -3198.706291, +1453.674527, -857.748557, +1173.231614, -156.981465, +371.836550, -216.619040, +193.691479, +11.891524},
           {+753.872780, -247.805823, +379.471484, -53.880558, -90.109153, -353.600190, -63.115353, -28.248187, +17.703387, +38.911307},
@@ -489,7 +489,7 @@ namespace SwissEphNet.CPort
         /* for pre_pecl(): */
         /* polynomials */
         //static double pqpol[NPOL_PECL,2] = {
-        static double[,] pqpol = new double[,]{
+        static readonly double[,] pqpol = new double[,]{
           {+5851.607687, -1600.886300},
           {-0.1189000, +1.1689818},
           {-0.00028913, -0.00000020},
@@ -498,7 +498,7 @@ namespace SwissEphNet.CPort
 
         /* periodics */
         //static double pqper[5,NPER_PECL] = {
-        static double[,] pqper = new double[,]{
+        static readonly double[,] pqper = new double[,]{
           {708.15, 2309, 1620, 492.2, 1183, 622, 882, 547},
           {-5486.751211, -17.127623, -617.517403, 413.44294, 78.614193, -180.732815, -87.676083, 46.140315},
           {-684.66156, 2446.28388, 399.671049, -356.652376, -186.387003, -316.80007, 198.296701, 101.135679}, /* typo in publication fixed */
@@ -509,7 +509,7 @@ namespace SwissEphNet.CPort
         /* for pre_pequ(): */
         /* polynomials */
         //static double xypol[NPOL_PEQU,2] = {
-        static double[,] xypol = new double[,]{
+        static readonly double[,] xypol = new double[,]{
           {+5453.282155, -73750.930350},
           {+0.4252841, -0.7675452},
           {-0.00037173, -0.00018725},
@@ -518,7 +518,7 @@ namespace SwissEphNet.CPort
 
         /* periodics */
         //static double xyper[5,NPER_PEQU] = {
-        static double[,] xyper = new double[,]{
+        static readonly double[,] xyper = new double[,]{
           {256.75, 708.15, 274.2, 241.45, 2309, 492.2, 396.1, 288.9, 231.1, 1610, 620, 157.87, 220.3, 1200},
           {-819.940624, -8444.676815, 2600.009459, 2755.17563, -167.659835, 871.855056, 44.769698, -512.313065, -819.415595, -538.071099, -189.793622, -402.922932, 179.516345, -9.814756},
           {75004.344875, 624.033993, 1251.136893, -1102.212834, -2660.66498, 699.291817, 153.16722, -950.865637, 499.754645, -145.18821, 558.116553, -23.923029, -165.405086, 9.344131},
@@ -829,7 +829,7 @@ namespace SwissEphNet.CPort
          *
          */
 
-        static int precess_1(CPointer<double> R, double J, int direction, int prec_method) {
+        int precess_1(CPointer<double> R, double J, int direction, int prec_method) {
             double T = 0, Z = 0, z = 0, TH = 0;
             int i;
             double[] x = new double[3];
@@ -907,46 +907,46 @@ namespace SwissEphNet.CPort
            is the same except for the lower order terms.  */
 
         /* SEMOD_PREC_WILLIAMS_1994 */
-        static double[] pAcof_williams = new double[] {
+        static readonly double[] pAcof_williams = new double[] {
          -8.66e-10, -4.759e-8, 2.424e-7, 1.3095e-5, 1.7451e-4, -1.8055e-3,
          -0.235316, 0.076, 110.5407, 50287.70000 };
-        static double[] nodecof_williams = new double[] {
+        static readonly double[] nodecof_williams = new double[] {
           6.6402e-16, -2.69151e-15, -1.547021e-12, 7.521313e-12, 1.9e-10, 
           -3.54e-9, -1.8103e-7,  1.26e-7,  7.436169e-5,
           -0.04207794833,  3.052115282424};
-        static double[] inclcof_williams = new double[] {
+        static readonly double[] inclcof_williams = new double[] {
           1.2147e-16, 7.3759e-17, -8.26287e-14, 2.503410e-13, 2.4650839e-11, 
           -5.4000441e-11, 1.32115526e-9, -6.012e-7, -1.62442e-5,
           0.00227850649, 0.0 };
 
         /* SEMOD_PREC_SIMON_1994 */
         /* Precession coefficients from Simon et al: */
-        static double[] pAcof_simon = new double[] {
+        static readonly double[] pAcof_simon = new double[] {
           -8.66e-10, -4.759e-8, 2.424e-7, 1.3095e-5, 1.7451e-4, -1.8055e-3,
           -0.235316, 0.07732, 111.2022, 50288.200 };
-        static double[] nodecof_simon = new double[] {
+        static readonly double[] nodecof_simon = new double[] {
           6.6402e-16, -2.69151e-15, -1.547021e-12, 7.521313e-12, 1.9e-10, 
           -3.54e-9, -1.8103e-7, 2.579e-8, 7.4379679e-5,
           -0.0420782900, 3.0521126906};
-        static double[] inclcof_simon = new double[] {
+        static readonly double[] inclcof_simon = new double[] {
           1.2147e-16, 7.3759e-17, -8.26287e-14, 2.503410e-13, 2.4650839e-11, 
           -5.4000441e-11, 1.32115526e-9, -5.99908e-7, -1.624383e-5,
           0.002278492868, 0.0 };
 
         /* SEMOD_PREC_LASKAR_1986 */
         /* Precession coefficients taken from Laskar's paper: */
-        static double[] pAcof_laskar = new double[] {
+        static readonly double[] pAcof_laskar = new double[] {
           -8.66e-10, -4.759e-8, 2.424e-7, 1.3095e-5, 1.7451e-4, -1.8055e-3,
           -0.235316, 0.07732, 111.1971, 50290.966 };
         /* Node and inclination of the earth's orbit computed from
          * Laskar's data as done in Bretagnon and Francou's paper.
          * Units are radians.
          */
-        static double[] nodecof_laskar = new double[] {
+        static readonly double[] nodecof_laskar = new double[] {
           6.6402e-16, -2.69151e-15, -1.547021e-12, 7.521313e-12, 6.3190131e-10, 
           -3.48388152e-9, -1.813065896e-7, 2.75036225e-8, 7.4394531426e-5,
           -0.042078604317, 3.052112654975 };
-        static double[] inclcof_laskar = new double[] {
+        static readonly double[] inclcof_laskar = new double[] {
           1.2147e-16, 7.3759e-17, -8.26287e-14, 2.503410e-13, 2.4650839e-11, 
           -5.4000441e-11, 1.32115526e-9, -5.998737027e-7, -1.6242797091e-5,
           0.002278495537, 0.0 };
@@ -1222,7 +1222,7 @@ namespace SwissEphNet.CPort
          * .0123	.0880		.0224	.0905
          * .0386	.1808		.0895	.1129
          */
-        static short[] nt = new short[] {  
+        static readonly short[] nt = new short[] {  
         /* LS and OC are units of 0.0001"
          *LS2 and OC2 are units of 0.00001"
          *MM,MS,FF,DD,OM, LS, LS2,OC, OC2 */
@@ -2069,7 +2069,8 @@ namespace SwissEphNet.CPort
         const int TABSIZ = (TABEND - TABSTART + 1);
         /* we make the table greater for additional values read from external file */
         const int TABSIZ_SPACE = (TABSIZ + 100);
-        static double[] dt = new double[TABSIZ_SPACE] {
+        //static double[] dt = new double[TABSIZ_SPACE] {
+        double[] dt = new double[TABSIZ_SPACE] {
             /* 1620.0 thru 1659.0 */
             124.00, 119.00, 115.00, 110.00, 106.00, 102.00, 98.00, 95.00, 91.00, 88.00,
             85.00, 82.00, 79.00, 77.00, 74.00, 72.00, 70.00, 67.00, 65.00, 63.00,
@@ -2144,7 +2145,7 @@ namespace SwissEphNet.CPort
         const int LTERM_EQUATION_YSTART = 1820;
         const int LTERM_EQUATION_COEFF = 32;
         /* Table for -1000 through 1600, from Morrison & Stephenson (2004).  */
-        static short[] dt2 = new short[]{
+        static readonly short[] dt2 = new short[]{
             /*-1000  -900  -800  -700  -600  -500  -400  -300  -200  -100*/
               25400,23700,22000,21000,19040,17190,15530,14080,12790,11640,
             /*    0   100   200   300   400   500   600   700   800   900*/
@@ -2645,10 +2646,11 @@ namespace SwissEphNet.CPort
         internal Int32 swi_set_tid_acc(double tjd_ut, Int32 iflag, Int32 denum, ref string serr)
         {
           Int32 retc = iflag;
+          Int32 denumret = 0;
           /* manual tid_acc overrides automatic tid_acc */
           if (swed.is_tid_acc_manual)
             return retc;
-          retc = swi_get_tid_acc(tjd_ut, iflag, denum, ref swed.jpldenum, out swed.tid_acc, ref serr);
+          retc = swi_get_tid_acc(tjd_ut, iflag, denum, ref denumret, out swed.tid_acc, ref serr);
 #if TRACE
             //swi_open_trace(NULL);
             //if (swi_trace_count < TRACE_COUNT_MAX) {
@@ -2742,7 +2744,7 @@ namespace SwissEphNet.CPort
          */
         /*  C'_{s,j})_i     C'_{c,j})_i */
         const int SIDTNTERM = 33;
-        static double[] stcf = new double[SIDTNTERM * 2]{
+        static readonly double[] stcf = new double[SIDTNTERM * 2]{
             2640.96,-0.39,
             63.52,-0.02,
             11.75,0.01,
@@ -2779,7 +2781,7 @@ namespace SwissEphNet.CPort
         };
         const int SIDTNARG = 14;
         /* l    l'   F    D   Om   L_Me L_Ve L_E  L_Ma L_J  L_Sa L_U  L_Ne p_A*/
-        static int[] stfarg = new int[SIDTNTERM * SIDTNARG]{
+        static readonly int[] stfarg = new int[SIDTNTERM * SIDTNARG]{
            0,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,
            0,   0,   0,   0,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,
            0,   0,   2,  -2,   3,   0,   0,   0,   0,   0,   0,   0,   0,   0,
@@ -3140,7 +3142,8 @@ namespace SwissEphNet.CPort
          * The CRCs this code generates agree with the vendor-supplied Verilog models
          * of several of the popular FDDI "MAC" chips.
          */
-        static UInt32[] crc32_table = null;//new UInt32[256];
+        //static UInt32[] crc32_table = null;//new UInt32[256];
+        UInt32[] crc32_table = null;//new UInt32[256];
         /* Initialized first time "crc32()" is called. If you prefer, you can
          * statically initialize it at compile time. [Another exercise.]
          */
@@ -3163,7 +3166,7 @@ namespace SwissEphNet.CPort
          */
         const UInt32 CRC32_POLY = 0x04c11db7;     /* AUTODIN II, Ethernet, & FDDI */
 
-        static void init_crc32() {
+        void init_crc32() {
             Int32 i, j;
             UInt32 c;
             crc32_table = new UInt32[256];
