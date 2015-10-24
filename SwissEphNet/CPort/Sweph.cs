@@ -5642,7 +5642,7 @@ namespace SwissEphNet.CPort
           new meff_ele(0.010, 0.002767),
           new meff_ele(0.000, 0.000000)
         };
-        static double meff(double r) {
+        double meff(double r) {
             double f, m;
             int i;
             if (r <= 0)

@@ -1740,7 +1740,7 @@ namespace SwissEphNet.CPort
         /* Reduce arc seconds modulo 360 degrees
          * answer in arc seconds
          */
-        static double mods3600(double x) {
+        double mods3600(double x) {
             double lx;
             lx = x;
             lx = lx - 1296000.0 * Math.Floor(lx / 1296000.0);

@@ -829,7 +829,7 @@ namespace SwissEphNet.CPort
          *
          */
 
-        static int precess_1(CPointer<double> R, double J, int direction, int prec_method) {
+        int precess_1(CPointer<double> R, double J, int direction, int prec_method) {
             double T = 0, Z = 0, z = 0, TH = 0;
             int i;
             double[] x = new double[3];

@@ -3143,7 +3143,7 @@ namespace SwissEphNet.CPort
          * double attemp       * atmospheric temperature degrees C *
          * returns double r in degrees
         */
-        static double calc_astronomical_refr(double inalt, double atpress, double attemp) {
+        double calc_astronomical_refr(double inalt, double atpress, double attemp) {
             //#if 0
             //  /* formula based on G.G. Bennett, The calculation of astronomical refraction in marine navigation,
             //  * Journal of Inst. Navigation, No. 35, page 255-259, 1982,
@@ -3176,7 +3176,7 @@ namespace SwissEphNet.CPort
          * double lapse_rate   * (dT/dh) [deg K/m]
          * returns dip in degrees
          */
-        static double calc_dip(double geoalt, double atpress, double attemp, double lapse_rate) {
+        double calc_dip(double geoalt, double atpress, double attemp, double lapse_rate) {
             /* below formula is based on A. Thom, Megalithic lunar observations, 1973 (page 32).
             * conversion to metric has been done by
             * V. Reijs, 2000, http://www.iol.ie/~geniet/eng/refract.htm
@@ -4042,7 +4042,7 @@ namespace SwissEphNet.CPort
             return retflag;
         }
 
-        static int find_maximum(double y00, double y11, double y2, double dx,
+        int find_maximum(double y00, double y11, double y2, double dx,
                                 out double dxret, out double yret) {
             double a, b, c, x, y;
             c = y11;
@@ -4055,7 +4055,7 @@ namespace SwissEphNet.CPort
             return SwissEph.OK;
         }
 
-        static int find_zero(double y00, double y11, double y2, double dx,
+        int find_zero(double y00, double y11, double y2, double dx,
                                 out double dxret, out double dxret2) {
             double a, b, c, x1, x2;
             dxret = dxret2 = 0;
