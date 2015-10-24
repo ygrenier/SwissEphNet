@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SwissEphNet</id>
-    <version>2.2.1.9</version>
+    <version>2.4.0.10</version>
     <title>SwissEph for .Net</title>
     <authors>Yan Grenier</authors>
     <owners>Yan Grenier</owners>
@@ -10,7 +10,11 @@
     <projectUrl>https://github.com/ygrenier/SwissEphNet</projectUrl>
     <description>A Swiss Ephemeris .Net portage</description>
     <releaseNotes>
-2.1.0.9 :
+2.4.0.10 :
+ - Update the code to the Swiss Ephemeris 2.04.00 version.
+ - Correct the code remove all static fields to permit multiple calculations with multiple SwissEph instances.
+  
+2.2.1.9 :
  - Update the code to the Swiss Ephemeris 2.02.01 version.
   
 2.1.0.6 :
@@ -19,7 +23,7 @@
 2.0.0.5 :
  - Fix an error : some swed data (like topocentric position) was reseted on each swe_close() call.
     </releaseNotes>
-    <copyright>Copyright 2014</copyright>
+    <copyright>Copyright 2014-2015</copyright>
     <tags>Swiss Ephemeris</tags>
   </metadata>
 </package>
