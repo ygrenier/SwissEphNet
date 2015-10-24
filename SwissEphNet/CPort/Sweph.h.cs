@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.02.01";
+        public const String SE_VERSION = "2.04";
 
         /// <summary>
         /// 2000 January 1.5
@@ -634,7 +634,7 @@ namespace SwissEphNet.CPort
             public Int32 timeout;
         }
 
-        //extern struct swe_data FAR swed;
+        //extern TLS struct swe_data FAR swed;
 
         /* obliquity of ecliptic */
         public class epsilon

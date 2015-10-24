@@ -216,7 +216,7 @@ namespace SwissEphNet.CPort
         //static void mean_elements_pl(void);
         //static double mods3600(double x);
         //static void ecldat_equ2000(double tjd, double *xpm);
-        //static void chewm(short *pt, int nlines, int nangles, 
+        //static void chewm(cont short *pt, int nlines, int nangles, 
         //                     int typflg, double *ans );
         //static void sscc(int k, double arg, int n );
         //static void moon1(void);
@@ -232,7 +232,7 @@ namespace SwissEphNet.CPort
         // * See references to the array z[] later on in the program.
         // * The 71 coefficients were estimated from 42,529 Lunar positions.
         // */
-        //static double z[] = {
+        //static readonly double z[] = {
         //-1.225346551567e+001, /* F, t^2 */
         //-1.096676093208e-003, /* F, t^3 */
         //-2.165750777942e-006, /* F, t^4 */
@@ -311,7 +311,7 @@ namespace SwissEphNet.CPort
          * interval from -3000 to +3000.
          * The coefficients were estimated from 34,247 Lunar positions.
          */
-        static double[] z = new double[] {
+        static readonly double[] z = new double[] {
             /* The following are scaled in arc seconds, time in Julian centuries.
                They replace the corresponding terms in the mean elements.  */
             -1.312045233711e+01, /* F, t^2 */
@@ -346,7 +346,7 @@ namespace SwissEphNet.CPort
         /* Perturbation tables
          */
         const int NLR = 118;
-        static short[] LR = new short[8 * NLR] {
+        static readonly short[] LR = new short[8 * NLR] {
         /*
                        Longitude    Radius
          D  l' l  F    1"  .0001"  1km  .0001km */
@@ -474,7 +474,7 @@ namespace SwissEphNet.CPort
 
         //#ifdef MOSH_MOON_200
         //#define NMB 56
-        //static short FAR MB[6*NMB] = {
+        //static readonly short FAR MB[6*NMB] = {
         ///*
         //               Latitude
         // D  l' l  F    1"  .0001" */
@@ -538,7 +538,7 @@ namespace SwissEphNet.CPort
         //};
         //#else
         const int NMB = 77;
-        static short[] MB = new short[6 * NMB] {
+        static readonly short[] MB = new short[6 * NMB] {
 /*
                Latitude
  D  l' l  F    1"  .0001" */
@@ -624,7 +624,7 @@ namespace SwissEphNet.CPort
         //#endif	/* ! MOSH_MOON_200 */
 
         const int NLRT = 38;
-        static short[] LRT = new short[8 * NLRT]{
+        static readonly short[] LRT = new short[8 * NLRT]{
             /*
             Multiply by T
                            Longitude    Radius
@@ -671,7 +671,7 @@ namespace SwissEphNet.CPort
             };
 
         const int NBT = 16;
-        static short[] BT = new short[5 * NBT] {
+        static readonly short[] BT = new short[5 * NBT] {
             /*
             Multiply by T
                          Latitude
@@ -696,7 +696,7 @@ namespace SwissEphNet.CPort
         };
 
         const int NLRT2 = 25;
-        static short[] LRT2 = new short[6 * NLRT2] {
+        static readonly short[] LRT2 = new short[6 * NLRT2] {
         /*
         Multiply by T^2
                    Longitude    Radius
@@ -730,7 +730,7 @@ namespace SwissEphNet.CPort
         };
 
         const int NBT2 = 12;
-        static short[] BT2 = new short[5 * NBT2]  {
+        static readonly short[] BT2 = new short[5 * NBT2]  {
             /*
             Multiply by T^2
                        Latitiude
@@ -752,7 +752,7 @@ namespace SwissEphNet.CPort
 
         /* corrections for mean lunar node in degrees, from -13100 to 17200,
          * in 100-year steps. corrections are set to 0 between the years 0 and 3000 */
-        static double[] mean_node_corr = new double[] {
+        static readonly double[] mean_node_corr = new double[] {
             -2.56,
             -2.473, -2.392347, -2.316425, -2.239639, -2.167764, -2.095100, -2.024810, -1.957622, -1.890097, -1.826389,
             -1.763335, -1.701047, -1.643016, -1.584186, -1.527309, -1.473352, -1.418917, -1.367736, -1.317202, -1.267269,
@@ -794,7 +794,7 @@ namespace SwissEphNet.CPort
 
         /* corrections for mean lunar apsides in degrees, from -13100 to 17200,
          * in 100-year steps. corrections are set to 0 between the years 0 and 3000 */
-        static double[] mean_apsis_corr = new double[] {
+        static readonly double[] mean_apsis_corr = new double[] {
             7.525,
             7.290, 7.057295, 6.830813, 6.611723, 6.396775, 6.189569, 5.985968, 5.788342, 5.597304, 5.410167,
             5.229946, 5.053389, 4.882187, 4.716494, 4.553532, 4.396734, 4.243718, 4.094282, 3.950865, 3.810366,
@@ -1740,7 +1740,7 @@ namespace SwissEphNet.CPort
         /* Reduce arc seconds modulo 360 degrees
          * answer in arc seconds
          */
-        static double mods3600(double x) {
+        double mods3600(double x) {
             double lx;
             lx = x;
             lx = lx - 1296000.0 * Math.Floor(lx / 1296000.0);

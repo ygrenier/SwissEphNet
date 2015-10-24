@@ -93,7 +93,7 @@ namespace SwissEphNet.CPort
         }
 
 
-        static int PLSV = 0; /*if Planet, Lunar and Stellar Visibility formula is needed PLSV=1*/
+        int PLSV = 0; /*if Planet, Lunar and Stellar Visibility formula is needed PLSV=1*/
         const double criticalangle = 0.0; /*[deg]*/
         const double BNIGHT = 1479.0; /*[nL]*/
         const double BNIGHT_FACTOR = 1.0;
@@ -165,7 +165,7 @@ namespace SwissEphNet.CPort
         /*optimization delta*/
         const double swehel_epsilon = 0.001;
         /* for Airmass usage*/
-        static int staticAirmass = 0; /* use staticAirmass=1 instead depending on difference k's*/
+        int staticAirmass = 0; /* use staticAirmass=1 instead depending on difference k's*/
 
         /* optic stuff */
         const int GOpticMag = 1; /*telescope magnification*/
@@ -173,20 +173,20 @@ namespace SwissEphNet.CPort
         const int GBinocular = 1; /*1-binocular 0=monocular*/
         const int GOpticDia = 50; /*telescope diameter [mm]*/
 
-        static double mymin(double a, double b) {
+        double mymin(double a, double b) {
             if (a <= b)
                 return a;
             return b;
         }
 
-        static double mymax(double a, double b) {
+        double mymax(double a, double b) {
             if (a >= b)
                 return a;
             return b;
         }
 
         /*###################################################################*/
-        static double Tanh(double x) {
+        double Tanh(double x) {
             return (Math.Exp(x) - Math.Exp(-x)) / (Math.Exp(x) + Math.Exp(-x));
         }
 
@@ -195,7 +195,7 @@ namespace SwissEphNet.CPort
         ' SN [-]
         ' CVA [deg]
         */
-        static double CVA(double B, double SN) {
+        double CVA(double B, double SN) {
             /*Schaefer, Astronomy and the limits of vision, Archaeoastronomy, 1993*/
             if (B > BNIGHT)
                 return (40.0 / SN) * Math.Pow(10, (8.28 * Math.Pow(B, (-0.29)))) / 60.0 / 60.0;
@@ -208,7 +208,7 @@ namespace SwissEphNet.CPort
         ' B [nL]
         ' PupilDia [mm]
         */
-        static double PupilDia(double Age, double B) {
+        double PupilDia(double Age, double B) {
             /* age dependancy from Garstang [2000]*/
             return (0.534 - 0.00211 * Age - (0.236 - 0.00127 * Age) * Tanh(0.4 * Math.Log(B) / Math.Log(10) - 2.2)) * 10;
         }
@@ -300,7 +300,7 @@ namespace SwissEphNet.CPort
 
         /*###################################################################
         */
-        static Int32 DeterObject(string ObjectName) {
+        Int32 DeterObject(string ObjectName) {
             //char s[AS_MAXCH];
             //char *sp;
             Int32 ipl;
@@ -335,9 +335,9 @@ namespace SwissEphNet.CPort
         //{
         //  int32 retval = OK, ipli, i;
         //  double dtjd;
-        //  static double tjdsv[3];
-        //  static double xsv[3,6];
-        //  static int32 iflagsv[3];
+        //  static TLS double tjdsv[3];
+        //  static TLS double xsv[3,6];
+        //  static TLS int32 iflagsv[3];
         //  ipli = ipl;
         //  if (ipli > SE_MOON) 
         //    ipli = 2;
@@ -369,8 +369,8 @@ namespace SwissEphNet.CPort
 
         /* avoids problems with star name string that may be overwritten by 
            swe_fixstar_mag() */
-        static double call_swe_fixstar_mag_dmag;
-        static string call_swe_fixstar_mag_star_save;
+        double call_swe_fixstar_mag_dmag;
+        string call_swe_fixstar_mag_star_save;
         Int32 call_swe_fixstar_mag(string star, ref double mag, ref string serr) {
             Int32 retval;
             string star2;
@@ -532,8 +532,8 @@ namespace SwissEphNet.CPort
         ' actual [0= approximation, 1=actual]
         ' SunRA [deg]
         */
-        static double SunRA_tjdlast;
-        static double SunRA_ralast;
+        double SunRA_tjdlast;
+        double SunRA_ralast;
         double SunRA(double JDNDaysUT, Int32 helflag, ref string serr) {
             int imon = 0, iday = 0, iyar = 0, calflag = SwissEph.SE_GREG_CAL;
             double dut = 0;
@@ -566,7 +566,7 @@ namespace SwissEphNet.CPort
         ' Temp [C]
         ' Kelvin [K]
         */
-        static double Kelvin(double Temp) {
+        double Kelvin(double Temp) {
             /*' http://en.wikipedia.org/wiki/Kelvin*/
             return Temp + C2K;
         }
@@ -577,7 +577,7 @@ namespace SwissEphNet.CPort
         ' PresE [mbar]
         ' TopoAltitudefromAppAlt [deg]
         */
-        static double TopoAltfromAppAlt(double AppAlt, double TempE, double PresE) {
+        double TopoAltfromAppAlt(double AppAlt, double TempE, double PresE) {
             double R = 0;
             double retalt = 0;
             if (AppAlt >= LowestAppAlt) {
@@ -601,7 +601,7 @@ namespace SwissEphNet.CPort
         ' call this instead of swe_azalt(), because it is faster (lower precision
         ' is required)
         */
-        static double AppAltfromTopoAlt(double TopoAlt, double TempE, double PresE, Int32 helflag) {
+        double AppAltfromTopoAlt(double TopoAlt, double TempE, double PresE, Int32 helflag) {
             /* using methodology of Newtown derivatives (analogue to what Swiss Emphemeris uses)*/
             int i, nloop = 2;
             double newAppAlt = TopoAlt;
@@ -636,7 +636,7 @@ namespace SwissEphNet.CPort
         ' Lat [deg]
         ' HourAngle [hour]
         */
-        static double HourAngle(double TopoAlt, double TopoDecl, double Lat) {
+        double HourAngle(double TopoAlt, double TopoDecl, double Lat) {
             double Alti = TopoAlt * SwissEph.DEGTORAD;
             double decli = TopoDecl * SwissEph.DEGTORAD;
             double Lati = Lat * SwissEph.DEGTORAD;
@@ -751,7 +751,7 @@ namespace SwissEphNet.CPort
         ' LongB [rad]
         ' DistanceAngle [rad]
         */
-        static double DistanceAngle(double LatA, double LongA, double LatB, double LongB) {
+        double DistanceAngle(double LatA, double LongA, double LatB, double LongB) {
             double dlon = LongB - LongA;
             double dlat = LatB - LatA;
             /* Haversine formula
@@ -771,7 +771,7 @@ namespace SwissEphNet.CPort
         ' RH [%]
         ' kW [-]
         */
-        static double kW(double HeightEye, double TempS, double RH) {
+        double kW(double HeightEye, double TempS, double RH) {
             /* From Schaefer , Archaeoastronomy, XV, 2000, page 128*/
             double WT = 0.031;
             WT *= 0.94 * (RH / 100.0) * Math.Exp(TempS / 15) * Math.Exp(-1 * HeightEye / scaleHwater);
@@ -784,8 +784,8 @@ namespace SwissEphNet.CPort
         ' lat [deg]
         ' kOZ [-]
         */
-        static double koz_last, kOZ_alts_last, kOZ_sunra_last;
-        static double kOZ(double AltS, double sunra, double Lat) {
+        double koz_last, kOZ_alts_last, kOZ_sunra_last;
+        double kOZ(double AltS, double sunra, double Lat) {
             double CHANGEKO, OZ, LT, kOZret;
             if (AltS == kOZ_alts_last && sunra == kOZ_sunra_last)
                 return koz_last;
@@ -806,7 +806,7 @@ namespace SwissEphNet.CPort
         ' heighteye [m]
         ' kR [-]
         */
-        static double kR(double AltS, double HeightEye) {
+        double kR(double AltS, double HeightEye) {
             /* depending on day/night vision (altitude of sun < start astronomical twilight),
              * lambda eye sensibility changes
              * see extinction section of Vistas in Astronomy page 343*/
@@ -821,7 +821,7 @@ namespace SwissEphNet.CPort
             return 0.1066 * Math.Exp(-1 * HeightEye / scaleHrayleigh) * Math.Pow(LAMBDA / 0.55, -4);
         }
 
-        static int Sgn(double x) {
+        int Sgn(double x) {
             if (x < 0)
                 return -1;
             return 1;
@@ -837,8 +837,8 @@ namespace SwissEphNet.CPort
         ' VR [km]
         ' ka [-]
         */
-        static double ka_alts_last, ka_sunra_last, ka_ka_last;
-        static double ka(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, ref string serr) {
+        double ka_alts_last, ka_sunra_last, ka_ka_last;
+        double ka(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, ref string serr) {
             double CHANGEKA, LAMBDA, BetaVr, Betaa, kaact;
             double SL = Sgn(Lat);
             /* depending on day/night vision (altitude of sun < start astronomical twilight),
@@ -893,7 +893,7 @@ namespace SwissEphNet.CPort
         ' ExtType [0=ka,1=kW,2=kR,3=kOZ,4=ktot]
         ' kt [-]
         */
-        static double kt(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, Int32 ExtType, ref string serr) {
+        double kt(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, Int32 ExtType, ref string serr) {
             double kRact = 0;
             double kWact = 0;
             double kOZact = 0;
@@ -916,7 +916,7 @@ namespace SwissEphNet.CPort
         ' PresS [mbar]
         ' Airmass [??]
         */
-        static double Airmass(double AppAltO, double Press) {
+        double Airmass(double AppAltO, double Press) {
             double airm, zend;
             zend = (90 - AppAltO) * SwissEph.DEGTORAD;
             if (zend > Math.PI / 2)
@@ -931,7 +931,7 @@ namespace SwissEphNet.CPort
         ' PresS [mbar]
         ' Xext [-]
         */
-        static double Xext(double scaleH, double zend, double Press) {
+        double Xext(double scaleH, double zend, double Press) {
             return Press / 1013.0 / (Math.Cos(zend) + 0.01 * Math.Sqrt(scaleH / 1000.0) * Math.Exp(-30.0 / Math.Sqrt(scaleH / 1000.0) * Math.Cos(zend)));
         }
 
@@ -941,7 +941,7 @@ namespace SwissEphNet.CPort
         ' PresS [mbar]
         ' Xlay [-]
         */
-        static double Xlay(double scaleH, double zend, double Press) {
+        double Xlay(double scaleH, double zend, double Press) {
             /*return Press / 1013.0 /Math.Sqrt(1.0 - pow(sin(zend) / (1.0 + (scaleH / Ra)), 2));*/
             double a = Math.Sin(zend) / (1.0 + (scaleH / Ra));
             return Press / 1013.0 / Math.Sqrt(1.0 - a * a);
@@ -954,7 +954,7 @@ namespace SwissEphNet.CPort
         ' HeightEye [m]
         ' TempEfromTempS [C]
         */
-        static double TempEfromTempS(double TempS, double HeightEye, double Lapse) {
+        double TempEfromTempS(double TempS, double HeightEye, double Lapse) {
             return TempS - Lapse * HeightEye;
         }
 
@@ -964,7 +964,7 @@ namespace SwissEphNet.CPort
         ' HeightEye [m]
         ' PresEfromPresS [mbar]
         */
-        static double PresEfromPresS(double TempS, double Press, double HeightEye) {
+        double PresEfromPresS(double TempS, double Press, double HeightEye) {
             return Press * Math.Exp(-9.80665 * 0.0289644 / (Kelvin(TempS) + 3.25 * HeightEye / 1000) / 8.31441 * HeightEye);
         }
 
@@ -980,8 +980,8 @@ namespace SwissEphNet.CPort
         ' VR [km]
         ' Deltam [-]
         */
-        static double Deltam_alts_last, Deltam_alto_last, Deltam_sunra_last, Deltam_deltam_last;
-        static double Deltam(double AltO, double AltS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Deltam_alts_last, Deltam_alto_last, Deltam_sunra_last, Deltam_deltam_last;
+        double Deltam(double AltO, double AltS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double zend, xR, XW, Xa, XOZ;
             double PresE = PresEfromPresS(datm[1], datm[0], HeightEye);
             double TempE = TempEfromTempS(datm[1], HeightEye, LapseSA);
@@ -1078,9 +1078,9 @@ namespace SwissEphNet.CPort
         //{
         //  int32 retval = OK, ipl, ipli;
         //  double dtjd;
-        //  static double tjdsv[3];
-        //  static double dmagsv[3];
-        //  static int32 helflagsv[3];
+        //  static TLS double tjdsv[3];
+        //  static TLS double dmagsv[3];
+        //  static TLS int32 helflagsv[3];
         //  ipl = DeterObject(ObjectName);
         //  ipli = ipl;
         //  if (ipli > SE_MOON) 
@@ -1103,7 +1103,7 @@ namespace SwissEphNet.CPort
         ' phasemoon [-]
         ' MoonsBrightness [-]
         */
-        static double MoonsBrightness(double dist, double phasemoon) {
+        double MoonsBrightness(double dist, double phasemoon) {
             double log10 = 2.302585092994;
             /*Moon's brightness changes with distance: http://hem.passagen.se/pausch/comp/ppcomp.html#15 */
             return -21.62 + 5 * Math.Log(dist / (Ra / 1000)) / log10 + 0.026 * Math.Abs(phasemoon) + 0.000000004 * Math.Pow(phasemoon, 4);
@@ -1115,7 +1115,7 @@ namespace SwissEphNet.CPort
         ' AziS [deg]
         ' MoonPhase [deg]
         */
-        static double MoonPhase(double AltM, double AziM, double AziS) {
+        double MoonPhase(double AltM, double AziM, double AziS) {
             double AltMi = AltM * SwissEph.DEGTORAD;
             double AziMi = AziM * SwissEph.DEGTORAD;
             double AziSi = AziS * SwissEph.DEGTORAD;
@@ -1125,7 +1125,7 @@ namespace SwissEphNet.CPort
         /*###################################################################
         ' Pressure [mbar]
         */
-        static double Bm(double AltO, double AziO, double AltM, double AziM, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Bm(double AltO, double AziO, double AltM, double AziM, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double M0 = -11.05;
             double Bm = 0;
             double RM, kXM, kX, C3, FM, phasemoon, MM;
@@ -1150,7 +1150,7 @@ namespace SwissEphNet.CPort
         /*###################################################################
         ' Pressure [mbar]
         */
-        static double Btwi(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Btwi(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double M0 = -11.05;
             double MS = -26.74;
             double PresE = PresEfromPresS(datm[1], datm[0], HeightEye);
@@ -1170,7 +1170,7 @@ namespace SwissEphNet.CPort
         /*###################################################################
         ' Pressure [mbar]
         */
-        static double Bday(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Bday(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double M0 = -11.05;
             double MS = -26.74;
             double RS = DistanceAngle(AltO * SwissEph.DEGTORAD, AziO * SwissEph.DEGTORAD, AltS * SwissEph.DEGTORAD, AziS * SwissEph.DEGTORAD) / SwissEph.DEGTORAD;
@@ -1191,7 +1191,7 @@ namespace SwissEphNet.CPort
         ' PresS [mbar]
         ' Bcity [nL]
         */
-        static double Bcity(double Value, double Press) {
+        double Bcity(double Value, double Press) {
             double Bcity = Value;
             Bcity = mymax(Bcity, 0);
             return Bcity;
@@ -1238,7 +1238,7 @@ namespace SwissEphNet.CPort
          *     [0]  age (default 36)
          *     [1]  Snellen ratio or visual acuity of observer (default 1)
          */
-        static void default_heliacal_parameters(double[] datm, double[] dgeo, double[] dobs, int helflag) {
+        void default_heliacal_parameters(double[] datm, double[] dgeo, double[] dobs, int helflag) {
             int i;
             if (datm[0] <= 0) {
                 /* estimate atmospheric pressure, according to the
@@ -1588,7 +1588,7 @@ namespace SwissEphNet.CPort
         ' parallax [deg]
         ' WidthMoon [deg]
         */
-        static double WidthMoon(double AltO, double AziO, double AltS, double AziS, double parallax) {
+        double WidthMoon(double AltO, double AziO, double AltS, double AziS, double parallax) {
             /* Yallop 1998, page 3*/
             double GeoAltO = AltO + parallax;
             return 0.27245 * parallax * (1 + Math.Sin(GeoAltO * SwissEph.DEGTORAD) * Math.Sin(parallax * SwissEph.DEGTORAD)) * (1 - Math.Cos((AltS - GeoAltO) * SwissEph.DEGTORAD) * Math.Cos((AziS - AziO) * SwissEph.DEGTORAD));
@@ -1598,7 +1598,7 @@ namespace SwissEphNet.CPort
         ' W [deg]
         ' LengthMoon [deg]
         */
-        static double LengthMoon(double W, double Diamoon) {
+        double LengthMoon(double W, double Diamoon) {
             double Wi, D;
             if (Diamoon == 0) Diamoon = AvgRadiusMoon * 2;
             Wi = W * 60;
@@ -1612,7 +1612,7 @@ namespace SwissEphNet.CPort
         ' GeoARCVact [deg]
         ' q [-]
         */
-        static double qYallop(double W, double GeoARCVact) {
+        double qYallop(double W, double GeoARCVact) {
             double Wi = W * 60;
             return (GeoARCVact - (11.8371 - 6.3226 * Wi + 0.7319 * Wi * Wi - 0.1018 * Wi * Wi * Wi)) / 10;
         }
@@ -1623,7 +1623,7 @@ namespace SwissEphNet.CPort
         'C (0,r)
         'D (1,s)
         */
-        static double crossing(double A, double B, double C, double D) {
+        double crossing(double A, double B, double C, double D) {
             return (C - A) / ((B - A) - (D - C));
         }
 
@@ -1659,7 +1659,7 @@ namespace SwissEphNet.CPort
         ' C y-value at x=-1
         ' x2min minimum for the quadratic function
         */
-        static double x2min(double A, double B, double C) {
+        double x2min(double A, double B, double C) {
             double term = A + C - 2 * B;
             if (term == 0)
                 return 0;
@@ -1674,11 +1674,11 @@ namespace SwissEphNet.CPort
         ' x
         ' y is y-value of quadratic function
         */
-        static double funct2(double A, double B, double C, double x) {
+        double funct2(double A, double B, double C, double x) {
             return (A + C - 2 * B) / 2.0 * x * x + (A - C) / 2.0 * x + B;
         }
 
-        static void strcpy_VBsafe(out string sout, string sin) {
+        void strcpy_VBsafe(out string sout, string sin) {
             //char *sp, *sp2; 
             //int iw = 0;
             //sp = sin; 
@@ -1959,7 +1959,7 @@ namespace SwissEphNet.CPort
         //}
         //#endif
 
-        static double get_synodic_period(int Planet) {
+        double get_synodic_period(int Planet) {
             /* synodic periods from:
              * Kelley/Milone/Aveni, "Exploring ancient Skies", p. 43. */
             switch (Planet) {
@@ -2423,7 +2423,7 @@ namespace SwissEphNet.CPort
          * - superior and inferior conjunction (Mercury and Venus)
          * - conjunction and opposition (ipl >= Mars)
          */
-        static double[] tcon = new double[] {
+        static readonly double[] tcon = new double[] {
               0, 0, 
               2451550, 2451550,  /* Moon */
               2451604, 2451670,  /* Mercury */

@@ -574,7 +574,7 @@ namespace SwissEphNet.CPort
             trace("swe_houses_armc: %f\t%f\t%f\t%c\t\n", armc, geolat, eps, hsys);
             trace("retc = %d\n", retc);
             trace("cusp:\n");
-            for (i = 0; i < 12; i++)
+            for (i = 1; i <= 12; i++)
                 trace("  %d\t%f\n", i, cusp[i]);
             trace("ascmc:\n");
             for (i = 0; i < 10; i++)

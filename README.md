@@ -1,7 +1,19 @@
 # SwissEphNet
 
 This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from 
-C (version 2.02.01) to C# in a PCL project for cross platform usage.
+C (version 2.04.00) to C# in a PCL project for cross platform usage.
+
+# Thread Local Storage (TLS) support
+
+Since version 2.03.00 the Swiss Ephemeris library supports the 
+[Thread-Local Storage (TLS)](https://en.wikipedia.org/wiki/Thread-local_storage), which
+allows to run several calculations simultaneously with multiple threads.
+
+As SwissEphNet is build an object ```SwissEphNet.SwissEph```, it always supports multiple
+calculations. You just need create one ```SwissEphNet.SwissEph``` per thread. On other hand
+it's still not thread-safe, so don't access the same ```SwissEphNet.SwissEph``` instance
+from multiple threads.
+
 
 # Projects splitted (2014-06-06)
 
