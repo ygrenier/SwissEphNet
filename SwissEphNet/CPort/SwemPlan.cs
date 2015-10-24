@@ -110,11 +110,11 @@ namespace SwissEphNet.CPort
         //  double *parg, double *node, double *incl,
         //  char *pname, int32 *fict_ifl, char *serr);
 
-        static int[] pnoint2msh = new int[] { 2, 2, 0, 1, 3, 4, 5, 6, 7, 8, };
+        static readonly int[] pnoint2msh = new int[] { 2, 2, 0, 1, 3, 4, 5, 6, 7, 8, };
 
 
         /* From Simon et al (1994)  */
-        static double[] freqs = new double[]
+        static readonly double[] freqs = new double[]
         {
         /* Arc sec per 10000 Julian years.  */
           53810162868.8982,
@@ -128,7 +128,7 @@ namespace SwissEphNet.CPort
           52272245.1795
         };
 
-        static double[] phases = new double[]
+        static readonly double[] phases = new double[]
         {
         /* Arc sec.  */
           252.25090552 * 3600.0,
@@ -142,7 +142,7 @@ namespace SwissEphNet.CPort
           860492.1546,
         };
 
-        Sweph.plantbl[] planets = new Sweph.plantbl[]{
+        readonly Sweph.plantbl[] planets = new Sweph.plantbl[]{
             SwemTab.mer404,
             SwemTab.ven404,
             SwemTab.ear404,
@@ -509,7 +509,7 @@ namespace SwissEphNet.CPort
          */
         public bool SE_NEELY = true;               /* use James Neely's revised elements 
                                          *      of Uranian planets*/
-        static string[] plan_fict_nam = new string[SwissEph.SE_NFICT_ELEM]{
+        static readonly string[] plan_fict_nam = new string[SwissEph.SE_NFICT_ELEM]{
             "Cupido", "Hades", "Zeus", "Kronos", 
            "Apollon", "Admetos", "Vulkanus", "Poseidon",
            "Isis-Transpluto", "Nibiru", "Harrington",
@@ -525,7 +525,7 @@ namespace SwissEphNet.CPort
             return snam;
         }
 
-        static double[,] plan_oscu_elem_neely = new double[SwissEph.SE_NFICT_ELEM, 8] {
+        static readonly double[,] plan_oscu_elem_neely = new double[SwissEph.SE_NFICT_ELEM, 8] {
           {Sweph.J1900, Sweph.J1900, 163.7409, 40.99837, 0.00460, 171.4333, 129.8325, 1.0833},/* Cupido Neely */ 
           {Sweph.J1900, Sweph.J1900,  27.6496, 50.66744, 0.00245, 148.1796, 161.3339, 1.0500},/* Hades Neely */
           {Sweph.J1900, Sweph.J1900, 165.1232, 59.21436, 0.00120, 299.0440,   0.0000, 0.0000},/* Zeus Neely */

@@ -335,9 +335,9 @@ namespace SwissEphNet.CPort
         //{
         //  int32 retval = OK, ipli, i;
         //  double dtjd;
-        //  static double tjdsv[3];
-        //  static double xsv[3,6];
-        //  static int32 iflagsv[3];
+        //  static TLS double tjdsv[3];
+        //  static TLS double xsv[3,6];
+        //  static TLS int32 iflagsv[3];
         //  ipli = ipl;
         //  if (ipli > SE_MOON) 
         //    ipli = 2;
@@ -369,8 +369,8 @@ namespace SwissEphNet.CPort
 
         /* avoids problems with star name string that may be overwritten by 
            swe_fixstar_mag() */
-        static double call_swe_fixstar_mag_dmag;
-        static string call_swe_fixstar_mag_star_save;
+        double call_swe_fixstar_mag_dmag;
+        string call_swe_fixstar_mag_star_save;
         Int32 call_swe_fixstar_mag(string star, ref double mag, ref string serr) {
             Int32 retval;
             string star2;
@@ -532,8 +532,8 @@ namespace SwissEphNet.CPort
         ' actual [0= approximation, 1=actual]
         ' SunRA [deg]
         */
-        static double SunRA_tjdlast;
-        static double SunRA_ralast;
+        double SunRA_tjdlast;
+        double SunRA_ralast;
         double SunRA(double JDNDaysUT, Int32 helflag, ref string serr) {
             int imon = 0, iday = 0, iyar = 0, calflag = SwissEph.SE_GREG_CAL;
             double dut = 0;
@@ -784,8 +784,8 @@ namespace SwissEphNet.CPort
         ' lat [deg]
         ' kOZ [-]
         */
-        static double koz_last, kOZ_alts_last, kOZ_sunra_last;
-        static double kOZ(double AltS, double sunra, double Lat) {
+        double koz_last, kOZ_alts_last, kOZ_sunra_last;
+        double kOZ(double AltS, double sunra, double Lat) {
             double CHANGEKO, OZ, LT, kOZret;
             if (AltS == kOZ_alts_last && sunra == kOZ_sunra_last)
                 return koz_last;
@@ -837,8 +837,8 @@ namespace SwissEphNet.CPort
         ' VR [km]
         ' ka [-]
         */
-        static double ka_alts_last, ka_sunra_last, ka_ka_last;
-        static double ka(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, ref string serr) {
+        double ka_alts_last, ka_sunra_last, ka_ka_last;
+        double ka(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, ref string serr) {
             double CHANGEKA, LAMBDA, BetaVr, Betaa, kaact;
             double SL = Sgn(Lat);
             /* depending on day/night vision (altitude of sun < start astronomical twilight),
@@ -893,7 +893,7 @@ namespace SwissEphNet.CPort
         ' ExtType [0=ka,1=kW,2=kR,3=kOZ,4=ktot]
         ' kt [-]
         */
-        static double kt(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, Int32 ExtType, ref string serr) {
+        double kt(double AltS, double sunra, double Lat, double HeightEye, double TempS, double RH, double VR, Int32 ExtType, ref string serr) {
             double kRact = 0;
             double kWact = 0;
             double kOZact = 0;
@@ -916,7 +916,7 @@ namespace SwissEphNet.CPort
         ' PresS [mbar]
         ' Airmass [??]
         */
-        static double Airmass(double AppAltO, double Press) {
+        double Airmass(double AppAltO, double Press) {
             double airm, zend;
             zend = (90 - AppAltO) * SwissEph.DEGTORAD;
             if (zend > Math.PI / 2)
@@ -980,8 +980,8 @@ namespace SwissEphNet.CPort
         ' VR [km]
         ' Deltam [-]
         */
-        static double Deltam_alts_last, Deltam_alto_last, Deltam_sunra_last, Deltam_deltam_last;
-        static double Deltam(double AltO, double AltS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Deltam_alts_last, Deltam_alto_last, Deltam_sunra_last, Deltam_deltam_last;
+        double Deltam(double AltO, double AltS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double zend, xR, XW, Xa, XOZ;
             double PresE = PresEfromPresS(datm[1], datm[0], HeightEye);
             double TempE = TempEfromTempS(datm[1], HeightEye, LapseSA);
@@ -1078,9 +1078,9 @@ namespace SwissEphNet.CPort
         //{
         //  int32 retval = OK, ipl, ipli;
         //  double dtjd;
-        //  static double tjdsv[3];
-        //  static double dmagsv[3];
-        //  static int32 helflagsv[3];
+        //  static TLS double tjdsv[3];
+        //  static TLS double dmagsv[3];
+        //  static TLS int32 helflagsv[3];
         //  ipl = DeterObject(ObjectName);
         //  ipli = ipl;
         //  if (ipli > SE_MOON) 
@@ -1115,7 +1115,7 @@ namespace SwissEphNet.CPort
         ' AziS [deg]
         ' MoonPhase [deg]
         */
-        static double MoonPhase(double AltM, double AziM, double AziS) {
+        double MoonPhase(double AltM, double AziM, double AziS) {
             double AltMi = AltM * SwissEph.DEGTORAD;
             double AziMi = AziM * SwissEph.DEGTORAD;
             double AziSi = AziS * SwissEph.DEGTORAD;
@@ -1125,7 +1125,7 @@ namespace SwissEphNet.CPort
         /*###################################################################
         ' Pressure [mbar]
         */
-        static double Bm(double AltO, double AziO, double AltM, double AziM, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Bm(double AltO, double AziO, double AltM, double AziM, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double M0 = -11.05;
             double Bm = 0;
             double RM, kXM, kX, C3, FM, phasemoon, MM;
@@ -1150,7 +1150,7 @@ namespace SwissEphNet.CPort
         /*###################################################################
         ' Pressure [mbar]
         */
-        static double Btwi(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Btwi(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double M0 = -11.05;
             double MS = -26.74;
             double PresE = PresEfromPresS(datm[1], datm[0], HeightEye);
@@ -1170,7 +1170,7 @@ namespace SwissEphNet.CPort
         /*###################################################################
         ' Pressure [mbar]
         */
-        static double Bday(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
+        double Bday(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double M0 = -11.05;
             double MS = -26.74;
             double RS = DistanceAngle(AltO * SwissEph.DEGTORAD, AziO * SwissEph.DEGTORAD, AltS * SwissEph.DEGTORAD, AziS * SwissEph.DEGTORAD) / SwissEph.DEGTORAD;
@@ -1191,7 +1191,7 @@ namespace SwissEphNet.CPort
         ' PresS [mbar]
         ' Bcity [nL]
         */
-        static double Bcity(double Value, double Press) {
+        double Bcity(double Value, double Press) {
             double Bcity = Value;
             Bcity = mymax(Bcity, 0);
             return Bcity;
@@ -2423,7 +2423,7 @@ namespace SwissEphNet.CPort
          * - superior and inferior conjunction (Mercury and Venus)
          * - conjunction and opposition (ipl >= Mars)
          */
-        static double[] tcon = new double[] {
+        static readonly double[] tcon = new double[] {
               0, 0, 
               2451550, 2451550,  /* Moon */
               2451604, 2451670,  /* Mercury */

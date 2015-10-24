@@ -181,8 +181,8 @@ namespace SwissEphNet.CPort
         //extern void swi_deflect_light(double *xx, double dt, int32 iflag);
         //extern void swi_aberr_light(double *xx, double *xe, int32 iflag);
         //extern int swi_plan_for_osc_elem(int32 iflag, double tjd, double *xx);
-        //extern int swi_trop_ra2sid_lon(double *xin, double *xout, double *xoutr, int32 iflag, char *serr);
-        //extern int swi_trop_ra2sid_lon_sosy(double *xin, double *xout, double *xoutr, int32 iflag, char *serr);
+        //extern int swi_trop_ra2sid_lon(double* xin, double* xout, double* xoutr, int32 iflag);
+        //extern int swi_trop_ra2sid_lon_sosy(double* xin, double* xout, int32 iflag);
         //extern int swi_get_observer(double tjd, int32 iflag, 
         //    AS_BOOL do_save, double *xobs, char *serr);
         //extern void swi_force_app_pos_etc();
