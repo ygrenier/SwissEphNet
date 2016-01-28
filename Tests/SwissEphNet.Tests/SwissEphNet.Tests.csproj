@@ -55,6 +55,7 @@
     <Compile Include="CPrintfTest.cs" />
     <Compile Include="CScanfTest.cs" />
     <Compile Include="CTest.cs" />
+    <Compile Include="Issue15Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringExtensionsTest.cs" />
     <Compile Include="CPointerTest.cs" />
