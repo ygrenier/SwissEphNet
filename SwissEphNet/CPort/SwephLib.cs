@@ -416,7 +416,7 @@ namespace SwissEphNet.CPort
             /* zero speed */
             if (l[3] == 0 && l[4] == 0 && l[5] == 0) {
                 x[3] = x[4] = x[5] = 0;
-                swi_polcart((double[])l, (double[])x);
+                swi_polcart(l, x);
                 return;
             }
             /* position */
