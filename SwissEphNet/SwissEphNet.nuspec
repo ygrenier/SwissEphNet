@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SwissEphNet</id>
-    <version>2.4.0.11</version>
+    <version>2.4.0.12</version>
     <title>SwissEph for .Net</title>
     <authors>Yan Grenier</authors>
     <owners>Yan Grenier</owners>
@@ -10,6 +10,9 @@
     <projectUrl>https://github.com/ygrenier/SwissEphNet</projectUrl>
     <description>A Swiss Ephemeris .Net portage</description>
     <releaseNotes>
+2.4.0.12 :
+ - Bug fixes.
+  
 2.4.0.11 :
  - Bug fix on the sideral calculation.
   
