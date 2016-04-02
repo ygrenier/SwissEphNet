@@ -4171,15 +4171,15 @@ namespace SwissEphNet.CPort
                 spi = 0;
                 /* MPC number and name; will be analyzed below:
                  * search "asteroid name" */
-                sp = s.TrimStart();
-                spi = sp.IndexOfFirstNot("0123456789".ToCharArray()) + 1;
+                //sp = s.TrimStart();
+                spi = s.IndexOfFirstNot(" 0123456789".ToCharArray());
                 i = spi;
                 sastnam = s.Substring(spi, lastnam + i);
                 /* save elements, they are required for swe_plan_pheno() */
                 swed.astelem = s;
                 /* required for magnitude */
-                swed.ast_H = double.Parse(s.Substring(35 + i, 7).Trim(), CultureInfo.InvariantCulture);
-                swed.ast_G = double.Parse(s.Substring(42 + i, 7).Trim(), CultureInfo.InvariantCulture);
+                swed.ast_H = C.atof(s.Substring(35 + i));
+                swed.ast_G = C.atof(s.Substring(42 + i));
                 if (swed.ast_G == 0) swed.ast_G = 0.15;
                 /* diameter in kilometers, not always given: */
                 s2 = s.Substring(51 + i, 7).Trim();
@@ -4187,7 +4187,7 @@ namespace SwissEphNet.CPort
                 if (String.IsNullOrEmpty(s2))
                     swed.ast_diam = 0;
                 else
-                    swed.ast_diam = double.Parse(s2, CultureInfo.InvariantCulture);
+                    swed.ast_diam = C.atof(s2);
                 if (swed.ast_diam == 0)
                 {
                     /* estimate the diameter from magnitude; assume albedo = 0.15 */
