@@ -55,6 +55,7 @@
     <Compile Include="CPrintfTest.cs" />
     <Compile Include="CScanfTest.cs" />
     <Compile Include="CTest.cs" />
+    <Compile Include="Issue18Test.cs" />
     <Compile Include="Issue17Test.cs" />
     <Compile Include="Issue15Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +79,9 @@
       <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
       <Name>SwissEphNet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="files\se00005s.se1" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
