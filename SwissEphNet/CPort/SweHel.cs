@@ -1678,7 +1678,8 @@ namespace SwissEphNet.CPort
             return (A + C - 2 * B) / 2.0 * x * x + (A - C) / 2.0 * x + B;
         }
 
-        void strcpy_VBsafe(out string sout, string sin) {
+        void strcpy_VBsafe(out string sout, string sin)
+        {
             //char *sp, *sp2; 
             //int iw = 0;
             //sp = sin; 
@@ -1689,7 +1690,9 @@ namespace SwissEphNet.CPort
             //}
             //*sp2 = '\0';
             int i = 0;
-            while ((Char.IsLetterOrDigit(sin[i]) || sin[i] == ' ' || sin[i] == '-') && i < 30)
+            sin = sin ?? String.Empty;
+            int limit = Math.Min(sin.Length, 30);
+            while (i < limit && (Char.IsLetterOrDigit(sin[i]) || sin[i] == ' ' || sin[i] == '-'))
                 i++;
             sout = sin.Substring(0, i);
         }
