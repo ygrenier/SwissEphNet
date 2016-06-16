@@ -86,6 +86,7 @@ namespace SwissEphNet.CPort
         {
             public houses() {
                 cusp = new double[37];
+                serr = string.Empty;
             }
             public double[] cusp;
             public double ac;
@@ -95,6 +96,8 @@ namespace SwissEphNet.CPort
             public double coasc1;
             public double coasc2;
             public double polasc;
+            public double sundec;   // declination of Sun for Sunshine houses
+            public string serr;
         }
 
         //#define HOUSES 	struct houses;
@@ -103,9 +106,9 @@ namespace SwissEphNet.CPort
         public double degtocs(double x) { return (SE.swe_d2l((x) * SwissEph.DEG)); }
         public double cstodeg(double x) { return (double)((x) * SwissEph.CS2DEG); }
 
-        public double sind(double x) { return Math.Sin(x * SwissEph.DEGTORAD); }
-        public double cosd(double x) { return Math.Cos(x * SwissEph.DEGTORAD); }
-        public double tand(double x) { return Math.Tan(x * SwissEph.DEGTORAD); }
+        public double sind(double x) { return Math.Sin((x) * SwissEph.DEGTORAD); }
+        public double cosd(double x) { return Math.Cos((x) * SwissEph.DEGTORAD); }
+        public double tand(double x) { return Math.Tan((x) * SwissEph.DEGTORAD); }
         public double asind(double x) { return (Math.Asin(x) * SwissEph.RADTODEG); }
         public double acosd(double x) { return (Math.Acos(x) * SwissEph.RADTODEG); }
         public double atand(double x) { return (Math.Atan(x) * SwissEph.RADTODEG); }

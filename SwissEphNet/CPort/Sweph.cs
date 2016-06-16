@@ -83,6 +83,7 @@ namespace SwissEphNet.CPort
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Reflection;
 
     partial class Sweph : BaseCPort
     {
@@ -102,6 +103,7 @@ namespace SwissEphNet.CPort
         bool SID_TNODE_FROM_ECL_T0 = false;
 
         //#define SEFLG_EPHMASK	(SEFLG_JPLEPH|SEFLG_SWIEPH|SEFLG_MOSEPH)
+        //#define SEFLG_COORDSYS  (SEFLG_EQUATORIAL | SEFLG_XYZ | SEFLG_RADIANS)
 
         struct meff_ele
         {
@@ -136,6 +138,7 @@ namespace SwissEphNet.CPort
                 //0.0,     /* tid_acc */
                 //FALSE,    /* is_tid_acc_manual */
                 //FALSE,    /* init_dt_done */
+                //FALSE,	/* swed_is_initialised */
         //                };
         internal swe_data swed = new swe_data() {
             ephe_path_is_set = false,
@@ -160,7 +163,8 @@ namespace SwissEphNet.CPort
             eop_dpsi_loaded = 0,     		/* eop_dpsi_loaded */
             tid_acc = 0.0,
             is_tid_acc_manual = false,
-            init_dt_done = false
+            init_dt_done = false,
+            swed_is_initialised = false
         };
 
         /*************
@@ -168,36 +172,46 @@ namespace SwissEphNet.CPort
          *************/
 
         static readonly string[] ayanamsa_name = new string[] {
-           "Fagan/Bradley",
-           "Lahiri",
-           "De Luce",
-           "Raman",
-           "Ushashashi",
-           "Krishnamurti",
-           "Djwhal Khul",
-           "Yukteshwar",
-           "J.N. Bhasin",
-           "Babylonian/Kugler 1",
-           "Babylonian/Kugler 2",
-           "Babylonian/Kugler 3",
-           "Babylonian/Huber",
-           "Babylonian/Eta Piscium",
-           "Babylonian/Aldebaran = 15 Tau",
-           "Hipparchos",
-           "Sassanian",
-           "Galact. Center = 0 Sag",
-           "J2000",
-           "J1900",
-           "B1950",
-           "Suryasiddhanta",
-           "Suryasiddhanta, mean Sun",
-           "Aryabhata",
-           "Aryabhata, mean Sun",
-           "SS Revati",
-           "SS Citra",
-           "True Citra",
-           "True Revati",
-           "True Pushya",
+           "Fagan/Bradley",                    /*  0 SE_SIDM_FAGAN_BRADLEY */
+           "Lahiri",                           /*  1 SE_SIDM_LAHIRI */
+           "De Luce",                          /*  2 SE_SIDM_DELUCE */
+           "Raman",                            /*  3 SE_SIDM_RAMAN */
+           "Usha/Shashi",                      /*  4 SE_SIDM_USHASHASHI */
+           "Krishnamurti",                     /*  5 SE_SIDM_KRISHNAMURTI */
+           "Djwhal Khul",                      /*  6 SE_SIDM_DJWHAL_KHUL */
+           "Yukteshwar",                       /*  7 SE_SIDM_YUKTESHWAR */
+           "J.N. Bhasin",                      /*  8 SE_SIDM_JN_BHASIN */
+           "Babylonian/Kugler 1",              /*  9 SE_SIDM_BABYL_KUGLER1 */
+           "Babylonian/Kugler 2",              /* 10 SE_SIDM_BABYL_KUGLER2 */
+           "Babylonian/Kugler 3",              /* 11 SE_SIDM_BABYL_KUGLER3 */
+           "Babylonian/Huber",                 /* 12 SE_SIDM_BABYL_HUBER */
+           "Babylonian/Eta Piscium",           /* 13 SE_SIDM_BABYL_ETPSC */
+           "Babylonian/Aldebaran = 15 Tau",    /* 14 SE_SIDM_ALDEBARAN_15TAU */
+           "Hipparchos",                       /* 15 SE_SIDM_HIPPARCHOS */
+           "Sassanian",                        /* 16 SE_SIDM_SASSANIAN */
+           "Galact. Center = 0 Sag",           /* 17 SE_SIDM_GALCENT_0SAG */
+           "J2000",                            /* 18 SE_SIDM_J2000 */
+           "J1900",                            /* 19 SE_SIDM_J1900 */
+           "B1950",                            /* 20 SE_SIDM_B1950 */
+           "Suryasiddhanta",                   /* 21 SE_SIDM_SURYASIDDHANTA */
+           "Suryasiddhanta, mean Sun",         /* 22 SE_SIDM_SURYASIDDHANTA_MSUN */
+           "Aryabhata",                        /* 23 SE_SIDM_ARYABHATA */
+           "Aryabhata, mean Sun",              /* 24 SE_SIDM_ARYABHATA_MSUN */
+           "SS Revati",                        /* 25 SE_SIDM_SS_REVATI */
+           "SS Citra",                         /* 26 SE_SIDM_SS_CITRA */
+           "True Citra",                       /* 27 SE_SIDM_TRUE_CITRA */
+           "True Revati",                      /* 28 SE_SIDM_TRUE_REVATI */
+           "True Pushya (PVRN Rao)",           /* 29 SE_SIDM_TRUE_PUSHYA */
+           "Galactic Center (Gil Brand)",      /* 30 SE_SIDM_GALCENT_RGILBRAND */
+           "Galactic Equator (IAU1958)",       /* 31 SE_SIDM_GALEQU_IAU1958 */
+           "Galactic Equator",                 /* 32 SE_SIDM_GALEQU_TRUE */
+           "Galactic Equator mid-Mula",        /* 33 SE_SIDM_GALEQU_MULA */
+           "Skydram (Mardyks)",                /* 34 SE_SIDM_GALALIGN_MARDYKS */
+           "True Mula (Chandra Hari)",         /* 35 SE_SIDM_TRUE_MULA */
+           "Dhruva/Gal.Center/Mula (Wilhelm)", /* 36 SE_SIDM_GALCENT_MULA_WILHELM */
+           "Aryabhata 522",                    /* 37 SE_SIDM_ARYABHATA_522 */
+           "Babylonian/Britton",               /* 38 SE_SIDM_BABYL_BRITTON */
+           /*"Manjula/Laghumanasa",*/
         };
         //int[] pnoint2jpl = PNOINT2JPL;
         int[] pnoint2jpl = null;        // This field is assigned in constructor
@@ -257,6 +271,53 @@ namespace SwissEphNet.CPort
             return SE_VERSION;
         }
 
+#if !NO_SWE_GLP	// -DNO_SWE_GLP to suppress this function
+//#if MSDOS
+//HANDLE dllhandle = NULL;        // global used in swe_version
+//                // if DLL, set by DllMain()
+//#else		
+//#if __GNUC__
+//#define __USE_GNU
+//#include <dlfcn.h>		// must be linked with -ldl
+//  static Dl_info dli;
+//#endif
+//#endif // MSDOS
+
+        public string swe_get_library_path()
+        {
+            //  size_t bytes;
+            //  int len;
+            //  *s = '\0';
+            //#if !defined(__APPLE) 
+            //  len = AS_MAXCH;
+            //#if MSDOS
+            //  bytes = GetModuleFileName(dllhandle, (TCHAR*) s, len);
+            //#else
+            //  #if __GNUC__
+            //    if (dladdr((void *)swe_version, &dli) != 0) {
+            //      if (strlen(dli.dli_fname) >= len) {
+            //    strncpy(s, dli.dli_fname, len);
+            //    s[len] = '\0';
+            //      } else{
+            //    strcpy(s, dli.dli_fname);
+            //      }
+            //      bytes = strlen(s);
+            //    } else {
+            //      bytes = readlink("/proc/self/exe", s, len);
+            //    }
+            //  #else
+            //    bytes = readlink("/proc/self/exe", s, len);
+            //  #endif
+            //#endif
+            //  if(bytes >= 0) {
+            //    s[bytes] = '\0';
+            //  }
+            //#endif
+            //  return s;
+            return typeof(Sweph).Assembly.FullName;
+        }
+#endif	// NO_SWE_GLP
+
         /* The routine called by the user.
          * It checks whether a position for the same planet, the same t, and the
          * same flag bits has already been computed. 
@@ -273,9 +334,9 @@ namespace SwissEphNet.CPort
         public Int32 swe_calc(double tjd, int ipl, Int32 iflag,
             double[] xx, ref string serr) {
             int i, j;
-            Int32 iflgcoor;
             Int32 iflgsave = iflag;
             Int32 epheflag;
+            bool use_speed3 = false;
             save_positions sd;
             double[] x = new double[6], /*xs,*/ x0 = new double[24], x2 = new double[24];
             CPointer<Double> xs;
@@ -371,6 +432,12 @@ namespace SwissEphNet.CPort
             /* high precision speed prevails fast speed */
             if ((iflag & SwissEph.SEFLG_SPEED3) != 0 && (iflag & SwissEph.SEFLG_SPEED) != 0)
                 iflag = iflag & ~SwissEph.SEFLG_SPEED3;
+            if ((iflag & SwissEph.SEFLG_SPEED3) != 0)
+                use_speed3 = true;
+            /* topocentric with SEFLG_SPEED is not good if aberration is included. 
+             * in such cases we calculate speed from three positions */
+            if ((iflag & SwissEph.SEFLG_SPEED) != 0 && (iflag & SwissEph.SEFLG_TOPOCTR) != 0 && 0 == (iflag & SwissEph.SEFLG_NOABERR))
+                use_speed3 = true;
             /* cartesian flag excludes radians flag */
             if ((iflag & SwissEph.SEFLG_XYZ) != 0 && (iflag & SwissEph.SEFLG_RADIANS) != 0)
                 iflag = iflag & ~SwissEph.SEFLG_RADIANS;
@@ -391,15 +458,14 @@ namespace SwissEphNet.CPort
              * because all asteroids called by MPC number share the same
              * save area.
              */
-            iflgcoor = SwissEph.SEFLG_EQUATORIAL | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_RADIANS;
             if (sd.tsave == tjd && tjd != 0 && ipl == sd.ipl) {
-                if ((sd.iflgsave & ~iflgcoor) == (iflag & ~iflgcoor))
+                if ((sd.iflgsave & ~SwissEph.SEFLG_COORDSYS) == (iflag & ~SwissEph.SEFLG_COORDSYS)) 
                     goto end_swe_calc;
             }
             /* 
              * otherwise, new position must be computed 
              */
-            if ((iflag & SwissEph.SEFLG_SPEED3) == 0) {
+            if (!use_speed3) {
                 /* 
                  * with high precision speed from one call of swecalc() 
                  * (FAST speed)
@@ -443,10 +509,11 @@ namespace SwissEphNet.CPort
                 calc_speed(x0, sd.xsaves, x2, dt);
             }
         end_swe_calc:
-            if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
+            if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0) {
                 xs = sd.xsaves.GetPointer(12);	/* equatorial coordinates */
-            else
+            } else {
                 xs = sd.xsaves;	/* ecliptic coordinates */
+            }
             if ((iflag & SwissEph.SEFLG_XYZ) != 0)
                 xs = xs + 6;		/* cartesian coordinates */
             if (ipl == SwissEph.SE_ECL_NUT)
@@ -478,7 +545,11 @@ namespace SwissEphNet.CPort
             //#endif
             for (i = 0; i <= 5; i++)
                 xx[i] = x[i];
-            iflag = sd.iflgsave;
+            //iflag = sd->iflgsave | (iflag & SEFLG_COORDSYS);
+            // iflag from previous call of swe_calc(), without coordinate system flags
+            iflag = sd.iflgsave & ~SwissEph.SEFLG_COORDSYS;
+            // add correct coordinate system flags
+            iflag |= (iflgsave & SwissEph.SEFLG_COORDSYS);
             /* if no ephemeris has been specified, do not return chosen ephemeris */
             if ((iflgsave & SwissEph.SEFLG_EPHMASK) == 0)
                 iflag = iflag & ~SwissEph.SEFLG_DEFAULTEPH;
@@ -1140,12 +1211,13 @@ namespace SwissEphNet.CPort
         public Int32 swi_init_swed_if_start()
         {
             /* initialisation of swed, when called first time from */
-            if (!swed.ephe_path_is_set)
+            if (!swed.swed_is_initialised)
             {
                 swed = new swe_data();
                 swed.ephepath = SwissEph.SE_EPHE_PATH;
                 swed.jplfnam = SwissEph.SE_FNAME_DFT;
                 SE.swe_set_tid_acc(SwissEph.SE_TIDAL_AUTOMATIC);
+                swed.swed_is_initialised = true;
                 return 1;
             }
             return 0;
@@ -1276,13 +1348,21 @@ namespace SwissEphNet.CPort
             //  if ((sp = getenv("SE_EPHE_PATH")) != NULL 
             //    && strlen(sp) != 0
             //    && strlen(sp) <= AS_MAXCH-1-13) {
-            //    s= sp;
-            //  } else if (path == NULL) {
-            //    s= SE_EPHE_PATH;
-            //  } else if (strlen(path) <= AS_MAXCH-1-13)
-            //    s= path;
-            //  else
-            //    s= SE_EPHE_PATH;
+            //    strcpy(s, sp);
+            //  } else if (path == NULL || *path == '\0') {
+            //    strcpy(s, SE_EPHE_PATH);
+            //  } else if (strlen(path) <= AS_MAXCH-1-13) {
+            //    strcpy(s, path);
+            //  } else {
+            //    strcpy(s, SE_EPHE_PATH);
+            //  }
+            //#if MSDOS
+            //  if (strchr(s, '/') != NULL)
+            //    strcpy(s, SE_EPHE_PATH);
+            //#else
+            //  if (strchr(s, '\\') != NULL)
+            //    strcpy(s, SE_EPHE_PATH);
+            //#endif
             s = !String.IsNullOrWhiteSpace(path) ? path : SwissEph.SE_EPHE_PATH;
             i = s.Length;
             //  if (*(s + i - 1) != *DIR_GLUE && *s != '\0')
@@ -2457,8 +2537,8 @@ namespace SwissEphNet.CPort
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
                     /* 
                      * Apparent speed is influenced by the fact that dt changes with
-                     * motion. This makes a difference of several hundredths of an
-                     * arc second. To take this into account, we compute 
+                     * time. This makes a difference of several hundredths of an
+                     * arc second / day. To take this into account, we compute 
                      * 1. true position - apparent position at time t - 1.
                      * 2. true position - apparent position at time t.
                      * 3. the difference between the two is the part of the daily motion 
@@ -2497,8 +2577,10 @@ namespace SwissEphNet.CPort
                 }
                 /* part of daily motion resulting from change of dt */
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     for (i = 0; i <= 2; i++)
                         xxsp[i] = pdp.x[i] - xx[i] - xxsp[i];
+                }
                 /* new position, accounting for light-time (accurate) */
                 switch (epheflag) {
                     case SwissEph.SEFLG_JPLEPH:
@@ -2536,9 +2618,9 @@ namespace SwissEphNet.CPort
                         }
                         break;
                     case SwissEph.SEFLG_SWIEPH:
-                        if (ibody == IS_PLANET)
+                        if (ibody == IS_PLANET) {
                             retc = sweplan(t, ipli, ifno, iflag, NO_SAVE, xx, xearth, xsun, null, ref serr);
-                        else { 		/*asteroid*/
+                        } else { 		/*asteroid*/
                             retc = sweplan(t, SEI_EARTH, SEI_FILE_PLANET, iflag, NO_SAVE, xearth, null, xsun, null, ref serr);
                             if (retc == OK)
                                 retc = sweph(t, ipli, ifno, iflag, xsun, NO_SAVE, xx, ref serr);
@@ -2565,9 +2647,9 @@ namespace SwissEphNet.CPort
                      */
                         if ((iflag & SwissEph.SEFLG_SPEED) != 0
                           && 0 == (iflag & (SwissEph.SEFLG_HELCTR | SwissEph.SEFLG_BARYCTR))) {
-                            if (ibody == IS_PLANET)
+                            if (ibody == IS_PLANET) {
                                 retc = SE.SwemPlan.swi_moshplan(t, ipli, NO_SAVE, xxsv, xearth, ref serr);
-                            else {		/* if asteroid */
+                            } else {		/* if asteroid */
                                 retc = sweph(t, ipli, ifno, iflag, null, NO_SAVE, xxsv, ref serr);
                                 if (retc == OK)
                                     retc = SE.SwemPlan.swi_moshplan(t, SEI_EARTH, NO_SAVE, xearth, xearth, ref serr);
@@ -2648,9 +2730,10 @@ namespace SwissEphNet.CPort
                  * the difference of speed of the earth between t and t-dt. 
                  * Neglecting this would involve an error of several 0.1"
                  */
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
                     for (i = 3; i <= 5; i++)
                         xx[i] += xobs[i] - xobs2[i];
+                }
             }
             if (0 == (iflag & SwissEph.SEFLG_SPEED))
                 for (i = 3; i <= 5; i++)
@@ -2776,22 +2859,38 @@ namespace SwissEphNet.CPort
                     sid_mode %= SwissEph.SE_SIDBITS;
                 /* standard equinoxes: positions always referred to ecliptic of t0 */
                 if (sid_mode == SwissEph.SE_SIDM_J2000
-                    || sid_mode == SwissEph.SE_SIDM_J1900
-                    || sid_mode == SwissEph.SE_SIDM_B1950) {
+                      || sid_mode == SwissEph.SE_SIDM_J1900
+                      || sid_mode == SwissEph.SE_SIDM_B1950
+                      //|| sid_mode == SwissEph.SE_SIDM_B1950
+                      || sid_mode == SwissEph.SE_SIDM_GALALIGN_MARDYKS
+	                  ) {
                     sip.sid_mode &= ~SwissEph.SE_SIDBIT_SSY_PLANE;
                     sip.sid_mode |= SwissEph.SE_SIDBIT_ECL_T0;
                 }
-                if (sid_mode == SwissEph.SE_SIDM_TRUE_CITRA || sid_mode == SwissEph.SE_SIDM_TRUE_REVATI || sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA)
-                    sip.sid_mode &= ~(SwissEph.SE_SIDBIT_ECL_T0 | SwissEph.SE_SIDBIT_SSY_PLANE);
+                if (sid_mode == SwissEph.SE_SIDM_TRUE_CITRA
+                    || sid_mode == SwissEph.SE_SIDM_TRUE_REVATI
+                    || sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA
+                    || sid_mode == SwissEph.SE_SIDM_TRUE_MULA
+                    || sid_mode == SwissEph.SE_SIDM_GALCENT_0SAG
+                    || sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND
+                    || sid_mode == SwissEph.SE_SIDM_GALCENT_MULA_WILHELM
+                    || sid_mode == SwissEph.SE_SIDM_GALEQU_IAU1958
+                    || sid_mode == SwissEph.SE_SIDM_GALEQU_TRUE
+                    || sid_mode == SwissEph.SE_SIDM_GALEQU_MULA)
+                    sip.sid_mode &= ~(SwissEph.SE_SIDBIT_ECL_T0 | SwissEph.SE_SIDBIT_SSY_PLANE | SwissEph.SE_SIDBIT_USER_UT);
                 if (sid_mode >= SwissEph.SE_NSIDM_PREDEF && sid_mode != SwissEph.SE_SIDM_USER)
                     sip.sid_mode = sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                 swed.ayana_is_set = true;
                 if (sid_mode == SwissEph.SE_SIDM_USER) {
                     sip.t0 = t0;
                     sip.ayan_t0 = ayan_t0;
+                    sip.t0_is_UT = false;
+                    if ((sip.sid_mode & SwissEph.SE_SIDBIT_USER_UT) != 0)
+                        sip.t0_is_UT = true;
                 } else {
                     sip.t0 = ayanamsa[sid_mode].t0;
                     sip.ayan_t0 = ayanamsa[sid_mode].ayan_t0;
+                    sip.t0_is_UT = ayanamsa[sid_mode].t0_is_UT;
                 }
             }
             finally {
@@ -2801,19 +2900,43 @@ namespace SwissEphNet.CPort
         }
 
         public Int32 swe_get_ayanamsa_ex(double tjd_et, Int32 iflag, out double daya, ref string serr) {
-            double[] x = new double[6]; double eps;
+            double[] x = new double[6]; double eps, t0;
             sid_data sip = swed.sidd;
             string star = string.Empty; //string sdummy = null;
-            Int32 epheflag, otherflag, retflag;
+            Int32 epheflag, otherflag, retflag, iflag_true, iflag_galequ;
             iflag = plaus_iflag(iflag, -1, tjd_et, out serr);
             epheflag = iflag & SwissEph.SEFLG_EPHMASK;
             otherflag = iflag & ~SwissEph.SEFLG_EPHMASK;
             daya = 0.0;
             iflag &= SwissEph.SEFLG_EPHMASK;
             iflag |= SwissEph.SEFLG_NONUT;
+              /* ayanamshas based on the intersection point of galactic equator and
+               * ecliptic always need SEFLG_TRUEPOS, because position of galactic
+               * pole is required without aberration or light deflection */
+            iflag_galequ = iflag | SwissEph.SEFLG_TRUEPOS;
+            //#if 1
+              /* _TRUE_ ayanamshas can have the following SEFLG_s;
+               * The star will have the intended fixed position even if these flags are 
+               * provided */
+            iflag_true = iflag;
+            if ((otherflag & SwissEph.SEFLG_TRUEPOS) != 0) iflag_true |= SwissEph.SEFLG_TRUEPOS;
+            if ((otherflag & SwissEph.SEFLG_NOABERR) != 0) iflag_true |= SwissEph.SEFLG_NOABERR;
+            if ((otherflag & SwissEph.SEFLG_NOGDEFL) != 0) iflag_true |= SwissEph.SEFLG_NOGDEFL;
+            //#endif
             /* warning, if swe_set_ephe_path() or swe_set_jplfile() was not called yet,
              * although ephemeris files are required */
-            if (swi_init_swed_if_start() == 1 && 0==(epheflag & SwissEph.SEFLG_MOSEPH) && (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA || sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI || sip.sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA))
+            if (swi_init_swed_if_start() == 1 && 0==(epheflag & SwissEph.SEFLG_MOSEPH)
+               && (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA
+                || sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI
+                || sip.sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA
+                || sip.sid_mode == SwissEph.SE_SIDM_TRUE_MULA
+                || sip.sid_mode == SwissEph.SE_SIDM_GALCENT_0SAG
+                || sip.sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND
+                || sip.sid_mode == SwissEph.SE_SIDM_GALCENT_MULA_WILHELM
+                || sip.sid_mode == SwissEph.SE_SIDM_GALEQU_IAU1958
+                || sip.sid_mode == SwissEph.SE_SIDM_GALEQU_TRUE
+                || sip.sid_mode == SwissEph.SE_SIDM_GALEQU_MULA)
+                && serr != null)
             {
                 serr = "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_get_ayanamsa_ex()";
             }
@@ -2821,7 +2944,7 @@ namespace SwissEphNet.CPort
                 swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA) {
                 star = "Spica"; /* Citra */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
                 {
                     return ERR;
                 }
@@ -2831,18 +2954,80 @@ namespace SwissEphNet.CPort
             }
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI) {
                 star = ",zePsc"; /* Revati */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
-                daya = SE.swe_degnorm(x[0]);
+                daya = SE.swe_degnorm(x[0] - 359.8333333333);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
-                /*return swe_degnorm(x[0] - 359.83333333334);*/
             }
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA)
             {
                 star = ",deCnc"; /* Pushya = Asellus Australis */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 106);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_MULA)
+            {
+                star = ",laSco"; /* Mula = lambda Scorpionis */
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                    return ERR;
+                daya = SE.swe_degnorm(x[0] - 240);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_GALCENT_0SAG)
+            {
+                star = ",SgrA*"; /* Galactic Centre */
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                    return ERR;
+                daya = SE.swe_degnorm(x[0] - 240.0);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+                /*return swe_degnorm(x[0] - 359.83333333334);*/
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND)
+            {
+                star = ",SgrA*"; /* Galactic Centre */
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                    return ERR;
+                daya = SE.swe_degnorm(x[0] - 210.0 - 90.0 * 0.3819660113);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+                /*return swe_degnorm(x[0] - 359.83333333334);*/
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_GALCENT_MULA_WILHELM)
+            {
+                star = ",SgrA*"; /* Galactic Centre */
+                /* right ascension in polar projection onto the ecliptic, 
+                 * and that point is put in the middle of Mula */
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_true | SwissEph.SEFLG_EQUATORIAL, x, ref serr)) == ERR)
+                    return ERR;
+                eps = SE.SwephLib.swi_epsiln(tjd_et, iflag) * SwissEph.RADTODEG;
+                daya = SE.SweHouse.swi_armc_to_mc(x[0], eps);
+                daya = SE.swe_degnorm(daya - 246.6666666667);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+                /*return swe_degnorm(x[0] - 359.83333333334);*/
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_GALEQU_IAU1958)
+            {
+                star = ",GP1958"; /* Galactic Pole IAU 1958 */
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
+                    return ERR;
+                daya = SE.swe_degnorm(x[0] - 150);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_GALEQU_TRUE)
+            {
+                star = ",GPol"; /* Galactic Pole modern, true */
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
+                    return ERR;
+                daya = SE.swe_degnorm(x[0] - 150);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+            }
+            if (sip.sid_mode == SwissEph.SE_SIDM_GALEQU_MULA)
+            {
+                star = ",GPol"; /* Galactic Pole modern, true */
+                if ((retflag = swe_fixstar(star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
+                    return ERR;
+                daya = SE.swe_degnorm(x[0] - 150 - 6.6666666667);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
             }
             /* vernal point (tjd), cartesian */
@@ -2852,9 +3037,12 @@ namespace SwissEphNet.CPort
             if (tjd_et != J2000)
                 SE.SwephLib.swi_precess(x, tjd_et, 0, J_TO_J2000);
             /* to t0 */
-            SE.SwephLib.swi_precess(x, sip.t0, 0, J2000_TO_J);
+            t0 = sip.t0;
+            if (sip.t0_is_UT)
+                t0 += SE.swe_deltat_ex(t0, iflag, ref serr);
+            SE.SwephLib.swi_precess(x, t0, 0, J2000_TO_J);
             /* to ecliptic */
-            eps = SE.SwephLib.swi_epsiln(sip.t0, 0);
+            eps = SE.SwephLib.swi_epsiln(t0, 0);
             SE.SwephLib.swi_coortrf(x, x, eps);
             /* to polar */
             SE.SwephLib.swi_cartpol(x, x);
@@ -3691,7 +3879,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pdp.teval
                   || swed.topd.teval == 0) {
-                      if (swi_get_observer(pdp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref sdummy) != OK)
+                      if (swi_get_observer(pdp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -5746,6 +5934,9 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 iflag = iflag & ~(SwissEph.SEFLG_HELCTR | SwissEph.SEFLG_BARYCTR);
             }
+            /* if barycentric bit, turn heliocentric bit off */
+            if ((iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                iflag = iflag & ~SwissEph.SEFLG_HELCTR;
             /* if heliocentric bit, turn aberration and deflection off */
             if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
                 iflag |= SwissEph.SEFLG_NOABERR | SwissEph.SEFLG_NOGDEFL; /*iflag |= SwissEph.SEFLG_TRUEPOS;*/
@@ -5952,14 +6143,56 @@ namespace SwissEphNet.CPort
                         else if (star.Contains(",zePsc") || star.StartsWith("Revati"))
                         {
                             s = "Revati,zePsc,ICRS,01,13,43.8857,7,34,31.274,141.66,-55.62,0.0,22.09,5.204,06,174";
-                            /* Ayanamsha SE_SIDM_TRUE_PUSHYA */
                             sstar = "revati";
                             goto found;
                         }
+                        /* Ayanamsha SE_SIDM_TRUE_PUSHYA */
                         else if (star.Contains(",deCnc") || star.StartsWith("Pushya"))
                         {
                             s = "Pushya,deCnc,ICRS,08,44,41.0996,+18,09,15.511,-17.10,-228.46,17.14,23.97,3.94,18,2027";
                             sstar = "pushya";
+                            goto found;
+                        }
+                        /* Ayanamsha SE_SIDM_TRUE_MULA */
+                        else if (star.Contains(",laSco") || star.StartsWith("Mula"))
+                        {
+                            s = "Mula,laSco,ICRS,17,33,36.520,-37,06,13.76,-8.90,-29.95,-3,4.64,1.62,-37,11673";
+                            sstar = "mula";
+                            goto found;
+                        }
+                        /* Ayanamsha SE_SIDM_GALCENT_0SAG */
+                        else if (star.Contains(",SgrA*"))
+                        {
+                            s = "Gal. Center,SgrA*,2000,17,45,40.0409,-29,00,28.118,-2.755718425,-5.547,0.0,0.0000,999.99,0,0";
+                            sstar = ",sgra*";
+                            goto found;
+                        }
+                        /* Ayanamsha SE_SIDM_GALCENT_RGILBRAND */
+                        else if (star.Contains(",SgrA*"))
+                        {
+                            s = "Gal. Center,SgrA*,2000,17,45,40.0409,-29,00,28.118,-2.755718425,-5.547,0.0,0.0000,999.99,0,0";
+                            sstar = ",sgra*";
+                            goto found;
+                        }
+                        /* Ayanamsha SE_SIDM_GALEQU_IAU1958 */
+                        else if (star.Contains(",GP1958"))
+                        {
+                            s = "Gal. Pole IAU1958,GP1958,1950,12,49,0.0,27,24,0.0,0.0,0.0,0.0,0.0,0.0,0,0";
+                            sstar = "gp1958";
+                            goto found;
+                        }
+                        /* Ayanamsha SE_SIDM_GALEQU_TRUE */
+                        else if (star.Contains(",GPol"))
+                        {
+                            s = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
+                            sstar = "gpol";
+                            goto found;
+                        }
+                        /* Ayanamsha SE_SIDM_GALEQU_MULA */
+                        else if (star.Contains(",GPol"))
+                        {
+                            s = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
+                            sstar = "gpol";
                             goto found;
                         }
                         retc = ERR;
@@ -6377,7 +6610,11 @@ namespace SwissEphNet.CPort
                 if (spi >= 0)
                     sstar = sstar.Substring(0, spi);
             }
-            sstar = sstar.TrimEnd();
+            /*swi_right_trim(sstar);*/
+            //while ((sp = strchr(sstar, ' ')) != NULL)
+            //    swi_strcpy(sp, sp + 1);
+            //sstar = sstar.TrimEnd();
+            sstar = sstar.Replace(" ", "");
             cmplen = sstar.Length;
             if (cmplen == 0) {
                 serr = C.sprintf("swe_fixstar_mag(): star name empty");
@@ -6405,9 +6642,13 @@ namespace SwissEphNet.CPort
                 }
                 //sp = '\0';	/* cut off first field */
                 //strncpy(fstar, s, SE_MAX_STNAME);
-                //*sp = ',';
+                //*sp = ','; /* restore comma */
                 //fstar[SE_MAX_STNAME] = '\0';	/* force termination */
                 fstar = s.Substring(0, spi).TrimEnd();
+                /*swi_right_trim(fstar);*/
+                //while ((sp = strchr(fstar, ' ')) != NULL)
+                //    swi_strcpy(sp, sp + 1);
+                fstar = fstar.Replace(" ", "");
                 i = fstar.Length;
                 if (i < (int)cmplen)
                     continue;
@@ -6663,6 +6904,7 @@ namespace SwissEphNet.CPort
                     //trace(true, "\n/*SWE_CALC*/");
                     //trace(true, "  tjd = %.9f; ipl = %d; iflag = %d;", tjd, ipl, iflag);
                     //trace(true, "  iflgret = swe_calc(tjd, ipl, iflag, xx, serr);");
+                    //fprintf(swi_fp_trace_c, "	/* xx = %p */\n", xx);
                     break;
                 case 2:
                     //trace(true, "  printf(\"swe_calc: %f\\t%d\\t%d\\t%f\\t%f\\t%f\\t%f\\t%f\\t%f\\t\", "); 
@@ -6746,6 +6988,13 @@ namespace SwissEphNet.CPort
         /* set geographic position and altitude of observer */
         public void swe_set_topo(double geolon, double geolat, double geoalt) {
             swi_init_swed_if_start();
+            if (swed.geopos_is_set == true
+              && swed.topd.geolon == geolon
+              && swed.topd.geolat == geolat
+              && swed.topd.geoalt == geoalt)
+            {
+                return;
+            }
             swed.topd.geolon = geolon;
             swed.topd.geolat = geolat;
             swed.topd.geoalt = geoalt;
@@ -6844,13 +7093,14 @@ namespace SwissEphNet.CPort
             /* subtract nutation, set backward flag */
             if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
                 SE.SwephLib.swi_coortrf2(xobs, xobs, -swed.nut.snut, swed.nut.cnut);
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
-                    SE.SwephLib.swi_coortrf2(xobs + 3, xobs + 3, -swed.nut.snut, swed.nut.cnut);
-                swi_nutate(xobs, iflag, true);
+                /* speed of xobs is always required, namely for aberration!!! */
+                /*if (iflag & SEFLG_SPEED)*/
+                SE.SwephLib.swi_coortrf2(xobs + 3, xobs + 3, -swed.nut.snut, swed.nut.cnut);
+                swi_nutate(xobs, iflag | SwissEph.SEFLG_SPEED, true);
             }
             /* precess to J2000 */
             SE.SwephLib.swi_precess(xobs, tjd, iflag, J_TO_J2000);
-            if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+            /*if ((iflag & SwissEph.SEFLG_SPEED) != 0)*/
                 swi_precess_speed(xobs, tjd, iflag, J_TO_J2000);
             /* neglect frame bias (displacement of 45cm) */
             /* ... */
