@@ -195,12 +195,21 @@ namespace SwissEphNet.CPort
         ' SN [-]
         ' CVA [deg]
         */
-        double CVA(double B, double SN) {
+        double CVA(double B, double SN, Int32 helflag)
+        {
             /*Schaefer, Astronomy and the limits of vision, Archaeoastronomy, 1993*/
-            if (B > BNIGHT)
-                return (40.0 / SN) * Math.Pow(10, (8.28 * Math.Pow(B, (-0.29)))) / 60.0 / 60.0;
-            else
+            bool is_scotopic = false;
+            //if (B < BNIGHT)
+            if (B < 1394)  /* use this value for BNIGHT to make the function continous */
+                is_scotopic = true;
+            if ((helflag & SwissEph.SE_HELFLAG_VISLIM_PHOTOPIC) != 0)
+                is_scotopic = false;
+            if ((helflag & SwissEph.SE_HELFLAG_VISLIM_SCOTOPIC) != 0)
+                is_scotopic = true;
+            if (is_scotopic)
                 return mymin(900, 380 / SN * Math.Pow(10, (0.3 * Math.Pow(B, (-0.29))))) / 60.0 / 60.0;
+            else
+                return (40.0 / SN) * Math.Pow(10, (8.28 * Math.Pow(B, (-0.29)))) / 60.0 / 60.0;
         }
 
         /*
@@ -237,6 +246,7 @@ namespace SwissEphNet.CPort
             double OpticMag = dobs[3];
             double OpticDia = dobs[4];
             double OpticTrans = dobs[5];
+            bool is_scotopic = false;
             SNi = SN;
             if (SNi <= 0.00000001) SNi = 0.00000001;
             /* 23 jaar as standard from Garstang*/
@@ -263,7 +273,15 @@ namespace SwissEphNet.CPort
             }
             Fb = 1;
             if (Binocular == 0) Fb = 1.41;
-            if (Bback < BNIGHT && 0 == (helflag & SwissEph.SE_HELFLAG_VISLIM_PHOTOPIC)) {
+            //if (Bback < BNIGHT)
+            if (Bback < 1645) /* use this value for BNIGHT to make the function continuous */
+                is_scotopic = true;
+            if ((helflag & SwissEph.SE_HELFLAG_VISLIM_PHOTOPIC) != 0)
+                is_scotopic = false;
+            if ((helflag & SwissEph.SE_HELFLAG_VISLIM_SCOTOPIC) != 0)
+                is_scotopic = true;
+            if (is_scotopic)
+            {
                 Fe = Math.Pow(10, (0.48 * kX));
                 Fsc = mymin(1, (1 - Math.Pow(Pst / 124.4, 4)) / (1 - Math.Pow((OpticDia / OpticMag / 124.4), 4)));
                 Fci = Math.Pow(10, (-0.4 * (1 - CIi / 2.0)));
@@ -277,7 +295,7 @@ namespace SwissEphNet.CPort
             Ft = 1 / OpticTrans;
             Fp = mymax(1, Math.Pow((Pst / (OpticMag * PupilDia(Age, Bback))), 2));
             Fa = Math.Pow((Pst / OpticDia), 2);
-            Fr = (1 + 0.03 * Math.Pow((OpticMag * ObjectSize / CVA(Bback, SNi)), 2)) / Math.Pow(SNi, 2);
+            Fr = (1 + 0.03 * Math.Pow((OpticMag * ObjectSize / CVA(Bback, SNi, helflag)), 2)) / Math.Pow(SNi, 2);
             Fm = Math.Pow(OpticMag, 2);
 #if DEBUG
             trace("Pst=%f\n", Pst);
@@ -449,7 +467,11 @@ namespace SwissEphNet.CPort
                 return SwissEph.ERR;
             }
             /* apparent radius of solar disk (ignoring refraction) */
-            rdi = Math.Asin(696000000.0 / 1.49597870691e+11 / xx[2]) / SwissEph.DEGTORAD;
+            rdi = 0;
+            if (ipl == SwissEph.SE_SUN)
+                rdi = Math.Asin(696000000.0 / 1.49597870691e+11 / xx[2]) / SwissEph.DEGTORAD;
+            else if (ipl == SwissEph.SE_MOON)
+                rdi = Math.Asin(1737000.0 / 1.49597870691e+11 / xx[2]) / SwissEph.DEGTORAD;
             if ((eventflag & SwissEph.SE_BIT_DISC_CENTER) != 0)
                 rdi = 0;
             /* true altitude of sun, when it appears at the horizon */
@@ -787,6 +809,7 @@ namespace SwissEphNet.CPort
         double koz_last, kOZ_alts_last, kOZ_sunra_last;
         double kOZ(double AltS, double sunra, double Lat) {
             double CHANGEKO, OZ, LT, kOZret;
+            double altslim = 0;
             if (AltS == kOZ_alts_last && sunra == kOZ_sunra_last)
                 return koz_last;
             kOZ_alts_last = AltS; kOZ_sunra_last = sunra;
@@ -796,7 +819,16 @@ namespace SwissEphNet.CPort
             kOZret = OZ * (3.0 + 0.4 * (LT * Math.Cos(sunra * SwissEph.DEGTORAD) - Math.Cos(3 * LT))) / 3.0;
             /* depending on day/night vision (altitude of sun < start astronomical twilight), KO changes from 100% to 30%
              * see extinction section of Vistas in Astronomy page 343*/
-            CHANGEKO = (100 - 11.6 * mymin(6, mymax(-AltS - 12, 0))) / 100;
+            altslim = -AltS - 12;
+            if (altslim < 0)
+                altslim = 0;
+            CHANGEKO = (100 - 11.6 * mymin(6, altslim)) / 100;
+            //if (0) {
+            //  static int a = 0;
+            //  //if (a == 0)
+            //    printf("bsk=%f %f\n", kOZret, AltS);
+            //  a = 1;
+            //}
             koz_last = kOZret * CHANGEKO;
             return koz_last;
         }
@@ -1169,6 +1201,13 @@ namespace SwissEphNet.CPort
 
         /*###################################################################
         ' Pressure [mbar]
+            2300 REM  Daylight brightness
+            2310 C4=10.0^(-.4*K(I)*XS)
+            2320 FS=6.2E+07*(RS^-2)+(10^(6.15-RS/40))
+            2330 FS=FS+(10^5.36)*(1.06+((COS(RS*RD))^2))
+            2340 BD=10^(-.4*(MS(I)-MO(I)+43.27))
+            2350 BD=BD*(1-10^(-.4*K(I)*X))
+            2360 BD=BD*(FS*C4+440000.0*(1-C4))
         */
         double Bday(double AltO, double AziO, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref string serr) {
             double M0 = -11.05;
@@ -1209,6 +1248,12 @@ namespace SwissEphNet.CPort
                     Bsky += Bday(AltO, AziO, AltS, AziS, sunra, Lat, HeightEye, datm, helflag, ref serr);
                 } else {
                     Bsky += mymin(Bday(AltO, AziO, AltS, AziS, sunra, Lat, HeightEye, datm, helflag, ref serr), Btwi(AltO, AziO, AltS, AziS, sunra, Lat, HeightEye, datm, helflag, ref serr));
+                    //if (0) {
+                    //  static int a = 0;
+                    //  if (a == 0)
+                    //    printf("bsk=%f\n", Bsky);
+                    //  a = 1;
+                    //}
                 }
             }
             /* if max. Bm [1E7] <5% of Bsky don't add Bm*/
@@ -1298,17 +1343,31 @@ namespace SwissEphNet.CPort
         double VisLimMagn(double[] dobs, double AltO, double AziO, double AltM, double AziM, double JDNDaysUT, double AltS, double AziS, double sunra, double Lat, double HeightEye, double[] datm, Int32 helflag, ref Int32 scotopic_flag, ref string serr) {
             double C1, C2, Th, kX, Bsk, CorrFactor1, CorrFactor2;
             double log10 = 2.302585092994;
+            bool is_scotopic = false;
             /*double Age = dobs[0];*/
             /*double SN = dobs[1];*/
             Bsk = Bsky(AltO, AziO, AltM, AziM, JDNDaysUT, AltS, AziS, sunra, Lat, HeightEye, datm, helflag, ref serr);
             /* Schaefer, Astronomy and the limits of vision, Archaeoastronomy, 1993 Verder:*/
             kX = Deltam(AltO, AltS, sunra, Lat, HeightEye, datm, helflag, ref serr);
+            //if (0) {
+            //  static int a = 0;
+            //  if (a == 0)
+            //    printf("bsk=%f, kx=%f\n", Bsk, kX);
+            //  a = 1;
+            //}
             /* influence of age*/
             /*Fa = mymax(1, pow(p(23, Bsk) / p(Age, Bsk), 2)); */
             CorrFactor1 = OpticFactor(Bsk, kX, dobs, JDNDaysUT, "", 1, helflag);
             CorrFactor2 = OpticFactor(Bsk, kX, dobs, JDNDaysUT, "", 0, helflag);
+            //if (Bsk < BNIGHT)
+            if (Bsk < 1645) /* use this function for BNIGHT to make the function continuous */
+                is_scotopic = true;
+            if ((helflag & SwissEph.SE_HELFLAG_VISLIM_PHOTOPIC) != 0)
+                is_scotopic = false;
+            if ((helflag & SwissEph.SE_HELFLAG_VISLIM_SCOTOPIC) != 0)
+                is_scotopic = true;
             /* From Schaefer , Archaeoastronomy, XV, 2000, page 129*/
-            if (Bsk < BNIGHT && 0 == (helflag & SwissEph.SE_HELFLAG_VISLIM_PHOTOPIC)) {
+            if (is_scotopic) {
                 C1 = 1.5848931924611e-10; /*pow(10, -9.8);*/ /* C1 = 10 ^ (-9.8);*/
                 C2 = 0.012589254117942; /*pow(10, -1.9);*/ /* C2 = 10 ^ (-1.9);*/
                 scotopic_flag = 1;
@@ -1320,13 +1379,14 @@ namespace SwissEphNet.CPort
             if (BNIGHT * BNIGHT_FACTOR > Bsk && BNIGHT / BNIGHT_FACTOR < Bsk)
                 scotopic_flag |= 2;
             /*Th = C1 * pow(1 +Math.Sqrt(C2 * Bsk), 2) * Fa;*/
-            Bsk = Bsk / CorrFactor1;
+            /*Bsk = Bsk / CorrFactor1;*/
+            Bsk = Bsk * CorrFactor1;
             Th = C1 * Math.Pow(1 + Math.Sqrt(C2 * Bsk), 2) * CorrFactor2;
 #if DEBUG
-            trace("Bsk=%f\n", Bsk);
-            trace("kX =%f\n", kX);
-            trace("Th =%f\n", Th);
-            trace("CorrFactor1=%f\n", CorrFactor1);
+            trace("Bsk=%f, ", Bsk);
+            trace("kX =%f, ", kX);
+            trace("Th =%f, ", Th);
+            trace("CorrFactor1=%f, ", CorrFactor1);
             trace("CorrFactor2=%f\n", CorrFactor2);
 #endif
             /* Visual limiting magnitude of point source*/
@@ -1684,7 +1744,8 @@ namespace SwissEphNet.CPort
             //int iw = 0;
             //sp = sin; 
             //sp2 = sout;
-            //while((isalnum(*sp) || *sp == ' ' || *sp == '-') && iw < 30) {
+            ///* note, star name may begin with comma, such as ",zePsc" */
+            //while((isalnum(*sp) || *sp == ' ' || *sp == '-' || *sp == ',') && iw < 30) {
             //  *sp2 = *sp;
             //  sp++; sp2++; iw++;
             //}
@@ -1692,7 +1753,8 @@ namespace SwissEphNet.CPort
             int i = 0;
             sin = sin ?? String.Empty;
             int limit = Math.Min(sin.Length, 30);
-            while (i < limit && (Char.IsLetterOrDigit(sin[i]) || sin[i] == ' ' || sin[i] == '-'))
+            /* note, star name may begin with comma, such as ",zePsc" */
+            while (i < limit && (Char.IsLetterOrDigit(sin[i]) || sin[i] == ' ' || sin[i] == '-' || sin[i] == ','))
                 i++;
             sout = sin.Substring(0, i);
         }
@@ -2620,9 +2682,9 @@ namespace SwissEphNet.CPort
         //#endif
 
         Int32 get_heliacal_day(double tjd, double[] dgeo, double[] datm, double[] dobs, string ObjectName, Int32 helflag, Int32 TypeEvent, ref double thel, ref string serr) {
-            Int32 is_rise_or_set = 0, ndays, retval, retval_old;
+            Int32 i, visible_at_sunsetrise, is_rise_or_set = 0, ndays, retval, retval_old;
             double direct_day = 0, direct_time = 0, tfac, tend, daystep, tday, vdelta, tret = 0;
-            double[] darr = new double[30]; double vd, dmag = 0;
+            double[] darr = new double[30]; double vd, dmag = 0, div;
             Int32 ipl = DeterObject(ObjectName);
             /* 
              * find the day and minute on which the object becomes visible 
@@ -2697,10 +2759,12 @@ namespace SwissEphNet.CPort
             }
             tend = tjd + ndays * direct_day;
             retval_old = -2;
-            for (tday = tjd;
+            for (tday = tjd, i = 0;
                  (direct_day > 0 && tday < tend) || (direct_day < 0 && tday > tend);
-                 tday += daystep * direct_day) {
+                 tday += daystep * direct_day, i++) {
                 vdelta = -100;
+                if (i > 0)
+                  tday -= 0.3 * direct_day;
                 if ((retval = my_rise_trans(tday, SwissEph.SE_SUN, "", is_rise_or_set, helflag, dgeo, datm, ref tret, ref serr)) == SwissEph.ERR)
                 {
                     return SwissEph.ERR;
@@ -2733,18 +2797,38 @@ namespace SwissEphNet.CPort
                     continue;
                 vdelta = darr[0] - darr[7];
                 /* find minute of object's becoming visible */
-                while (retval != -2 && (vd = darr[0] - darr[7]) < 0) {
+                div = 1440.0;
+                //    div = 86400.0;
+                //      printf("tret=%f, m1=%f, m2=%f\n", tret, darr[0], darr[1]);
+                vd = -1;
+                visible_at_sunsetrise = 1;
+                while (retval != -2 && (vd = darr[0] - darr[7]) < 0)
+                {
+                    visible_at_sunsetrise = 0;
                     if (vd < -1.0)
-                        tret += 5.0 / 1440.0 * direct_time * tfac;
+                        tret += 5.0 / div * direct_time * tfac;
                     else if (vd < -0.5)
-                        tret += 2.0 / 1440.0 * direct_time * tfac;
+                        tret += 2.0 / div * direct_time * tfac;
                     else if (vd < -0.1)
-                        tret += 1.0 / 1440.0 * direct_time * tfac;
+                        tret += 1.0 / div * direct_time * tfac;
                     else
-                        tret += 1.0 / 1440.0 * direct_time;
+                        tret += 1.0 / div * direct_time;
                     retval = swe_vis_limit_mag(tret, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr);
                     if (retval == SwissEph.ERR)
                         return SwissEph.ERR;
+                }
+                /* if possible move a bit away from sunset, where vis_limit_mag() has strange behaviour */
+                if (visible_at_sunsetrise != 0)
+                {
+                    for (i = 0; i < 10; i++)
+                    {
+                        if ((retval = SE.swe_vis_limit_mag(tret + 1.0 / div * direct_time, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr)) >= 0
+                          && darr[0] - darr[7] > vd)
+                        {
+                            vd = darr[0] - darr[7];
+                            tret += 1.0 / div * direct_time;
+                        }
+                    }
                 }
                 vdelta = darr[0] - darr[7];
                 /* object is visible, save time of appearance */
@@ -2759,49 +2843,81 @@ namespace SwissEphNet.CPort
                 }
             }
             serr = C.sprintf("heliacal event does not happen");
+            //printf("%s\n", serr);
             return -2;
         }
 
         Int32 time_optimum_visibility(double tjd, double[] dgeo, double[] datm, double[] dobs, string ObjectName, Int32 helflag, ref double tret, ref string serr) {
             Int32 retval, retval_sv, i;
-            double d, vl, phot_scot_opic, phot_scot_opic_sv; double[] darr = new double[10];
+            double t1, t2, vl1, vl2, d, vl, phot_scot_opic, phot_scot_opic_sv; double[] darr = new double[10];
+            int t_has_changed;
             tret = tjd;
             retval = swe_vis_limit_mag(tjd, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr);
             if (retval == SwissEph.ERR) return SwissEph.ERR;
             retval_sv = retval;
             vl = darr[0] - darr[7];
+            vl = -1;
+            t1 = tjd;
+            t2 = tjd;
+            vl1 = -1;
+            vl2 = -1;
+            //printf("begin tret=%f, dvl=%f\n", tjd, darr[0] - darr[7]);
             phot_scot_opic_sv = retval & SwissEph.SE_SCOTOPIC_FLAG;
             for (i = 0, d = 100.0 / 86400.0; i < 3; i++, d /= 10.0) {
-                while ((retval = swe_vis_limit_mag(tjd - d, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr)) >= 0
+                // fprintf(stderr, "i= %d\n", i);
+                t1 += d;
+                t_has_changed = 0;
+                while ((retval = swe_vis_limit_mag(t1 - d, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr)) >= 0 
                 && darr[0] > darr[7]
-                && darr[0] - darr[7] > vl) {
-                    tjd -= d; vl = darr[0] - darr[7];
+                && darr[0] - darr[7] > vl1) {
+                    t1 -= d; vl1 = darr[0] - darr[7];
+                    t_has_changed = 1;
+                    //fprintf(stderr, "vl1=%f %d vlm=%f, obm=%f, t=%f\n", vl, retval, darr[0], darr[7], tjd + d);
                     retval_sv = retval;
                     phot_scot_opic_sv = retval & SwissEph.SE_SCOTOPIC_FLAG;
                     /*  printf("1: %f\n", darr[8]);*/
                 }
+                if (t_has_changed == 0)
+                    t1 -= d; /* revert initial addition */
                 if (retval == SwissEph.ERR) return SwissEph.ERR;
-                while ((retval = swe_vis_limit_mag(tjd + d, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr)) >= 0
-                    && darr[0] > darr[7]
-                && darr[0] - darr[7] > vl) {
-                    tjd += d; vl = darr[0] - darr[7];
+            }
+            for (i = 0, d = 100.0 / 86400.0; i < 3; i++, d /= 10.0)
+            {
+                t2 -= d;
+                t_has_changed = 0;
+                while ((retval = swe_vis_limit_mag(t2 + d, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr)) >= 0
+                        && darr[0] > darr[7]
+                        && darr[0] - darr[7] > vl2)
+                {
+                    t2 += d; vl2 = darr[0] - darr[7];
+                    t_has_changed = 1;
+                    //fprintf(stderr, "vl2=%f %d vlm=%f, obm=%f, t=%f\n", vl, retval, darr[0], darr[7], tjd + d);
                     retval_sv = retval;
                     phot_scot_opic_sv = retval & SwissEph.SE_SCOTOPIC_FLAG;
                     /*  printf("2: %f\n", darr[8]);*/
                 }
+                if (t_has_changed == 0)
+                    t2 += d; /* revert initial subtraction */
                 if (retval == SwissEph.ERR) return SwissEph.ERR;
             }
+            if (vl2 > vl1)
+                tjd = t2;
+            else
+                tjd = t1;
             /*  printf("3: %f <-> %f\n", darr[8], phot_scot_opic_sv);*/
             tret = tjd;
+            //printf("end tret=%f, dvl=%f\n", tjd, darr[0] - darr[7]);
             if (retval >= 0) {
                 /* search for optimum came to an end because change scotopic/photopic: */
                 phot_scot_opic = (retval & SwissEph.SE_SCOTOPIC_FLAG);
                 if (phot_scot_opic_sv != phot_scot_opic) {
                     /* calling function writes warning into serr */
+                    //C.printf("hallo -2\n");
                     return -2;
                 }
                 /* valid result found but it is close to the scotopic/photopic limit */
                 if ((retval_sv & SwissEph.SE_MIXEDOPIC_FLAG) != 0) {
+                    //C.printf("hallo -2\n");
                     return -2;
                 }
             }
@@ -3093,7 +3209,7 @@ namespace SwissEphNet.CPort
             if (retval == SwissEph.ERR) goto moon_event_err;
             dret[1] = tjd;
             /* find moment of becoming visible */
-            /* Note: The on the day of fist light the moon may become visible 
+            /* Note: On the day of first light the moon may become visible 
              * already during day. It also may appear during day, disappear again
              * and then reappear after sunset */
             direct = 1;
@@ -3107,6 +3223,7 @@ namespace SwissEphNet.CPort
             retval = time_limit_invisible(dret[1], dgeo, datm, dobs, ObjectName, helflag, direct, ref tjd, ref  serr);
             dret[0] = tjd;
             if (retval == SwissEph.ERR) goto moon_event_err;
+            // #if 1
             /* if the moon is visible before sunset, we return sunset as start time */
             if (TypeEvent == 3) {
                 if ((retval = my_rise_trans(tjd, SwissEph.SE_SUN, "", SwissEph.SE_CALC_SET, helflag, dgeo, datm, ref trise, ref serr)) == SwissEph.ERR)
@@ -3126,6 +3243,7 @@ namespace SwissEphNet.CPort
                     /*serr = "end time given is sunrise, but moon is observable after that";*/
                 }
             }
+            // #endif
             /* correct order of the three times: */
             if (TypeEvent == 4) {
                 tjd = dret[0];

@@ -131,8 +131,9 @@ namespace SweMini
             double[] x2 = new double[6];
             Int32 iflag, iflgret;
             //int p;
-            iflag = SwissEph.SEFLG_SPEED;
             using (var swe = new SwissEph()) {
+                swe.swe_set_ephe_path(null);
+                iflag = SwissEph.SEFLG_SPEED;
                 swe.OnLoadFile += swe_OnLoadFile;
                 while (true) {
                     Console.Write("\nDate (d.m.y) ? ");
