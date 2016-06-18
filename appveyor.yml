@@ -1,0 +1,18 @@
+version: 2.5.1.{build}
+branches:
+  only:
+  - master
+configuration: Release
+build:
+  publish_nuget: true
+  verbosity: minimal
+after_build:
+- ps: "$DestPath = \"release-bin\"\n\nif ((Test-Path -path $DestPath) -eq $True)\n{\n    $res = Remove-Item -Recurse $DestPath\n}\n$res = New-Item $DestPath -type directory -ErrorAction SilentlyContinue\n\n$Binaries = [System.IO.Path]::Combine($DestPath, \"bin\")\n$res = New-Item $Binaries -type directory\n\nGet-ChildItem -Recurse . -Force -ErrorAction SilentlyContinue -File `\n    | Where-Object { \n        ($_.PSIsContainer -eq $false) `\n        -and ($_.DirectoryName.EndsWith(\"bin\\Release\")) `\n        -and !($_.Name.Contains(\".vshost.\")) `\n        -and !($_.Name.Contains(\"Tests\")) `\n        -and ( ( $_.Name -like \"*.dll\") -or ( $_.Name -like \"*.exe\") ) `\n    } `\n    | ForEach-Object { Copy-Item $_.FullName $Binaries }"
+artifacts:
+- path: '*.nupkg'
+  name: Nuget
+- path: release-bin
+  name: Binary
+deploy:
+- provider: Environment
+  name: Nuget
