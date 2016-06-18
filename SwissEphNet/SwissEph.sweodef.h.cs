@@ -106,8 +106,12 @@ namespace SwissEphNet
         /// </summary>
         public const String ODEGREE_STRING = "°";
 
-        public const double DEGTORAD = 0.0174532925199433;
-        public const double RADTODEG = 57.2957795130823;
+        public const double M_PI = 3.14159265358979323846;
+
+        //public const double DEGTORAD = 0.0174532925199433;
+        //public const double RADTODEG = 57.2957795130823;
+        public const double RADTODEG = (180.0 / M_PI);
+        public const double DEGTORAD = (M_PI / 180.0);
 
         public const int DEG = 360000;  /* degree expressed in centiseconds */
         public const int DEG7_30 = (2700000);	/* 7.5 degrees */
@@ -122,8 +126,10 @@ namespace SwissEphNet
         public const int DEG270 = (270 * DEG);
         public const int DEG360 = (360 * DEG);
 
-        public const double CSTORAD = 4.84813681109536E-08; /* centisec to rad: pi / 180 /3600/100 */
-        public const double RADTOCS = 2.06264806247096E+07; /* rad to centisec 180*3600*100/pi */
+        //public const double CSTORAD = 4.84813681109536E-08; /* centisec to rad: pi / 180 /3600/100 */
+        //public const double RADTOCS = 2.06264806247096E+07; /* rad to centisec 180*3600*100/pi */
+        public const double CSTORAD	= (DEGTORAD / 360000.0);
+        public const double RADTOCS = (RADTODEG * 360000.0);
 
         public const double CS2DEG = (1.0 / 360000.0);	/* centisec to degree */
 

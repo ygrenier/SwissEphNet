@@ -329,7 +329,17 @@ namespace SwissEphNet.CPort
             rxy = Math.Sqrt(rxy);
             ll[0] = Math.Atan2(x[1], x[0]);
             if (ll[0] < 0.0) ll[0] += Sweph.TWOPI;
-            ll[1] = Math.Atan(x[2] / rxy);
+            if (rxy == 0)
+            {
+                if (x[2] >= 0)
+                    ll[1] = Sweph.PI / 2;
+                else
+                    ll[1] = -(Sweph.PI / 2);
+            }
+            else
+            {
+                ll[1] = Math.Atan(x[2] / rxy);
+            }
             l[0] = ll[0];
             l[1] = ll[1];
             l[2] = ll[2];
@@ -2122,10 +2132,12 @@ namespace SwissEphNet.CPort
             56.86, 57.57, 58.31, 59.12, 59.98, 60.78, 61.63, 62.30, 62.97, 63.47,
             /* 2000.0 thru 2009.0 */
             63.83, 64.09, 64.30, 64.47, 64.57, 64.69, 64.85, 65.15, 65.46, 65.78,      
-            /* 2010.0 thru 2015.0 */
-            66.07, 66.32, 66.60, 66.907,67.281,67.644,
-            /* Extrapolated values, 2016 - 2019 */
-            68.01, 68.50, 69.00, 69.50,
+            /* 2010.0 thru 2016.0 */
+            /* newest value of 2016 was taken from:
+             * http://maia.usno.navy.mil/ser7/deltat.data*/
+            66.07, 66.32, 66.60, 66.907,67.281,67.644,68.1024,
+            /* Extrapolated values, 2017 - 2019 */
+					                      68.50, 69.00, 69.50,
 
             // Fill with 100
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -2249,7 +2261,7 @@ namespace SwissEphNet.CPort
             }
 #if TRACE
             trace("swe_deltat: %f\t%f\t", tjd, ans);
-            //fprintf(swi_fp_trace_c, "  iflag = %d;", tjd);
+            //fprintf(swi_fp_trace_c, "  iflag = %d;", iflag);
             //fprintf(swi_fp_trace_c, " t = swe_deltat_ex(tjd, iflag, NULL);\n");
 #endif
             deltat = ans / 86400.0;
@@ -2259,6 +2271,8 @@ namespace SwissEphNet.CPort
         public double swe_deltat_ex(double tjd, Int32 iflag, ref string serr)
         {
             double deltat;
+            if (swed.delta_t_userdef_is_set)
+                return swed.delta_t_userdef;
             calc_deltat(tjd, iflag, out deltat, ref serr);
             return deltat;
         }
@@ -2548,6 +2562,19 @@ namespace SwissEphNet.CPort
             }
             swed.tid_acc = t_acc;
             swed.is_tid_acc_manual = true;
+        }
+
+        public void swe_set_delta_t_userdef(double dt)
+        {
+            if (dt == SwissEph.SE_DELTAT_AUTOMATIC)
+            {
+                swed.delta_t_userdef_is_set = false;
+            }
+            else
+            {
+                swed.delta_t_userdef_is_set = true;
+                swed.delta_t_userdef = dt;
+            }
         }
 
         internal Int32 swi_guess_ephe_flag()
@@ -3425,26 +3452,31 @@ namespace SwissEphNet.CPort
             return E;
         }
 
-        public void swi_FK4_FK5(CPointer<double> xp, double tjd) {
+        public void swi_FK4_FK5(CPointer<double> xp, double tjd)
+        {
+            bool correct_speed = true;
             if (xp[0] == 0 && xp[1] == 0 && xp[2] == 0)
                 return;
-            swi_cartpol(xp, xp);
+            /* with zero speed, we assume that it should be really zero */
+            if (xp[3] == 0)
+                correct_speed = false;
+            swi_cartpol_sp(xp, xp);
             /* according to Expl.Suppl., p. 167f. */
             xp[0] += (0.035 + 0.085 * (tjd - Sweph.B1950) / 36524.2198782) / 3600 * 15 * SwissEph.DEGTORAD;
-            xp[3] += (0.085 / 36524.2198782) / 3600 * 15 * SwissEph.DEGTORAD;
-            swi_polcart(xp, xp);
+            if (correct_speed)
+                xp[3] += (0.085 / 36524.2198782) / 3600 * 15 * SwissEph.DEGTORAD;
+            swi_polcart_sp(xp, xp);
         }
 
         public void swi_FK5_FK4(CPointer<double> xp, double tjd) {
             if (xp[0] == 0 && xp[1] == 0 && xp[2] == 0)
                 return;
-            swi_cartpol(xp, xp);
+            swi_cartpol_sp(xp, xp);
             /* according to Expl.Suppl., p. 167f. */
             xp[0] -= (0.035 + 0.085 * (tjd - Sweph.B1950) / 36524.2198782) / 3600 * 15 * SwissEph.DEGTORAD;
             xp[3] -= (0.085 / 36524.2198782) / 3600 * 15 * SwissEph.DEGTORAD;
-            swi_polcart(xp, xp);
+            swi_polcart_sp(xp, xp);
         }
-
 
         public void swe_set_astro_models(Int32[] imodel)
         {

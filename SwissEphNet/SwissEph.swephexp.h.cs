@@ -203,22 +203,28 @@ namespace SwissEphNet
         public const int SEFLG_MOSEPH = 4;       /* use Moshier ephemeris */
 
         public const int SEFLG_EPHMASK = (SEFLG_JPLEPH | SEFLG_SWIEPH | SEFLG_MOSEPH);
+        public const int SEFLG_COORDSYS = (SEFLG_EQUATORIAL | SEFLG_XYZ | SEFLG_RADIANS);
 
-        public const int SEFLG_HELCTR = 8;      /* return heliocentric position */
-        public const int SEFLG_TRUEPOS = 16;     /* return true positions, not apparent */
+        public const int SEFLG_HELCTR = 8;     /* heliocentric position */
+        public const int SEFLG_TRUEPOS = 16;     /* true/geometric position, not apparent position */
         public const int SEFLG_J2000 = 32;     /* no precession, i.e. give J2000 equinox */
         public const int SEFLG_NONUT = 64;     /* no nutation, i.e. mean equinox of date */
-        public const int SEFLG_SPEED3 = 128;     /* speed from 3 positions (do not use it,
-                                                    SEFLG_SPEED is faster and more precise.) */
-        public const int SEFLG_SPEED = 256;     /* high precision speed  */
-        public const int SEFLG_NOGDEFL = 512;     /* turn off gravitational deflection */
-        public const int SEFLG_NOABERR = 1024;    /* turn off 'annual' aberration of light */
+        public const int SEFLG_SPEED3 = 128;    /* speed from 3 positions (do not use it,
+                                                 * SEFLG_SPEED is faster and more precise.) */
+        public const int SEFLG_SPEED = 256;    /* high precision speed  */
+        public const int SEFLG_NOGDEFL = 512;    /* turn off gravitational deflection */
+        public const int SEFLG_NOABERR = 1024;   /* turn off 'annual' aberration of light */
+        public const int SEFLG_ASTROMETRIC = (SEFLG_NOABERR | SEFLG_NOGDEFL); /* astrometric position,
+                                        * i.e. with light-time, but without aberration and
+			                            * light deflection */
         public const int SEFLG_EQUATORIAL = (2 * 1024);    /* equatorial positions are wanted */
-        public const int SEFLG_XYZ = (4 * 1024);    /* cartesian, not polar, coordinates */
-        public const int SEFLG_RADIANS = (8 * 1024);    /* coordinates in radians, not degrees */
-        public const int SEFLG_BARYCTR = (16 * 1024);   /* barycentric positions */
-        public const int SEFLG_TOPOCTR = (32 * 1024);   /* topocentric positions */
-        public const int SEFLG_SIDEREAL = (64 * 1024);   /* sidereal positions */
+        public const int SEFLG_XYZ = (4 * 1024);     /* cartesian, not polar, coordinates */
+        public const int SEFLG_RADIANS = (8 * 1024);     /* coordinates in radians, not degrees */
+        public const int SEFLG_BARYCTR = (16 * 1024);    /* barycentric position */
+        public const int SEFLG_TOPOCTR = (32 * 1024);    /* topocentric position */
+        public const int SEFLG_ORBEL_AA = SEFLG_TOPOCTR; /* used for Astronomical Almanac mode in 
+                                              * calculation of Kepler elipses */
+        public const int SEFLG_SIDEREAL = (64 * 1024);    /* sidereal position */
         public const int SEFLG_ICRS = (128 * 1024);   /* ICRS (DE406 reference frame) */
         public const int SEFLG_DPSIDEPS_1980 = (256 * 1024); /* reproduce JPL Horizons 
                                                                 1962 - today to 0.002 arcsec. */
@@ -230,6 +236,8 @@ namespace SwissEphNet
         public const int SE_SIDBIT_ECL_T0 = 256;
         /* for projection onto solar system plane */
         public const int SE_SIDBIT_SSY_PLANE = 512;
+        /* with user-defined ayanamsha, t0 is UT */
+        public const int SE_SIDBIT_USER_UT = 1024;
 
         /* sidereal modes (ayanamsas) */
         public const int SE_SIDM_FAGAN_BRADLEY = 0;
@@ -262,9 +270,19 @@ namespace SwissEphNet
         public const int SE_SIDM_TRUE_CITRA = 27;
         public const int SE_SIDM_TRUE_REVATI = 28;
         public const int SE_SIDM_TRUE_PUSHYA = 29;
-        public const int SE_SIDM_USER = 255;
+        public const int SE_SIDM_GALCENT_RGILBRAND = 30;
+        public const int SE_SIDM_GALEQU_IAU1958 = 31;
+        public const int SE_SIDM_GALEQU_TRUE = 32;
+        public const int SE_SIDM_GALEQU_MULA = 33;
+        public const int SE_SIDM_GALALIGN_MARDYKS = 34;
+        public const int SE_SIDM_TRUE_MULA = 35;
+        public const int SE_SIDM_GALCENT_MULA_WILHELM = 36;
+        public const int SE_SIDM_ARYABHATA_522 = 37;
+        public const int SE_SIDM_BABYL_BRITTON = 38;
+        //#define SE_SIDM_MANJULA         38
+        public const int SE_SIDM_USER = 255; /* user-defined ayanamsha, t0 is TT */
 
-        public const int SE_NSIDM_PREDEF = 30;
+        public const int SE_NSIDM_PREDEF = 39;
 
         /* used for swe_nod_aps(): */
         public const int SE_NODBIT_MEAN = 1;   /* mean nodes/apsides */
@@ -402,13 +420,15 @@ namespace SwissEphNet
         public const int SE_HELFLAG_SEARCH_1_PERIOD = (1 << 11);  /*  2048 */
         public const int SE_HELFLAG_VISLIM_DARK = (1 << 12);  /*  4096 */
         public const int SE_HELFLAG_VISLIM_NOMOON = (1 << 13);  /*  8192 */
+        /* the following undocumented defines are for test reasons only */
         public const int SE_HELFLAG_VISLIM_PHOTOPIC = (1 << 14);  /* 16384 */
-        public const int SE_HELFLAG_AV = (1 << 15);  /* 32768 */
-        public const int SE_HELFLAG_AVKIND_VR = (1 << 15);  /* 32768 */
-        public const int SE_HELFLAG_AVKIND_PTO = (1 << 16);
-        public const int SE_HELFLAG_AVKIND_MIN7 = (1 << 17);
-        public const int SE_HELFLAG_AVKIND_MIN9 = (1 << 18);
-        public const int SE_HELFLAG_AVKIND = (SE_HELFLAG_AVKIND_VR | SE_HELFLAG_AVKIND_PTO | SE_HELFLAG_AVKIND_MIN7 | SE_HELFLAG_AVKIND_MIN9);
+        public const int SE_HELFLAG_VISLIM_SCOTOPIC = (1 << 15);  /* 32768 */
+        public const int SE_HELFLAG_AV = (1 << 16);  /* 65536 */
+        public const int SE_HELFLAG_AVKIND_VR = (1 << 16);  /* 65536 */
+        public const int SE_HELFLAG_AVKIND_PTO = (1 << 17);
+        public const int SE_HELFLAG_AVKIND_MIN7 = (1 << 18);
+        public const int SE_HELFLAG_AVKIND_MIN9 = (1 << 19);
+        public const int SE_HELFLAG_AVKIND =(SE_HELFLAG_AVKIND_VR|SE_HELFLAG_AVKIND_PTO|SE_HELFLAG_AVKIND_MIN7|SE_HELFLAG_AVKIND_MIN9);
         public const double TJD_INVALID = 99999999.0;
         public const bool SIMULATE_VICTORVB = true;
 
@@ -450,6 +470,9 @@ namespace SwissEphNet
         public const double SE_TIDAL_MOSEPH = SE_TIDAL_DE404;
         public const double SE_TIDAL_SWIEPH = SE_TIDAL_DEFAULT;
         public const double SE_TIDAL_JPLEPH = SE_TIDAL_DEFAULT;
+
+        /* for function swe_set_delta_t_userdef() */
+        public const double SE_DELTAT_AUTOMATIC = (-1E-10);
 
         public const int SE_MODEL_PREC_LONGTERM = 0;
         public const int SE_MODEL_PREC_SHORTTERM = 1;
@@ -597,6 +620,7 @@ namespace SwissEphNet
          ****************************/
 
         public string swe_version() { return Sweph.swe_version(); }
+        public string swe_get_library_path() { return Sweph.swe_get_library_path(); }
 
         /// <summary>
         /// Version for DotNet portage
@@ -921,6 +945,16 @@ namespace SwissEphNet
             return SweCL.swe_nod_aps_ut(tjd_ut, ipl, iflag, method, xnasc, xndsc, xperi, xaphe, ref serr);
         }
 
+        public Int32 swe_get_orbital_elements(
+          double tjd_et, Int32 ipl, Int32 iflag, double[] dret, ref string serr)
+        {
+            return SweCL.swe_get_orbital_elements(tjd_et, ipl, iflag, dret, ref serr);
+        }
+
+        public Int32 swe_orbit_max_min_true_distance(double tjd_et, Int32 ipl, Int32 iflag, ref double dmax, ref double dmin, ref double dtrue, ref string serr)
+        {
+            return SweCL.swe_orbit_max_min_true_distance(tjd_et, ipl, iflag, ref dmax, ref dmin, ref dtrue, ref serr);
+        }
 
         /**************************** 
          * exports from swephlib.c 
@@ -964,6 +998,10 @@ namespace SwissEphNet
         /// </summary>
         public double swe_get_tid_acc() { return SwephLib.swe_get_tid_acc(); }
         public void swe_set_tid_acc(double tidacc) { SwephLib.swe_set_tid_acc(tidacc); }
+
+        /* set a user defined delta t to be returned by functions
+         * swe_deltat() and swe_deltat_ex() */
+        public void swe_set_delta_t_userdef(double dt) { SwephLib.swe_set_delta_t_userdef(dt); }
 
         public double swe_degnorm(double x) { return SwephLib.swe_degnorm(x); }
 

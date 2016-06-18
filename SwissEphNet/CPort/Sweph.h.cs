@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.04";
+        public const String SE_VERSION = "2.05.01";
 
         /// <summary>
         /// 2000 January 1.5
@@ -368,55 +368,80 @@ namespace SwissEphNet.CPort
 
         /* Ayanamsas 
          * For each ayanamsa, there are two values:
-         * t0       epoch of ayanamsa, TDT (ET)
+         * t0       epoch of ayanamsa, TDT (can be ET or UT)
+         * t0_is_UT true, if t0 is UT
          * ayan_t0  ayanamsa value at epoch
          */
-        public struct aya_init { public double t0; public double ayan_t0;};
+        public struct aya_init { public double t0; public double ayan_t0; public bool t0_is_UT;};
         public static aya_init[] ayanamsa = new aya_init[]{
-            new aya_init{t0=2433282.5, ayan_t0=24.042044444},	/* 0: Fagan/Bradley (Default) */
+            new aya_init{t0=2433282.5, ayan_t0=24.042044444, t0_is_UT=false},    /* 0: Fagan/Bradley (Default) */
             /*{J1900, 360 - 337.53953},   * 1: Lahiri (Robert Hand) */
-            new aya_init{t0=2435553.5, ayan_t0=23.250182778 - 0.004660222},   /* 1: Lahiri (derived from:
-                       * Indian Astronomical Ephemeris 1989, p. 556;
-                       * the subtracted value is nutation) */
-            new aya_init{t0=J1900, ayan_t0=360 - 333.58695},   /* 2: De Luce (Robert Hand) */
-            new aya_init{t0=J1900, ayan_t0=360 - 338.98556},   /* 3: Raman (Robert Hand) */
-            new aya_init{t0=J1900, ayan_t0=360 - 341.33904},   /* 4: Ushashashi (Robert Hand) */
-            new aya_init{t0=J1900, ayan_t0=360 - 337.636111},  /* 5: Krishnamurti (Robert Hand) */
-            new aya_init{t0=J1900, ayan_t0=360 - 333.0369024}, /* 6: Djwhal Khool; (Graham Dawson)  
-                                         *    Aquarius entered on 1 July 2117 */
-            new aya_init{t0=J1900, ayan_t0=360 - 338.917778},  /* 7: Yukteshwar; (David Cochrane) */
-            new aya_init{t0=J1900, ayan_t0=360 - 338.634444},  /* 8: JN Bhasin; (David Cochrane) */
-            new aya_init{t0=1684532.5, ayan_t0=-3.36667},      /* 9: Babylonian, Kugler 1 */
-            new aya_init{t0=1684532.5, ayan_t0=-4.76667},      /*10: Babylonian, Kugler 2 */
-            new aya_init{t0=1684532.5, ayan_t0=-5.61667},      /*11: Babylonian, Kugler 3 */
-            new aya_init{t0=1684532.5, ayan_t0=-4.56667},      /*12: Babylonian, Huber */
-            new aya_init{t0=1673941, ayan_t0=-5.079167},       /*13: Babylonian, Mercier;
-                                         *    eta Piscium culminates with zero point */
-            new aya_init{t0=1684532.5, ayan_t0=-4.44088389},   /*14: t0 is defined by Aldebaran at 15 Taurus */
-            new aya_init{t0=1674484, ayan_t0=-9.33333},        /*15: Hipparchos */
-            new aya_init{t0=1927135.8747793, ayan_t0=0},       /*16: Sassanian */
-            /*{1746443.513, 0},          *17: Galactic Center at 0 Sagittarius */
-            new aya_init{t0=1746447.518, ayan_t0=0},           /*17: Galactic Center at 0 Sagittarius */
-            new aya_init{t0=J2000, ayan_t0=0},	                /*18: J2000 */
-            new aya_init{t0=J1900, ayan_t0=0},	                /*19: J1900 */
-            new aya_init{t0=B1950, ayan_t0=0},	                /*20: B1950 */
-            new aya_init{t0=1903396.8128654, ayan_t0=0},	/*21: Suryasiddhanta, assuming
-                                              ingress of mean Sun into Aries at point
-                              of mean equinox of date on
-                              21.3.499, noon, Ujjain (75.7684565 E)
-                                              = 7:30:31.57 UT */
-            new aya_init{t0=1903396.8128654,ayan_t0=-0.21463395},/*22: Suryasiddhanta, assuming
-                                              ingress of mean Sun into Aries at
-                              true position of mean Sun at same epoch */
-            new aya_init{t0=1903396.7895321, ayan_t0=0},	/*23: Aryabhata, same date, but UT 6:56:55.57
-                                              analogous 21 */
-            new aya_init{t0=1903396.7895321,ayan_t0=-0.23763238},/*24: Aryabhata, analogous 22 */
-            new aya_init{t0=1903396.8128654,ayan_t0=-0.79167046},/*25: SS, Revati/zePsc at polar long. 359°50'*/
-            new aya_init{t0=1903396.8128654, ayan_t0=2.11070444},/*26: SS, Citra/Spica at polar long. 180° */
-            new aya_init{t0=0, ayan_t0=0},	                /*27: True Citra (Spica exactly at 0 Libra) */
-            new aya_init{t0=0, ayan_t0=0},	                /*28: True Revati (zeta Psc exactly at 0 Aries) */
-            new aya_init{t0=0, ayan_t0=0},			/*29: True Pushya (delta Cnc exactly a 16 Cancer */
-            new aya_init{t0=0, ayan_t0=0},	                /*30: - */
+            new aya_init{t0=2435553.5, ayan_t0=23.250182778 - 0.004660222, t0_is_UT=false}, 
+                                                 /* 1: Lahiri (derived from: Indian
+				                  * Astronomical Ephemeris 1989, p. 556;
+				                  * the subtracted value is nutation) */
+            new aya_init{t0=J1900, ayan_t0=360 - 333.58695, t0_is_UT=false},     /* 2: Robert DeLuce (Constellational Astrology ... p. 5 */
+            new aya_init{t0=J1900, ayan_t0=360 - 338.98556, t0_is_UT=false},     /* 3: B.V. Raman (Robert Hand) */
+            new aya_init{t0=J1900, ayan_t0=360 - 341.33904, t0_is_UT=false},     /* 4: Usha/Shashi (Robert Hand) */
+            new aya_init{t0=J1900, ayan_t0=360 - 337.636111, t0_is_UT=false},    /* 5: Krishnamurti (Robert Hand) */
+            new aya_init{t0=J1900, ayan_t0=360 - 333.0369024, t0_is_UT=false},   /* 6: Djwhal Khool; (Graham Dawson)  
+                                                  *    Aquarius entered on 1 July 2117 */
+            new aya_init{t0=J1900, ayan_t0=360 - 338.917778, t0_is_UT=false},    /* 7: Shri Yukteshwar; (David Cochrane) */
+            //{2412543.5, 20.91, TRUE},          /* 7: Shri Yukteshwar; (Holy Science, p. xx) */
+            new aya_init{t0=J1900, ayan_t0=360 - 338.634444, t0_is_UT=false},    /* 8: J.N. Bhasin; (David Cochrane) */
+            new aya_init{t0=1684532.5, ayan_t0=-3.36667, t0_is_UT=true},         /* 9: Babylonian, Kugler 1 */
+            new aya_init{t0=1684532.5, ayan_t0=-4.76667, t0_is_UT=true},         /*10: Babylonian, Kugler 2 */
+            new aya_init{t0=1684532.5, ayan_t0=-5.61667, t0_is_UT=true},         /*11: Babylonian, Kugler 3 */
+            new aya_init{t0=1684532.5, ayan_t0=-4.46667, t0_is_UT=true},         /*12: Babylonian, Huber */
+            /*{1684532.5, -4.56667, TRUE},         *12: Babylonian, Huber (Swisseph has been wrong for many years!) */
+            new aya_init{t0=1673941, ayan_t0=-5.079167, t0_is_UT=true},          /*13: Babylonian, Mercier;
+                                                  *    eta Piscium culminates with zero point */
+            new aya_init{t0=1684532.5, ayan_t0=-4.44088389, t0_is_UT=true},      /*14: t0 is defined by Aldebaran at 15 Taurus */
+            new aya_init{t0=1674484, ayan_t0=-9.33333, t0_is_UT=true},           /*15: Hipparchos */
+            new aya_init{t0=1927135.8747793, ayan_t0=0, t0_is_UT=true},          /*16: Sassanian */
+            //{1746412.236, 0, FALSE},             /*17: Galactic Center at 0 Sagittarius */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},                       /*17: Galactic Center at 0 Sagittarius */
+            new aya_init{t0=J2000, ayan_t0=0, t0_is_UT=false},	             /*18: J2000 */
+            new aya_init{t0=J1900, ayan_t0=0, t0_is_UT=false},	             /*19: J1900 */
+            new aya_init{t0=B1950, ayan_t0=0, t0_is_UT=false},	             /*20: B1950 */
+            new aya_init{t0=1903396.8128654, ayan_t0=0, t0_is_UT=true},	     /*21: Suryasiddhanta, assuming
+                                                   ingress of mean Sun into Aries at point
+				                   of mean equinox of date on
+				                   21.3.499, noon, Ujjain (75.7684565 E)
+                                                   = 7:30:31.57 UT */
+            new aya_init{t0=1903396.8128654,ayan_t0=-0.21463395, t0_is_UT=true}, /*22: Suryasiddhanta, assuming
+				                   ingress of mean Sun into Aries at
+				                   true position of mean Sun at same epoch */
+            new aya_init{t0=1903396.7895321, ayan_t0=0, t0_is_UT=true},	     /*23: Aryabhata, same date, but UT 6:56:55.57
+				                   analogous 21 */
+            new aya_init{t0=1903396.7895321,ayan_t0=-0.23763238, t0_is_UT=true}, /*24: Aryabhata, analogous 22 */
+            new aya_init{t0=1903396.8128654,ayan_t0=-0.79167046, t0_is_UT=true}, /*25: SS, Revati/zePsc at polar long. 359°50'*/
+            new aya_init{t0=1903396.8128654,ayan_t0= 2.11070444, t0_is_UT=true}, /*26: SS, Citra/Spica at polar long. 180° */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*27: True Citra (Spica exactly at 0 Libra) */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*28: True Revati (zeta Psc exactly at 29°50' Pisces) */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},			     /*29: True Pushya (delta Cnc exactly a 16 Cancer */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},                       /*30: R. Gil Brand; Galactic Center at golden section
+                                                   between 0 Sco and 0 Aqu; note: 0° Aqu/Leo is
+				                   the symmetric axis of rulerships */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*31: Galactic Equator IAU 1958, i.e. galactic/ecliptic
+                                                   intersection point based on galactic coordinate system */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*32: Galactic Equator True, i.e. galactic/ecliptic 
+                                                   intersection point based on the galactic pole as given in:
+				                   Liu/Zhu/Zhang, „Reconsidering the galactic 
+				                   coordinate system“, A & A No. AA2010, Oct. 2010 */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*33: Galactic Equator Mula, i.e. galactic/ecliptic 
+                                                   intersection point in the middle of lunar mansion Mula */
+            new aya_init{t0=2451079.734892000, ayan_t0=30, t0_is_UT=false},	     /*34: Skydram/Galactic Alignment (R. Mardyks); 
+                                                   autumn equinox aligned with Galactic Equator/Pole */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*35: Chandra Hari */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*36: Dhruva Galactic Centre Middle of Mula (Ernst Wilhelm) */
+            new aya_init{t0=1911797.740782065, ayan_t0=0, t0_is_UT=true},	     /*37: Kali 3623 = 522 CE, Ujjain (75.7684565), 
+                                                  *    based on Kali midnight and SS year length */
+            new aya_init{t0=1721057.5, ayan_t0=-3.2, t0_is_UT=true},             /*38: Babylonian (Britton 2010) */
+            /*{2061539.789532065, 6.83333333, TRUE}, *38: Manjula's Laghumanasa, 10 March 932,
+                                                  *    12 PM LMT Ujjain (75.7684565 E),
+				                  *    ayanamsha = 6°50' */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*39: - */
             };
 
         /*
@@ -441,6 +466,7 @@ namespace SwissEphNet.CPort
         //extern int32 swi_set_tid_acc(double tjd_ut, int32 iflag, int32 denum, char *serr);
         //extern int32 swi_get_tid_acc(double tjd_ut, int32 iflag, int32 denum, int32 *denumret, double *tid_acc, char *serr);
 
+        //double swi_armc_to_mc(double armc, double eps);
 
         /* nutation */
         public class nut
@@ -555,6 +581,7 @@ namespace SwissEphNet.CPort
             public Int32 sid_mode;
             public double ayan_t0;
             public double t0;
+            public bool t0_is_UT;
         };
 
         /* dpsi and deps loaded for 100 years after 1962 */
@@ -604,6 +631,9 @@ namespace SwissEphNet.CPort
             public double tid_acc;
             public bool is_tid_acc_manual;
             public bool init_dt_done;
+            public bool swed_is_initialised;
+            public bool delta_t_userdef_is_set;
+            public double delta_t_userdef;
             public file_data[] fidat { get; private set; }
             public gen_const gcdat;
             public plan_data[] pldat { get; private set; }
