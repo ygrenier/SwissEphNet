@@ -9,7 +9,7 @@ namespace SwissEphNet
     public static class TypeExtensions
     {
         /// <summary>
-        /// Returns the TypeCode of a type
+        /// Returns the <see cref="System.TypeCode"/> of a type
         /// </summary>
         public static TypeCode GetTypeCode(this Type type)
         {
@@ -35,5 +35,18 @@ namespace SwissEphNet
             return Type.GetTypeCode(type);
 #endif
         }
+
+        /// <summary>
+        /// Returns the <see cref="System.Reflection.Assembly"/> of a type
+        /// </summary>
+        public static Assembly GetAssembly(this Type type)
+        {
+#if NET_STANDARD
+            return type?.GetTypeInfo()?.Assembly;
+#else
+            return type?.Assembly;
+#endif
+        }
+
     }
 }
