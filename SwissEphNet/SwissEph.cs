@@ -14,6 +14,17 @@ namespace SwissEphNet
         #region Ctors & Dest
 
         /// <summary>
+        /// Static constructor
+        /// </summary>
+        static SwissEph()
+        {
+#if NET_STANDARD
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
+            DefaultEncoding = Encoding.GetEncoding("Windows-1252");
+        }
+
+        /// <summary>
         /// Create a new context
         /// </summary>
         public SwissEph() {
@@ -66,7 +77,7 @@ namespace SwissEphNet
         /// <summary>
         /// Default encoding
         /// </summary>
-        public static Encoding DefaultEncoding = Encoding.GetEncoding("Windows-1252");
+        public static Encoding DefaultEncoding = null;
 
         /// <summary>
         /// Load a file

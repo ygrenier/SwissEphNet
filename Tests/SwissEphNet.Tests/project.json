@@ -3,6 +3,10 @@
 
   "testRunner": "xunit",
 
+  "buildOptions": {
+    "embed": [ "files/*" ]
+  },
+
   "dependencies": {
     "SwissEphNet": "2.5.1.13-beta1",
     "xunit": "2.2.0-beta3-build3402",
@@ -20,7 +24,10 @@
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.0"
-        }
+        },
+      },
+      "buildOptions": {
+        "define": ["NET_STANDARD"]
       }
     }
   }
