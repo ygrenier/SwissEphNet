@@ -16,7 +16,7 @@
       "type": "git",
       "url": "https://github.com/ygrenier/SwissEphNet"
     },
-    "releaseNotes": "2.5.1.13 :\n - Update the code to the Swiss Ephemeris 2.05.01 version.\n2.4.0.12 :\n - Bug fixes.\n2.4.0.11 :\n - Bug fix on the sideral calculation.\n2.4.0.10 :\n - Update the code to the Swiss Ephemeris 2.04.00 version.\n - Correct the code remove all static fields to permit multiple calculations with multiple SwissEph instances.\n2.2.1.9 :\n - Update the code to the Swiss Ephemeris 2.02.01 version.\n2.1.0.6 :\n - Update the code to the Swiss Ephemeris 2.01.00 version.\n2.0.0.5 :\n - Fix an error : some swed data (like topocentric position) was reseted on each swe_close() call.\n"
+    "releaseNotes": "2.5.1.14:\n - Update package to .net Core\n2.5.1.13 :\n - Update the code to the Swiss Ephemeris 2.05.01 version.\n2.4.0.12 :\n - Bug fixes.\n2.4.0.11 :\n - Bug fix on the sideral calculation.\n2.4.0.10 :\n - Update the code to the Swiss Ephemeris 2.04.00 version.\n - Correct the code remove all static fields to permit multiple calculations with multiple SwissEph instances.\n2.2.1.9 :\n - Update the code to the Swiss Ephemeris 2.02.01 version.\n2.1.0.6 :\n - Update the code to the Swiss Ephemeris 2.01.00 version.\n2.0.0.5 :\n - Fix an error : some swed data (like topocentric position) was reseted on each swe_close() call.\n"
   },
 
   "buildOptions": {
