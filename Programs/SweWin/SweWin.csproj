@@ -94,15 +94,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.csproj">
-      <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
-      <Name>SwissEphNet</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Datas\sedeltat.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.xproj">
+      <Project>{067b4733-56fd-46a1-81b5-0fd31d76e68f}</Project>
+      <Name>SwissEphNet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
