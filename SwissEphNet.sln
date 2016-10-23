@@ -15,10 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6D5C2702
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Programs", "Programs", "{DA9EB626-FC40-46C3-A44D-3EE76D044CC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwissEphNet", "SwissEphNet\SwissEphNet.csproj", "{8895A5B1-E188-4926-B204-87B921EE040C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwissEphNet.Tests", "Tests\SwissEphNet.Tests\SwissEphNet.Tests.csproj", "{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{D0592369-8075-4795-BABB-818AF5AD967D}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
@@ -33,14 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,7 +38,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE} = {6D5C2702-2FF1-42A8-B86D-E5E5EAE41F66}
 		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
 	EndGlobalSection
 EndGlobal
