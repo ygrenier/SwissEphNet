@@ -2032,7 +2032,7 @@
           "lib/netstandard1.3/_._": {}
         }
       },
-      "SwissEphNet/2.5.1.13-beta1": {
+      "SwissEphNet/2.5.1.14-beta-1": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.3",
         "dependencies": {
@@ -2048,7 +2048,7 @@
       }
     },
     ".NETFramework,Version=v4.0": {
-      "SwissEphNet/2.5.1.13-beta1": {
+      "SwissEphNet/2.5.1.14-beta-1": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.0",
         "compile": {
@@ -6652,7 +6652,7 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "SwissEphNet/2.5.1.13-beta1": {
+    "SwissEphNet/2.5.1.14-beta-1": {
       "type": "project",
       "path": "../../SwissEphNet/project.json",
       "msbuildProject": "../../SwissEphNet/SwissEphNet.xproj"
@@ -6660,7 +6660,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "SwissEphNet >= 2.5.1.13-beta1"
+      "SwissEphNet >= 2.5.1.14-beta-*"
     ],
     ".NETCoreApp,Version=v1.0": [
       "Microsoft.NETCore.App >= 1.0.1"

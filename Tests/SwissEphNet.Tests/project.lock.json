@@ -2477,7 +2477,7 @@
           "lib/netstandard1.1/xunit.runner.utility.dotnet.dll": {}
         }
       },
-      "SwissEphNet/2.5.1.13-beta1": {
+      "SwissEphNet/2.5.1.14-beta-1": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.3",
         "dependencies": {
@@ -2874,7 +2874,7 @@
           "lib/net45/xunit.runner.utility.desktop.dll": {}
         }
       },
-      "SwissEphNet/2.5.1.13-beta1": {
+      "SwissEphNet/2.5.1.14-beta-1": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.0",
         "compile": {
@@ -7869,7 +7869,7 @@
         "xunit.runner.utility.nuspec"
       ]
     },
-    "SwissEphNet/2.5.1.13-beta1": {
+    "SwissEphNet/2.5.1.14-beta-1": {
       "type": "project",
       "path": "../../SwissEphNet/project.json",
       "msbuildProject": "../../SwissEphNet/SwissEphNet.xproj"
@@ -7877,7 +7877,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "SwissEphNet >= 2.5.1.13-beta1",
+      "SwissEphNet >= 2.5.1.14-beta-*",
       "dotnet-test-xunit >= 2.2.0-preview2-build1029",
       "xunit >= 2.2.0-beta3-build3402"
     ],

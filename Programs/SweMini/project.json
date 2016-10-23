@@ -7,7 +7,7 @@
   },
 
   "dependencies": {
-    "SwissEphNet": "2.5.1.13-beta1"
+    "SwissEphNet": "2.5.1.14-beta-*"
   },
 
   "frameworks": {
