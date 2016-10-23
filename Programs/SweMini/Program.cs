@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SwissEphNet;
 
 namespace SweMini
 {
@@ -15,5 +16,10 @@ namespace SweMini
 #endif
             return 0;
         }
+        public static void printf(string Format, params object[] Parameters)
+        {
+            Console.Write(C.sprintf(Format, Parameters));
+        }
+
     }
 }
