@@ -6,6 +6,10 @@
     "platform": "anycpu"
   },
 
+  "dependencies": {
+    "SwissEphNet": "2.5.1.13-beta1"
+  },
+
   "frameworks": {
     "net40": {
     },
