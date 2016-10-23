@@ -16,10 +16,12 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
 
+#if !PCL
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+[assembly: ComVisibleAttribute(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("067b4733-56fd-46a1-81b5-0fd31d76e68f")]
+[assembly: GuidAttribute("067b4733-56fd-46a1-81b5-0fd31d76e68f")]
+#endif
