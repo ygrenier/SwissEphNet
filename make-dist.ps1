@@ -20,14 +20,17 @@ $config = "Release"
 $net = "bin/$config/"
 $net40 = "bin/$config/net40"
 $netcore = "bin/$config/netcoreapp1.0"
+$netstandard13 = "bin/$config/netstandard1.3"
 
 # Copy SweMini
 CopyFolder "./Programs/SweMini/$net40" "./binaries/net40/"
 CopyFolder "./Programs/SweMini/$netcore" "./binaries/netcore/SweMini"
+CopyFolder "./SwissEphNet/$netstandard13" "./binaries/netcore/SweMini"
 
 # Copy SweTest
 CopyFolder "./Programs/SweTest/$net40" "./binaries/net40/"
 CopyFolder "./Programs/SweTest/$netcore" "./binaries/netcore/SweTest"
+CopyFolder "./SwissEphNet/$netstandard13" "./binaries/netcore/SweTest"
 
 # Copy SweWin
 CopyFolder "./Programs/SweWin/$net" "./binaries/net40/"
