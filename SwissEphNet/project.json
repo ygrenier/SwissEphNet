@@ -1,6 +1,6 @@
 ﻿{
   "name": "SwissEphNet",
-  "version": "2.5.1.14-beta-1",
+  "version": "2.5.1.14-beta-2",
   "title": "SwissEph for .Net",
   "authors": [ "Yan Grenier" ],
   "description": "A Swiss Ephemeris .Net portage",
