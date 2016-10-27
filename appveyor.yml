@@ -7,15 +7,21 @@ configuration: Release
 before_build:
 - ps: >-
     nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
+
     dotnet restore
+
     dotnet build .\SwissEphNet\ -c Release
+
 build:
   verbosity: minimal
 after_build:
 - ps: >-
     dotnet pack .\SwissEphNet\ -c Release
+
     Get-ChildItem . -Recurse -Include "*.symbols.nupkg" | Delete-Item
+
     .\make-dist.ps1
+
 test_script:
 - cmd: dotnet test .\Tests\SwissEphNet.Tests\
 artifacts:
