@@ -45,7 +45,7 @@ namespace SwissEphNet
         /// 	<c>true</c> if the specified value is positive; otherwise, <c>false</c>.
         /// </returns>
         public static bool IsPositive(object Value, bool ZeroIsPositive) {
-            switch (Type.GetTypeCode(Value.GetType())) {
+            switch (Value.GetType().GetTypeCode()) {
                 case TypeCode.SByte:
                     return (ZeroIsPositive ? (sbyte)Value >= 0 : (sbyte)Value > 0);
                 case TypeCode.Int16:
@@ -83,7 +83,7 @@ namespace SwissEphNet
         /// <param name="Value">The value.</param>
         /// <returns>A boxed numeric object whos type is unsigned.</returns>
         public static object ToUnsigned(object Value) {
-            switch (Type.GetTypeCode(Value.GetType())) {
+            switch (Value.GetType().GetTypeCode()) {
                 case TypeCode.SByte:
                     return (byte)((sbyte)Value);
                 case TypeCode.Int16:
@@ -122,7 +122,7 @@ namespace SwissEphNet
         /// <param name="Value">The value.</param>
         /// <returns>A boxed numeric object whos type is an integer type.</returns>
         public static object ToInteger(object Value, bool Round) {
-            switch (Type.GetTypeCode(Value.GetType())) {
+            switch (Value.GetType().GetTypeCode()) {
                 case TypeCode.SByte:
                     return Value;
                 case TypeCode.Int16:
@@ -155,7 +155,7 @@ namespace SwissEphNet
         #endregion
         #region UnboxToLong
         public static long UnboxToLong(object Value, bool Round) {
-            switch (Type.GetTypeCode(Value.GetType())) {
+            switch (Value.GetType().GetTypeCode()) {
                 case TypeCode.SByte:
                     return (long)((sbyte)Value);
                 case TypeCode.Int16:

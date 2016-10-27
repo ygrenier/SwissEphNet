@@ -1,0 +1,26 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "debugType": "portable",
+    "platform": "anycpu"
+  },
+
+  "dependencies": {
+    "SwissEphNet": "2.5.1.14-beta-*"
+  },
+
+  "frameworks": {
+    "net40": {
+    },
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      },
+      "imports": "dnxcore50"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="EmitMSBuildWarning" BeforeTargets="Build">
+    <Warning Text="Les packages contenant des cibles et des fichiers de propriétés MSBuild ne peuvent pas être installés complètement dans des projets ciblant plusieurs infrastructures. Les cibles et les fichiers de propriétés MSBuild ont été ignorés." />
+  </Target>
+</Project>

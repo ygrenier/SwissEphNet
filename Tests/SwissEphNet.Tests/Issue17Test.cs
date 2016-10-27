@@ -1,15 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Xunit;
 
 namespace SwissEphNet.Tests
 {
-    [TestClass]
+
     public class Issue17Test
     {
-        [TestMethod]
+        [Fact]
         public void strcpy_VBsafe()
         {
             using (var sweph = new SwissEph())

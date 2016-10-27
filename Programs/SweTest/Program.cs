@@ -82,6 +82,7 @@
 using SwissEphNet;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -92,8 +93,8 @@ namespace SweTest
         #region C
 
         #region Strings
-/* attention: Microsoft Compiler does not accept strings > 2048 char */
-static string infocmd0 = @"\n\
+        /* attention: Microsoft Compiler does not accept strings > 2048 char */
+        static string infocmd0 = @"\n\
   Swetest computes a complete set of geocentric planetary positions,\n\
   for a given date or a sequence of dates.\n\
   Input can either be a date or an absolute julian day number.\n\
@@ -103,7 +104,7 @@ static string infocmd0 = @"\n\
   for graphical display.\n\
   Version: $Header: /users/dieter/sweph/RCS/swetest.c,v 1.78 2010/06/25 07:22:10 dieter Exp $\n\
 \n";
-static string infocmd1 = @"\n\
+        static string infocmd1 = @"\n\
   Command line options:\n\
      help commands:\n\
         -?, -h  display whole info\n\
@@ -145,7 +146,7 @@ static string infocmd1 = @"\n\
                 If an 's' is appended, the time step is in seconds instead of days, \n\
                 for example -s1s for a time step of 1 second.\n\
 ";
-static string infocmd2 = @"\
+        static string infocmd2 = @"\
      output format:\n\
         -fSEQ   use SEQ as format sequence for the output columns;\n\
                 default is PLBRS.\n\
@@ -202,7 +203,7 @@ static string infocmd2 = @"\
 		 The use of lower case letters is deprecated. They will have a\n\
 		 different meaning in future releases of Swiss Ephemeris.\n\
 ";
-static string infocmd3 = @"\
+        static string infocmd3 = @"\
         -geopos[long,lat,elev]	\n\
         Geographic position. Can be used for azimuth and altitude\n\
                 or topocentric or house cups calculations.\n\
@@ -269,7 +270,7 @@ static string infocmd3 = @"\
         -icrs             ICRS (use Internat. Celestial Reference System)\n\
         -nonut            no nutation \n\
 ";
-static string infocmd4 = @"\
+        static string infocmd4 = @"\
         -speed            calculate high precision speed \n\
         -speed3           'low' precision speed from 3 positions \n\
                           do not use this option. -speed parameter\n\
@@ -315,7 +316,7 @@ static string infocmd4 = @"\
                 specify planet (-pf -xfAldebaran for stars) \n\
                 output format same as with -solecl\n\
 ";
-static string infocmd5 = @"\
+        static string infocmd5 = @"\
         -lunecl lunar eclipse\n\
                 output 1st line:\n\
                   eclipse date,\n\
@@ -355,7 +356,7 @@ static string infocmd5 = @"\
         -central central eclipse (only with -solecl, nonlocal)\n\
         -noncentral non-central eclipse (only with -solecl, nonlocal)\n\
 ";
-static string infocmd6 = @"\
+        static string infocmd6 = @"\
      specifications for risings and settings:\n\
         -norefrac   neglect refraction (with option -rise)\n\
         -disccenter find rise of disc center (with option -rise)\n\
@@ -382,10 +383,10 @@ static string infocmd6 = @"\
             Default values: -opt36,1,1,1,0,0 (naked eye)\n\
      backward search:\n\
         -bwd\n";
-/* characters still available:
-  bcgijklruvx
- */
-static string infoplan = @"\n\
+        /* characters still available:
+          bcgijklruvx
+         */
+        static string infoplan = @"\n\
   Planet selection letters:\n\
      planetary lists:\n\
         d (default) main factors 0123456789mtABCcg\n\
@@ -455,10 +456,10 @@ static string infoplan = @"\n\
         x sidereal time\n\
         e print a line of labels\n\
           \n";
-/* characters still available 
-   CcEeMmOoqWwz
-*/
-static string infoform = @"\n\
+        /* characters still available 
+           CcEeMmOoqWwz
+        */
+        static string infoform = @"\n\
   Output format SEQ letters:\n\
   In the standard setting five columns of coordinates are printed with\n\
   the default format PLBRS. You can change the default by providing an\n\
@@ -510,11 +511,11 @@ static string infoform = @"\n\
     * elongation\n\
     / apparent diameter of disc (without refraction)\n\
     = magnitude\n";
-static string infoform2 = @"\
+        static string infoform2 = @"\
         v (reserved)\n\
         V (reserved)\n\
     ";
-static string infodate = @"\n\
+        static string infodate = @"\n\
   Date entry:\n\
   In the interactive mode, when you are asked for a start date,\n\
   you can enter data in one of the following formats:\n\
@@ -541,7 +542,7 @@ static string infodate = @"\n\
         +20             advance the date by 20 days\n\
 \n\
         -10             go back in time 10 days\n";
-static string infoexamp = @"\n\
+        static string infoexamp = @"\n\
 \n\
   Examples:\n\
 \n\
@@ -646,7 +647,7 @@ static string infoexamp = @"\n\
         static int OUTPUT_EXTRA_PRECISION = 0;
 
         static string se_pname = String.Empty;
-        static string[] zod_nam = new String[]{"ar", "ta", "ge", "cn", "le", "vi", 
+        static string[] zod_nam = new String[]{"ar", "ta", "ge", "cn", "le", "vi",
                                   "li", "sc", "sa", "cp", "aq", "pi"};
 
         static string star = "algol", star2 = String.Empty;
@@ -689,10 +690,10 @@ static string infoexamp = @"\n\
             xcartq = new double[6], xobl = new double[6], xaz = new double[6], xt = new double[6], xsv = new double[6];
         static double hpos, hpos2, hposj, armc;
         static int hpos_meth = 0;
-        static double[] geopos=new double[10];
+        static double[] geopos = new double[10];
         static double[] attr = new double[20], tret = new double[20], datm = new double[4], dobs = new double[6];
         static Int32 iflag = 0, iflag2;              /* external flag: helio, geo... */
-        static string[] hs_nam = new string[] 
+        static string[] hs_nam = new string[]
         { "undef", "Ascendant", "MC", "ARMC", "Vertex", "equat. Asc.", "co-Asc. W.Koch", "co-Asc Munkasey", "Polar Asc." };
         static int direction = 1;
         static bool direction_flag = false;
@@ -703,7 +704,7 @@ static string infoexamp = @"\n\
         static Int32 nstep = 1, istep;
         static Int32 search_flag = 0;
         static string sout = String.Empty;
-        static Int32 whicheph = SwissEph.SEFLG_SWIEPH;   
+        static Int32 whicheph = SwissEph.SEFLG_SWIEPH;
         static char psp;
         static Int32 norefrac = 0;
         static Int32 disccenter = 0;
@@ -733,7 +734,8 @@ static string infoexamp = @"\n\
 
         static SwissEph sweph = null;
 
-        static int main_test(int argc, string[] argv) {
+        static int main_test(int argc, string[] argv)
+        {
             string sdate_save = String.Empty;
             string s1 = String.Empty, s2 = String.Empty;
             string sp/*, sp2*/; int spi, sp2i;
@@ -772,14 +774,18 @@ static string infoexamp = @"\n\
             //  argc = ccommand(&argv); /* display the arguments window */    
             //# endif
             stimein = string.Empty;
-            using (sweph = new SwissEph()) {
+            using (sweph = new SwissEph())
+            {
                 sweph.OnLoadFile += sweph_OnLoadFile;
                 ephepath = @".;C:\\sweph\ephe";
                 fname = SwissEph.SE_FNAME_DFT;
-                for (i = 1; i < argc; i++) {
-                    if (argv[i].StartsWith("-ut")) {
+                for (i = 1; i < argc; i++)
+                {
+                    if (argv[i].StartsWith("-ut"))
+                    {
                         universal_time = true;
-                        if (argv[i].Length > 3) {
+                        if (argv[i].Length > 3)
+                        {
                             //stimein = string.Empty;
                             //strncat(stimein, argv[i] + 3, 30);
                             stimein = argv[i].Substring(3);
@@ -798,95 +804,153 @@ static string infoexamp = @"\n\
                     else if (argv[i].StartsWith("-head"))
                     {
                         with_header = false;
-                    } else if (argv[i].StartsWith("+head")) {
+                    }
+                    else if (argv[i].StartsWith("+head"))
+                    {
                         with_header_always = true;
-                    } else if (String.Compare(argv[i], "-j2000") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-j2000") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_J2000;
-                    } else if (String.Compare(argv[i], "-icrs") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-icrs") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_ICRS;
-                    } else if (argv[i].StartsWith("-ay")) {
+                    }
+                    else if (argv[i].StartsWith("-ay"))
+                    {
                         do_ayanamsa = true;
                         sid_mode = int.Parse(argv[i] + 3);
                         //sweph.swe_set_sid_mode(sid_mode, 0, 0);
-                    } else if (argv[i].StartsWith("-sidt0")) {
+                    }
+                    else if (argv[i].StartsWith("-sidt0"))
+                    {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 6);
                         if (sid_mode == 0)
                             sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                         sid_mode |= SwissEph.SE_SIDBIT_ECL_T0;
                         //sweph.swe_set_sid_mode(sid_mode, 0, 0);
-                    } else if (argv[i].StartsWith("-sidsp")) {
+                    }
+                    else if (argv[i].StartsWith("-sidsp"))
+                    {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 6);
                         if (sid_mode == 0)
                             sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                         sid_mode |= SwissEph.SE_SIDBIT_SSY_PLANE;
                         //sweph.swe_set_sid_mode(sid_mode, 0, 0);
-                    } else if (argv[i].StartsWith("-sid")) {
+                    }
+                    else if (argv[i].StartsWith("-sid"))
+                    {
                         iflag |= SwissEph.SEFLG_SIDEREAL;
                         sid_mode = int.Parse(argv[i] + 4);
                         //if (sid_mode > 0)
                         //    sweph.swe_set_sid_mode(sid_mode, 0, 0);
-                    } else if (String.Compare(argv[i], "-jplhora") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-jplhora") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_JPLHOR_APPROX;
-                    } else if (String.Compare(argv[i], "-jplhor") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-jplhor") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_JPLHOR;
-                    } else if (argv[i].StartsWith("-j")) {
+                    }
+                    else if (argv[i].StartsWith("-j"))
+                    {
                         begindate = argv[i] + 1;
-                    } else if (argv[i].StartsWith("-ejpl")) {
+                    }
+                    else if (argv[i].StartsWith("-ejpl"))
+                    {
                         whicheph = SwissEph.SEFLG_JPLEPH;
-                        if (argv[i].Length > 5) {
+                        if (argv[i].Length > 5)
+                        {
                             fname = argv[i].Substring(5);
                         }
-                    } else if (argv[i].StartsWith("-edir")) {
-                        if (argv[i].Length > 5) {
+                    }
+                    else if (argv[i].StartsWith("-edir"))
+                    {
+                        if (argv[i].Length > 5)
+                        {
                             ephepath = argv[i].Substring(5);
                         }
-                    } else if (String.Compare(argv[i], "-eswe") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-eswe") == 0)
+                    {
                         whicheph = SwissEph.SEFLG_SWIEPH;
-                    } else if (String.Compare(argv[i], "-emos") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-emos") == 0)
+                    {
                         whicheph = SwissEph.SEFLG_MOSEPH;
-                    } else if (argv[i].StartsWith("-helflag")) {
+                    }
+                    else if (argv[i].StartsWith("-helflag"))
+                    {
                         helflag = int.Parse(argv[i] + 8);
                         if (helflag >= SwissEph.SE_HELFLAG_AV)
                             hel_using_AV = true;
-                    } else if (String.Compare(argv[i], "-hel") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-hel") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_HELCTR;
-                    } else if (String.Compare(argv[i], "-bary") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-bary") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_BARYCTR;
-                    } else if (argv[i].StartsWith("-house")) {
+                    }
+                    else if (argv[i].StartsWith("-house"))
+                    {
                         sout = String.Empty;
                         C.sscanf(argv[i].Substring(6), "%lf,%lf,%c", ref top_long, ref top_lat, ref sout);
                         top_elev = 0;
                         if (!String.IsNullOrEmpty(sout)) ihsy = sout[0];
                         do_houses = true;
                         have_geopos = true;
-                    } else if (argv[i].StartsWith("-hsy")) {
+                    }
+                    else if (argv[i].StartsWith("-hsy"))
+                    {
                         ihsy = argv[i].Length > 4 ? argv[i][4] : '\0';
                         if (ihsy == '\0') ihsy = 'P';
                         if (argv[i].Length > 5)
                             hpos_meth = int.Parse(argv[i].Substring(5));
                         have_geopos = true;
-                    } else if (argv[i].StartsWith("-topo")) {
+                    }
+                    else if (argv[i].StartsWith("-topo"))
+                    {
                         iflag |= SwissEph.SEFLG_TOPOCTR;
                         C.sscanf(argv[i].Substring(5), "%lf,%lf,%lf", ref top_long, ref top_lat, ref top_elev);
                         have_geopos = true;
-                    } else if (argv[i].StartsWith("-geopos")) {
+                    }
+                    else if (argv[i].StartsWith("-geopos"))
+                    {
                         C.sscanf(argv[i].Substring(7), "%lf,%lf,%lf", ref top_long, ref top_lat, ref top_elev);
                         have_geopos = true;
-                    } else if (String.Compare(argv[i], "-true") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-true") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_TRUEPOS;
-                    } else if (String.Compare(argv[i], "-noaberr") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-noaberr") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_NOABERR;
-                    } else if (String.Compare(argv[i], "-nodefl") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-nodefl") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_NOGDEFL;
-                    } else if (String.Compare(argv[i], "-nonut") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-nonut") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_NONUT;
-                    } else if (String.Compare(argv[i], "-speed3") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-speed3") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_SPEED3;
-                    } else if (String.Compare(argv[i], "-speed") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-speed") == 0)
+                    {
                         iflag |= SwissEph.SEFLG_SPEED;
-                    } else if (argv[i].StartsWith("-testaa")) {
+                    }
+                    else if (argv[i].StartsWith("-testaa"))
+                    {
                         whicheph = SwissEph.SEFLG_JPLEPH;
                         fname = SwissEph.SE_FNAME_DE200;
                         if (String.Compare(argv[i].Substring(7), "95") == 0)
@@ -898,7 +962,9 @@ static string infoexamp = @"\n\
                         fmt = "PADRu";
                         universal_time = false;
                         plsel = "3";
-                    } else if (argv[i].StartsWith("-lmt")) {
+                    }
+                    else if (argv[i].StartsWith("-lmt"))
+                    {
                         universal_time = true;
                         time_flag |= BIT_TIME_LMT;
                         if (argv[i].Length > 4)
@@ -906,59 +972,103 @@ static string infoexamp = @"\n\
                             stimein = string.Empty;
                             stimein += argv[i].Substring(4, Math.Min(30, argv[i].Length - 4));
                         }
-                    } else if (String.Compare(argv[i], "-lat") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-lat") == 0)
+                    {
                         universal_time = true;
                         time_flag |= BIT_TIME_LAT;
-                    } else if (String.Compare(argv[i], "-lunecl") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-lunecl") == 0)
+                    {
                         special_event = SP_LUNAR_ECLIPSE;
-                    } else if (String.Compare(argv[i], "-solecl") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-solecl") == 0)
+                    {
                         special_event = SP_SOLAR_ECLIPSE;
                         have_geopos = true;
-                    } else if (String.Compare(argv[i], "-short") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-short") == 0)
+                    {
                         short_output = true;
-                    } else if (String.Compare(argv[i], "-occult") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-occult") == 0)
+                    {
                         special_event = SP_OCCULTATION;
                         have_geopos = true;
-                    } else if (String.Compare(argv[i], "-hocal") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-hocal") == 0)
+                    {
                         /* used to create a listing for inclusion in hocal.c source code */
                         special_mode |= SP_MODE_HOCAL;
-                    } else if (String.Compare(argv[i], "-how") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-how") == 0)
+                    {
                         special_mode |= SP_MODE_HOW;
-                    } else if (String.Compare(argv[i], "-total") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-total") == 0)
+                    {
                         search_flag |= SwissEph.SE_ECL_TOTAL;
-                    } else if (String.Compare(argv[i], "-annular") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-annular") == 0)
+                    {
                         search_flag |= SwissEph.SE_ECL_ANNULAR;
-                    } else if (String.Compare(argv[i], "-anntot") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-anntot") == 0)
+                    {
                         search_flag |= SwissEph.SE_ECL_ANNULAR_TOTAL;
-                    } else if (String.Compare(argv[i], "-partial") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-partial") == 0)
+                    {
                         search_flag |= SwissEph.SE_ECL_PARTIAL;
-                    } else if (String.Compare(argv[i], "-penumbral") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-penumbral") == 0)
+                    {
                         search_flag |= SwissEph.SE_ECL_PENUMBRAL;
-                    } else if (String.Compare(argv[i], "-noncentral") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-noncentral") == 0)
+                    {
                         search_flag &= ~SwissEph.SE_ECL_CENTRAL;
                         search_flag |= SwissEph.SE_ECL_NONCENTRAL;
-                    } else if (String.Compare(argv[i], "-central") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-central") == 0)
+                    {
                         search_flag &= ~SwissEph.SE_ECL_NONCENTRAL;
                         search_flag |= SwissEph.SE_ECL_CENTRAL;
-                    } else if (String.Compare(argv[i], "-local") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-local") == 0)
+                    {
                         special_mode |= SP_MODE_LOCAL;
-                    } else if (String.Compare(argv[i], "-rise") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-rise") == 0)
+                    {
                         special_event = SP_RISE_SET;
                         have_geopos = true;
-                    } else if (String.Compare(argv[i], "-norefrac") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-norefrac") == 0)
+                    {
                         norefrac = 1;
-                    } else if (String.Compare(argv[i], "-disccenter") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-disccenter") == 0)
+                    {
                         disccenter = 1;
-                    } else if (String.Compare(argv[i], "-hindu") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-hindu") == 0)
+                    {
                         norefrac = 1;
                         disccenter = 1;
-                    } else if (String.Compare(argv[i], "-discbottom") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-discbottom") == 0)
+                    {
                         discbottom = 1;
-                    } else if (String.Compare(argv[i], "-metr") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-metr") == 0)
+                    {
                         special_event = SP_MERIDIAN_TRANSIT;
                         have_geopos = true;
                         /* secret test feature for dieter */
-                    } else if (argv[i].StartsWith("-prec")) {
+                    }
+                    else if (argv[i].StartsWith("-prec"))
+                    {
                         j = 0;
                         //astro_models[j] = atoi(argv[i] + 5);
                         //sp = argv[i];
@@ -977,7 +1087,8 @@ static string infoexamp = @"\n\
                             astro_models[j] = xx;
                         }
                         do_set_astro_models = true;
-                    } else if (argv[i].StartsWith("-hev"))
+                    }
+                    else if (argv[i].StartsWith("-hev"))
                     {
                         special_event = SP_HELIACAL;
                         search_flag = 0;
@@ -985,7 +1096,9 @@ static string infoexamp = @"\n\
                             search_flag = int.Parse(argv[i].Substring(4));
                         have_geopos = true;
                         if (argv[i].Contains("AV")) hel_using_AV = true;
-                    } else if (argv[i].StartsWith("-at")) {
+                    }
+                    else if (argv[i].StartsWith("-at"))
+                    {
                         C.sscanf(argv[i].Substring(3), "%lf,%lf,%lf,%lf", ref datm[0], ref datm[1], ref datm[2], ref datm[3]);
                         sp = argv[i].Substring(3);
                         j = 0;
@@ -997,18 +1110,29 @@ static string infoexamp = @"\n\
                             //if (sp != NULL) sp += 1;
                             j++;
                         }
-                    } else if (argv[i].StartsWith("-obs")) {
+                    }
+                    else if (argv[i].StartsWith("-obs"))
+                    {
                         C.sscanf(argv[i].Substring(4), "%lf,%lf", ref (dobs[0]), ref (dobs[1]));
-                    } else if (argv[i].StartsWith("-opt")) {
+                    }
+                    else if (argv[i].StartsWith("-opt"))
+                    {
                         C.sscanf(argv[i].Substring(4), "%lf,%lf,%lf,%lf,%lf,%lf", ref (dobs[0]), ref (dobs[1]), ref (dobs[2]), ref (dobs[3]), ref (dobs[4]), ref (dobs[5]));
-                    } else if (argv[i].StartsWith("-orbel")) {
+                    }
+                    else if (argv[i].StartsWith("-orbel"))
+                    {
                         do_orbital_elements = true;
-                    } else if (String.Compare(argv[i], "-bwd") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-bwd") == 0)
+                    {
                         direction = -1;
                         direction_flag = true;
-                    } else if (argv[i].StartsWith("-p")) {
+                    }
+                    else if (argv[i].StartsWith("-p"))
+                    {
                         spno = argv[i][2];
-                        switch (spno) {
+                        switch (spno)
+                        {
                             case 'd':
                                 /*
                                 case '\0':
@@ -1020,27 +1144,41 @@ static string infoexamp = @"\n\
                             case 'a': plsel = PLSEL_A; break;
                             default: plsel = spno.ToString(); break;
                         }
-                    } else if (argv[i].StartsWith("-xs")) {
+                    }
+                    else if (argv[i].StartsWith("-xs"))
+                    {
                         /* number of asteroid */
                         sastno = argv[i].Substring(3);
-                    } else if (argv[i].StartsWith("-xf")) {
+                    }
+                    else if (argv[i].StartsWith("-xf"))
+                    {
                         /* name or number of fixed star */
                         star = argv[i].Substring(3);
-                    } else if (argv[i].StartsWith("-xz")) {
+                    }
+                    else if (argv[i].StartsWith("-xz"))
+                    {
                         /* number of hypothetical body */
                         shyp = argv[i].Substring(3);
-                    } else if (argv[i].StartsWith("-x")) {
+                    }
+                    else if (argv[i].StartsWith("-x"))
+                    {
                         /* name or number of fixed star */
                         star = argv[i].Substring(2);
-                    } else if (argv[i].StartsWith("-n")) {
+                    }
+                    else if (argv[i].StartsWith("-n"))
+                    {
                         nstep = int.Parse(argv[i].Substring(2));
                         if (nstep == 0)
                             nstep = 20;
-                    } else if (argv[i].StartsWith("-i")) {
+                    }
+                    else if (argv[i].StartsWith("-i"))
+                    {
                         iflag_f = int.Parse(argv[i].Substring(2));
                         if ((iflag_f & SwissEph.SEFLG_XYZ) != 0)
                             fmt = "PX";
-                    } else if (argv[i].StartsWith("-s")) {
+                    }
+                    else if (argv[i].StartsWith("-s"))
+                    {
                         tstep = double.Parse(argv[i].Substring(2));
                         //if (*(argv[i] + strlen(argv[i]) - 1) == 'm')
                         //    step_in_minutes = TRUE;
@@ -1054,32 +1192,46 @@ static string infoexamp = @"\n\
                     else if (argv[i].StartsWith("-b"))
                     {
                         begindate = argv[i].Substring(2);
-                    } else if (argv[i].StartsWith("-f")) {
+                    }
+                    else if (argv[i].StartsWith("-f"))
+                    {
                         fmt = argv[i].Substring(2);
-                    } else if (argv[i].StartsWith("-g")) {
+                    }
+                    else if (argv[i].StartsWith("-g"))
+                    {
                         gap = argv[i].Substring(2);
                         if (String.IsNullOrEmpty(gap)) gap = "\t";
-                    } else if (argv[i].StartsWith("-d") || argv[i].StartsWith("-D")) {
+                    }
+                    else if (argv[i].StartsWith("-d") || argv[i].StartsWith("-D"))
+                    {
                         diff_mode = argv[i][1];	/* 'd' or 'D' */
                         sp = argv[i].Substring(2);
                         ipldiff = letter_to_ipl(String.IsNullOrEmpty(sp) ? '\0' : sp[0]);
                         if (ipldiff < 0) ipldiff = SwissEph.SE_SUN;
                         spnam2 = sweph.swe_get_planet_name(ipldiff);
-                    } else if (String.Compare(argv[i], "-roundsec") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-roundsec") == 0)
+                    {
                         round_flag |= BIT_ROUND_SEC;
-                    } else if (String.Compare(argv[i], "-roundmin") == 0) {
+                    }
+                    else if (String.Compare(argv[i], "-roundmin") == 0)
+                    {
                         round_flag |= BIT_ROUND_MIN;
-                    /*} else if (strncmp(argv[i], "-timeout", 8) == 0) {
-                          swe_set_timeout(atoi(argv[i]) + 8);*/
+                        /*} else if (strncmp(argv[i], "-timeout", 8) == 0) {
+                              swe_set_timeout(atoi(argv[i]) + 8);*/
                     }
                     else if (argv[i].StartsWith("-t"))
                     {
-                        if (argv[i].Length > 2) {
+                        if (argv[i].Length > 2)
+                        {
                             stimein = argv[i].Substring(2, Math.Min(30, argv[i].Length - 2));
                         }
-                    } else if (argv[i].StartsWith("-h") || argv[i].StartsWith("-?")) {
+                    }
+                    else if (argv[i].StartsWith("-h") || argv[i].StartsWith("-?"))
+                    {
                         sp = argv[i].Length > 2 ? argv[i].Substring(2, 1) : String.Empty;
-                        if (sp == "c" || sp == String.Empty) {
+                        if (sp == "c" || sp == String.Empty)
+                        {
                             Console.Write(infocmd0);
                             Console.Write(infocmd1);
                             Console.Write(infocmd2);
@@ -1090,7 +1242,8 @@ static string infoexamp = @"\n\
                         }
                         if (sp == "p" || sp == String.Empty)
                             Console.Write(infoplan);
-                        if (sp == "f" || sp == String.Empty) {
+                        if (sp == "f" || sp == String.Empty)
+                        {
                             Console.Write(infoform);
                             Console.Write(infoform2);
                         }
@@ -1099,7 +1252,9 @@ static string infoexamp = @"\n\
                         if (sp == "e" || sp == String.Empty)
                             Console.Write(infoexamp);
                         goto end_main;
-                    } else {
+                    }
+                    else
+                    {
                         sout = "illegal option ";
                         sout += argv[i];
                         sout += "\n";
@@ -1111,7 +1266,8 @@ static string infoexamp = @"\n\
                     special_event == SP_RISE_SET ||
                     special_event == SP_MERIDIAN_TRANSIT ||
                     special_event == SP_HELIACAL
-                    ) {
+                    )
+                {
                     ipl = letter_to_ipl(string.IsNullOrEmpty(plsel) ? '\0' : plsel[0]);
                     if (plsel == "f")
                         ipl = SwissEph.SE_FIXSTAR;
@@ -1150,7 +1306,8 @@ static string infoexamp = @"\n\
 #endif
                 if (with_header)
                 {
-                    for (i = 0; i < argc; i++) {
+                    for (i = 0; i < argc; i++)
+                    {
                         Console.Write(argv[i]);
                         Console.Write(" ");
                     }
@@ -1158,8 +1315,10 @@ static string infoexamp = @"\n\
                 iflag = (iflag & ~SEFLG_EPHMASK) | whicheph;
                 if (fmt.IndexOfAny("SsQ".ToCharArray()) >= 0 && (iflag & SwissEph.SEFLG_SPEED3) == 0)
                     iflag |= SwissEph.SEFLG_SPEED;
-                if (String.IsNullOrEmpty(ephepath)) {
-                    if (make_ephemeris_path(iflag, argv[0], ref ephepath) == SwissEph.ERR) {
+                if (String.IsNullOrEmpty(ephepath))
+                {
+                    if (make_ephemeris_path(iflag, argv[0], ref ephepath) == SwissEph.ERR)
+                    {
                         iflag = (iflag & ~SwissEph.SEFLG_EPHMASK) | SwissEph.SEFLG_MOSEPH;
                         whicheph = SwissEph.SEFLG_MOSEPH;
                     }
@@ -1181,57 +1340,80 @@ static string infoexamp = @"\n\
                 while (true)
                 {
                     serr = serr_save = serr_warn = String.Empty;
-                    if (begindate == null) {
+                    if (begindate == null)
+                    {
                         Console.Write("\nDate ?");
                         sdate = String.Empty;
                         sdate = Console.ReadLine();
                         if (sdate == null) goto end_main;
-                    } else {
+                    }
+                    else
+                    {
                         sdate = String.Empty;
                         sdate = begindate;
                         begindate = ".";  /* to exit afterwards */
                     }
-                    if (String.Compare(sdate, "-bary") == 0) {
+                    if (String.Compare(sdate, "-bary") == 0)
+                    {
                         iflag = iflag & ~SwissEph.SEFLG_HELCTR;
                         iflag |= SwissEph.SEFLG_BARYCTR;
                         sdate = String.Empty;
-                    } else if (String.Compare(sdate, "-hel") == 0) {
+                    }
+                    else if (String.Compare(sdate, "-hel") == 0)
+                    {
                         iflag = iflag & ~SwissEph.SEFLG_BARYCTR;
                         iflag |= SwissEph.SEFLG_HELCTR;
                         sdate = String.Empty;
-                    } else if (String.Compare(sdate, "-geo") == 0) {
+                    }
+                    else if (String.Compare(sdate, "-geo") == 0)
+                    {
                         iflag = iflag & ~SwissEph.SEFLG_BARYCTR;
                         iflag = iflag & ~SwissEph.SEFLG_HELCTR;
                         sdate = String.Empty;
-                    } else if (String.Compare(sdate, "-ejpl") == 0) {
+                    }
+                    else if (String.Compare(sdate, "-ejpl") == 0)
+                    {
                         iflag &= ~SwissEph.SEFLG_EPHMASK;
                         iflag |= SwissEph.SEFLG_JPLEPH;
                         sdate = String.Empty;
-                    } else if (String.Compare(sdate, "-eswe") == 0) {
+                    }
+                    else if (String.Compare(sdate, "-eswe") == 0)
+                    {
                         iflag &= ~SwissEph.SEFLG_EPHMASK;
                         iflag |= SwissEph.SEFLG_SWIEPH;
                         sdate = String.Empty;
-                    } else if (String.Compare(sdate, "-emos") == 0) {
+                    }
+                    else if (String.Compare(sdate, "-emos") == 0)
+                    {
                         iflag &= ~SwissEph.SEFLG_EPHMASK;
                         iflag |= SwissEph.SEFLG_MOSEPH;
                         sdate = String.Empty;
-                    } else if (sdate.StartsWith("-xs")) {
+                    }
+                    else if (sdate.StartsWith("-xs"))
+                    {
                         /* number of asteroid */
                         sastno = sdate.Substring(3);
                         sdate = String.Empty;
                     }
                     sp = sdate;
-                    if (sp.StartsWith(".")) {
+                    if (sp.StartsWith("."))
+                    {
                         goto end_main;
-                    } else if (String.IsNullOrEmpty(sp)) {
+                    }
+                    else if (String.IsNullOrEmpty(sp))
+                    {
                         sdate = sdate_save;
-                    } else {
+                    }
+                    else
+                    {
                         sdate_save = sdate;
                     }
-                    if (String.IsNullOrEmpty(sdate)) {
+                    if (String.IsNullOrEmpty(sdate))
+                    {
                         sdate = C.sprintf("j%f", tjd);
                     }
-                    if (sp.StartsWith("j")) {   /* it's a day number */
+                    if (sp.StartsWith("j"))
+                    {   /* it's a day number */
                         if ((sp2i = sp.IndexOf(',')) >= 0)
                             //*sp2 = '.';
                             sp = String.Concat(sp.Substring(0, sp2i), '.', sp.Substring(sp2i + 1));
@@ -1246,17 +1428,23 @@ static string infoexamp = @"\n\
                         else if (sp.Contains("greg"))
                             gregflag = SwissEph.SE_GREG_CAL;
                         sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                    } else if (sp.StartsWith("+")) {
+                    }
+                    else if (sp.StartsWith("+"))
+                    {
                         n = int.Parse(sp);
                         if (n == 0) n = 1;
                         tjd += n;
                         sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                    } else if (sp.StartsWith("-")) {
+                    }
+                    else if (sp.StartsWith("-"))
+                    {
                         n = int.Parse(sp);
                         if (n == 0) n = -1;
                         tjd += n;
                         sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                    } else {
+                    }
+                    else
+                    {
                         if (C.sscanf(sp, "%d%*c%d%*c%d", ref jday, ref jmon, ref jyear) < 1) return 1;
                         if ((Int32)jyear * 10000L + (Int32)jmon * 100L + (Int32)jday < 15821015L)
                             gregflag = SwissEph.SE_JUL_CAL;
@@ -1270,13 +1458,15 @@ static string infoexamp = @"\n\
                         tjd = sweph.swe_julday(jyear, jmon, jday, jut, gregflag);
                         tjd += thour / 24.0;
                     }
-                    if (special_event > 0) {
+                    if (special_event > 0)
+                    {
                         do_special_event(tjd, ipl, star, special_event, special_mode, geopos, datm, dobs, ref serr);
                         //swe_close();
                         return SwissEph.OK;
                     }
                     line_count = 0;
-                    for (t = tjd, istep = 1; istep <= nstep; t += tstep, istep++) {
+                    for (t = tjd, istep = 1; istep <= nstep; t += tstep, istep++)
+                    {
                         if (step_in_minutes)
                             t = tjd + (istep - 1) * tstep / 1440;
                         if (step_in_seconds)
@@ -1291,7 +1481,8 @@ static string infoexamp = @"\n\
                             gregflag = SwissEph.SE_GREG_CAL;
                         t2 = t;
                         sweph.swe_revjul(t2, gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                        if (with_header) {
+                        if (with_header)
+                        {
                             if (with_glp)
                                 printf("\npath: %s", sweph.swe_get_library_path());
                             printf("\ndate (dmy) %d.%d.%d", jday, jmon, jyear);
@@ -1319,7 +1510,8 @@ static string infoexamp = @"\n\
                             printf("\t\tversion %s", sweph.swe_version());
                         }
                         delt = sweph.swe_deltat_ex(t, iflag, ref serr);
-                        if (universal_time) {
+                        if (universal_time)
+                        {
                             if ((time_flag & BIT_TIME_LMT) != 0)
                             {
                                 if (with_header)
@@ -1328,22 +1520,28 @@ static string infoexamp = @"\n\
                                     t -= geopos[0] / 15.0 / 24.0;
                                 }
                             }
-                            if (with_header) {
+                            if (with_header)
+                            {
                                 printf("\nUT:  %.9f", t);
                             }
-                            if (with_header) {
+                            if (with_header)
+                            {
                                 printf("     delta t: %f sec", delt * 86400.0);
                             }
                             te = t + delt;
                             tut = t;
-                        } else {
+                        }
+                        else
+                        {
                             te = t;
                             tut = t - delt;
                         }
                         iflgret = sweph.swe_calc(te, SwissEph.SE_ECL_NUT, iflag, xobl, ref serr);
-                        if (with_header) {
+                        if (with_header)
+                        {
                             printf("\nTT:  %.9f", te);
-                            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+                            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+                            {
                                 if (sweph.swe_get_ayanamsa_ex(te, iflag, out daya, ref serr) == SwissEph.ERR)
                                 {
                                     printf("   error in swe_get_ayanamsa_ex(): %s\n", serr);
@@ -1351,27 +1549,34 @@ static string infoexamp = @"\n\
                                 }
                                 printf("   ayanamsa = %s (%s)", dms(daya, round_flag), sweph.swe_get_ayanamsa_name(sid_mode));
                             }
-                            if (have_geopos) {
+                            if (have_geopos)
+                            {
                                 printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
                             }
                             if (iflag_f >= 0)
                                 iflag = iflag_f;
-                            if (plsel.IndexOf('o') < 0) {
+                            if (plsel.IndexOf('o') < 0)
+                            {
                                 printf("\n%-15s %s", "Epsilon (true)", dms(xobl[0], round_flag));
                             }
-                            if (plsel.IndexOf('n') < 0) {
+                            if (plsel.IndexOf('n') < 0)
+                            {
                                 Console.Write("\nNutation        ");
                                 Console.Write(dms(xobl[2], round_flag));
                                 Console.Write(gap);
                                 Console.Write(dms(xobl[3], round_flag));
                             }
                             printf("\n");
-                            if (do_houses) {
+                            if (do_houses)
+                            {
                                 var shsy = sweph.swe_house_name(ihsy);
-                                if (!universal_time) {
+                                if (!universal_time)
+                                {
                                     do_houses = false;
                                     printf("option -house requires option -ut for Universal Time\n");
-                                } else {
+                                }
+                                else
+                                {
                                     s1 = dms(top_long, round_flag);
                                     s2 = dms(top_lat, round_flag);
                                     printf("Houses system %c (%s) for long=%s, lat=%s\n", ihsy, shsy, s1, s2);
@@ -1380,7 +1585,8 @@ static string infoexamp = @"\n\
                         }
                         if (with_header && !with_header_always)
                             with_header = false;
-                        if (do_ayanamsa) {
+                        if (do_ayanamsa)
+                        {
                             if (sweph.swe_get_ayanamsa_ex(te, iflag, out daya, ref serr) == SwissEph.ERR)
                             {
                                 printf("   error in swe_get_ayanamsa_ex(): %s\n", serr);
@@ -1423,7 +1629,8 @@ static string infoexamp = @"\n\
                             psp = plsel[pspi];
                             if (psp == 'e') continue;
                             ipl = letter_to_ipl(psp);
-                            if (ipl == -2) {
+                            if (ipl == -2)
+                            {
                                 printf("illegal parameter -p%s\n", plsel);
                                 return 1;
                             }
@@ -1433,7 +1640,8 @@ static string infoexamp = @"\n\
                                 ipl = int.Parse(sastno) + 10000;
                             else if (psp == 'z')
                                 ipl = int.Parse(shyp) + SwissEph.SE_FICT_OFFSET_1;
-                            if ((iflag & SwissEph.SEFLG_HELCTR) != 0) {
+                            if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+                            {
                                 if (ipl == SwissEph.SE_SUN
                                       || ipl == SwissEph.SE_MEAN_NODE || ipl == SwissEph.SE_TRUE_NODE
                                       || ipl == SwissEph.SE_MEAN_APOG || ipl == SwissEph.SE_OSCU_APOG)
@@ -1453,28 +1661,34 @@ static string infoexamp = @"\n\
                             /* ecliptic position */
                             if (iflag_f >= 0)
                                 iflag = iflag_f;
-                            if (ipl == SwissEph.SE_FIXSTAR) {
+                            if (ipl == SwissEph.SE_FIXSTAR)
+                            {
                                 iflgret = sweph.swe_fixstar(star, te, iflag, x, ref serr);
                                 /* magnitude, etc. */
-                                if (iflgret != SwissEph.ERR && fmt.IndexOf('=') >= 0) {
+                                if (iflgret != SwissEph.ERR && fmt.IndexOf('=') >= 0)
+                                {
                                     double mag = 0;
                                     iflgret = sweph.swe_fixstar_mag(ref star, ref mag, ref serr);
                                     attr[4] = mag;
                                 }
                                 se_pname = star;
-                            } else {
+                            }
+                            else
+                            {
                                 iflgret = sweph.swe_calc(te, ipl, iflag, x, ref serr);
                                 /* phase, magnitude, etc. */
                                 if (iflgret != SwissEph.ERR && fmt.IndexOfAny("+-*/=".ToCharArray()) >= 0)
                                     iflgret = sweph.swe_pheno(te, ipl, iflag, attr, ref serr);
                                 se_pname = sweph.swe_get_planet_name(ipl);
                             }
-                            if (psp == 'q') {/* delta t */
+                            if (psp == 'q')
+                            {/* delta t */
                                 x[0] = sweph.swe_deltat_ex(te, iflag, ref serr) * 86400;
                                 x[1] = x[2] = x[3] = 0;
                                 se_pname = "Delta T";
                             }
-                            if (psp == 'x') {/* sidereal time */
+                            if (psp == 'x')
+                            {/* sidereal time */
                                 x[0] = sweph.swe_degnorm(sweph.swe_sidtime(tut) * 15 + geopos[0]);
                                 x[1] = x[2] = x[3] = 0;
                                 se_pname = "Sidereal Time";
@@ -1484,19 +1698,22 @@ static string infoexamp = @"\n\
                                 x[2] = x[3] = 0;
                                 se_pname = "Ecl. Obl.";
                             }
-                            if (psp == 'n') {/* nutation is wanted, remove ecliptic */
+                            if (psp == 'n')
+                            {/* nutation is wanted, remove ecliptic */
                                 x[0] = x[2];
                                 x[1] = x[3];
                                 x[2] = x[3] = 0;
                                 se_pname = "Nutation";
                             }
-                            if (psp == 'y') {/* time equation */
+                            if (psp == 'y')
+                            {/* time equation */
                                 iflgret = sweph.swe_time_equ(tut, out (x[0]), ref serr);
                                 x[0] *= 86400; /* in seconds */;
                                 x[1] = x[2] = x[3] = 0;
                                 se_pname = "Time Equ.";
                             }
-                            if (iflgret < 0) {
+                            if (iflgret < 0)
+                            {
                                 if (String.Compare(serr, serr_save) != 0
                                   && (ipl == SwissEph.SE_SUN || ipl == SwissEph.SE_MOON
                                       || ipl == SwissEph.SE_MEAN_NODE || ipl == SwissEph.SE_TRUE_NODE
@@ -1509,25 +1726,32 @@ static string infoexamp = @"\n\
                                     Console.Write("\n");
                                 }
                                 serr_save = serr;
-                            } else if (!String.IsNullOrEmpty(serr) && String.IsNullOrEmpty(serr_warn)) {
+                            }
+                            else if (!String.IsNullOrEmpty(serr) && String.IsNullOrEmpty(serr_warn))
+                            {
                                 if (!serr.Contains("'seorbel.txt' not found"))
                                     serr_warn = serr;
                             }
-                            if (diff_mode != 0) {
+                            if (diff_mode != 0)
+                            {
                                 iflgret = sweph.swe_calc(te, ipldiff, iflag, x2, ref serr);
-                                if (iflgret < 0) {
+                                if (iflgret < 0)
+                                {
                                     Console.Write("error: ");
                                     Console.Write(serr);
                                     Console.Write("\n");
                                 }
-                                if (diff_mode == DIFF_DIFF) {
+                                if (diff_mode == DIFF_DIFF)
+                                {
                                     for (i = 1; i < 6; i++)
                                         x[i] -= x2[i];
                                     if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
                                         x[0] = sweph.swe_difdeg2n(x[0], x2[0]);
                                     else
                                         x[0] = sweph.swe_difrad2n(x[0], x2[0]);
-                                } else {	/* DIFF_MIDP */
+                                }
+                                else
+                                {	/* DIFF_MIDP */
                                     for (i = 1; i < 6; i++)
                                         x[i] = (x[i] + x2[i]) / 2;
                                     if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
@@ -1537,22 +1761,27 @@ static string infoexamp = @"\n\
                                 }
                             }
                             /* equator position */
-                            if (fmt.IndexOfAny("aADdQ".ToCharArray()) >= 0) {
+                            if (fmt.IndexOfAny("aADdQ".ToCharArray()) >= 0)
+                            {
                                 iflag2 = iflag | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
                                     iflgret = sweph.swe_fixstar(star, te, iflag2, xequ, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xequ, ref serr);
-                                if (diff_mode != 0) {
+                                if (diff_mode != 0)
+                                {
                                     iflgret = sweph.swe_calc(te, ipldiff, iflag2, x2, ref serr);
-                                    if (diff_mode == DIFF_DIFF) {
+                                    if (diff_mode == DIFF_DIFF)
+                                    {
                                         for (i = 1; i < 6; i++)
                                             xequ[i] -= x2[i];
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
                                             xequ[0] = sweph.swe_difdeg2n(xequ[0], x2[0]);
                                         else
                                             xequ[0] = sweph.swe_difrad2n(xequ[0], x2[0]);
-                                    } else {	/* DIFF_MIDP */
+                                    }
+                                    else
+                                    {	/* DIFF_MIDP */
                                         for (i = 1; i < 6; i++)
                                             xequ[i] = (xequ[i] + x2[i]) / 2;
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
@@ -1563,7 +1792,8 @@ static string infoexamp = @"\n\
                                 }
                             }
                             /* azimuth and height */
-                            if (fmt.IndexOfAny("IiHhKk".ToCharArray()) >= 0) {
+                            if (fmt.IndexOfAny("IiHhKk".ToCharArray()) >= 0)
+                            {
                                 /* first, get topocentric equatorial positions */
                                 iflgt = whicheph | SwissEph.SEFLG_EQUATORIAL | SwissEph.SEFLG_TOPOCTR;
                                 if (ipl == SwissEph.SE_FIXSTAR)
@@ -1576,17 +1806,21 @@ static string infoexamp = @"\n\
                                  * If the altitude of the observer is given (in geopos[2])
                                  * pressure is estimated according to that */
                                 sweph.swe_azalt(tut, SwissEph.SE_EQU2HOR, geopos, datm[0], datm[1], xt, xaz);
-                                if (diff_mode != 0) {
+                                if (diff_mode != 0)
+                                {
                                     iflgret = sweph.swe_calc(te, ipldiff, iflgt, xt, ref serr);
                                     sweph.swe_azalt(tut, SwissEph.SE_EQU2HOR, geopos, datm[0], datm[1], xt, x2);
-                                    if (diff_mode == DIFF_DIFF) {
+                                    if (diff_mode == DIFF_DIFF)
+                                    {
                                         for (i = 1; i < 3; i++)
                                             xaz[i] -= x2[i];
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
                                             xaz[0] = sweph.swe_difdeg2n(xaz[0], x2[0]);
                                         else
                                             xaz[0] = sweph.swe_difrad2n(xaz[0], x2[0]);
-                                    } else {	/* DIFF_MIDP */
+                                    }
+                                    else
+                                    {	/* DIFF_MIDP */
                                         for (i = 1; i < 3; i++)
                                             xaz[i] = (xaz[i] + x2[i]) / 2;
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
@@ -1597,41 +1831,52 @@ static string infoexamp = @"\n\
                                 }
                             }
                             /* ecliptic cartesian position */
-                            if (fmt.IndexOfAny("XU".ToCharArray()) >= 0) {
+                            if (fmt.IndexOfAny("XU".ToCharArray()) >= 0)
+                            {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ;
                                 if (ipl == SwissEph.SE_FIXSTAR)
                                     iflgret = sweph.swe_fixstar(star, te, iflag2, xcart, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xcart, ref serr);
-                                if (diff_mode != 0) {
+                                if (diff_mode != 0)
+                                {
                                     iflgret = sweph.swe_calc(te, ipldiff, iflag2, x2, ref serr);
-                                    if (diff_mode == DIFF_DIFF) {
+                                    if (diff_mode == DIFF_DIFF)
+                                    {
                                         for (i = 0; i < 6; i++)
                                             xcart[i] -= x2[i];
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         xcart[i] = (xcart[i] + x2[i]) / 2;
                                     }
                                 }
                             }
                             /* equator cartesian position */
-                            if (fmt.IndexOfAny("xu".ToCharArray()) >= 0) {
+                            if (fmt.IndexOfAny("xu".ToCharArray()) >= 0)
+                            {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
                                     iflgret = sweph.swe_fixstar(star, te, iflag2, xcartq, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xcartq, ref serr);
-                                if (diff_mode != 0) {
+                                if (diff_mode != 0)
+                                {
                                     iflgret = sweph.swe_calc(te, ipldiff, iflag2, x2, ref serr);
-                                    if (diff_mode == DIFF_DIFF) {
+                                    if (diff_mode == DIFF_DIFF)
+                                    {
                                         for (i = 0; i < 6; i++)
                                             xcartq[i] -= x2[i];
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         xcartq[i] = (xcart[i] + x2[i]) / 2;
                                     }
                                 }
                             }
                             /* house position */
-                            if (fmt.IndexOfAny("gGj".ToCharArray()) >= 0) {
+                            if (fmt.IndexOfAny("gGj".ToCharArray()) >= 0)
+                            {
                                 armc = sweph.swe_degnorm(sweph.swe_sidtime(tut) * 15 + geopos[0]);
                                 for (i = 0; i < 6; i++)
                                     xsv[i] = x[i];
@@ -1641,16 +1886,20 @@ static string infoexamp = @"\n\
                                     star2 = star;
                                 else
                                     star2 = String.Empty;
-                                if (hpos_meth >= 2 && char.ToUpper(ihsy) == 'G') {
+                                if (hpos_meth >= 2 && char.ToUpper(ihsy) == 'G')
+                                {
                                     sweph.swe_gauquelin_sector(tut, ipl, star2, iflag, hpos_meth, geopos, 0, 0, ref hposj, ref serr);
-                                } else {
+                                }
+                                else
+                                {
                                     hposj = sweph.swe_house_pos(armc, geopos[1], xobl[0], ihsy, xsv, ref serr);
                                 }
                                 if (char.ToUpper(ihsy) == 'G')
                                     hpos = (hposj - 1) * 10;
                                 else
                                     hpos = (hposj - 1) * 30;
-                                if (diff_mode != 0) {
+                                if (diff_mode != 0)
+                                {
                                     for (i = 0; i < 6; i++)
                                         xsv[i] = x2[i];
                                     if (hpos_meth == 1)
@@ -1660,12 +1909,15 @@ static string infoexamp = @"\n\
                                         hpos2 = (hpos2 - 1) * 10;
                                     else
                                         hpos2 = (hpos2 - 1) * 30;
-                                    if (diff_mode == DIFF_DIFF) {
+                                    if (diff_mode == DIFF_DIFF)
+                                    {
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
                                             hpos = sweph.swe_difdeg2n(hpos, hpos2);
                                         else
                                             hpos = sweph.swe_difrad2n(hpos, hpos2);
-                                    } else {	/* DIFF_MIDP */
+                                    }
+                                    else
+                                    {	/* DIFF_MIDP */
                                         if ((iflag & SwissEph.SEFLG_RADIANS) == 0)
                                             hpos = sweph.swe_deg_midp(hpos, hpos2);
                                         else
@@ -1751,25 +2003,29 @@ static string infoexamp = @"\n\
                         if (line_count >= line_limit)
                             break;
                     }           /* for tjd */
-                    if (!String.IsNullOrEmpty(serr_warn)) {
+                    if (!String.IsNullOrEmpty(serr_warn))
+                    {
                         printf("\nwarning: ");
                         Console.Write(serr_warn);
                         printf("\n");
                     }
                 }             /* while 1 */
-            /* close open files and free allocated space */
-            end_main:
+                              /* close open files and free allocated space */
+                end_main:
                 //swe_close();
                 return SwissEph.OK;
             }
         }
 
-        static void sweph_OnLoadFile(object sender, LoadFileEventArgs e) {
+        static void sweph_OnLoadFile(object sender, LoadFileEventArgs e)
+        {
             String fname = e.FileName.Replace("[ephe]", "").Trim('/', '\\');
             String[] paths = String.IsNullOrWhiteSpace(ephepath) ? new String[] { "" } : ephepath.Split(';');
-            foreach (var path in paths) {
+            foreach (var path in paths)
+            {
                 String f = System.IO.Path.Combine(path, fname);
-                if (System.IO.File.Exists(f)) {
+                if (System.IO.File.Exists(f))
+                {
                     e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
                 }
             }
@@ -1828,7 +2084,8 @@ static string infoexamp = @"\n\
          * so that they are not repeated in list_hor (horizontal list) mode.
          * In list_hor mode, no newline is printed.
          */
-        static int print_line(int mode, bool is_first) {
+        static int print_line(int mode, bool is_first)
+        {
             //string sp, sp2;
             int spi = 0; char sp;
             int sp2i = 0; char sp2;
@@ -1906,27 +2163,42 @@ static string infoexamp = @"\n\
                         break;
                     case 'p':
                         if (is_label) { printf("obj.nr"); break; }
-                        if (!is_house && diff_mode == DIFF_DIFF) {
+                        if (!is_house && diff_mode == DIFF_DIFF)
+                        {
                             printf("%d-%d", ipl, ipldiff);
-                        } else if (!is_house && diff_mode == DIFF_MIDP) {
+                        }
+                        else if (!is_house && diff_mode == DIFF_MIDP)
+                        {
                             printf("%d/%d", ipl, ipldiff);
-                        } else {
+                        }
+                        else
+                        {
                             printf("%d", ipl);
                         }
                         break;
                     case 'P':
                         if (is_label) { printf("%-15s", "name"); break; }
-                        if (is_house) {
-                            if (ipl <= nhouses) {
+                        if (is_house)
+                        {
+                            if (ipl <= nhouses)
+                            {
                                 printf("house %2d       ", ipl);
-                            } else {
+                            }
+                            else
+                            {
                                 printf("%-15s", hs_nam[ipl - nhouses]);
                             }
-                        } else if (diff_mode == DIFF_DIFF) {
+                        }
+                        else if (diff_mode == DIFF_DIFF)
+                        {
                             printf("%.3s-%.3s", spnam, spnam2);
-                        } else if (diff_mode == DIFF_MIDP) {
+                        }
+                        else if (diff_mode == DIFF_MIDP)
+                        {
                             printf("%.3s/%.3s", spnam, spnam2);
-                        } else {
+                        }
+                        else
+                        {
                             printf("%-15s", spnam);
                         }
                         break;
@@ -1937,9 +2209,12 @@ static string infoexamp = @"\n\
                         }
                         if (is_label) { printf("julday"); break; }
                         y_frac = (t - Math.Floor(t)) * 100;
-                        if (Math.Floor(y_frac) != y_frac) {
+                        if (Math.Floor(y_frac) != y_frac)
+                        {
                             printf("%.5f", t);
-                        } else {
+                        }
+                        else
+                        {
                             printf("%.2f", t);
                         }
                         break;
@@ -1950,7 +2225,8 @@ static string infoexamp = @"\n\
                         }
                         if (is_label) { printf("date    "); break; }
                         printf("%02d.%02d.%d", jday, jmon, jyear);
-                        if (jut != 0 || step_in_minutes || step_in_seconds) {
+                        if (jut != 0 || step_in_minutes || step_in_seconds)
+                        {
                             int h, m, s;
                             s = (int)(jut * 3600 + 0.5);
                             h = (int)(s / 3600.0);
@@ -1979,7 +2255,7 @@ static string infoexamp = @"\n\
                         break;
                     case 'l':
                         if (is_label) { printf(slon); break; }
-                    ldec:
+                        ldec:
                         if (OUTPUT_EXTRA_PRECISION != 0)
                             printf("%# 11.9f", x[0]);
                         else
@@ -2003,12 +2279,15 @@ static string infoexamp = @"\n\
                         break;
                     case 'S':
                     case 's':
-                        if (fmt.Length>spi+1 && (fmt[spi + 1] == 'S' || fmt[spi + 1] == 's' || fmt.IndexOfAny("XUxu".ToCharArray()) >= 0)) {
-                            for (sp2i=0; sp2i < fmt.Length; sp2i++) {
+                        if (fmt.Length > spi + 1 && (fmt[spi + 1] == 'S' || fmt[spi + 1] == 's' || fmt.IndexOfAny("XUxu".ToCharArray()) >= 0))
+                        {
+                            for (sp2i = 0; sp2i < fmt.Length; sp2i++)
+                            {
                                 sp2 = fmt[sp2i];
                                 if (sp2i > 0)
                                     Console.Write(gap);
-                                switch (sp2) {
+                                switch (sp2)
+                                {
                                     case 'L':   /* speed! */
                                     case 'Z':   /* speed! */
                                         if (is_label) { printf("lon/day"); break; }
@@ -2052,7 +2331,8 @@ static string infoexamp = @"\n\
                                         break;
                                     case 'U':   /* speed! */
                                     case 'X':   /* speed! */
-                                        if (is_label) {
+                                        if (is_label)
+                                        {
                                             Console.Write("speed_0");
                                             Console.Write(gap);
                                             Console.Write("speed_1");
@@ -2072,7 +2352,8 @@ static string infoexamp = @"\n\
                                         break;
                                     case 'u':   /* speed! */
                                     case 'x':   /* speed! */
-                                        if (is_label) {
+                                        if (is_label)
+                                        {
                                             Console.Write("speed_0");
                                             Console.Write(gap);
                                             Console.Write("speed_1");
@@ -2094,14 +2375,19 @@ static string infoexamp = @"\n\
                                         break;
                                 }
                             }
-                            if (fmt[spi + 1] == 'S' || fmt[spi + 1] == 's') {
+                            if (fmt[spi + 1] == 'S' || fmt[spi + 1] == 's')
+                            {
                                 spi++;
                                 sp = fmt[spi];
                             }
-                        } else if (sp == 'S') {
+                        }
+                        else if (sp == 'S')
+                        {
                             if (is_label) { printf("deg/day"); break; }
                             Console.Write(dms(x[3], round_flag));
-                        } else {
+                        }
+                        else
+                        {
                             if (is_label) { printf("deg/day"); break; }
                             printf("%# 11.7f", x[3]);
                         }
@@ -2169,7 +2455,8 @@ static string infoexamp = @"\n\
                         break;
                     case 'r':
                         if (is_label) { printf("dist"); break; }
-                        if (ipl == SwissEph.SE_MOON) { /* for moon print parallax */
+                        if (ipl == SwissEph.SE_MOON)
+                        { /* for moon print parallax */
                             /* geocentric horizontal parallax: */
                             //if (false) {
                             //    sinp = 8.794 / x[2];    /* in seconds of arc */
@@ -2179,7 +2466,9 @@ static string infoexamp = @"\n\
                             //}
                             sweph.swe_pheno(te, ipl, iflag, dret, ref serr);
                             printf("%# 13.5f\"", dret[5] * 3600);
-                        } else {
+                        }
+                        else
+                        {
                             printf("%# 14.9f", x[2]);
                         }
                         break;
@@ -2202,7 +2491,8 @@ static string infoexamp = @"\n\
                         break;
                     case 'u':
                     case 'x':
-                        if (is_label) {
+                        if (is_label)
+                        {
                             Console.Write("x0");
                             Console.Write(gap);
                             Console.Write("x1");
@@ -2235,12 +2525,15 @@ static string infoexamp = @"\n\
                         Console.Write(dms(xequ[4], round_flag));
                         break;
                     case 'N':
-                    case 'n': {
+                    case 'n':
+                        {
                             double[] xasc = new double[6], xdsc = new double[6];
                             int imeth = (sp == char.ToLower(sp)) ? SwissEph.SE_NODBIT_MEAN : SwissEph.SE_NODBIT_OSCU;
                             iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, xasc, xdsc, null, null, ref serr);
-                            if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'N')) {
-                                if (is_label) {
+                            if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'N'))
+                            {
+                                if (is_label)
+                                {
                                     Console.Write("nodAsc");
                                     Console.Write(gap);
                                     Console.Write("nodDesc");
@@ -2254,12 +2547,15 @@ static string infoexamp = @"\n\
                         break;
                     case 'F':
                     case 'f':
-                        if (!is_house) {
+                        if (!is_house)
+                        {
                             double[] xfoc = new double[6], xaph = new double[6], xper = new double[6];
                             int imeth = (sp == char.ToLower(sp)) ? SwissEph.SE_NODBIT_MEAN : SwissEph.SE_NODBIT_OSCU;
                             iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, null, null, xper, xaph, ref serr);
-                            if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F')) {
-                                if (is_label) {
+                            if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F'))
+                            {
+                                if (is_label)
+                                {
                                     Console.Write("peri");
                                     Console.Write(gap);
                                     Console.Write("apo");
@@ -2271,8 +2567,10 @@ static string infoexamp = @"\n\
                             }
                             imeth |= SwissEph.SE_NODBIT_FOPOINT;
                             iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, null, null, xper, xfoc, ref serr);
-                            if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F')) {
-                                if (is_label) {
+                            if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F'))
+                            {
+                                if (is_label)
+                                {
                                     Console.Write(gap);
                                     Console.Write("focus");
                                     break;
@@ -2308,7 +2606,8 @@ static string infoexamp = @"\n\
                         printf("  %# 6.2fm", attr[4]);
                         break;
                     case 'V': /* human design gates */
-                    case 'v': {
+                    case 'v':
+                        {
                             double xhds;
                             int igate, iline, ihex;
                             int[] hexa = new int[64] { 1, 43, 14, 34, 9, 5, 26, 11, 10, 58, 38, 54, 61, 60, 41, 19, 13, 49, 30, 55, 37, 63, 22, 36, 25, 17, 21, 51, 42, 3, 27, 24, 2, 23, 8, 20, 16, 35, 45, 12, 15, 52, 39, 53, 62, 56, 31, 33, 7, 4, 29, 59, 40, 64, 47, 6, 46, 18, 48, 57, 32, 50, 28, 44 };
@@ -2330,7 +2629,8 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static string dms(double xv, Int32 iflg) {
+        static string dms(double xv, Int32 iflg)
+        {
             int izod;
             Int32 k, kdeg, kmin, ksec;
             string c = SwissEph.ODEGREE_STRING;
@@ -2353,7 +2653,8 @@ static string infoexamp = @"\n\
             {
                 sgn = 1;
             }
-            if ((iflg & BIT_ROUND_MIN) != 0) {
+            if ((iflg & BIT_ROUND_MIN) != 0)
+            {
                 xv = sweph.swe_degnorm(xv + 0.5 / 60);
             }
             else if ((iflg & BIT_ROUND_SEC) != 0)
@@ -2378,16 +2679,21 @@ static string infoexamp = @"\n\
                 xv = (xv % 30.0);
                 kdeg = (Int32)xv;
                 s = C.sprintf(" %2d %s ", kdeg, zod_nam[izod]);
-            } else {
+            }
+            else
+            {
                 kdeg = (Int32)xv;
                 s = C.sprintf("%3d%s", kdeg, c);
             }
             xv -= kdeg;
             xv *= 60;
             kmin = (Int32)xv;
-            if ((iflg & BIT_ZODIAC) != 0 && (iflg & BIT_ROUND_MIN) != 0) {
+            if ((iflg & BIT_ZODIAC) != 0 && (iflg & BIT_ROUND_MIN) != 0)
+            {
                 s1 = C.sprintf("%2d", kmin);
-            } else {
+            }
+            else
+            {
                 s1 = C.sprintf("%2d'", kmin);
             }
             s += s1;
@@ -2396,44 +2702,54 @@ static string infoexamp = @"\n\
             xv -= kmin;
             xv *= 60;
             ksec = (Int32)xv;
-            if ((iflg & BIT_ROUND_SEC) != 0) {
+            if ((iflg & BIT_ROUND_SEC) != 0)
+            {
                 s1 = C.sprintf("%2d\"", ksec);
-            } else {
+            }
+            else
+            {
                 s1 = C.sprintf("%2d", ksec);
             }
             s += s1;
             if ((iflg & BIT_ROUND_SEC) != 0)
                 goto return_dms;
             xv -= ksec;
-            if (OUTPUT_EXTRA_PRECISION != 0) {
+            if (OUTPUT_EXTRA_PRECISION != 0)
+            {
                 k = (Int32)(xv * 100000000);
                 s1 = C.sprintf(".%08d", k);
-            } else {
+            }
+            else
+            {
                 k = (Int32)(xv * 10000);
                 s1 = C.sprintf(".%04d", k);
             }
             s += s1;
-        return_dms: ;
+            return_dms:;
             int spi;
-            if (sgn < 0) {
+            if (sgn < 0)
+            {
                 spi = s.IndexOfAny("0123456789".ToCharArray());
                 s = String.Concat(s.Substring(0, spi - 1), '-', s.Substring(spi));
             }
-            if ((iflg & BIT_LZEROES) != 0) {
+            if ((iflg & BIT_LZEROES) != 0)
+            {
                 //while ((sp = strchr(s + 2, ' ')) != NULL) *sp = '0';
                 s = s.Substring(0, 2) + s.Substring(2).Replace(' ', '0');
             }
             return (s);
         }
 
-        static int letter_to_ipl(char letter) {
+        static int letter_to_ipl(char letter)
+        {
             if (letter >= '0' && letter <= '9')
                 return letter - '0' + SwissEph.SE_SUN;
             if (letter >= 'A' && letter <= 'I')
                 return letter - 'A' + SwissEph.SE_MEAN_APOG;
             if (letter >= 'J' && letter <= 'Z')
                 return letter - 'J' + SwissEph.SE_CUPIDO;
-            switch (letter) {
+            switch (letter)
+            {
                 case 'm': return SwissEph.SE_MEAN_NODE;
                 case 'c': return SwissEph.SE_INTP_APOG;
                 case 'g': return SwissEph.SE_INTP_PERG;
@@ -2457,11 +2773,14 @@ static string infoexamp = @"\n\
             return -2;
         }
 
-        static Int32 ut_to_lmt_lat(double t_ut, double[] geopos, out double t_ret, ref string serr) {
+        static Int32 ut_to_lmt_lat(double t_ut, double[] geopos, out double t_ret, ref string serr)
+        {
             Int32 iflgret = SwissEph.OK;
-            if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
+            if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+            {
                 t_ut += geopos[0] / 360.0;
-                if ((time_flag & BIT_TIME_LAT) != 0) {
+                if ((time_flag & BIT_TIME_LAT) != 0)
+                {
                     iflgret = sweph.swe_lmt_to_lat(t_ut, geopos[0], out t_ut, ref serr);
                 }
             }
@@ -2493,7 +2812,8 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static Int32 call_rise_set(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr) {
+        static Int32 call_rise_set(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
+        {
             int ii;
             Int32 rsmi = 0;
             double[] tret = new double[10]; double tret1sv = 0;
@@ -2507,7 +2827,8 @@ static string infoexamp = @"\n\
                 sout = String.Empty;
                 /* swetest -rise
                  * calculate and print rising and setting */
-                if (special_event == SP_RISE_SET) {
+                if (special_event == SP_RISE_SET)
+                {
                     /* rising */
                     rsmi = SwissEph.SE_CALC_RISE;
                     if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
@@ -2536,24 +2857,31 @@ static string infoexamp = @"\n\
                     }
                     t0 = 0; t1 = 0;
                     sout = "rise     ";
-                    if (tret[0] == 0 || tret[0] > tret[1]) {
+                    if (tret[0] == 0 || tret[0] > tret[1])
+                    {
                         sout = "         -                     ";
-                    } else {
+                    }
+                    else
+                    {
                         t0 = tret[0];
                         sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                        sout +=C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
+                        sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
                     sout += "set      ";
-                    if (tret[1] == 0) {
+                    if (tret[1] == 0)
+                    {
                         sout += "         -                     \n";
-                    } else {
+                    }
+                    else
+                    {
                         t1 = tret[1];
                         sweph.swe_revjul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
-                    if (t0 != 0 && t1 != 0) {
+                    if (t0 != 0 && t1 != 0)
+                    {
                         t0 = (t1 - t0) * 24;
-                        sout +=C.sprintf("dt = %s", hms(t0, BIT_LZEROES));
+                        sout += C.sprintf("dt = %s", hms(t0, BIT_LZEROES));
                     }
                     sout += "\n";
                     do_printf(sout);
@@ -2561,14 +2889,17 @@ static string infoexamp = @"\n\
                 /* swetest -metr
                  * calculate and print transits over meridian (midheaven and lower
                  * midheaven */
-                if (special_event == SP_MERIDIAN_TRANSIT) {
+                if (special_event == SP_MERIDIAN_TRANSIT)
+                {
                     /* transit over midheaven */
-                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_MTRANSIT, geopos, datm[0], datm[1], ref (tret[0]), ref serr) != SwissEph.OK) {
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_MTRANSIT, geopos, datm[0], datm[1], ref (tret[0]), ref serr) != SwissEph.OK)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
                     /* transit over lower midheaven */
-                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_ITRANSIT, geopos, datm[0], datm[1], ref (tret[1]), ref serr) != SwissEph.OK) {
+                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_ITRANSIT, geopos, datm[0], datm[1], ref (tret[1]), ref serr) != SwissEph.OK)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -2580,13 +2911,15 @@ static string infoexamp = @"\n\
                     }
                     sout = "mtransit ";
                     if (tret[0] == 0) sout += "         -                     ";
-                    else {
+                    else
+                    {
                         sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
                     sout += "itransit ";
                     if (tret[1] == 0) sout += "         -                     \n";
-                    else {
+                    else
+                    {
                         sweph.swe_revjul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s\n", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
@@ -2596,7 +2929,8 @@ static string infoexamp = @"\n\
             return retc;
         }
 
-        static Int32 call_lunar_eclipse(double t_ut, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr) {
+        static Int32 call_lunar_eclipse(double t_ut, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
+        {
             int i, ii, retc, eclflag, ecl_type = 0;
             int ihou, imin, isec, isgn;
             double dfrc, dt; double[] attr = new double[30];
@@ -2605,29 +2939,42 @@ static string infoexamp = @"\n\
             if ((search_flag & SwissEph.SE_ECL_ALLTYPES_LUNAR) == 0)
                 search_flag |= SwissEph.SE_ECL_ALLTYPES_LUNAR;
             do_printf("\n");
-            for (ii = 0; ii < nstep; ii++, t_ut += direction) {
+            for (ii = 0; ii < nstep; ii++, t_ut += direction)
+            {
                 sout = String.Empty;
                 /* swetest -lunecl -how 
                  * type of lunar eclipse and percentage for a given time: */
-                if ((special_mode & SP_MODE_HOW) != 0) {
-                    if ((eclflag = sweph.swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, ref serr)) == SwissEph.ERR) {
+                if ((special_mode & SP_MODE_HOW) != 0)
+                {
+                    if ((eclflag = sweph.swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, ref serr)) == SwissEph.ERR)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
-                    } else {
-                        if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0) {
+                    }
+                    else
+                    {
+                        if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0)
+                        {
                             ecl_type = ECL_LUN_TOTAL;
                             sfmt = "total lunar eclipse: %f o/o \n";
-                        } else if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0) {
+                        }
+                        else if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
+                        {
                             ecl_type = ECL_LUN_PARTIAL;
                             sfmt = "partial lunar eclipse: %f o/o \n";
-                        } else if ((eclflag & SwissEph.SE_ECL_PENUMBRAL) != 0) {
+                        }
+                        else if ((eclflag & SwissEph.SE_ECL_PENUMBRAL) != 0)
+                        {
                             ecl_type = ECL_LUN_PENUMBRAL;
                             sfmt = "penumbral lunar eclipse: %f o/o \n";
-                        } else {
+                        }
+                        else
+                        {
                             sfmt = "no lunar eclipse \n";
                         }
                         sout = sfmt;
-                        if (sfmt.IndexOf('%') >= 0) {
+                        if (sfmt.IndexOf('%') >= 0)
+                        {
                             sout = C.sprintf(sfmt, attr[0]);
                         }
                         do_printf(sout);
@@ -2637,27 +2984,34 @@ static string infoexamp = @"\n\
                 /* swetest -lunecl 
                  * find next lunar eclipse: */
                 /* locally visible lunar eclipse */
-                if ((special_mode & SP_MODE_LOCAL) != 0) {
-                    if ((eclflag = sweph.swe_lun_eclipse_when_loc(t_ut, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR) {
+                if ((special_mode & SP_MODE_LOCAL) != 0)
+                {
+                    if ((eclflag = sweph.swe_lun_eclipse_when_loc(t_ut, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
-                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
-                        for (i = 0; i < 10; i++) {
+                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                    {
+                        for (i = 0; i < 10; i++)
+                        {
                             if (tret[i] != 0)
                                 retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                         }
                     }
                     t_ut = tret[0];
-                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0)
+                    {
                         sout = "total   ";
                         ecl_type = ECL_LUN_TOTAL;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_PENUMBRAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_PENUMBRAL) != 0)
+                    {
                         sout = "penumb. ";
                         ecl_type = ECL_LUN_PENUMBRAL;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
+                    {
                         sout = "partial ";
                         ecl_type = ECL_LUN_PARTIAL;
                     }
@@ -2702,31 +3056,40 @@ static string infoexamp = @"\n\
                     sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                     sout += ("\n");
                     /* global lunar eclipse */
-                } else {
-                    if ((eclflag = sweph.swe_lun_eclipse_when(t_ut, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR) {
+                }
+                else
+                {
+                    if ((eclflag = sweph.swe_lun_eclipse_when(t_ut, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
                     t_ut = tret[0];
-                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0)
+                    {
                         sout = ("total   ");
                         ecl_type = ECL_LUN_TOTAL;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_PENUMBRAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_PENUMBRAL) != 0)
+                    {
                         sout = ("penumb. ");
                         ecl_type = ECL_LUN_PENUMBRAL;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
+                    {
                         sout = ("partial ");
                         ecl_type = ECL_LUN_PARTIAL;
                     }
                     sout += ("lunar eclipse\t");
-                    if ((eclflag = sweph.swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, ref serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, ref serr)) == SwissEph.ERR)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
-                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
-                        for (i = 0; i < 10; i++) {
+                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                    {
+                        for (i = 0; i < 10; i++)
+                        {
                             if (tret[i] != 0)
                                 retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                         }
@@ -2775,7 +3138,8 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static Int32 call_solar_eclipse(double t_ut, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr) {
+        static Int32 call_solar_eclipse(double t_ut, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
+        {
             int i, ii, retc, eclflag, ecl_type = 0;
             double dt; double[] tret = new double[30], attr = new double[30], geopos_max = new double[3];
             string s1 = string.Empty, s2 = string.Empty, sout_short = string.Empty;
@@ -2787,38 +3151,51 @@ static string infoexamp = @"\n\
             if ((special_mode & SP_MODE_LOCAL) != 0)
                 sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
-            for (ii = 0; ii < nstep; ii++, t_ut += direction) {
+            for (ii = 0; ii < nstep; ii++, t_ut += direction)
+            {
                 sout = String.Empty;
                 /* swetest -solecl -local -geopos...
                  * find next solar eclipse observable from a given geographic position */
-                if ((special_mode & SP_MODE_LOCAL) != 0) {
-                    if ((eclflag = sweph.swe_sol_eclipse_when_loc(t_ut, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR) {
+                if ((special_mode & SP_MODE_LOCAL) != 0)
+                {
+                    if ((eclflag = sweph.swe_sol_eclipse_when_loc(t_ut, whicheph, geopos, tret, attr, direction_flag, ref serr)) == SwissEph.ERR)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
-                    } else {
+                    }
+                    else
+                    {
                         has_found = false;
                         t_ut = tret[0];
-                        if ((search_flag & SwissEph.SE_ECL_TOTAL) != 0 && (eclflag & SwissEph.SE_ECL_TOTAL) != 0) {
+                        if ((search_flag & SwissEph.SE_ECL_TOTAL) != 0 && (eclflag & SwissEph.SE_ECL_TOTAL) != 0)
+                        {
                             sout = ("total   ");
                             has_found = true;
                             ecl_type = ECL_SOL_TOTAL;
                         }
-                        if ((search_flag & SwissEph.SE_ECL_ANNULAR) != 0 && (eclflag & SwissEph.SE_ECL_ANNULAR) != 0) {
+                        if ((search_flag & SwissEph.SE_ECL_ANNULAR) != 0 && (eclflag & SwissEph.SE_ECL_ANNULAR) != 0)
+                        {
                             sout = ("annular ");
                             has_found = true;
                             ecl_type = ECL_SOL_ANNULAR;
                         }
-                        if ((search_flag & SwissEph.SE_ECL_PARTIAL) != 0 && (eclflag & SwissEph.SE_ECL_PARTIAL) != 0) {
+                        if ((search_flag & SwissEph.SE_ECL_PARTIAL) != 0 && (eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
+                        {
                             sout = ("partial ");
                             has_found = true;
                             ecl_type = ECL_SOL_PARTIAL;
                         }
-                        if (!has_found) {
+                        if (!has_found)
+                        {
                             ii--;
-                        } else {
+                        }
+                        else
+                        {
                             sweph.swe_calc(t_ut + sweph.swe_deltat_ex(t_ut, whicheph, ref serr), SwissEph.SE_ECL_NUT, 0, x, ref serr);
-                            if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
-                                for (i = 0; i < 10; i++) {
+                            if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                            {
+                                for (i = 0; i < 10; i++)
+                                {
                                     if (tret[i] != 0)
                                         retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                                 }
@@ -2860,33 +3237,41 @@ static string infoexamp = @"\n\
                 }   /* endif search_local */
                 /* swetest -solecl
                  * find next solar eclipse observable from anywhere on earth */
-                if (0 == (special_mode & SP_MODE_LOCAL)) {
-                    if ((eclflag = sweph.swe_sol_eclipse_when_glob(t_ut, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR) {
+                if (0 == (special_mode & SP_MODE_LOCAL))
+                {
+                    if ((eclflag = sweph.swe_sol_eclipse_when_glob(t_ut, whicheph, search_flag, tret, direction_flag, ref serr)) == SwissEph.ERR)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
                     t_ut = tret[0];
-                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0)
+                    {
                         sout = ("total   ");
                         ecl_type = ECL_SOL_TOTAL;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_ANNULAR) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_ANNULAR) != 0)
+                    {
                         sout = ("annular ");
                         ecl_type = ECL_SOL_ANNULAR;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_ANNULAR_TOTAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_ANNULAR_TOTAL) != 0)
+                    {
                         sout = ("ann-tot ");
                         ecl_type = ECL_SOL_ANNULAR;	/* by Alois: what is this ? */
                     }
-                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
+                    {
                         sout = ("partial ");
                         ecl_type = ECL_SOL_PARTIAL;
                     }
                     if ((eclflag & SwissEph.SE_ECL_NONCENTRAL) != 0 && 0 == (eclflag & SwissEph.SE_ECL_PARTIAL))
                         sout += ("non-central ");
                     sweph.swe_sol_eclipse_where(t_ut, whicheph, geopos_max, attr, ref serr);
-                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
-                        for (i = 0; i < 10; i++) {
+                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                    {
+                        for (i = 0; i < 10; i++)
+                        {
                             if (tret[i] != 0)
                                 retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                         }
@@ -2895,14 +3280,20 @@ static string infoexamp = @"\n\
                     sout_short = C.sprintf("%s\t%2d.%2d.%4d\t%s\t%.3f", sout, jday, jmon, jyear, hms(jut, 0), attr[8]);
                     sout += C.sprintf("%2d.%02d.%04d\t%s\t%f km\t%.4f/%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, 0), attr[3], attr[8], attr[0], attr[2], (int)attr[9], (int)attr[10], tret[0]);
                     sout += C.sprintf("\t%s ", hms_from_tjd(tret[2]));
-                    if (tret[4] != 0) {
+                    if (tret[4] != 0)
+                    {
                         sout += C.sprintf("%s ", hms_from_tjd(tret[4]));
-                    } else {
+                    }
+                    else
+                    {
                         sout += ("   -         ");
                     }
-                    if (tret[5] != 0) {
+                    if (tret[5] != 0)
+                    {
                         sout += C.sprintf("%s ", hms_from_tjd(tret[5]));
-                    } else {
+                    }
+                    else
+                    {
                         sout += ("   -         ");
                     }
                     sout += C.sprintf("%s", hms_from_tjd(tret[3]));
@@ -2913,8 +3304,10 @@ static string infoexamp = @"\n\
                     sout += C.sprintf("\t%s\t%s", s1, s2);
                     sout += ("\t");
                     sout_short += ("\t");
-                    if (0 == (eclflag & SwissEph.SE_ECL_PARTIAL) && 0 == (eclflag & SwissEph.SE_ECL_NONCENTRAL)) {
-                        if ((eclflag = sweph.swe_sol_eclipse_when_loc(t_ut - 10, whicheph, geopos_max, tret, attr, false, ref serr)) == SwissEph.ERR) {
+                    if (0 == (eclflag & SwissEph.SE_ECL_PARTIAL) && 0 == (eclflag & SwissEph.SE_ECL_NONCENTRAL))
+                    {
+                        if ((eclflag = sweph.swe_sol_eclipse_when_loc(t_ut - 10, whicheph, geopos_max, tret, attr, false, ref serr)) == SwissEph.ERR)
+                        {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
@@ -2930,7 +3323,8 @@ static string infoexamp = @"\n\
                     sout_short += C.sprintf("\t%d\t%d", (int)attr[9], (int)attr[10]);
                     sout += ("\n");
                     sout_short += ("\n");
-                    if ((special_mode & SP_MODE_HOCAL) != 0) {
+                    if ((special_mode & SP_MODE_HOCAL) != 0)
+                    {
                         int ihou, imin, isec, isgn;
                         double dfrc;
                         sweph.swe_split_deg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
@@ -2946,7 +3340,8 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static Int32 call_lunar_occultation(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr) {
+        static Int32 call_lunar_occultation(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
+        {
             int i, ii, ecl_type = 0, eclflag, retc;
             double dt; double[] tret = new double[30], attr = new double[30], geopos_max = new double[3];
             string s1 = String.Empty, s2 = String.Empty;
@@ -2959,7 +3354,8 @@ static string infoexamp = @"\n\
             if ((special_mode & SP_MODE_LOCAL) != 0)
                 sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
-            for (ii = 0; ii < nstep; ii++) {
+            for (ii = 0; ii < nstep; ii++)
+            {
                 sout = String.Empty;
                 nloops++;
                 if (nloops > SEARCH_RANGE_LUNAR_CYCLES)
@@ -2990,30 +3386,36 @@ static string infoexamp = @"\n\
                     else
                     {
                         t_ut = tret[0];
-                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
-                            for (i = 0; i < 10; i++) {
+                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                        {
+                            for (i = 0; i < 10; i++)
+                            {
                                 if (tret[i] != 0)
                                     retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                             }
                         }
                         has_found = false;
                         sout = String.Empty;
-                        if ((search_flag & SwissEph.SE_ECL_TOTAL) != 0 && (eclflag & SwissEph.SE_ECL_TOTAL) != 0) {
+                        if ((search_flag & SwissEph.SE_ECL_TOTAL) != 0 && (eclflag & SwissEph.SE_ECL_TOTAL) != 0)
+                        {
                             sout += ("total");
                             has_found = true;
                             ecl_type = ECL_SOL_TOTAL;
                         }
-                        if ((search_flag & SwissEph.SE_ECL_ANNULAR) != 0 && (eclflag & SwissEph.SE_ECL_ANNULAR) != 0) {
+                        if ((search_flag & SwissEph.SE_ECL_ANNULAR) != 0 && (eclflag & SwissEph.SE_ECL_ANNULAR) != 0)
+                        {
                             sout += ("annular");
                             has_found = true;
                             ecl_type = ECL_SOL_ANNULAR;
                         }
-                        if ((search_flag & SwissEph.SE_ECL_PARTIAL) != 0 && (eclflag & SwissEph.SE_ECL_PARTIAL) != 0) {
+                        if ((search_flag & SwissEph.SE_ECL_PARTIAL) != 0 && (eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
+                        {
                             sout += ("partial");
                             has_found = true;
                             ecl_type = ECL_SOL_PARTIAL;
                         }
-                        if (ipl != SwissEph.SE_SUN) {
+                        if (ipl != SwissEph.SE_SUN)
+                        {
                             if ((eclflag & SwissEph.SE_ECL_OCC_BEG_DAYLIGHT) != 0 && (eclflag & SwissEph.SE_ECL_OCC_END_DAYLIGHT) != 0)
                                 sout += ("(daytime)"); /* occultation occurs during the day */
                             else if ((eclflag & SwissEph.SE_ECL_OCC_BEG_DAYLIGHT) != 0)
@@ -3023,9 +3425,12 @@ static string infoexamp = @"\n\
                         }
                         while (sout.Length < 17)
                             sout += (" ");
-                        if (!has_found) {
+                        if (!has_found)
+                        {
                             ii--;
-                        } else {
+                        }
+                        else
+                        {
                             sweph.swe_calc_ut(t_ut, SwissEph.SE_ECL_NUT, 0, x, ref serr);
                             sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                             dt = (tret[3] - tret[2]) * 24 * 60;
@@ -3061,9 +3466,11 @@ static string infoexamp = @"\n\
                         }
                     }
                 }   /* endif search_local */
-                if (0 == (special_mode & SP_MODE_LOCAL)) {
+                if (0 == (special_mode & SP_MODE_LOCAL))
+                {
                     /* * global search for occultations, test one lunar cycle only (SE_ECL_ONE_TRY) */
-                    if ((eclflag = sweph.swe_lun_occult_when_glob(t_ut, ipl, star, whicheph, search_flag, tret, direction_flag/*|SE_ECL_ONE_TRY*/, ref serr)) == SwissEph.ERR) {
+                    if ((eclflag = sweph.swe_lun_occult_when_glob(t_ut, ipl, star, whicheph, search_flag, tret, direction_flag/*|SE_ECL_ONE_TRY*/, ref serr)) == SwissEph.ERR)
+                    {
                         do_printf(serr);
                         return SwissEph.ERR;
                     }
@@ -3078,15 +3485,18 @@ static string infoexamp = @"\n\
                         sout = ("total   ");
                         ecl_type = ECL_SOL_TOTAL;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_ANNULAR) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_ANNULAR) != 0)
+                    {
                         sout = ("annular ");
                         ecl_type = ECL_SOL_ANNULAR;
                     }
-                    if ((eclflag & SwissEph.SE_ECL_ANNULAR_TOTAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_ANNULAR_TOTAL) != 0)
+                    {
                         sout = ("ann-tot ");
                         ecl_type = ECL_SOL_ANNULAR;	/* by Alois: what is this ? */
                     }
-                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0) {
+                    if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
+                    {
                         sout = ("partial ");
                         ecl_type = ECL_SOL_PARTIAL;
                     }
@@ -3094,8 +3504,10 @@ static string infoexamp = @"\n\
                         sout += ("non-central ");
                     t_ut = tret[0];
                     sweph.swe_lun_occult_where(t_ut, ipl, star, whicheph, geopos_max, attr, ref serr);
-                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
-                        for (i = 0; i < 10; i++) {
+                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                    {
+                        for (i = 0; i < 10; i++)
+                        {
                             if (tret[i] != 0)
                                 retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
                         }
@@ -3117,18 +3529,21 @@ static string infoexamp = @"\n\
                     s1 = (dms(geopos_max[0], BIT_ROUND_MIN));
                     s2 = (dms(geopos_max[1], BIT_ROUND_MIN));
                     sout += C.sprintf("\t%s\t%s", s1, s2);
-                    if (0==(eclflag & SwissEph.SE_ECL_PARTIAL) && 0==(eclflag & SwissEph.SE_ECL_NONCENTRAL)) {
-                        if ((eclflag = sweph.swe_lun_occult_when_loc(t_ut - 10, ipl, star, whicheph, geopos_max, tret, attr, false, ref serr)) == SwissEph.ERR) {
+                    if (0 == (eclflag & SwissEph.SE_ECL_PARTIAL) && 0 == (eclflag & SwissEph.SE_ECL_NONCENTRAL))
+                    {
+                        if ((eclflag = sweph.swe_lun_occult_when_loc(t_ut - 10, ipl, star, whicheph, geopos_max, tret, attr, false, ref serr)) == SwissEph.ERR)
+                        {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
                         if (Math.Abs(tret[0] - t_ut) > 2)
                             do_printf("when_loc returns wrong date\n");
                         dt = (tret[3] - tret[2]) * 24 * 60;
-                        sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, (dt% 1.0) * 60);
+                        sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, (dt % 1.0) * 60);
                     }
                     sout += ("\n");
-                    if ((special_mode & SP_MODE_HOCAL) != 0) {
+                    if ((special_mode & SP_MODE_HOCAL) != 0)
+                    {
                         int ihou, imin, isec, isgn;
                         double dfrc;
                         sweph.swe_split_deg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
@@ -3141,13 +3556,14 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static void do_print_heliacal(double[] dret, Int32 event_type, string obj_name) {
-            string[] sevtname = new string[]{"", 
-            "heliacal rising ", 
-            "heliacal setting", 
-            "evening first   ", 
-            "morning last    ", 
-            "evening rising  ", 
+        static void do_print_heliacal(double[] dret, Int32 event_type, string obj_name)
+        {
+            string[] sevtname = new string[]{"",
+            "heliacal rising ",
+            "heliacal setting",
+            "evening first   ",
+            "morning last    ",
+            "evening rising  ",
             "morning setting ",};
             string stz = "UT";
             string stim0 = String.Empty, stim1 = String.Empty, stim2 = String.Empty;
@@ -3157,13 +3573,17 @@ static string infoexamp = @"\n\
                 stz = "LAT";
             sout = String.Empty;
             sweph.swe_revjul(dret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
-            if (event_type <= 4) {
-                if (hel_using_AV) {
+            if (event_type <= 4)
+            {
+                if (hel_using_AV)
+                {
                     stim0 = (hms_from_tjd(dret[0]));
                     remove_whitespace(ref stim0);
                     /* The following line displays only the beginning of visibility. */
                     sout += C.sprintf("%s %s: %d/%02d/%02d %s %s (%.5f)\n", obj_name, sevtname[event_type], jyear, jmon, jday, stim0, stz, dret[0]);
-                } else {
+                }
+                else
+                {
                     /* display the moment of beginning and optimum visibility */
                     stim0 = (hms_from_tjd(dret[0]));
                     stim1 = (hms_from_tjd(dret[1]));
@@ -3173,7 +3593,9 @@ static string infoexamp = @"\n\
                     remove_whitespace(ref stim2);
                     sout += C.sprintf("%s %s: %d/%02d/%02d %s %s (%.5f), opt %s, end %s, dur %.1f min\n", obj_name, sevtname[event_type], jyear, jmon, jday, stim0, stz, dret[0], stim1, stim2, (dret[2] - dret[0]) * 1440);
                 }
-            } else {
+            }
+            else
+            {
                 stim0 = (hms_from_tjd(dret[0]));
                 remove_whitespace(ref stim0);
                 sout += C.sprintf("%s %s: %d/%02d/%02d %s %s (%f)\n", obj_name, sevtname[event_type], jyear, jmon, jday, stim0, stz, dret[0]);
@@ -3181,7 +3603,8 @@ static string infoexamp = @"\n\
             do_printf(sout);
         }
 
-        static Int32 call_heliacal_event(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, double[] datm, double[] dobs, ref string serr) {
+        static Int32 call_heliacal_event(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, double[] datm, double[] dobs, ref string serr)
+        {
             int ii, retc, event_type = 0, retflag;
             double[] dret = new double[40]; double tsave1, tsave2 = 0;
             string obj_name;
@@ -3199,7 +3622,8 @@ static string infoexamp = @"\n\
             else
                 obj_name = sweph.swe_get_planet_name(ipl);
             do_printf("\n");
-            for (ii = 0; ii < nstep; ii++, t_ut = dret[0] + 1) {
+            for (ii = 0; ii < nstep; ii++, t_ut = dret[0] + 1)
+            {
                 sout = String.Empty;
                 if (search_flag > 0)
                     event_type = search_flag;
@@ -3208,27 +3632,33 @@ static string infoexamp = @"\n\
                 else
                     event_type = SwissEph.SE_HELIACAL_RISING;
                 retflag = sweph.swe_heliacal_ut(t_ut, geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
-                if (retflag == SwissEph.ERR) {
+                if (retflag == SwissEph.ERR)
+                {
                     do_printf(serr);
                     return SwissEph.ERR;
                 }
-                if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
+                if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                {
                     retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
                     retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
                     retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
                 }
                 do_print_heliacal(dret, event_type, obj_name);
                 /* list all events within synodic cycle */
-                if (search_flag == 0) {
-                    if (ipl == SwissEph.SE_VENUS || ipl == SwissEph.SE_MERCURY) {
+                if (search_flag == 0)
+                {
+                    if (ipl == SwissEph.SE_VENUS || ipl == SwissEph.SE_MERCURY)
+                    {
                         /* we have heliacal rising (morning first), now find morning last */
                         event_type = SwissEph.SE_MORNING_LAST;
-                        retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref  serr);
-                        if (retflag == SwissEph.ERR) {
+                        retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
+                        if (retflag == SwissEph.ERR)
+                        {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
-                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
+                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                        {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
                             retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
                             retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
@@ -3239,55 +3669,66 @@ static string infoexamp = @"\n\
                          * appearances in betweeen. We have to find out when the next 
                          * morning appearance is and then find all evening appearances 
                          * that take place before that */
-                        if (ipl == SwissEph.SE_MERCURY) {
+                        if (ipl == SwissEph.SE_MERCURY)
+                        {
                             event_type = SwissEph.SE_HELIACAL_RISING;
                             retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
-                            if (retflag == SwissEph.ERR) {
+                            if (retflag == SwissEph.ERR)
+                            {
                                 do_printf(serr);
                                 return SwissEph.ERR;
                             }
                             tsave2 = dret[0];
                         }
-                    //repeat_mercury:
+                        //repeat_mercury:
                         /* evening first */
                         event_type = SwissEph.SE_EVENING_FIRST;
                         retflag = sweph.swe_heliacal_ut(tsave1, geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
-                        if (retflag == SwissEph.ERR) {
+                        if (retflag == SwissEph.ERR)
+                        {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
                         if (ipl == SwissEph.SE_MERCURY && dret[0] > tsave2)
                             continue;
-                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
+                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                        {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
                             retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
                             retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
                         }
                         do_print_heliacal(dret, event_type, obj_name);
                     }
-                    if (ipl == SwissEph.SE_MOON) {
+                    if (ipl == SwissEph.SE_MOON)
+                    {
                         /* morning last */
                         event_type = SwissEph.SE_MORNING_LAST;
                         retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
-                        if (retflag == SwissEph.ERR) {
+                        if (retflag == SwissEph.ERR)
+                        {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
-                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
+                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                        {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
                             retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
                             retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
                         }
                         do_print_heliacal(dret, event_type, obj_name);
-                    } else {
+                    }
+                    else
+                    {
                         /* heliacal setting (evening last) */
                         event_type = SwissEph.SE_HELIACAL_SETTING;
                         retflag = sweph.swe_heliacal_ut(dret[0], geopos, datm, dobs, obj_name, event_type, helflag, dret, ref serr);
-                        if (retflag == SwissEph.ERR) {
+                        if (retflag == SwissEph.ERR)
+                        {
                             do_printf(serr);
                             return SwissEph.ERR;
                         }
-                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0) {
+                        if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
+                        {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
                             retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
                             retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
@@ -3303,7 +3744,8 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static int do_special_event(double tjd, Int32 ipl, string star, Int32 special_event, Int32 special_mode, double[] geopos, double[] datm, double[] dobs, ref string serr) {
+        static int do_special_event(double tjd, Int32 ipl, string star, Int32 special_event, Int32 special_mode, double[] geopos, double[] datm, double[] dobs, ref string serr)
+        {
             int retc = 0;
             /* risings, settings, meridian transits */
             if (special_event == SP_RISE_SET ||
@@ -3324,7 +3766,8 @@ static string infoexamp = @"\n\
             return retc;
         }
 
-        static string hms_from_tjd(double tjd) {
+        static string hms_from_tjd(double tjd)
+        {
             double x;
             /* tjd may be negative, 0h corresponds to day number 9999999.5 */
             x = (tjd % 1.0);  /* may be negative ! */
@@ -3332,13 +3775,15 @@ static string infoexamp = @"\n\
             return C.sprintf("%s ", hms(x * 24, BIT_LZEROES));
         }
 
-        static string hms(double x, Int32 iflag) {
+        static string hms(double x, Int32 iflag)
+        {
             //static char s[AS_MAXCH], s2[AS_MAXCH], *sp;
             var c = SwissEph.ODEGREE_STRING;
             x += 0.5 / 36000.0; /* round to 0.1 sec */
             var s = dms(x, iflag);
             var spi = s.IndexOf(c);
-            if (spi >= 0) {
+            if (spi >= 0)
+            {
                 s = String.Concat(s.Substring(0, spi), ":", s.Substring(spi + 1));
                 var s2 = s.Substring(spi + SwissEph.ODEGREE_STRING.Length);
                 s = String.Concat(s.Substring(0, spi + 1), s2);
@@ -3360,7 +3805,8 @@ static string infoexamp = @"\n\
          *   +                              on program drive
          *   +                              on drive C:
          */
-        static int make_ephemeris_path(Int32 iflg, string argv0, ref string path) {
+        static int make_ephemeris_path(Int32 iflg, string argv0, ref string path)
+        {
             int spi;
             char dirglue = SwissEph.DIR_GLUE;
             int pathlen = 0;
@@ -3368,7 +3814,8 @@ static string infoexamp = @"\n\
             path = C.sprintf(".%c", SwissEph.PATH_SEPARATOR);
             /* program directory */
             spi = argv0.LastIndexOf(dirglue);
-            if (spi >= 0) {
+            if (spi >= 0)
+            {
                 pathlen = spi;
                 path += argv0.Substring(0, pathlen);
                 path += C.sprintf("%c", SwissEph.PATH_SEPARATOR);
@@ -3391,8 +3838,9 @@ static string infoexamp = @"\n\
                  */
                 s = String.Empty;
                 /* current working drive */
-                sp[0] = Environment.CurrentDirectory;
-                if (String.IsNullOrWhiteSpace(sp[0])) {
+                sp[0] = Directory.GetCurrentDirectory();
+                if (String.IsNullOrWhiteSpace(sp[0]))
+                {
                     printf("error in getcwd()\n");
                     Environment.Exit(1);
                 }
@@ -3405,13 +3853,15 @@ static string infoexamp = @"\n\
                     sp[1] = null;
                 /* drive C */
                 sp[2] = "C";
-                for (i = 0; i < np; i++) {
+                for (i = 0; i < np; i++)
+                {
                     s = cpos[i];
                     if (s[0] == '.')	/* current directory */
                         continue;
                     if (s[1] == ':')  /* drive already there */
                         continue;
-                    for (j = 0; j < 3; j++) {
+                    for (j = 0; j < 3; j++)
+                    {
                         if (sp[j] != null)
                             path += C.sprintf("%c:%s%c", sp[j][0], s, SwissEph.PATH_SEPARATOR);
                     }
@@ -3424,7 +3874,8 @@ static string infoexamp = @"\n\
             return SwissEph.OK;
         }
 
-        static void remove_whitespace(ref string s) {
+        static void remove_whitespace(ref string s)
+        {
             //char *sp, s1[AS_MAXCH];
             //if (s == NULL) return;
             //for (sp = s; *sp == ' '; sp++)
@@ -3470,19 +3921,22 @@ static string infoexamp = @"\n\
         //}	/* cutstr */
         //#endif
 
-        static void printf(String format, params object[] args) {
+        static void printf(String format, params object[] args)
+        {
             Console.Write(C.sprintf(format, args));
         }
 
         #endregion
 
-        static int Main(string[] args) {
+        static int Main(string[] args)
+        {
             var s = Environment.GetCommandLineArgs();
             //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pp", "-ejpl" };
             //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pp", "-emos" };
             //s = new String[] { s[0], "-b16.08.1974", "-n1", "-s1", "-fPLBRS", "-pah", "-ejplde431.eph" };
             var result = main_test(s.Length, s);
 #if DEBUG
+            Console.WriteLine("Press a key to exit...");
             Console.ReadKey();
 #endif
             return result;

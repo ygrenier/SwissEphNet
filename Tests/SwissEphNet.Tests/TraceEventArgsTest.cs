@@ -1,15 +1,14 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SwissEphNet.Tests
 {
-    [TestClass]
     public class TraceEventArgsTest
     {
-        [TestMethod]
+        [Fact]
         public void TestCreate() {
             var target = new TraceEventArgs("message");
-            Assert.AreEqual("message", target.Message);
+            Assert.Equal("message", target.Message);
         }
     }
 }

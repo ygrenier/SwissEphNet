@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace SwissEphNet.Tests
 {
     partial class SwissEphTest
     {
-        [TestMethod]
+        [Fact]
         public void Test_swe_azalt() {
             using (var swe = new SwissEph()) {
                 double tjd = swe.swe_julday(1974, 8, 16, 0.5, SwissEph.SE_GREG_CAL);
@@ -13,9 +13,9 @@ namespace SwissEphNet.Tests
                 double[] xin = new double[6], xaz = new double[6]; String serr = null;
                 swe.swe_calc(tjd, SwissEph.SE_SUN, SwissEph.SEFLG_MOSEPH, xin, ref serr);
                 swe.swe_azalt(tjd, SwissEph.SE_ECL2HOR, geopos, 0, 0, xin, xaz);
-                Assert.AreEqual(249.642425229358, xaz[0], 0.000000001);
-                Assert.AreEqual(-32.8340786097275, xaz[1], 0.0000000001);
-                Assert.AreEqual(-32.8340786097275, xaz[2], 0.0000000001);
+                Assert.Equal(249.642425229358, xaz[0], 12);
+                Assert.Equal(-32.8340786097275, xaz[1], 12);
+                Assert.Equal(-32.8340786097275, xaz[2], 12);
             }
         }
     }

@@ -5,6 +5,7 @@
 *.suo
 *.user
 *.sln.docstates
+.vs/
 
 # Build results
 [Dd]ebug/
@@ -175,3 +176,4 @@ FakesAssemblies/
 /README.html
 /README.min.html
 /release-bin
+/binaries

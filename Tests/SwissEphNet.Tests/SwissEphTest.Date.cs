@@ -1,101 +1,101 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Text;
+using Xunit;
 
 namespace SwissEphNet.Tests
 {
     partial class SwissEphTest
     {
 
-        [TestMethod]
+        [Fact]
         public void TestJulDay() {
             using (var swe = new SwissEph()) {
-                Assert.AreEqual(0.0, swe.swe_julday(-4713, 11, 24, 12.0, SwissEph.SE_GREG_CAL));
+                Assert.Equal(0.0, swe.swe_julday(-4713, 11, 24, 12.0, SwissEph.SE_GREG_CAL));
 
-                Assert.AreEqual(0.0, swe.swe_julday(-4712, 1, 1, 12.0, SwissEph.SE_JUL_CAL));
+                Assert.Equal(0.0, swe.swe_julday(-4712, 1, 1, 12.0, SwissEph.SE_JUL_CAL));
 
-                Assert.AreEqual(2000000.0, swe.swe_julday(763, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
+                Assert.Equal(2000000.0, swe.swe_julday(763, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
 
-                Assert.AreEqual(2000000.0, swe.swe_julday(763, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
+                Assert.Equal(2000000.0, swe.swe_julday(763, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
 
-                Assert.AreEqual(1063884, swe.swe_julday(-1800, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
+                Assert.Equal(1063884, swe.swe_julday(-1800, 9, 18, 12.0, SwissEph.SE_GREG_CAL));
 
-                Assert.AreEqual(1063865, swe.swe_julday(-1800, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
+                Assert.Equal(1063865, swe.swe_julday(-1800, 9, 14, 12.0, SwissEph.SE_JUL_CAL));
 
-                Assert.AreEqual(2442275.47916667, swe.swe_julday(1974, 8, 15, 23 + 30 / 60.0 + 0 / 3600.0, SwissEph.SE_GREG_CAL), 0.00000001);
-                Assert.AreEqual(2456774.20375, swe.swe_julday(2014, 4, 26, SwissEph.GetHourValue(16, 53, 24), SwissEph.SE_GREG_CAL));
+                Assert.Equal(2442275.47916667, swe.swe_julday(1974, 8, 15, 23 + 30 / 60.0 + 0 / 3600.0, SwissEph.SE_GREG_CAL), 8);
+                Assert.Equal(2456774.20375, swe.swe_julday(2014, 4, 26, SwissEph.GetHourValue(16, 53, 24), SwissEph.SE_GREG_CAL));
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void TestRevjul() {
             using (var swe = new SwissEph()) {
                 int y = 0, m = 0, d = 0; double ut = 0;
 
                 swe.swe_revjul(0, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
-                Assert.AreEqual(-4713, y);
-                Assert.AreEqual(11, m);
-                Assert.AreEqual(24, d);
-                Assert.AreEqual(12.0, ut);
+                Assert.Equal(-4713, y);
+                Assert.Equal(11, m);
+                Assert.Equal(24, d);
+                Assert.Equal(12.0, ut);
 
                 swe.swe_revjul(0, SwissEph.SE_JUL_CAL, ref y, ref m, ref d, ref ut);
-                Assert.AreEqual(-4712, y);
-                Assert.AreEqual(1, m);
-                Assert.AreEqual(1, d);
-                Assert.AreEqual(12.0, ut);
+                Assert.Equal(-4712, y);
+                Assert.Equal(1, m);
+                Assert.Equal(1, d);
+                Assert.Equal(12.0, ut);
 
                 swe.swe_revjul(2000000, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
-                Assert.AreEqual(763, y);
-                Assert.AreEqual(9, m);
-                Assert.AreEqual(18, d);
-                Assert.AreEqual(12.0, ut);
+                Assert.Equal(763, y);
+                Assert.Equal(9, m);
+                Assert.Equal(18, d);
+                Assert.Equal(12.0, ut);
 
                 swe.swe_revjul(2000000, SwissEph.SE_JUL_CAL, ref y, ref m, ref d, ref ut);
-                Assert.AreEqual(763, y);
-                Assert.AreEqual(9, m);
-                Assert.AreEqual(14, d);
-                Assert.AreEqual(12.0, ut);
+                Assert.Equal(763, y);
+                Assert.Equal(9, m);
+                Assert.Equal(14, d);
+                Assert.Equal(12.0, ut);
 
                 swe.swe_revjul(2456774.20375, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
-                Assert.AreEqual(2014, y);
-                Assert.AreEqual(4, m);
-                Assert.AreEqual(26, d);
-                Assert.AreEqual(16.8899999968708, ut, 0.0000000000001);
-                Assert.AreEqual(16.0, Math.Floor(ut));
-                Assert.AreEqual(1013, Math.Floor(ut * 60.0));
-                Assert.AreEqual(53.0, (Math.Floor(ut * 60.0)) % 60.0);
-                Assert.AreEqual(60803, Math.Floor(ut * 3600.0));
-                Assert.AreEqual(23.9999887347221, (ut * 3600.0) % 60.0, 0.0000000000001);
-                Assert.AreEqual(23, Math.Floor(ut * 3600.0) % 60.0);
+                Assert.Equal(2014, y);
+                Assert.Equal(4, m);
+                Assert.Equal(26, d);
+                Assert.Equal(16.8899999968708, ut, 13);
+                Assert.Equal(16.0, Math.Floor(ut));
+                Assert.Equal(1013, Math.Floor(ut * 60.0));
+                Assert.Equal(53.0, (Math.Floor(ut * 60.0)) % 60.0);
+                Assert.Equal(60803, Math.Floor(ut * 3600.0));
+                Assert.Equal(23.9999887347221, (ut * 3600.0) % 60.0, 13);
+                Assert.Equal(23, Math.Floor(ut * 3600.0) % 60.0);
 
 
                 swe.swe_revjul(2442275.47916667, SwissEph.SE_GREG_CAL, ref y, ref m, ref d, ref ut);
-                Assert.AreEqual(1974, y);
-                Assert.AreEqual(8, m);
-                Assert.AreEqual(15, d);
-                Assert.AreEqual(23.5000000745058, ut, 0.0000000000001);
-                Assert.AreEqual(23.0, Math.Floor(ut));
-                Assert.AreEqual(1410.0, Math.Floor(ut * 60.0));
-                Assert.AreEqual(30.0, (Math.Floor(ut * 60.0)) % 60.0);
-                Assert.AreEqual(84600, Math.Floor(ut * 3600.0));
-                Assert.AreEqual(0, Math.Floor(ut * 3600.0) % 60.0);
+                Assert.Equal(1974, y);
+                Assert.Equal(8, m);
+                Assert.Equal(15, d);
+                Assert.Equal(23.5000000745058, ut, 13);
+                Assert.Equal(23.0, Math.Floor(ut));
+                Assert.Equal(1410.0, Math.Floor(ut * 60.0));
+                Assert.Equal(30.0, (Math.Floor(ut * 60.0)) % 60.0);
+                Assert.Equal(84600, Math.Floor(ut * 3600.0));
+                Assert.Equal(0, Math.Floor(ut * 3600.0) % 60.0);
             }
         }
 
-        //[TestMethod]
+        //[Fact]
         //public void TestDeltaT_with_ESPENAK_MEEUS_2006() {
         //    using (var swe = new SwissEph()) {
         //        swe.ESPENAK_MEEUS_2006 = true;
         //        double deltaPrec = 0.00000000000001;
 
-        //        Assert.AreEqual(1.5716511059188, swe.swe_deltat(0.0), deltaPrec);
+        //        Assert.Equal(1.5716511059188, swe.swe_deltat(0.0), deltaPrec);
 
-        //        Assert.AreEqual(0.0374254553961889, swe.swe_deltat(2000000.0), deltaPrec);
-        //        Assert.AreEqual(0.0374253886123893, swe.swe_deltat(2000000.25), deltaPrec);
-        //        Assert.AreEqual(0.0374253218286385, swe.swe_deltat(2000000.5), deltaPrec);
-        //        Assert.AreEqual(0.0374252550449363, swe.swe_deltat(2000000.75), deltaPrec);
-        //        Assert.AreEqual(0.000848297829347124, swe.swe_deltat(2317746.13090277789), deltaPrec);
+        //        Assert.Equal(0.0374254553961889, swe.swe_deltat(2000000.0), deltaPrec);
+        //        Assert.Equal(0.0374253886123893, swe.swe_deltat(2000000.25), deltaPrec);
+        //        Assert.Equal(0.0374253218286385, swe.swe_deltat(2000000.5), deltaPrec);
+        //        Assert.Equal(0.0374252550449363, swe.swe_deltat(2000000.75), deltaPrec);
+        //        Assert.Equal(0.000848297829347124, swe.swe_deltat(2317746.13090277789), deltaPrec);
 
         //        // 2415020.0
         //        var vals = new Dictionary<double, double>() {
@@ -176,264 +176,264 @@ namespace SwissEphNet.Tests
 
         //        };
         //        foreach (var kvp in vals) {
-        //            Assert.AreEqual(kvp.Value, swe.swe_deltat(kvp.Key), deltaPrec, String.Format("deltat({0})", kvp.Key));
+        //            Assert.Equal(kvp.Value, swe.swe_deltat(kvp.Key), deltaPrec, String.Format("deltat({0})", kvp.Key));
         //        }
 
-        //        Assert.AreEqual(0.101230433035332, swe.swe_deltat(3000000), deltaPrec);
-        //        Assert.AreEqual(0.101230598229371, swe.swe_deltat(3000000.5), deltaPrec);
-        //        Assert.AreEqual(0.101230680826441, swe.swe_deltat(3000000.75), deltaPrec);
+        //        Assert.Equal(0.101230433035332, swe.swe_deltat(3000000), deltaPrec);
+        //        Assert.Equal(0.101230598229371, swe.swe_deltat(3000000.5), deltaPrec);
+        //        Assert.Equal(0.101230680826441, swe.swe_deltat(3000000.75), deltaPrec);
 
         //    }
         //}
 
-        //[TestMethod]
+        //[Fact]
         //public void TestDeltaT_without_ESPENAK_MEEUS_2006() {
         //    using (var swe = new SwissEph()) {
         //        swe.ESPENAK_MEEUS_2006 = false;
         //        double deltaPrec = 0.000000000001;
 
-        //        Assert.AreEqual(1.5716511059188, swe.swe_deltat(0.0), deltaPrec);
+        //        Assert.Equal(1.5716511059188, swe.swe_deltat(0.0), deltaPrec);
 
-        //        Assert.AreEqual(0.0375610997366034, swe.swe_deltat(2000000.0), deltaPrec);
-        //        Assert.AreEqual(0.0375610327085927, swe.swe_deltat(2000000.25), deltaPrec);
-        //        Assert.AreEqual(0.0375609656805818, swe.swe_deltat(2000000.5), deltaPrec);
-        //        Assert.AreEqual(0.0375608986525707, swe.swe_deltat(2000000.75), deltaPrec);
-        //        Assert.AreEqual(0.000848297829347124, swe.swe_deltat(2317746.13090277789), deltaPrec);
+        //        Assert.Equal(0.0375610997366034, swe.swe_deltat(2000000.0), deltaPrec);
+        //        Assert.Equal(0.0375610327085927, swe.swe_deltat(2000000.25), deltaPrec);
+        //        Assert.Equal(0.0375609656805818, swe.swe_deltat(2000000.5), deltaPrec);
+        //        Assert.Equal(0.0375608986525707, swe.swe_deltat(2000000.75), deltaPrec);
+        //        Assert.Equal(0.000848297829347124, swe.swe_deltat(2317746.13090277789), deltaPrec);
 
         //        var tjd = SwissEph.J2000 + (365.25 * (1610 - 2000.0));
-        //        Assert.AreEqual(0.00138947083317893, swe.swe_deltat(tjd), deltaPrec);
+        //        Assert.Equal(0.00138947083317893, swe.swe_deltat(tjd), deltaPrec);
 
 
-        //        Assert.AreEqual(0.101230433035332, swe.swe_deltat(3000000), deltaPrec);
-        //        Assert.AreEqual(0.101230598229371, swe.swe_deltat(3000000.5), deltaPrec);
-        //        Assert.AreEqual(0.101230680826441, swe.swe_deltat(3000000.75), deltaPrec);
+        //        Assert.Equal(0.101230433035332, swe.swe_deltat(3000000), deltaPrec);
+        //        Assert.Equal(0.101230598229371, swe.swe_deltat(3000000.5), deltaPrec);
+        //        Assert.Equal(0.101230680826441, swe.swe_deltat(3000000.75), deltaPrec);
 
         //    }
         //}
 
-        [TestMethod]
+        [Fact]
         public void Test_swe_utc_time_zone() {
             using (var swe = new SwissEph()) {
                 int year = 1974, month = 8, day = 16, hour = 0, min = 30; double sec = 0;
 
                 // local to utc
                 swe.swe_utc_time_zone(year, month, day, hour, min, sec, +2.0, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(15, day);
-                Assert.AreEqual(22, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(0.0, sec);
+                Assert.Equal(1974, year);
+                Assert.Equal(8, month);
+                Assert.Equal(15, day);
+                Assert.Equal(22, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(0.0, sec);
 
                 // utc to local
                 swe.swe_utc_time_zone(year, month, day, hour, min, sec, -2.0, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(0.0, sec);
+                Assert.Equal(1974, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(0.0, sec);
 
                 // check leap sec
                 sec = 61;
                 swe.swe_utc_time_zone(year, month, day, hour, min, sec, -2.0, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(2, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(60.9999999999998, sec, 0.0000000000001);
+                Assert.Equal(1974, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(2, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(60.9999999999998, sec, 13);
 
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_swe_utc_to_jd() {
             using (var swe = new SwissEph()) {
                 int year = 1974, month = 8, day = 16, hour = 0, min = 30; double sec = 0;
                 string serr = null; double[] dret = new double[2];
 
                 var res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2442275.5213563, dret[0], 0.0000001);
-                Assert.AreEqual(2442275.52083414, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2442275.5213563, dret[0], 7);
+                Assert.Equal(2442275.52083414, dret[1], 7);
+                Assert.Equal(null, serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2442288.5213563, dret[0], 0.0000001);
-                Assert.AreEqual(2442288.52083373, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2442288.5213563, dret[0], 7);
+                Assert.Equal(2442288.52083373, dret[1], 7);
+                Assert.Equal(null, serr);
 
                 // leap second
                 res = swe.swe_utc_to_jd(year, 12, 31, 23, 59, 60, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2442413.50052296, dret[0], 0.0000001);
-                Assert.AreEqual(2442413.49999659, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2442413.50052296, dret[0], 7);
+                Assert.Equal(2442413.49999659, dret[1], 7);
+                Assert.Equal(null, serr);
 
                 res = swe.swe_utc_to_jd(year, 12, 31, 23, 59, 60, SwissEph.SE_JUL_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.ERR, res);
-                Assert.AreEqual("invalid time (no leap second!): 23:59:60.00", serr);
+                Assert.Equal(SwissEph.ERR, res);
+                Assert.Equal("invalid time (no leap second!): 23:59:60.00", serr);
                 serr = null;
 
                 // Before 1972
                 year = 1960;
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2437162.52122023, dret[0], 0.0000001);
-                Assert.AreEqual(2437162.52083333, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2437162.52122023, dret[0], 7);
+                Assert.Equal(2437162.52083333, dret[1], 7);
+                Assert.Equal(null, serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2437175.52122041, dret[0], 0.0000001);
-                Assert.AreEqual(2437175.52083333, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2437175.52122041, dret[0], 7);
+                Assert.Equal(2437175.52083333, dret[1], 7);
+                Assert.Equal(null, serr);
 
                 // Date > today (after last leap date)
                 year = 2030;
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2462729.52185329, dret[0], 0.0000001);
-                Assert.AreEqual(2462729.52083333, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2462729.52185329, dret[0], 7);
+                Assert.Equal(2462729.52083333, dret[1], 7);
+                Assert.Equal(null, serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2462742.52185396, dret[0], 0.0000001);
-                Assert.AreEqual(2462742.52083333, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2462742.52185396, dret[0], 7);
+                Assert.Equal(2462742.52083333, dret[1], 7);
+                Assert.Equal(null, serr);
 
                 // Errors
                 year = 1974;
                 res = swe.swe_utc_to_jd(year, 2, 31, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.ERR, res);
-                Assert.AreEqual("invalid date: year = 1974, month = 2, day = 31", serr);
+                Assert.Equal(SwissEph.ERR, res);
+                Assert.Equal("invalid date: year = 1974, month = 2, day = 31", serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, 62, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.ERR, res);
-                Assert.AreEqual("invalid time: 0:62:0.00", serr);
+                Assert.Equal(SwissEph.ERR, res);
+                Assert.Equal("invalid time: 0:62:0.00", serr);
 
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_swe_jdet_to_utc() {
             using (var swe = new SwissEph()) {
                 int year = 0, month = 0, day = 0, hour = 0, min = 0; double sec = 0;
 
                 swe.swe_jdet_to_utc(2442275.5213563, SwissEph.SE_GREG_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(0.000335276126861572, sec, 0.000000000000000001);
+                Assert.Equal(1974, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(0.000335276126861572, sec, 14);
 
                 swe.swe_jdet_to_utc(2442288.5213563, SwissEph.SE_JUL_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(0.000335276126861572, sec, 0.000000000000000001);
+                Assert.Equal(1974, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(0.000335276126861572, sec, 14);
 
                 // leap second
                 swe.swe_jdet_to_utc(2442413.50052296, SwissEph.SE_GREG_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(12, month);
-                Assert.AreEqual(31, day);
-                Assert.AreEqual(23, hour);
-                Assert.AreEqual(59, min);
-                Assert.AreEqual(59.9997586011887, sec, 0.00000000001);
+                Assert.Equal(1974, year);
+                Assert.Equal(12, month);
+                Assert.Equal(31, day);
+                Assert.Equal(23, hour);
+                Assert.Equal(59, min);
+                Assert.Equal(59.9997586011887, sec, 12);
                 swe.swe_jdet_to_utc(2442413.50052299, SwissEph.SE_GREG_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(12, month);
-                Assert.AreEqual(31, day);
-                Assert.AreEqual(23, hour);
-                Assert.AreEqual(59, min);
-                Assert.AreEqual(60.0022987127304, sec, 0.00000000001);
+                Assert.Equal(1974, year);
+                Assert.Equal(12, month);
+                Assert.Equal(31, day);
+                Assert.Equal(23, hour);
+                Assert.Equal(59, min);
+                Assert.Equal(60.0022987127304, sec, 12);
                 swe.swe_jdet_to_utc(2442413.50055, SwissEph.SE_GREG_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1975, year);
-                Assert.AreEqual(1, month);
-                Assert.AreEqual(1, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(0, min);
-                Assert.AreEqual(1.33598148822784, sec, 0.00000000001);
+                Assert.Equal(1975, year);
+                Assert.Equal(1, month);
+                Assert.Equal(1, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(0, min);
+                Assert.Equal(1.33598148822784, sec, 12);
 
                 // Before 1972
                 swe.swe_jdet_to_utc(2437162.52122023, SwissEph.SE_GREG_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1960, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(29, min);
-                Assert.AreEqual(59.9996513128281, sec, 0.000000000001);
+                Assert.Equal(1960, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(29, min);
+                Assert.Equal(59.9996513128281, sec, 12);
 
                 swe.swe_jdet_to_utc(2437175.52122041, SwissEph.SE_JUL_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1960, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(29, min);
-                Assert.AreEqual(59.9996915459633, sec, 0.000000000001);
+                Assert.Equal(1960, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(29, min);
+                Assert.Equal(59.9996915459633, sec, 12);
 
                 // Date > today (after last leap date)
                 swe.swe_jdet_to_utc(2462729.5218584, SwissEph.SE_GREG_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(2030, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(0.441692769527435, sec, 0.000000000001);
+                Assert.Equal(2030, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(0.441692769527435, sec, 12);
 
                 swe.swe_jdet_to_utc(2462742.52185908, SwissEph.SE_JUL_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(2030, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(0.442135334014893, sec, 0.000000000001);
+                Assert.Equal(2030, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(0.442135334014893, sec, 12);
 
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_swe_jdut1_to_utc() {
             using (var swe = new SwissEph()) {
                 int year = 0, month = 0, day = 0, hour = 0, min = 0; double sec = 0;
 
                 swe.swe_jdut1_to_utc(2442275.5213563, SwissEph.SE_GREG_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
-                Assert.AreEqual(1974, year);
-                Assert.AreEqual(8, month);
-                Assert.AreEqual(16, day);
-                Assert.AreEqual(0, hour);
-                Assert.AreEqual(30, min);
-                Assert.AreEqual(45.1149970293045, sec, 0.00000000000001);
+                Assert.Equal(1974, year);
+                Assert.Equal(8, month);
+                Assert.Equal(16, day);
+                Assert.Equal(0, hour);
+                Assert.Equal(30, min);
+                Assert.Equal(45.1149970293045, sec, 10);
 
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_swe_date_conversion() {
             using (var swe = new SwissEph()) {
                 int year = 1974, month = 8, day = 16; double hour = 0.5; double tjd = 0.0;
 
                 var res = swe.swe_date_conversion(year, month, day, hour, 'g', ref tjd);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2442275.52083333, tjd, 0.0000001);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2442275.52083333, tjd, 8);
 
                 res = swe.swe_date_conversion(year, month, day, hour, 'j', ref tjd);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2442288.52083333, tjd, 0.0000001);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2442288.52083333, tjd, 8);
 
                 res = swe.swe_date_conversion(year, month, 32, hour, 'j', ref tjd);
-                Assert.AreEqual(SwissEph.ERR, res);
+                Assert.Equal(SwissEph.ERR, res);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_LoadingLeapSeconds() {
             int year = 2019, month = 12, day = 31, hour = 23, min = 59; double sec = 60;
             string serr = null; double[] dret = new double[2]; int res;
@@ -441,10 +441,10 @@ namespace SwissEphNet.Tests
             // The date is not a standard leap second
             using (var swe = new SwissEph()) {
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2458849.50082255, dret[0], 0.0000001);
-                Assert.AreEqual(2458849.5, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2458849.50082255, dret[0], 8);
+                Assert.Equal(2458849.5, dret[1], 15);
+                Assert.Equal(null, serr);
             }
 
             // We include the date as leap second in fake loading
@@ -514,10 +514,10 @@ namespace SwissEphNet.Tests
                 };
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2458849.50082389, dret[0], 0.0000001);
-                Assert.AreEqual(2458849.50000134, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2458849.50082389, dret[0], 8);
+                Assert.Equal(2458849.50000134, dret[1], 8);
+                Assert.Equal(null, serr);
             }
 
             // We adding a lot of lines in 'file' for code coverage purpose
@@ -534,25 +534,25 @@ namespace SwissEphNet.Tests
                 };
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
-                Assert.AreEqual(SwissEph.OK, res);
-                Assert.AreEqual(2458849.50082389, dret[0], 0.0000001);
-                Assert.AreEqual(2458849.50000134, dret[1], 0.00000001);
-                Assert.AreEqual(null, serr);
+                Assert.Equal(SwissEph.OK, res);
+                Assert.Equal(2458849.50082389, dret[0], 8);
+                Assert.Equal(2458849.50000134, dret[1], 8);
+                Assert.Equal(null, serr);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void Test_swe_day_of_week() {
             using (var target = new SwissEph()) {
-                Assert.AreEqual(0, target.swe_day_of_week(0));
-                Assert.AreEqual(5, target.swe_day_of_week(2456774.20375));
-                Assert.AreEqual(6, target.swe_day_of_week(2456775.20375));
-                Assert.AreEqual(0, target.swe_day_of_week(2456776.20375));
-                Assert.AreEqual(1, target.swe_day_of_week(2456777.20375));
-                Assert.AreEqual(2, target.swe_day_of_week(2456778.20375));
-                Assert.AreEqual(3, target.swe_day_of_week(2456779.20375));
-                Assert.AreEqual(4, target.swe_day_of_week(2456780.20375));
-                Assert.AreEqual(5, target.swe_day_of_week(2456781.20375));
+                Assert.Equal(0, target.swe_day_of_week(0));
+                Assert.Equal(5, target.swe_day_of_week(2456774.20375));
+                Assert.Equal(6, target.swe_day_of_week(2456775.20375));
+                Assert.Equal(0, target.swe_day_of_week(2456776.20375));
+                Assert.Equal(1, target.swe_day_of_week(2456777.20375));
+                Assert.Equal(2, target.swe_day_of_week(2456778.20375));
+                Assert.Equal(3, target.swe_day_of_week(2456779.20375));
+                Assert.Equal(4, target.swe_day_of_week(2456780.20375));
+                Assert.Equal(5, target.swe_day_of_week(2456781.20375));
             }
         }
 

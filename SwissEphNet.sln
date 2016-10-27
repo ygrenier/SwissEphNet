@@ -1,7 +1,6 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{E1A57EF3-7B69-420D-9A11-F708D677C0C6}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,21 +14,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6D5C2702
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Programs", "Programs", "{DA9EB626-FC40-46C3-A44D-3EE76D044CC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwissEphNet", "SwissEphNet\SwissEphNet.csproj", "{8895A5B1-E188-4926-B204-87B921EE040C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweMini", "Programs\SweMini\SweMini.csproj", "{D2043376-EA04-4677-803E-698CB384D361}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweTest", "Programs\SweTest\SweTest.csproj", "{29AABD40-C169-40B9-8A84-2CFA070CE9E5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweWin", "Programs\SweWin\SweWin.csproj", "{D1AE1640-218C-4CCB-BD09-EADCAE96335A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwissEphNet.Tests", "Tests\SwissEphNet.Tests\SwissEphNet.Tests.csproj", "{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{D0592369-8075-4795-BABB-818AF5AD967D}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
-		SwissEphNet\SwissEphNet.nuspec = SwissEphNet\SwissEphNet.nuspec
+		make-dist.ps1 = make-dist.ps1
 	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SweMini", "Programs\SweMini\SweMini.xproj", "{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SwissEphNet", "SwissEphNet\SwissEphNet.xproj", "{067B4733-56FD-46A1-81B5-0FD31D76E68F}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SwissEphNet.Tests", "Tests\SwissEphNet.Tests\SwissEphNet.Tests.xproj", "{7D8FDC4D-94FB-4FB7-9457-23DDDE1DE55A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SweTest", "Programs\SweTest\SweTest.xproj", "{0565849E-C335-4A55-ABB0-EB6CAEE8DAAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweWin", "Programs\SweWin\SweWin.csproj", "{D1AE1640-218C-4CCB-BD09-EADCAE96335A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwissEphNet-Net40", "SwissEphNet\SwissEphNet-Net40.csproj", "{8895A5B1-E188-4926-B204-87B921EE040C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,34 +38,38 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D2043376-EA04-4677-803E-698CB384D361}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D2043376-EA04-4677-803E-698CB384D361}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D2043376-EA04-4677-803E-698CB384D361}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D2043376-EA04-4677-803E-698CB384D361}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29AABD40-C169-40B9-8A84-2CFA070CE9E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{067B4733-56FD-46A1-81B5-0FD31D76E68F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{067B4733-56FD-46A1-81B5-0FD31D76E68F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{067B4733-56FD-46A1-81B5-0FD31D76E68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{067B4733-56FD-46A1-81B5-0FD31D76E68F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D8FDC4D-94FB-4FB7-9457-23DDDE1DE55A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D8FDC4D-94FB-4FB7-9457-23DDDE1DE55A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D8FDC4D-94FB-4FB7-9457-23DDDE1DE55A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D8FDC4D-94FB-4FB7-9457-23DDDE1DE55A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0565849E-C335-4A55-ABB0-EB6CAEE8DAAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0565849E-C335-4A55-ABB0-EB6CAEE8DAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0565849E-C335-4A55-ABB0-EB6CAEE8DAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0565849E-C335-4A55-ABB0-EB6CAEE8DAAD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D2043376-EA04-4677-803E-698CB384D361} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
-		{29AABD40-C169-40B9-8A84-2CFA070CE9E5} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
+		{67BE4773-CC1F-4C5B-A3A6-38A163C9768C} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
+		{7D8FDC4D-94FB-4FB7-9457-23DDDE1DE55A} = {6D5C2702-2FF1-42A8-B86D-E5E5EAE41F66}
+		{0565849E-C335-4A55-ABB0-EB6CAEE8DAAD} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A} = {DA9EB626-FC40-46C3-A44D-3EE76D044CC8}
-		{93ADF5AE-AF28-4BF2-9918-6F442A8F6ABE} = {6D5C2702-2FF1-42A8-B86D-E5E5EAE41F66}
 	EndGlobalSection
 EndGlobal
