@@ -1,7 +1,18 @@
 # SwissEphNet
 
 This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from 
-C (version 2.04.00) to C# in a PCL project for cross platform usage.
+C (version 2.05.01) to C# in a PCL/.Net Core project for cross platform usage.
+
+Since version 2.5.1.14, the nuget package includes 3 versions:
+- .Net 4.0
+- .Net Standard 1.3
+- PCL Profile 136 : (.NETFramework 4.0, Silverlight 5.0, Windows 8.0, WindowsPhone 8.0)
+
+The programs SweMini and SweTest are availables in 2 versions:
+- .Net 4.0
+- .Net Core App 1.0
+
+These programs are available in the "binary.zip" of [each release](https://github.com/ygrenier/SwissEphNet/releases).
 
 # Thread Local Storage (TLS) support
 
