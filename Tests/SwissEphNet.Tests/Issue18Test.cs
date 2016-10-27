@@ -1,22 +1,22 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Xunit;
 
 namespace SwissEphNet.Tests
 {
-    [TestClass]
+
     public class Issue18Test
     {
-        [TestMethod]
+        [Fact]
         public void LoadAsteroidData()
         {
             using (var swe = new SwissEph())
             {
                 swe.OnLoadFile += (s, e) => {
-                    var asm = this.GetType().Assembly;
+                    var asm = this.GetType().GetAssembly();
                     String sr = e.FileName.Replace("[ephe]", @"SwissEphNet.Tests.files").Replace("/", ".").Replace("\\", ".");
                     e.File = asm.GetManifestResourceStream(sr);
                 };
@@ -27,12 +27,12 @@ namespace SwissEphNet.Tests
 
                 // The issue raised a FormatException
                 swe.swe_calc_ut(tjd, SwissEph.SE_AST_OFFSET + 5, SwissEph.SEFLG_SWIEPH, xx, ref serr);
-                Assert.AreEqual(130.764380973775, xx[0], 0.000000000001);
-                Assert.AreEqual(-1.04454870127634, xx[1], 0.0000000000001);
-                Assert.AreEqual(3.07938963784905, xx[2], 0.0000000000001);
-                Assert.AreEqual(0, xx[3], 0.0000000000001);
-                Assert.AreEqual(0, xx[4], 0.0000000000001);
-                Assert.AreEqual(0, xx[5], 0.0000000000001);
+                Assert.Equal(130.764380973775, xx[0], 12);
+                Assert.Equal(-1.04454870127634, xx[1], 13);
+                Assert.Equal(3.07938963784905, xx[2], 13);
+                Assert.Equal(0, xx[3], 13);
+                Assert.Equal(0, xx[4], 13);
+                Assert.Equal(0, xx[5], 13);
             }
         }
     }

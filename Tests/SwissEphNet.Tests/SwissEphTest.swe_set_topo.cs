@@ -1,14 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Xunit;
 
 namespace SwissEphNet.Tests
 {
     partial class SwissEphTest
     {
-        [TestMethod]
+        [Fact]
         public void Test_swe_set_topo()
         {
             using (var swe = new SwissEph())
@@ -21,20 +21,20 @@ namespace SwissEphNet.Tests
                     ; String serr = null;
 
                 swe.swe_calc(tjd, SwissEph.SE_SUN, 33024, xin1, ref serr);
-                Assert.AreEqual(0, xin1[0], 0.0000000000001);
-                Assert.AreEqual(0, xin1[1], 0.0000000000001);
-                Assert.AreEqual(0, xin1[2], 0.0000000000001);
+                Assert.Equal(0, xin1[0], 12);
+                Assert.Equal(0, xin1[1], 12);
+                Assert.Equal(0, xin1[2], 12);
 
                 swe.swe_set_topo(geopos[0], geopos[1], geopos[2]);
                 swe.swe_calc(tjd, SwissEph.SE_SUN, 33024, xin2, ref serr);
-                Assert.AreEqual(142.78180233188, xin2[0], 0.000000000001);
-                Assert.AreEqual(6.06728560368863E-05, xin2[1], 0.000000000001);
-                Assert.AreEqual(1.01269577772231, xin2[2], 0.000000000001);
+                Assert.Equal(142.78180233188, xin2[0], 12);
+                Assert.Equal(6.06728560368863E-05, xin2[1], 12);
+                Assert.Equal(1.01269577772231, xin2[2], 12);
 
                 swe.swe_calc(tjd, SwissEph.SE_SUN, 33024, xin3, ref serr);
-                Assert.AreEqual(142.78180233188, xin3[0], 0.000000000001);
-                Assert.AreEqual(6.06728560368863E-05, xin3[1], 0.0000000000001);
-                Assert.AreEqual(1.01269577772231, xin3[2], 0.0000000000001);
+                Assert.Equal(142.78180233188, xin3[0], 12);
+                Assert.Equal(6.06728560368863E-05, xin3[1], 12);
+                Assert.Equal(1.01269577772231, xin3[2], 12);
             }
         }
 

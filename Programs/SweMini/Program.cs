@@ -83,17 +83,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using SwissEphNet;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace SweMini
 {
-
     class Program
     {
-        static int Main(string[] args) {
+        static int Main(string[] args)
+        {
             return Main_Mini(args);
             //return Main_TestValues(args);
         }
@@ -124,18 +124,21 @@ namespace SweMini
         //    return 0;
         //}
 
-        static int Main_Mini(string[] args) {
+        static int Main_Mini(string[] args)
+        {
             string sdate = String.Empty, snam = String.Empty, serr = String.Empty;
             int jday = 1, jmon = 1, jyear = 2000;
             double jut = 0.0;
             double[] x2 = new double[6];
             Int32 iflag, iflgret;
             //int p;
-            using (var swe = new SwissEph()) {
+            using (var swe = new SwissEph())
+            {
                 swe.swe_set_ephe_path(null);
                 iflag = SwissEph.SEFLG_SPEED;
                 swe.OnLoadFile += swe_OnLoadFile;
-                while (true) {
+                while (true)
+                {
                     Console.Write("\nDate (d.m.y) ? ");
                     sdate = Console.ReadLine();
                     if (String.IsNullOrWhiteSpace(sdate)) break;
@@ -162,7 +165,8 @@ namespace SweMini
                     /*
                      * a loop over all planets
                      */
-                    for (var p = SwissEph.SE_SUN; p <= SwissEph.SE_CHIRON; p++) {
+                    for (var p = SwissEph.SE_SUN; p <= SwissEph.SE_CHIRON; p++)
+                    {
                         if (p == SwissEph.SE_EARTH) continue;
                         /*
                          * do the coordinate calculation for this planet p
@@ -196,13 +200,15 @@ namespace SweMini
             return 0;
         }
 
-        static Stream SearchFile(String fileName) {
+        static Stream SearchFile(String fileName)
+        {
             fileName = fileName.Trim('/', '\\');
-            var folders = new string[] { 
-                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Datas"),
+            var folders = new string[] {
+                System.IO.Path.Combine(Directory.GetCurrentDirectory(), "Datas"),
                 @"C:\Temp\swisseph\swisseph\ephe"
             };
-            foreach (var folder in folders) {
+            foreach (var folder in folders)
+            {
                 var f = Path.Combine(folder, fileName);
                 if (File.Exists(f))
                     return new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
@@ -210,17 +216,22 @@ namespace SweMini
             return null;
         }
 
-        static void swe_OnLoadFile(object sender, LoadFileEventArgs e) {
-            if (e.FileName.StartsWith("[ephe]")) {
+        static void swe_OnLoadFile(object sender, LoadFileEventArgs e)
+        {
+            if (e.FileName.StartsWith("[ephe]"))
+            {
                 e.File = SearchFile(e.FileName.Replace("[ephe]", string.Empty));
-            } else {
+            }
+            else
+            {
                 var f = e.FileName;
                 if (System.IO.File.Exists(f))
                     e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read);
             }
         }
 
-        public static void printf(string Format, params object[] Parameters) {
+        public static void printf(string Format, params object[] Parameters)
+        {
             Console.Write(C.sprintf(Format, Parameters));
         }
 

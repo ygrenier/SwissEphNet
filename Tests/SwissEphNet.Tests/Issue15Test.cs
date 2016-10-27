@@ -1,15 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Xunit;
 
 namespace SwissEphNet.Tests
 {
-    [TestClass]
+    
     public class Issue15Test
     {
-        [TestMethod]
+        [Fact]
         public void TestSideral()
         {
             using (var sweph = new SwissEph())
@@ -24,59 +24,59 @@ namespace SwissEphNet.Tests
                 var tjd = sweph.swe_julday(jyear, jmon, jday, jut, SwissEph.SE_GREG_CAL);
                 var te = tjd + sweph.swe_deltat(tjd);
 
-                double delta = 0.000001;
+                int delta = 6;
 
-                Assert.AreEqual(2451910.5, tjd);
-                Assert.AreEqual(2451910.500742, te, delta);
+                Assert.Equal(2451910.5, tjd);
+                Assert.Equal(2451910.500742, te, delta);
 
                 sweph.swe_set_sid_mode(SwissEph.SE_SIDM_LAHIRI, 0, 0);
                 double ayanamsa = sweph.swe_get_ayanamsa(te);
 
-                Assert.AreEqual(23.871032, ayanamsa, delta);
+                Assert.Equal(23.871032, ayanamsa, delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_SUN, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(256.766845, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(256.766845, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_MOON, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(324.839238, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(324.839238, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_MERCURY, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(260.404949, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(260.404949, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_VENUS, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(303.100189, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(303.100189, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_MARS, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(191.071250, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(191.071250, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_JUPITER, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(38.323488, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(38.323488, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_SATURN, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(30.724496, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(30.724496, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_URANUS, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(294.783510, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(294.783510, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_NEPTUNE, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(281.460643, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(281.460643, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_PLUTO, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(229.901526, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(229.901526, x2[0], delta);
 
                 iflgret = sweph.swe_calc(te, SwissEph.SE_MEAN_NODE, iflag, x2, ref serr);
-                Assert.AreEqual(iflgret, iflag);
-                Assert.AreEqual(81.818882, x2[0], delta);
+                Assert.Equal(iflgret, iflag);
+                Assert.Equal(81.818882, x2[0], delta);
             }
 
         }

@@ -1,18 +1,59 @@
-version: 2.5.1.{build}
-branches:
-  only:
-  - master
-configuration: Release
-build:
-  publish_nuget: true
-  verbosity: minimal
-after_build:
-- ps: "$DestPath = \"release-bin\"\n\nif ((Test-Path -path $DestPath) -eq $True)\n{\n    $res = Remove-Item -Recurse $DestPath\n}\n$res = New-Item $DestPath -type directory -ErrorAction SilentlyContinue\n\n$Binaries = [System.IO.Path]::Combine($DestPath, \"bin\")\n$res = New-Item $Binaries -type directory\n\nGet-ChildItem -Recurse . -Force -ErrorAction SilentlyContinue -File `\n    | Where-Object { \n        ($_.PSIsContainer -eq $false) `\n        -and ($_.DirectoryName.EndsWith(\"bin\\Release\")) `\n        -and !($_.Name.Contains(\".vshost.\")) `\n        -and !($_.Name.Contains(\"Tests\")) `\n        -and ( ( $_.Name -like \"*.dll\") -or ( $_.Name -like \"*.exe\") ) `\n    } `\n    | ForEach-Object { Copy-Item $_.FullName $Binaries }"
-artifacts:
-- path: '*.nupkg'
-  name: Nuget
-- path: release-bin
-  name: Binary
-deploy:
-- provider: Environment
-  name: Nuget
+# Master branch: production
+-
+  version: 2.5.1.{build}
+  branches:
+    only:
+      - master
+
+  configuration: Release
+  build:
+    publish_nuget: true
+    verbosity: minimal
+  after_build:
+    - ps: "$DestPath = \"release-bin\"\n\nif ((Test-Path -path $DestPath) -eq $True)\n{\n    $res = Remove-Item -Recurse $DestPath\n}\n$res = New-Item $DestPath -type directory -ErrorAction SilentlyContinue\n\n$Binaries = [System.IO.Path]::Combine($DestPath, \"bin\")\n$res = New-Item $Binaries -type directory\n\nGet-ChildItem -Recurse . -Force -ErrorAction SilentlyContinue -File `\n    | Where-Object { \n        ($_.PSIsContainer -eq $false) `\n        -and ($_.DirectoryName.EndsWith(\"bin\\Release\")) `\n        -and !($_.Name.Contains(\".vshost.\")) `\n        -and !($_.Name.Contains(\"Tests\")) `\n        -and ( ( $_.Name -like \"*.dll\") -or ( $_.Name -like \"*.exe\") ) `\n    } `\n    | ForEach-Object { Copy-Item $_.FullName $Binaries }"
+  artifacts:
+    - path: '*.nupkg'
+      name: Nuget
+    - path: release-bin
+      name: Binary
+  deploy:
+    - provider: Environment
+      name: Nuget
+   
+# Netcore: beta
+-
+  version: 2.5.1.{build}-beta
+  branches:
+    only:
+      - feature/netcore
+
+  max_jobs: 1
+  configuration: Release
+  before_build:
+    - ps: >-
+        nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
+
+        dotnet restore
+
+        dotnet build .\SwissEphNet\ -c Release
+
+  build:
+    verbosity: minimal
+  after_build:
+    - ps: >-
+        dotnet pack .\SwissEphNet\ -c Release
+
+        Get-ChildItem . -Recurse -Include "*.symbols.nupkg" | Remove-Item
+
+        .\make-dist.ps1
+
+  test_script:
+    - cmd: dotnet test .\Tests\SwissEphNet.Tests\
+  artifacts:
+    - path: SwissEphNet/bin/$(configuration)/*.nupkg
+      name: Nuget
+    - path: binaries
+      name: Binary
+  deploy:
+    - provider: Environment
+      name: Nuget

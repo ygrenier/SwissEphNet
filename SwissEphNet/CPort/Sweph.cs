@@ -314,7 +314,7 @@ namespace SwissEphNet.CPort
             //  }
             //#endif
             //  return s;
-            return typeof(Sweph).Assembly.FullName;
+            return typeof(Sweph).GetAssembly().FullName;
         }
 #endif	// NO_SWE_GLP
 

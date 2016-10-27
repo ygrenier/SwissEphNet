@@ -1,0 +1,52 @@
+﻿{
+  "name": "SwissEphNet",
+  "version": "2.5.1.14-beta-2",
+  "title": "SwissEph for .Net",
+  "authors": [ "Yan Grenier" ],
+  "description": "A Swiss Ephemeris .Net portage",
+  "copyright": "Copyright 2014-2016",
+  "packOptions": {
+    "summary": "A Swiss Ephemeris .Net portage",
+    "owners": [ "Yan Grenier" ],
+    "licenseUrl": "https://raw.githubusercontent.com/ygrenier/SwissEphNet/master/LICENSE",
+    "projectUrl": "https://github.com/ygrenier/SwissEphNet",
+    "requireLicenseAcceptance": false,
+    "tags": [ "Swiss Ephemeris" ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/ygrenier/SwissEphNet"
+    },
+    "releaseNotes": "2.5.1.14:\n - Update package to .net Core\n2.5.1.13 :\n - Update the code to the Swiss Ephemeris 2.05.01 version.\n2.4.0.12 :\n - Bug fixes.\n2.4.0.11 :\n - Bug fix on the sideral calculation.\n2.4.0.10 :\n - Update the code to the Swiss Ephemeris 2.04.00 version.\n - Correct the code remove all static fields to permit multiple calculations with multiple SwissEph instances.\n2.2.1.9 :\n - Update the code to the Swiss Ephemeris 2.02.01 version.\n2.1.0.6 :\n - Update the code to the Swiss Ephemeris 2.01.00 version.\n2.0.0.5 :\n - Fix an error : some swed data (like topocentric position) was reseted on each swe_close() call.\n"
+  },
+
+  "buildOptions": {
+    "debugType": "portable",
+    "platform": "anycpu"
+  },
+
+  "frameworks": {
+    "net40": {},
+    ".NETPortable,Version=v4.0,Profile=Profile136": {
+      "frameworkAssemblies": {
+        "mscorlib": "",
+        "System": "",
+        "System.Core": ""
+      },
+      "buildOptions": {
+        "define": [ "PCL" ]
+      }
+    },
+    "netstandard1.3": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Runtime": "4.1.0",
+        "System.Text.Encoding.CodePages": "4.0.1"
+      },
+      "buildOptions": {
+        "define": [ "NET_STANDARD" ]
+      },
+      "imports": "dnxcore50"
+    }
+  }
+
+}

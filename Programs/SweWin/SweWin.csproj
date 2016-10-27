@@ -94,17 +94,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.csproj">
-      <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
-      <Name>SwissEphNet</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Datas\sedeltat.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SwissEphNet\SwissEphNet-Net40.csproj">
+      <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
+      <Name>SwissEphNet-Net40</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
