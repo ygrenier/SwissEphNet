@@ -1,8 +1,6 @@
-# Global configuration
-version: 2.5.1.{build}
-
 # Master branch: production
 -
+  version: 2.5.1.{build}
   branches:
     only:
       - master
@@ -24,6 +22,7 @@ version: 2.5.1.{build}
    
 # Netcore: beta
 -
+  version: 2.5.1.{build}-beta
   branches:
     only:
       - feature/netcore
