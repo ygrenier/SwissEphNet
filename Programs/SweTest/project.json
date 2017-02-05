@@ -7,10 +7,7 @@
   },
 
   "dependencies": {
-    "SwissEphNet": {
-      "version": "2.5.1.16",
-      "target": "project"
-    } 
+    "SwissEphNet": "2.5.1.16"
   },
 
   "frameworks": {
