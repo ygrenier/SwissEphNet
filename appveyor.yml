@@ -9,7 +9,7 @@
   configuration: Release
   before_build:
     - ps: >-
-		nuget restore .\SwissEphNet.sln
+        nuget restore .\SwissEphNet.sln
 
         dotnet restore .\SwissEphNet\
 
@@ -47,11 +47,11 @@
   configuration: Debug
   before_build:
     - ps: >-
-		nuget restore .\SwissEphNet.sln
+        nuget restore .\SwissEphNet.sln
 
         dotnet restore .\SwissEphNet\
 
-        dotnet build .\SwissEphNet\ -c Debug
+        dotnet build .\SwissEphNet\ -c Release
 
   build:
     verbosity: minimal
