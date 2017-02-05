@@ -9,9 +9,9 @@
   configuration: Release
   before_build:
     - ps: >-
-        nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
+		nuget restore .\SwissEphNet.sln
 
-        dotnet restore
+        dotnet restore .\SwissEphNet\
 
         dotnet build .\SwissEphNet\ -c Release
 
@@ -47,9 +47,9 @@
   configuration: Debug
   before_build:
     - ps: >-
-        nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
+		nuget restore .\SwissEphNet.sln
 
-        dotnet restore
+        dotnet restore .\SwissEphNet\
 
         dotnet build .\SwissEphNet\ -c Debug
 

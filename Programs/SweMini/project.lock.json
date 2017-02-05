@@ -1,5 +1,4 @@
 {
-  "locked": false,
   "version": 2,
   "targets": {
     ".NETCoreApp,Version=v1.0": {
@@ -1992,7 +1991,7 @@
           "lib/netstandard1.3/_._": {}
         }
       },
-      "SwissEphNet/2.5.1.16-beta5": {
+      "SwissEphNet/2.5.1.16": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.0",
         "dependencies": {
@@ -2019,7 +2018,7 @@
       }
     },
     ".NETFramework,Version=v4.0": {
-      "SwissEphNet/2.5.1.16-beta5": {
+      "SwissEphNet/2.5.1.16": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.0",
         "compile": {
@@ -6623,7 +6622,7 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "SwissEphNet/2.5.1.16-beta5": {
+    "SwissEphNet/2.5.1.16": {
       "type": "project",
       "path": "../../SwissEphNet/project.json",
       "msbuildProject": "../../SwissEphNet/SwissEphNet.xproj"
@@ -6631,7 +6630,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "SwissEphNet >= 2.5.1"
+      "SwissEphNet >= 2.5.1.16"
     ],
     ".NETCoreApp,Version=v1.0": [
       "Microsoft.NETCore.App >= 1.0.1"
@@ -6639,5 +6638,8 @@
     ".NETFramework,Version=v4.0": []
   },
   "tools": {},
-  "projectFileToolGroups": {}
+  "projectFileToolGroups": {},
+  "packageFolders": {
+    "C:\\Users\\yan_g\\.nuget\\packages\\": {}
+  }
 }
