@@ -298,7 +298,7 @@ namespace SwissEphNet.CPort
          */
 
         /* Leap seconds were inserted at the end of the following days:*/
-        const int NLEAP_SECONDS = 26;
+        const int NLEAP_SECONDS = 27;
         const int NLEAP_SECONDS_SPACE = 100;
         int[] leap_seconds = new int[]{
         19720630,
@@ -327,6 +327,7 @@ namespace SwissEphNet.CPort
         20081231,
         20120630,
         20150630,
+        20161231,
         0  /* keep this 0 as end mark */
         };
         const double J1972 = 2441317.5;
