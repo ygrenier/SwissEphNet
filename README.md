@@ -3,16 +3,26 @@
 This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from 
 C (version 2.05.01) to C# in a PCL/.Net Core project for cross platform usage.
 
-Since version 2.5.1.14, the nuget package includes 3 versions:
+Since version 2.5.1.16, the nuget package includes 6 versions:
 - .Net 4.0
-- .Net Standard 1.3
-- PCL Profile 136 : (.NETFramework 4.0, Silverlight 5.0, Windows 8.0, WindowsPhone 8.0)
+- .Net Core 5.0 (UWP)
+- .Net Standard 1.0
+- PCL Profile 136 : (.NET Framework 4.0, Silverlight 5.0, Windows 8.0, Windows Phone Silverlight 8.0)
+- PCL Profile 111 : (.NET Framework 4.5, Windows 8, Windows Phone 8.1)
+- PCL Profile 259 : (.NET Framework 4.5, Windows 8, Windows Phone 8.1, Windows Phone Silverlight 8)
+
 
 The programs SweMini and SweTest are availables in 2 versions:
 - .Net 4.0
 - .Net Core App 1.0
 
 These programs are available in the "binary.zip" of [each release](https://github.com/ygrenier/SwissEphNet/releases).
+
+# Breaking changes
+
+Since 2.5.1.16 some libraries don't supports the "Windows-1252" code page. In this case, the default encoding become "UTF-8".
+
+You can change the default encoding by assigning the static property ```SwissEphNet.SwissEph.DefaultEncoding```.
 
 # Thread Local Storage (TLS) support
 

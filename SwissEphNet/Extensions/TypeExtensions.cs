@@ -13,7 +13,7 @@ namespace SwissEphNet
         /// </summary>
         public static TypeCode GetTypeCode(this Type type)
         {
-#if NET_STANDARD
+#if NET_STANDARD || NOTYPECODE
             if (type == null) return TypeCode.Empty;
             else if (type == typeof(bool)) return TypeCode.Boolean;
             else if (type == typeof(byte)) return TypeCode.Byte;
@@ -41,7 +41,7 @@ namespace SwissEphNet
         /// </summary>
         public static Assembly GetAssembly(this Type type)
         {
-#if NET_STANDARD
+#if NET_STANDARD || NOTYPECODE
             return type?.GetTypeInfo()?.Assembly;
 #else
             return type?.Assembly;
@@ -49,4 +49,28 @@ namespace SwissEphNet
         }
 
     }
+
+#if NOTYPECODE
+    public enum TypeCode
+    {
+        Empty = 0,
+        Object = 1,
+        Boolean = 3,
+        Char = 4,
+        SByte = 5,
+        Byte = 6,
+        Int16 = 7,
+        UInt16 = 8,
+        Int32 = 9,
+        UInt32 = 10,
+        Int64 = 11,
+        UInt64 = 12,
+        Single = 13,
+        Double = 14,
+        Decimal = 15,
+        DateTime = 16,
+        String = 18
+    }
+#endif
+
 }

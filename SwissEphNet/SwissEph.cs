@@ -18,10 +18,17 @@ namespace SwissEphNet
         /// </summary>
         static SwissEph()
         {
+            try
+            {
 #if NET_STANDARD
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
-            DefaultEncoding = Encoding.GetEncoding("Windows-1252");
+                DefaultEncoding = Encoding.GetEncoding("Windows-1252");
+            }
+            catch
+            {
+                DefaultEncoding = Encoding.UTF8;
+            }
         }
 
         /// <summary>
