@@ -20,7 +20,7 @@ These programs are available in the "binary.zip" of [each release](https://githu
 
 # Breaking changes
 
-Since 2.5.1.16 some libraries don't supports the "Windows-1252" code page. in this case, the default encoding become "UTF-8".
+Since 2.5.1.16 some libraries don't supports the "Windows-1252" code page. In this case, the default encoding become "UTF-8".
 
 You can change the default encoding by assigning the static property ```SwissEphNet.SwissEph.DefaultEncoding```.
 
