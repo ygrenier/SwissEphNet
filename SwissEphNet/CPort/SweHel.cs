@@ -247,6 +247,7 @@ namespace SwissEphNet.CPort
             double OpticDia = dobs[4];
             double OpticTrans = dobs[5];
             bool is_scotopic = false;
+            //JDNDaysUT = JDNDaysUT; /* currently not used, statement prevents compiler warning */
             SNi = SN;
             if (SNi <= 0.00000001) SNi = 0.00000001;
             /* 23 jaar as standard from Garstang*/
@@ -559,6 +560,8 @@ namespace SwissEphNet.CPort
         double SunRA(double JDNDaysUT, Int32 helflag, ref string serr) {
             int imon = 0, iday = 0, iyar = 0, calflag = SwissEph.SE_GREG_CAL;
             double dut = 0;
+            //helflag = helflag; /* statement prevents compiler warning */
+            serr = null;
             if (JDNDaysUT == SunRA_tjdlast)
                 return SunRA_ralast;
             if (SwissEph.SIMULATE_VICTORVB) {
@@ -1147,11 +1150,14 @@ namespace SwissEphNet.CPort
         ' AziS [deg]
         ' MoonPhase [deg]
         */
-        double MoonPhase(double AltM, double AziM, double AziS) {
+        double MoonPhase(double AltM, double AziM, double AltS, double AziS) {
             double AltMi = AltM * SwissEph.DEGTORAD;
+            double AltSi = AltS * SwissEph.DEGTORAD;
             double AziMi = AziM * SwissEph.DEGTORAD;
             double AziSi = AziS * SwissEph.DEGTORAD;
-            return 180 - Math.Acos(Math.Cos(AziSi - AziMi) * Math.Cos(AltMi + 0.95 * SwissEph.DEGTORAD)) / SwissEph.DEGTORAD;
+            double MoonAvgPar = 0.95;
+            // return 180 - acos(cos(AziSi - AziMi) * cos(AltMi + MoonAvgPar * DEGTORAD) * cos(AltSi) + sin(AltSi) * sin(AltMi + MoonAvgPar * DEGTORAD)) / DEGTORAD;
+            return 180 - Math.Acos(Math.Cos(AziSi - AziMi - MoonAvgPar * SwissEph.DEGTORAD) * Math.Cos(AltMi + MoonAvgPar * SwissEph.DEGTORAD) * Math.Cos(AltSi) + Math.Sin(AltSi) * Math.Sin(AltMi + MoonAvgPar * SwissEph.DEGTORAD)) / SwissEph.DEGTORAD;
         }
 
         /*###################################################################
@@ -1161,16 +1167,23 @@ namespace SwissEphNet.CPort
             double M0 = -11.05;
             double Bm = 0;
             double RM, kXM, kX, C3, FM, phasemoon, MM;
-            if (AltM > -0.26) {
+            double lunar_radius = 0.25 * SwissEph.DEGTORAD;
+            bool object_is_moon = false;
+            if (AltO == AltM && AziO == AziM)
+                object_is_moon = true;
+            if (AltM > -0.26 && !object_is_moon)
+            { // second condition added by Dieter, SE2.06
                 /* moon only adds light when (partly) above horizon
                  * From Schaefer , Archaeoastronomy, XV, 2000, page 129*/
                 RM = DistanceAngle(AltO * SwissEph.DEGTORAD, AziO * SwissEph.DEGTORAD, AltM * SwissEph.DEGTORAD, AziM * SwissEph.DEGTORAD) / SwissEph.DEGTORAD;
+                if (RM <= lunar_radius) // addition by Dieter for objects behind the Moon, SE2.06
+                    RM = lunar_radius;
                 kXM = Deltam(AltM, AltS, sunra, Lat, HeightEye, datm, helflag, ref serr);
                 kX = Deltam(AltO, AltS, sunra, Lat, HeightEye, datm, helflag, ref serr);
                 C3 = Math.Pow(10, -0.4 * kXM);
                 FM = (62000000.0) / RM / RM + Math.Pow(10, 6.15 - RM / 40) + Math.Pow(10, 5.36) * (1.06 + Math.Pow(Math.Cos(RM * SwissEph.DEGTORAD), 2));
                 Bm = FM * C3 + 440000 * (1 - C3);
-                phasemoon = MoonPhase(AltM, AziM, AziS);
+                phasemoon = MoonPhase(AltM, AziM, AltS, AziS);
                 MM = MoonsBrightness(MoonDistance, phasemoon);
                 Bm = Bm * Math.Pow(10, -0.4 * (MM - M0 + 43.27));
                 Bm = Bm * (1 - Math.Pow(10, -0.4 * kX));
@@ -1232,6 +1245,7 @@ namespace SwissEphNet.CPort
         */
         double Bcity(double Value, double Press) {
             double Bcity = Value;
+            //Press = Press; /* unused; statement prevents compiler warning */
             Bcity = mymax(Bcity, 0);
             return Bcity;
         }
@@ -1398,6 +1412,16 @@ namespace SwissEphNet.CPort
             return -16.57 - 2.5 * (Math.Log(Th) / log10);
         }
 
+        static string tolower_string(ref string str)
+        {
+            //char* sp;
+            //for (sp = str; *sp != '\0'; sp++)
+            //    *sp = tolower(*sp);
+            //return str;
+            str = str?.ToLower();
+            return str;
+        }
+
         /* Limiting magnitude in dark skies 
          * function returns:
          * -1   Error
@@ -1412,6 +1436,7 @@ namespace SwissEphNet.CPort
             double sunra;
             for (i = 0; i < 7; i++)
                 dret[i] = 0;
+            tolower_string(ref ObjectName);
             if (DeterObject(ObjectName) == SwissEph.SE_SUN)
             {
                 serr = "it makes no sense to call swe_vis_limit_mag() for the Sun";
@@ -1816,6 +1841,7 @@ namespace SwissEphNet.CPort
             /* note, the fixed stars functions rewrite the star name. The input string 
                may be too short, so we have to make sure we have enough space */
             strcpy_VBsafe(out ObjectName, ObjectNameIn);
+            tolower_string(ref ObjectName);
             default_heliacal_parameters(datm, dgeo, dobs, helflag);
             SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
             retval = ObjectLoc(JDNDaysUT, dgeo, datm, "sun", 1, helflag, ref AziS, ref serr);
@@ -3323,6 +3349,7 @@ namespace SwissEphNet.CPort
             /* note, the fixed stars functions rewrite the star name. The input string 
                may be too short, so we have to make sure we have enough space */
             strcpy_VBsafe(out ObjectName, ObjectNameIn);
+            tolower_string(ref ObjectName);
             default_heliacal_parameters(datm, dgeo, dobs, helflag);
             SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
             Planet = DeterObject(ObjectName);
