@@ -391,30 +391,6 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "SwissEphNet/2.5.1.16": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.1.0",
-          "System.Collections": "4.0.11",
-          "System.Diagnostics.Debug": "4.0.11",
-          "System.Linq": "4.1.0",
-          "System.ObjectModel": "4.0.12",
-          "System.Reflection": "4.1.0",
-          "System.Reflection.Extensions": "4.0.1",
-          "System.Reflection.Primitives": "4.0.1",
-          "System.Resources.ResourceManager": "4.0.1",
-          "System.Runtime": "4.1.0",
-          "System.Runtime.Extensions": "4.1.0",
-          "System.Runtime.InteropServices": "4.1.0",
-          "System.Text.RegularExpressions": "4.1.0"
-        },
-        "compile": {
-          "lib/netstandard1.0/SwissEphNet.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/SwissEphNet.dll": {}
-        }
-      },
       "System.AppContext/4.1.0": {
         "type": "package",
         "dependencies": {
@@ -2015,16 +1991,42 @@
         "runtime": {
           "lib/netstandard1.3/_._": {}
         }
+      },
+      "SwissEphNet/2.5.1.16": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v1.0",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0",
+          "System.Collections": "4.0.11",
+          "System.Diagnostics.Debug": "4.0.11",
+          "System.Linq": "4.1.0",
+          "System.ObjectModel": "4.0.12",
+          "System.Reflection": "4.1.0",
+          "System.Reflection.Extensions": "4.0.1",
+          "System.Reflection.Primitives": "4.0.1",
+          "System.Resources.ResourceManager": "4.0.1",
+          "System.Runtime": "4.1.0",
+          "System.Runtime.Extensions": "4.1.0",
+          "System.Runtime.InteropServices": "4.1.0",
+          "System.Text.RegularExpressions": "4.1.0"
+        },
+        "compile": {
+          "netstandard1.0/SwissEphNet.dll": {}
+        },
+        "runtime": {
+          "netstandard1.0/SwissEphNet.dll": {}
+        }
       }
     },
     ".NETFramework,Version=v4.0": {
       "SwissEphNet/2.5.1.16": {
-        "type": "package",
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.0",
         "compile": {
-          "lib/net40/SwissEphNet.dll": {}
+          "net40/SwissEphNet.dll": {}
         },
         "runtime": {
-          "lib/net40/SwissEphNet.dll": {}
+          "net40/SwissEphNet.dll": {}
         }
       }
     }
@@ -2455,21 +2457,6 @@
         "lib/netstandard1.0/_._",
         "runtime.native.System.Security.Cryptography.4.0.0.nupkg.sha512",
         "runtime.native.System.Security.Cryptography.nuspec"
-      ]
-    },
-    "SwissEphNet/2.5.1.16": {
-      "sha512": "Zf/9qlASfOrzF8lhLXvRyppD+28KeDTkWz8V7xiUcAOt/Io45eMXl7P/enjVfTprefLJDyUf7bd/8lBAcNd/SA==",
-      "type": "package",
-      "path": "SwissEphNet/2.5.1.16",
-      "files": [
-        "SwissEphNet.2.5.1.16.nupkg.sha512",
-        "SwissEphNet.nuspec",
-        "lib/net40/SwissEphNet.dll",
-        "lib/netcore50/SwissEphNet.dll",
-        "lib/netstandard1.0/SwissEphNet.dll",
-        "lib/portable40-net40+sl5+win8+wp8+wpa81/SwissEphNet.dll",
-        "lib/portable45-net45+win8+wp8+wpa81/SwissEphNet.dll",
-        "lib/portable45-net45+win8+wpa81/SwissEphNet.dll"
       ]
     },
     "System.AppContext/4.1.0": {
@@ -6635,6 +6622,11 @@
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._"
       ]
+    },
+    "SwissEphNet/2.5.1.16": {
+      "type": "project",
+      "path": "../../SwissEphNet/project.json",
+      "msbuildProject": "../../SwissEphNet/SwissEphNet.xproj"
     }
   },
   "projectFileDependencyGroups": {

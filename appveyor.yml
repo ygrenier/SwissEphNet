@@ -11,7 +11,7 @@
     - ps: >-
         #nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
 
-        dotnet restore
+        dotnet restore .\SwissEphNet\
 
         dotnet build .\SwissEphNet\ -c Release
 
@@ -49,7 +49,7 @@
     - ps: >-
         #nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
 
-        dotnet restore
+        dotnet restore .\SwissEphNet\
 
         dotnet build .\SwissEphNet\ -c Debug
 
