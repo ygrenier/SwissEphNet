@@ -13,7 +13,6 @@ namespace SwissEphNet
     public class CFile : IDisposable
     {
         private Stream _Stream;
-        private Encoding _Encoding;
         private Decoder _Decoder;
 
         /// <summary>
@@ -22,11 +21,18 @@ namespace SwissEphNet
         public CFile(Stream stream, Encoding encoding = null) {
             this._Stream = stream;
             EOF = _Stream == null;
+            try
+            {
 #if NET_STANDARD
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
-            this._Encoding = encoding ?? Encoding.GetEncoding("Windows-1252");
-            this._Decoder = _Encoding.GetDecoder();
+                this.Encoding = encoding ?? Encoding.GetEncoding("Windows-1252");
+            }
+            catch
+            {
+                this.Encoding = encoding ?? Encoding.UTF8;
+            }
+            this._Decoder = Encoding.GetDecoder();
         }
 
         /// <summary>
@@ -38,7 +44,7 @@ namespace SwissEphNet
                     _Stream.Dispose();
                     _Stream = null;
                 }
-                _Encoding = null;
+                Encoding = null;
             }
         }        
 
@@ -195,7 +201,7 @@ namespace SwissEphNet
                 buff.Add(c);
             }
             if (EOF && read == 0) return null;
-            return _Encoding.GetString(buff.ToArray(), 0, buff.Count);
+            return Encoding.GetString(buff.ToArray(), 0, buff.Count);
         }
 
         /// <summary>
@@ -340,6 +346,11 @@ namespace SwissEphNet
             }
             return res;
         }
+
+        /// <summary>
+        /// Encoding of the file
+        /// </summary>
+        public Encoding Encoding { get; private set; }
 
         /// <summary>
         /// True if the file is at end of file
