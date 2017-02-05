@@ -8,7 +8,7 @@
   },
 
   "dependencies": {
-    "SwissEphNet": "2.5.1.*",
+    "SwissEphNet": "2.5.1.16",
     "xunit": "2.2.0-beta3-build3402",
     "dotnet-test-xunit": "2.2.0-preview2-build1029"
   },

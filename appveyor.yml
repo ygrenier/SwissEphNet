@@ -9,7 +9,7 @@
   configuration: Release
   before_build:
     - ps: >-
-        nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
+        #nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
 
         dotnet restore
 
@@ -47,7 +47,7 @@
   configuration: Debug
   before_build:
     - ps: >-
-        nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
+        #nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
 
         dotnet restore
 
