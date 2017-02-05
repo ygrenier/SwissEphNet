@@ -1,5 +1,4 @@
 {
-  "locked": false,
   "version": 2,
   "targets": {
     ".NETCore,Version=v5.0": {
@@ -6091,5 +6090,8 @@
     ]
   },
   "tools": {},
-  "projectFileToolGroups": {}
+  "projectFileToolGroups": {},
+  "packageFolders": {
+    "C:\\Users\\yan_g\\.nuget\\packages\\": {}
+  }
 }

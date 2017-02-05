@@ -48,6 +48,7 @@
   before_build:
     - ps: >-
         #nuget restore .\Programs\SweWin\SweWin.csproj -packagesDirectory .\packages\
+		nuget restore .\SwissEphNet.sln
 
         dotnet restore .\SwissEphNet\
 
