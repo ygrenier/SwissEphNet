@@ -51,7 +51,7 @@
 
         dotnet restore .\SwissEphNet\
 
-        dotnet build .\SwissEphNet\ -c Release
+        dotnet build .\SwissEphNet\ -c Debug
 
   build:
     verbosity: minimal
