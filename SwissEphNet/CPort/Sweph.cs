@@ -139,6 +139,18 @@ namespace SwissEphNet.CPort
                 //FALSE,    /* is_tid_acc_manual */
                 //FALSE,    /* init_dt_done */
                 //FALSE,	/* swed_is_initialised */
+			    //FALSE,	/* delta_t_userdef_is_set */
+			    //0.0,	/* delta_t_userdef */
+			    //0.0,	/* ast_G */
+			    //0.0,	/* ast_H */
+			    //0.0,	/* ast_diam */
+			    //"",		/* astelem[] */
+			    //0, 		/* i_saved_planet_name */
+			    //"",		/* saved_planet_name[] */
+			    //NULL,	/* dpsi */
+			    //NULL,	/* deps */
+			    //0,		/* timeout */
+			    //{0,0,0,0,0,0,0,0,}, /* astro_models */
         //                };
         internal swe_data swed = new swe_data() {
             ephe_path_is_set = false,
@@ -164,7 +176,19 @@ namespace SwissEphNet.CPort
             tid_acc = 0.0,
             is_tid_acc_manual = false,
             init_dt_done = false,
-            swed_is_initialised = false
+            swed_is_initialised = false,
+            delta_t_userdef_is_set = false,  /* delta_t_userdef_is_set */
+            delta_t_userdef = 0.0,    /* delta_t_userdef */
+            ast_G = 0.0,    /* ast_G */
+            ast_H = 0.0,    /* ast_H */
+            ast_diam = 0.0,    /* ast_diam */
+            astelem = "",     /* astelem[] */
+            i_saved_planet_name = 0,      /* i_saved_planet_name */
+            saved_planet_name = "",     /* saved_planet_name[] */
+            dpsi = null,   /* dpsi */
+            deps = null,   /* deps */
+            timeout = 0,      /* timeout */
+            astro_models = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, }, /* astro_models */
         };
 
         /*************
@@ -286,7 +310,7 @@ namespace SwissEphNet.CPort
         public string swe_get_library_path()
         {
             //  size_t bytes;
-            //  int len;
+            //  size_t len;
             //  *s = '\0';
             //#if !defined(__APPLE) 
             //  len = AS_MAXCH;
@@ -1370,6 +1394,7 @@ namespace SwissEphNet.CPort
             if (!s.EndsWith(SwissEph.DIR_GLUE.ToString()))
                 s = s + SwissEph.DIR_GLUE;
             swed.ephepath = s;
+            //swe_set_interpolate_nut(TRUE);
             /* try to open lunar ephemeris, in order to get DE number and set
              * tidal acceleration of the Moon */
             iflag = SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_J2000 | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_ICRS;
@@ -2009,6 +2034,7 @@ namespace SwissEphNet.CPort
             plan_data pdp = swed.pldat[ipli];
             plan_data pedp = swed.pldat[SEI_EARTH];
             plan_data psdp = swed.pldat[SEI_SUNBARY];
+            //iflag = SEFLG_JPLEPH; /* currently not used, but this stops compiler warning */
             /* we assume Teph ~= TDB ~= TT. The maximum error is < 0.002 sec, 
              * corresponding to an ephemeris error < 0.001 arcsec for the moon */
             /* double tjd_tdb, T;
@@ -2395,8 +2421,8 @@ namespace SwissEphNet.CPort
             serr = C.sprintf("SwissEph file '%s' not found in PATH '%s'", fname, ephepath);
             return null;
         }
-
-        Int32 get_denum(Int32 ipli, Int32 iflag)
+        
+        public Int32 swi_get_denum(Int32 ipli, Int32 iflag)
         {
             file_data fdp = null;
             if ((iflag & SwissEph.SEFLG_MOSEPH) != 0)
@@ -2744,7 +2770,7 @@ namespace SwissEphNet.CPort
             //swi_polcart(xx, xx);
             //#endif
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && get_denum(ipli, epheflag) >= 403)
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(ipli, epheflag) >= 403)
             {
                 SE.SwephLib.swi_bias(xx, t, iflag, false);
             }/**/
@@ -2861,7 +2887,6 @@ namespace SwissEphNet.CPort
                 if (sid_mode == SwissEph.SE_SIDM_J2000
                       || sid_mode == SwissEph.SE_SIDM_J1900
                       || sid_mode == SwissEph.SE_SIDM_B1950
-                      //|| sid_mode == SwissEph.SE_SIDM_B1950
                       || sid_mode == SwissEph.SE_SIDM_GALALIGN_MARDYKS
 	                  ) {
                     sip.sid_mode &= ~SwissEph.SE_SIDBIT_SSY_PLANE;
@@ -3098,8 +3123,8 @@ namespace SwissEphNet.CPort
 
         /* 
          * input coordinates are J2000, cartesian.
-         * xout 	ecliptical sidereal position
-         * xoutr 	equatorial sidereal position
+         * xout 	ecliptical sidereal position (relative to ecliptic t0)
+         * xoutr 	equatorial sidereal position (relative to equator t0)
          */
         public int swi_trop_ra2sid_lon(CPointer<double> xin, CPointer<double> xout, CPointer<double> xoutr, Int32 iflag) {
             double[] x = new double[6];
@@ -3809,7 +3834,7 @@ namespace SwissEphNet.CPort
                 for (i = 3; i <= 5; i++)
                     xx[i] = 0;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && get_denum(SEI_SUN, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403) {
                 SE.SwephLib.swi_bias(xx, t, iflag, false);
             }/**/
             /* save J2000 coordinates; required for sidereal positions */
@@ -3984,7 +4009,7 @@ namespace SwissEphNet.CPort
                 for (i = 3; i <= 5; i++)
                     xx[i] = 0;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && get_denum(SEI_MOON, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_MOON, iflag) >= 403) {
                 SE.SwephLib.swi_bias(xx, t, iflag, false);
             }/**/
             /* save J2000 coordinates; required for sidereal positions */
@@ -4030,7 +4055,7 @@ namespace SwissEphNet.CPort
                 for (i = 3; i <= 5; i++)
                     xx[i] = 0;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && get_denum(SEI_SUN, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403) {
                 SE.SwephLib.swi_bias(xx, psdp.teval, iflag, false);
             }/**/
             /* save J2000 coordinates; required for sidereal positions */
@@ -5590,7 +5615,7 @@ namespace SwissEphNet.CPort
             epsilon oectmp = new epsilon();
             sid_data sip = new sid_data(); ;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && get_denum(SEI_SUN, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403) {
                 SE.SwephLib.swi_bias(xx, tjd, iflag, false);
             }/**/
             /************************************************
@@ -5978,7 +6003,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_JPLHOR) != 0) {
                 if (swed.eop_dpsi_loaded <= 0
                    || ((tjd < swed.eop_tjd_beg || tjd > swed.eop_tjd_end)
-                   && jplhor_model != SwissEph.SEMOD_JPLHOR_EXTENDED_1800))
+                   && jplhor_model != SwissEph.SEMOD_JPLHOR_LONG_AGREEMENT))
                 {
                     /*&& !USE_HORIZONS_METHOD_BEFORE_1980)) {*/
                     switch (swed.eop_dpsi_loaded)
@@ -6178,21 +6203,21 @@ namespace SwissEphNet.CPort
                         else if (star.Contains(",GP1958"))
                         {
                             s = "Gal. Pole IAU1958,GP1958,1950,12,49,0.0,27,24,0.0,0.0,0.0,0.0,0.0,0.0,0,0";
-                            sstar = "gp1958";
+                            sstar = ",gp1958";
                             goto found;
                         }
                         /* Ayanamsha SE_SIDM_GALEQU_TRUE */
                         else if (star.Contains(",GPol"))
                         {
                             s = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
-                            sstar = "gpol";
+                            sstar = ",gpol";
                             goto found;
                         }
                         /* Ayanamsha SE_SIDM_GALEQU_MULA */
                         else if (star.Contains(",GPol"))
                         {
                             s = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
-                            sstar = "gpol";
+                            sstar = ",gpol";
                             goto found;
                         }
                         retc = ERR;
@@ -6331,7 +6356,7 @@ namespace SwissEphNet.CPort
             if (epoch != 0) {
                 SE.SwephLib.swi_icrs2fk5(x, iflag, true); /* backward, i. e. to icrf */
                 /* with ephemerides < DE403, we now convert to J2000 */
-                if (get_denum(SEI_SUN, iflag) >= 403) {
+                if (swi_get_denum(SEI_SUN, iflag) >= 403) {
                     SE.SwephLib.swi_bias(x, J2000, SwissEph.SEFLG_SPEED, false);
                 }
             }
@@ -6418,7 +6443,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && (iflag & SwissEph.SEFLG_NOABERR) == 0)
                 swi_aberr_light(x, xpo, iflag & SwissEph.SEFLG_SPEED);
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && (get_denum(SEI_SUN, iflag) >= 403 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && (swi_get_denum(SEI_SUN, iflag) >= 403 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)) {
                 SE.SwephLib.swi_bias(x, tjd, iflag, false);
             }/**/
             /* save J2000 coordinates; required for sidereal positions */
@@ -6482,15 +6507,19 @@ namespace SwissEphNet.CPort
                     if (swi_trop_ra2sid_lon(xxsv, x, xxsv, iflag) != OK)
                         goto return_err;
                     if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
+                    {
                         for (i = 0; i <= 5; i++)
                             x[i] = xxsv[i];
+                    }
                     /* project onto solar system equator */
                 } else if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0) {
                     if (swi_trop_ra2sid_lon_sosy(xxsv, x, iflag) != OK)
                         return ERR;
                     if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
+                    {
                         for (i = 0; i <= 5; i++)
                             x[i] = xxsv[i];
+                    }
                     /* traditional algorithm */
                 } else {
                     SE.SwephLib.swi_cartpol_sp(x, x);
