@@ -432,6 +432,7 @@ namespace SwissEphNet
         public const double TJD_INVALID = 99999999.0;
         public const bool SIMULATE_VICTORVB = true;
 
+#if FALSE  // unused and redundant
         public const int SE_HELIACAL_LONG_SEARCH = 128;
         public const int SE_HELIACAL_HIGH_PRECISION = 256;
         public const int SE_HELIACAL_OPTICAL_PARAMS = 512;
@@ -445,6 +446,7 @@ namespace SwissEphNet
         public const int SE_HELIACAL_AVKIND_MIN7 = (1 << 17);
         public const int SE_HELIACAL_AVKIND_MIN9 = (1 << 18);
         public const int SE_HELIACAL_AVKIND = (SE_HELFLAG_AVKIND_VR | SE_HELFLAG_AVKIND_PTO | SE_HELFLAG_AVKIND_MIN7 | SE_HELFLAG_AVKIND_MIN9);
+#endif
 
         public const int SE_PHOTOPIC_FLAG = 0;
         public const int SE_SCOTOPIC_FLAG = 1;
@@ -465,6 +467,7 @@ namespace SwissEphNet
         public const double SE_TIDAL_DE430 = (-25.82);   /* JPL Interoffice Memorandum 9-jul-2013 on DE430 Lunar Orbit */
         public const double SE_TIDAL_DE431 = (-25.80);   /* IPN Progress Report 42-196 â€¢ February 15, 2014, p. 15; was (-25.82) in V. 2.00.00 */
         public const double SE_TIDAL_26 = (-26.0);
+        public const double SE_TIDAL_STEPHENSON_2016 = (-25.85);
         public const double SE_TIDAL_DEFAULT = SE_TIDAL_DE431;
         public const double SE_TIDAL_AUTOMATIC = 999999;
         public const double SE_TIDAL_MOSEPH = SE_TIDAL_DE404;
@@ -474,34 +477,36 @@ namespace SwissEphNet
         /* for function swe_set_delta_t_userdef() */
         public const double SE_DELTAT_AUTOMATIC = (-1E-10);
 
-        public const int SE_MODEL_PREC_LONGTERM = 0;
-        public const int SE_MODEL_PREC_SHORTTERM = 1;
-        public const int SE_MODEL_NUT = 2;
-        public const int SE_MODEL_SIDT = 3;
+        public const int SE_MODEL_DELTAT = 0;
+        public const int SE_MODEL_PREC_LONGTERM = 1;
+        public const int SE_MODEL_PREC_SHORTTERM = 2;
+        public const int SE_MODEL_NUT = 3;
         public const int SE_MODEL_BIAS = 4;
         public const int SE_MODEL_JPLHOR_MODE = 5;
         public const int SE_MODEL_JPLHORA_MODE = 6;
-        public const int SE_MODEL_DELTAT = 7;
+        public const int SE_MODEL_SIDT = 7;
+        public const int NSE_MODELS = 8;
 
         /* precession models */
+        public const int SEMOD_NPREC = 9;
         public const int SEMOD_PREC_IAU_1976 = 1;
-        public const int SEMOD_PREC_IAU_2000 = 2;
-        public const int SEMOD_PREC_IAU_2006 = 3;
-        public const int SEMOD_PREC_BRETAGNON_2003 = 4;
-        public const int SEMOD_PREC_LASKAR_1986 = 5;
-        public const int SEMOD_PREC_SIMON_1994 = 6;
-        public const int SEMOD_PREC_WILLIAMS_1994 = 7;
-        public const int SEMOD_PREC_VONDRAK_2011 = 8;
+        public const int SEMOD_PREC_LASKAR_1986 = 2;
+        public const int SEMOD_PREC_WILL_EPS_LASK = 3;
+        public const int SEMOD_PREC_WILLIAMS_1994 = 4;
+        public const int SEMOD_PREC_SIMON_1994 = 5;
+        public const int SEMOD_PREC_IAU_2000 = 6;
+        public const int SEMOD_PREC_BRETAGNON_2003 = 7;
+        public const int SEMOD_PREC_IAU_2006 = 8;
+        public const int SEMOD_PREC_VONDRAK_2011 = 9;
         public const int SEMOD_PREC_DEFAULT = SEMOD_PREC_VONDRAK_2011;
-        /* former implementations of the used 
-         * IAU 1976, 2000 and 2006 for a limited time range
-         * in combination with a different model for 
-         * long term precession. 
-        #define SEMOD_PREC_DEFAULT_SHORT SEMOD_PREC_IAU_2000
+        /* SE versions before 1.70 used IAU 1976 precession for 
+         * a limited time range of 2 centuries in combination with 
+         * the long-term precession Simon 1994.
          */
         public const int SEMOD_PREC_DEFAULT_SHORT = SEMOD_PREC_VONDRAK_2011;
 
         /* nutation models */
+        public const int SEMOD_NNUT = 4;
         public const int SEMOD_NUT_IAU_1980 = 1;
         public const int SEMOD_NUT_IAU_CORR_1987 = 2; /* Herring's (1987) corrections to IAU 1980 
                             * nutation series. AA (1996) neglects them.*/
@@ -510,28 +515,33 @@ namespace SwissEphNet
         public const int SEMOD_NUT_DEFAULT = SEMOD_NUT_IAU_2000B;  /* fast, but precision of milli-arcsec */
 
         /* methods for sidereal time */
-        public const int SEMOD_SIDT_LONGTERM = 1;
-        public const int SEMOD_SIDT_IERS_CONV_2010 = 2;
-        public const int SEMOD_SIDT_PREC_MODEL = 3;
-        public const int SEMOD_SIDT_IAU_1976 = 4;
+        public const int SEMOD_NSIDT = 4;
+        public const int SEMOD_SIDT_IAU_1976 = 1;
+        public const int SEMOD_SIDT_IAU_2006 = 2;
+        public const int SEMOD_SIDT_IERS_CONV_2010 = 3;
+        public const int SEMOD_SIDT_LONGTERM = 4;
         public const int SEMOD_SIDT_DEFAULT = SEMOD_SIDT_LONGTERM;
         //#define SEMOD_SIDT_DEFAULT          SEMOD_SIDT_IERS_CONV_2010
 
         /* frame bias methods */
-        public const int SEMOD_BIAS_IAU2000 = 1;  /* use frame bias matrix IAU 2000 */
-        public const int SEMOD_BIAS_IAU2006 = 2;  /* use frame bias matrix IAU 2000 */
+        public const int SEMOD_NBIAS = 3;
+        public const int SEMOD_BIAS_NONE = 1;  /* ignore frame bias */
+        public const int SEMOD_BIAS_IAU2000 = 2;  /* use frame bias matrix IAU 2000 */
+        public const int SEMOD_BIAS_IAU2006 = 3;  /* use frame bias matrix IAU 2006 */
         public const int SEMOD_BIAS_DEFAULT = SEMOD_BIAS_IAU2006;
 
         /* methods of JPL Horizons (iflag & SEFLG_JPLHOR), 
          * using daily dpsi, deps;  see explanations below */
-        public const int SEMOD_JPLHOR_EXTENDED_1800 = 1;  /* daily dpsi and deps from file are 
+        public const int SEMOD_NJPLHOR = 2;
+        public const int SEMOD_JPLHOR_LONG_AGREEMENT = 1;  /* daily dpsi and deps from file are 
                                              * limited to 1962 - today. JPL uses the
                              * first and last value for all  dates 
                              * beyond this time range. */
-        public const int SEMOD_JPLHOR_NOT_EXTENDED = 2;  /* outside the available time range 
-                                             * 1962 - today default to SEFLG_JPLHOR_APROX */
-        public const int SEMOD_JPLHOR_DEFAULT = SEMOD_JPLHOR_EXTENDED_1800;
-        /* SEMOD_JPLHOR_EXTENDED_1800, if combined with SEFLG_JPLHOR provides good 
+        public const int SEMOD_JPLHOR_BEFORE_1962_USE_APPROX = 2;
+                            /* outside the available time range 
+                                * 1962 - today default to SEFLG_JPLHOR_APROX */
+        public const int SEMOD_JPLHOR_DEFAULT = SEMOD_JPLHOR_LONG_AGREEMENT;
+        /* SEMOD_JPLHOR_LONG_AGREEMENT, if combined with SEFLG_JPLHOR provides good 
          * agreement with JPL Horizons for 1800 - today. However, Horizons uses
          * correct dpsi and deps only after 20-jan-1962. For all dates before that
          * it uses dpsi and deps of 20-jan-1962, which provides a continuous
@@ -539,7 +549,8 @@ namespace SwissEphNet
          * Before 1800, even this option does not provide agreement with Horizons,
          * because Horizons uses a different precession model (Owen 1986)
          * before 1800, which is not included in the Swiss Ephemeris.
-         * SEMOD_JPLHOR_NOT_EXTENDED causes the program to default to SEFLG_JPLHOR_APPROX,
+         * SEMOD_JPLHOR_BEFORE_1962_USE_APPROX causes the program to default 
+         * to SEFLG_JPLHOR_APPROX,
          * if the date is outside the time range 1962 - today, where values
          * for dpsi and deps are given.
          * Note that this will result in a non-continuous ephemeris near
@@ -548,6 +559,7 @@ namespace SwissEphNet
 
         /* methods of approximation of JPL Horizons (iflag & SEFLG_JPLHORA), 
          * without dpsi, deps; see explanations below */
+        public const int SEMOD_NJPLHORA = 2;
         public const int SEMOD_JPLHORA_1 = 1;
         public const int SEMOD_JPLHORA_2 = 2;
         public const int SEMOD_JPLHORA_DEFAULT = SEMOD_JPLHORA_1;
@@ -555,17 +567,22 @@ namespace SwissEphNet
          * using a recent precession/nutation model. Frame bias matrix is applied 
          * with some correction to RA and another correction is added to epsilon.
          * This provides a very good approximation of JPL Horizons positions. 
-         * With SEMOD_JPLHORA_2, frame bias as r$ecommended by IERS Conventions 2003 
+         * With SEMOD_JPLHORA_2, frame bias as recommended by IERS Conventions 2003 
          * and 2010 is *not* applied. Instead, dpsi_bias and deps_bias are added to 
          * nutation. This procedure is found in some older astronomical software.
          * Equatorial apparent positions will be close to JPL Horizons 
-         * (within a few mas) beetween 1962 and current years. Ecl. longitude 
+         * (within a few mas) between 1962 and current years. Ecl. longitude 
          * will be good, latitude bad. 
          */
 
-        public const int SEMOD_DELTAT_ESPENAK_MEEUS_2006 = 1;
-        public const int SEMOD_DELTAT_STEPHENSON_MORRISON_2004 = 2;
-        public const int SEMOD_DELTAT_DEFAULT = SEMOD_DELTAT_ESPENAK_MEEUS_2006;
+        public const int SEMOD_NDELTAT = 5;
+        public const int SEMOD_DELTAT_STEPHENSON_MORRISON_1984 = 1;
+        public const int SEMOD_DELTAT_STEPHENSON_1997 = 2;
+        public const int SEMOD_DELTAT_STEPHENSON_MORRISON_2004 = 3;
+        public const int SEMOD_DELTAT_ESPENAK_MEEUS_2006 = 4;
+        public const int SEMOD_DELTAT_STEPHENSON_ETC_2016 = 5;
+        //#define SEMOD_DELTAT_DEFAULT   SEMOD_DELTAT_ESPENAK_MEEUS_2006
+        public const int SEMOD_DELTAT_DEFAULT = SEMOD_DELTAT_STEPHENSON_ETC_2016;
 
         /// <summary>
         /// 2000 January 1.5
@@ -610,9 +627,13 @@ namespace SwissEphNet
 
         /* the following is secret, for Dieter, allows to test old models of
          * precession, nutation, etc. Search for SE_MODEL_... in this file */
-        public void swe_set_astro_models(Int32[] imodel)
+        public void swe_set_astro_models(string samod, Int32 iflag)
         {
-            SwephLib.swe_set_astro_models(imodel);
+            SwephLib.swe_set_astro_models(samod, iflag);
+        }
+        public void swe_get_astro_models(string samod, out string sdet, Int32 iflag)
+        {
+            SwephLib.swe_get_astro_models(samod, out sdet, iflag);
         }
 
         /**************************** 
@@ -985,7 +1006,7 @@ namespace SwissEphNet
         /// </summary>
         public double swe_sidtime0(double tjd_ut, double ecl, double nut) { return SwephLib.swe_sidtime0(tjd_ut, ecl, nut); }
         public double swe_sidtime(double tjd_ut) { return SwephLib.swe_sidtime(tjd_ut); }
-
+        public void swe_set_interpolate_nut(bool do_interpolate) { SwephLib.swe_set_interpolate_nut(do_interpolate); }
 
         /// <summary>
         /// coordinate transformation polar -> polar

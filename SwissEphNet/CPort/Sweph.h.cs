@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.05.01";
+        public const String SE_VERSION = "2.06";
 
         /// <summary>
         /// 2000 January 1.5
@@ -225,7 +225,7 @@ namespace SwissEphNet.CPort
 
         public const int SEI_NEPHFILES = 7;
         public const int SEI_CURR_FPOS = -1;
-        public const int SEI_NMODELS = 20;
+        public const int SEI_NMODELS = 8;
 
         public const double SEI_ECL_GEOALT_MAX = 25000.0;
         public const double SEI_ECL_GEOALT_MIN = (-500.0);
@@ -313,7 +313,7 @@ namespace SwissEphNet.CPort
         public const double KGAUSS = 0.01720209895;		/* Gaussian gravitational constant K6 */
         public const double SUN_RADIUS = (959.63 / 3600 * SwissEph.DEGTORAD);  /*  Meeus germ. p 391 */
         public const double EARTH_RADIUS = 6378136.6;		/* AA 2006 K6 */
-        /*#define EARTH_OBLATENESS= (1.0/ 298.257223563)	 * AA 1998 K13 */
+        //#define EARTH_OBLATENESS (1.0/ 298.257223563)	/* AA 1998 K13 */
         public const double EARTH_OBLATENESS = (1.0 / 298.25642);	/* AA 2006 K6 */
         public const double EARTH_ROT_SPEED = (7.2921151467e-5 * 86400); /* in rad/day, expl. suppl., p 162 */
 
@@ -367,10 +367,10 @@ namespace SwissEphNet.CPort
 
 
         /* Ayanamsas 
-         * For each ayanamsa, there are two values:
+         * For each ayanamsa, there are the following values:
          * t0       epoch of ayanamsa, TDT (can be ET or UT)
-         * t0_is_UT true, if t0 is UT
          * ayan_t0  ayanamsa value at epoch
+         * t0_is_UT true, if t0 is UT
          */
         public struct aya_init { public double t0; public double ayan_t0; public bool t0_is_UT;};
         public static aya_init[] ayanamsa = new aya_init[]{
@@ -467,6 +467,8 @@ namespace SwissEphNet.CPort
         //extern int32 swi_get_tid_acc(double tjd_ut, int32 iflag, int32 denum, int32 *denumret, double *tid_acc, char *serr);
 
         //double swi_armc_to_mc(double armc, double eps);
+
+        //int32 swi_get_denum(int32 ipli, int32 iflag);
 
         /* nutation */
         public class nut
@@ -587,6 +589,18 @@ namespace SwissEphNet.CPort
         /* dpsi and deps loaded for 100 years after 1962 */
         static int SWE_DATA_DPSI_DEPS = 36525;
 
+        public struct interpol
+        {
+            public double tjd_nut0;
+            public double tjd_nut2;
+            public double nut_dpsi0;
+            public double nut_dpsi1;
+            public double nut_dpsi2;
+            public double nut_deps0;
+            public double nut_deps1;
+            public double nut_deps2;
+        };
+
         /* if this is changed, then also update initialisation in sweph.c */
         public class swe_data
         {
@@ -634,6 +648,20 @@ namespace SwissEphNet.CPort
             public bool swed_is_initialised;
             public bool delta_t_userdef_is_set;
             public double delta_t_userdef;
+            public double ast_G;
+            public double ast_H;
+            public double ast_diam;
+            public string astelem; //[AS_MAXCH * 10];
+            public int i_saved_planet_name;
+            public string saved_planet_name; //[80];
+            //double dpsi[36525];  /* works for 100 years after 1962 */
+            //double deps[36525];
+            public CPointer<double> dpsi;
+            public CPointer<double> deps;
+            public Int32 timeout;
+            public Int32[] astro_models;
+            public bool do_interpolate_nut;
+            public interpol interpol;
             public file_data[] fidat { get; private set; }
             public gen_const gcdat;
             public plan_data[] pldat { get; private set; }
@@ -650,18 +678,6 @@ namespace SwissEphNet.CPort
             public nut nutv { get; internal set; }
             public topo_data topd { get; internal set; }
             public sid_data sidd;
-            public string astelem = string.Empty;
-            public double ast_G;
-            public double ast_H;
-            public double ast_diam;
-            public int i_saved_planet_name;
-            public string saved_planet_name;
-            //public double[] dpsi { get; private set; }  /* works for 100 years after 1962 */
-            //public double[] deps { get; private set; }
-            public double[] dpsi;
-            public double[] deps;
-            public Int32[] astro_models { get; internal set; }
-            public Int32 timeout;
         }
 
         //extern TLS struct swe_data FAR swed;
