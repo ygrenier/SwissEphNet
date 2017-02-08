@@ -12,9 +12,9 @@ namespace SwissEphNet.Tests
                 double[] geopos = new double[] { 47.853333, 5.333889, 468 };
                 double[] xx = new double[6]; String serr = null;
                 swe.swe_calc_ut(tjd, SwissEph.SE_SUN, SwissEph.SEFLG_MOSEPH, xx, ref serr);
-                Assert.Equal(142.780328315269, xx[0], 12);
-                Assert.Equal(-1.57808056001826E-05, xx[1], 12);
-                Assert.Equal(1.01267244282576, xx[2], 12);
+                Assert.Equal(142.780328279462, xx[0], 12);
+                Assert.Equal(-1.5780805E-05, xx[1], 12);
+                Assert.Equal(1.012672442833, xx[2], 12);
                 Assert.Equal(0, xx[3], 12);
                 Assert.Equal(0, xx[4], 12);
                 Assert.Equal(0, xx[5], 12);
