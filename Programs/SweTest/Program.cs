@@ -120,9 +120,10 @@ namespace SweTest
         -bj...  begin date as an absolute Julian day number; e.g. -bj2415020.5\n\
         -j...   same as -bj\n\
         -tHH.MMSS  input time (as Ephemeris Time)\n\
-        -ut     input date is Universal Time\n\
-	-utHH:MM:SS input time (as Universal Time)\n\
-	-utHH.MMSS input time (as Universal Time)\n\
+        -ut     input date is Universal Time (UT1)\n\
+    -utHH:MM:SS input time (as Universal Time)\n\
+    -utHH.MMSS input time (as Universal Time)\n\
+    -utcHH.MM:SS input time (as Universal Time Coordinated UTC)\n\
      output time for eclipses, occultations, risings/settings is UT by default\n\
         -lmt    output date/time is LMT (with -geopos)\n\
         -lat    output date/time is LAT (with -geopos)\n\
@@ -141,6 +142,10 @@ namespace SweTest
                 number is given, the default is 20.\n\
         -sN     timestep N days, default 1. This option is only meaningful\n\
                 when combined with option -n.\n\
+                If an 'y' is appended, the time step is in years instead of days, \n\
+                for example -s10y for a time step of 10 years.\n\
+                If an 'mo' is appended, the time step is in months instead of days, \n\
+                for example -s3mo for a time step of 3 months.\n\
                 If an 'm' is appended, the time step is in minutes instead of days, \n\
                 for example -s15m for a time step of 15 minutes.\n\
                 If an 's' is appended, the time step is in seconds instead of days, \n\
@@ -678,6 +683,7 @@ namespace SweTest
         static int gregflag = SwissEph.SE_GREG_CAL;
         static int diff_mode = 0;
         static bool universal_time = false;
+        static bool universal_time_utc = false;
         static Int32 round_flag = 0;
         static Int32 time_flag = 0;
         static bool short_output = false;
@@ -699,6 +705,8 @@ namespace SweTest
         static bool direction_flag = false;
         static bool step_in_minutes = false;
         static bool step_in_seconds = false;
+        static bool step_in_years = false;
+        static bool step_in_months = false;
         static Int32 helflag = 0;
         static double tjd = 2415020.5;
         static Int32 nstep = 1, istep;
@@ -711,8 +719,11 @@ namespace SweTest
         static string ephepath = String.Empty;
         static Int32 discbottom = 0;
         /* for test of old models only */
-        static Int32[] astro_models = new Int32[20] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        static string astro_models;
         static bool do_set_astro_models = false;
+        //static char smod[2000];
+        static string smod;
+        static bool inut = false; /* for Astrodienst internal feature */
 
         const int SP_LUNAR_ECLIPSE = 1;
         const int SP_SOLAR_ECLIPSE = 2;
@@ -766,6 +777,7 @@ namespace SweTest
             Int32 sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
             double t2, tstep = 1, thour = 0;
             double delt;
+            double tid_acc = 0;
             datm[0] = 1013.25; datm[1] = 15; datm[2] = 40; datm[3] = 0;
             dobs[0] = 0; dobs[1] = 0;
             dobs[2] = 0; dobs[3] = 0; dobs[4] = 0; dobs[5] = 0;
@@ -781,7 +793,16 @@ namespace SweTest
                 fname = SwissEph.SE_FNAME_DFT;
                 for (i = 1; i < argc; i++)
                 {
-                    if (argv[i].StartsWith("-ut"))
+                    if (argv[i].StartsWith("-utc"))
+                    {
+                        universal_time = true;
+                        universal_time_utc = true;
+                        if ((argv[i].Length) > 4)
+                        {
+                            stimein = argv[i].Substring(4, 30);
+                        }
+                    }
+                    else if (argv[i].StartsWith("-ut"))
                     {
                         universal_time = true;
                         if (argv[i].Length > 3)
@@ -1057,36 +1078,25 @@ namespace SweTest
                         norefrac = 1;
                         disccenter = 1;
                     }
-                    else if (String.Compare(argv[i], "-discbottom") == 0)
+                    else if (string.Compare(argv[i], "-discbottom") == 0)
                     {
                         discbottom = 1;
                     }
-                    else if (String.Compare(argv[i], "-metr") == 0)
+                    else if (string.Compare(argv[i], "-metr") == 0)
                     {
                         special_event = SP_MERIDIAN_TRANSIT;
                         have_geopos = true;
-                        /* secret test feature for dieter */
+                        /* undocumented test feature */
                     }
-                    else if (argv[i].StartsWith("-prec"))
+                    else if (argv[i].StartsWith("-amod"))
                     {
-                        j = 0;
-                        //astro_models[j] = atoi(argv[i] + 5);
-                        //sp = argv[i];
-                        //while ((sp2 = strchr(sp, ',')) != NULL)
-                        //{
-                        //    sp = sp2 + 1;
-                        //    j++;
-                        //    astro_models[j] = atoi(sp);
-                        //}
-                        var parts = argv[i].Substring(5).Split(',');
-                        foreach (var p in parts)
-                        {
-                            int xx = 0;
-                            int.TryParse(p, out xx);
-                            j++;
-                            astro_models[j] = xx;
-                        }
+                        astro_models = argv[i] + 5;
                         do_set_astro_models = true;
+                        /* undocumented test feature */
+                    }
+                    else if (argv[i].StartsWith("-tidacc"))
+                    {
+                        tid_acc = C.atof(argv[i] + 7);
                     }
                     else if (argv[i].StartsWith("-hev"))
                     {
@@ -1171,6 +1181,10 @@ namespace SweTest
                         if (nstep == 0)
                             nstep = 20;
                     }
+                    else if (argv[i].StartsWith("-inut"))
+                    {
+                        inut = true;
+                    }
                     else if (argv[i].StartsWith("-i"))
                     {
                         iflag_f = int.Parse(argv[i].Substring(2));
@@ -1188,6 +1202,13 @@ namespace SweTest
                             step_in_minutes = true;
                         if (argv[i].EndsWith("s"))
                             step_in_seconds = true;
+                        if (argv[i].EndsWith("y"))
+                            step_in_years = true;
+                        if (argv[i].EndsWith("o"))
+                        {
+                            step_in_minutes = false;
+                            step_in_months = true;
+                        }
                     }
                     else if (argv[i].StartsWith("-b"))
                     {
@@ -1329,14 +1350,22 @@ namespace SweTest
                     sweph.swe_set_jpl_file(fname);
                 /* the following is only a test feature */
                 if (do_set_astro_models)
-                    sweph.swe_set_astro_models(astro_models); /* secret test feature for dieter */
+                {
+                    sweph.swe_set_astro_models(astro_models, iflag); /* secret test feature for dieter */
+                    sweph.swe_get_astro_models(astro_models, out smod, iflag);
+                }
+#if N0
+  if (inut) /* Astrodienst internal feature */
+    sweph.swe_set_interpolate_nut(true);
+#endif
                 if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0 || do_ayanamsa)
                     sweph.swe_set_sid_mode(sid_mode, 0, 0);
                 geopos[0] = top_long;
                 geopos[1] = top_lat;
                 geopos[2] = top_elev;
                 sweph.swe_set_topo(top_long, top_lat, top_elev);
-                /*swe_set_tid_acc(-25.82);  * to test delta t output */
+                if (tid_acc != 0)
+                    sweph.swe_set_tid_acc(tid_acc);
                 while (true)
                 {
                     serr = serr_save = serr_warn = String.Empty;
@@ -1455,8 +1484,27 @@ namespace SweTest
                         else if (sp.Contains("greg"))
                             gregflag = SwissEph.SE_GREG_CAL;
                         jut = 0;
-                        tjd = sweph.swe_julday(jyear, jmon, jday, jut, gregflag);
-                        tjd += thour / 24.0;
+                        if (universal_time_utc)
+                        {
+                            int ih = 0, im = 0;
+                            double ds = 0.0;
+                            if (!string.IsNullOrEmpty(stimein))
+                            {
+                                C.sscanf(stimein, "%d:%d:%lf", ref ih, ref im, ref ds);
+                            }
+                            if (sweph.swe_utc_to_jd(jyear, jmon, jday, ih, im, ds, gregflag, tret, ref serr) == SwissEph.ERR)
+                            {
+                                printf(" error in swe_utc_to_jd(): %s\n", serr);
+                                //exit(-1);
+                                return -1;
+                            }
+                            tjd = tret[1];
+                        }
+                        else
+                        {
+                            tjd = sweph.swe_julday(jyear, jmon, jday, jut, gregflag);
+                            tjd += thour / 24.0;
+                        }
                     }
                     if (special_event > 0)
                     {
@@ -1471,6 +1519,19 @@ namespace SweTest
                             t = tjd + (istep - 1) * tstep / 1440;
                         if (step_in_seconds)
                             t = tjd + (istep - 1) * tstep / 86400;
+                        if (step_in_years)
+                        {
+                            sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                            t = sweph.swe_julday(jyear + (istep - 1) * (int)tstep, jmon, jday, jut, gregflag);
+                        }
+                        if (step_in_months)
+                        {
+                            sweph.swe_revjul(tjd, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                            jmon += (istep - 1) * (int)tstep;
+                            jyear += (int)((jmon - 1) / 12);
+                            jmon = ((jmon - 1) % 12) + 1;
+                            t = sweph.swe_julday(jyear, jmon, jday, jut, gregflag);
+                        }
                         if (t < 2299160.5)
                             gregflag = SwissEph.SE_JUL_CAL;
                         else
@@ -1683,8 +1744,9 @@ namespace SweTest
                             }
                             if (psp == 'q')
                             {/* delta t */
-                                x[0] = sweph.swe_deltat_ex(te, iflag, ref serr) * 86400;
+                                x[0] = sweph.swe_deltat_ex(tut, iflag, ref serr) * 86400;
                                 x[1] = x[2] = x[3] = 0;
+                                x[1] = x[0] / 3600.0; // to hours
                                 se_pname = "Delta T";
                             }
                             if (psp == 'x')
@@ -1892,6 +1954,9 @@ namespace SweTest
                                 }
                                 else
                                 {
+                                    CPointer<double> cusp = new double[100];
+                                    if (ihsy == 'i' || ihsy == 'I')
+                                        iflgret = sweph.swe_houses_ex(t, iflag, top_lat, top_long, ihsy, cusp, cusp + 13);
                                     hposj = sweph.swe_house_pos(armc, geopos[1], xobl[0], ihsy, xsv, ref serr);
                                 }
                                 if (char.ToUpper(ihsy) == 'G')
@@ -1989,6 +2054,14 @@ namespace SweTest
                                         gpos[2] = 0;
                                         sweph.swe_azalt(t, SwissEph.SE_ECL2HOR, gpos, datm[0], datm[1], x, xaz);
                                     }
+                                    if (fmt.IndexOfAny("gGj".ToCharArray()) >= 0)
+                                    {
+                                        hposj = sweph.swe_house_pos(armc, geopos[1], xobl[0], ihsy, x, ref serr);
+                                        if (char.ToUpper(ihsy) == 'G')
+                                            hpos = (hposj - 1) * 10;
+                                        else
+                                            hpos = (hposj - 1) * 30;
+                                    }
                                     print_line(MODE_HOUSE, is_first);
                                     is_first = false;
                                     if (!list_hor) line_count++;
@@ -2012,6 +2085,10 @@ namespace SweTest
                 }             /* while 1 */
                               /* close open files and free allocated space */
                 end_main:
+                if (do_set_astro_models)
+                {
+                    printf(smod);
+                }
                 //swe_close();
                 return SwissEph.OK;
             }
@@ -2133,7 +2210,7 @@ namespace SweTest
             for (spi = 0; spi < fmt.Length; spi++)
             {
                 sp = fmt[spi];
-                if (is_house && "bBsSrRxXuUQnNfF+-*/=".IndexOf(sp) >= 0) continue;
+                if (is_house && "bBsSrRxXuUQnNfFj+-*/=".IndexOf(sp) >= 0) continue;
                 //if (sp != fmt)
                 if (spi > 0)
                     Console.Write(gap);
@@ -2249,15 +2326,17 @@ namespace SweTest
                         break;
                     case 'L':
                         if (is_label) { printf(slon); break; }
-                        if (psp == 'q' || psp == 'y') /* delta t or time equation */
-                            goto ldec;
+                        if (psp == 'q' || psp == 'y') { /* delta t or time equation */
+                            printf("%# 11.7f", x[0]);
+                            printf("s");
+                            break;
+                        }
                         Console.Write(dms(x[0], round_flag));
                         break;
                     case 'l':
                         if (is_label) { printf(slon); break; }
-                        ldec:
                         if (OUTPUT_EXTRA_PRECISION != 0)
-                            printf("%# 11.9f", x[0]);
+                            printf("%# 11.11f", x[0]);
                         else
                             printf("%# 11.7f", x[0]);
                         break;
@@ -2295,7 +2374,10 @@ namespace SweTest
                                         break;
                                     case 'l':   /* speed! */
                                         if (is_label) { printf("lon/day"); break; }
-                                        printf("%11.7f", x[3]);
+                                        if (OUTPUT_EXTRA_PRECISION != 0)
+                                            printf("%# 11.9f", x[3]);
+                                        else
+                                            printf("%# 11.7f", x[3]);
                                         break;
                                     case 'B':   /* speed! */
                                         if (is_label) { printf("lat/day"); break; }
@@ -2303,7 +2385,10 @@ namespace SweTest
                                         break;
                                     case 'b':   /* speed! */
                                         if (is_label) { printf("lat/day"); break; }
-                                        printf("%11.7f", x[4]);
+                                        if (OUTPUT_EXTRA_PRECISION != 0)
+                                            printf("%# 11.9f", x[4]);
+                                        else
+                                            printf("%# 11.7f", x[4]);
                                         break;
                                     case 'A':   /* speed! */
                                         if (is_label) { printf("RA/day"); break; }
@@ -2311,7 +2396,10 @@ namespace SweTest
                                         break;
                                     case 'a':   /* speed! */
                                         if (is_label) { printf("RA/day"); break; }
-                                        printf("%11.7f", xequ[3]);
+                                        if (OUTPUT_EXTRA_PRECISION != 0)
+                                            printf("%# 11.9f", xequ[3]);
+                                        else
+                                            printf("%# 11.7f", xequ[3]);
                                         break;
                                     case 'D':   /* speed! */
                                         if (is_label) { printf("dcl/day"); break; }
@@ -2319,7 +2407,10 @@ namespace SweTest
                                         break;
                                     case 'd':   /* speed! */
                                         if (is_label) { printf("dcl/day"); break; }
-                                        printf("%11.7f", xequ[4]);
+                                        if (OUTPUT_EXTRA_PRECISION != 0)
+                                            printf("%# 11.9f", xequ[4]);
+                                        else
+                                            printf("%# 11.7f", xequ[4]);
                                         break;
                                     case 'R':   /* speed! */
                                     case 'r':   /* speed! */
@@ -2389,17 +2480,26 @@ namespace SweTest
                         else
                         {
                             if (is_label) { printf("deg/day"); break; }
-                            printf("%# 11.7f", x[3]);
+                            if (OUTPUT_EXTRA_PRECISION != 0)
+                                printf("%# 11.9f", x[3]);
+                            else
+                                printf("%# 11.7f", x[3]);
                         }
                         break;
                     case 'B':
                         if (is_label) { printf("lat.    "); break; }
+                        if (psp == 'q')
+                        { /* delta t */
+                            printf("%# 11.7f", x[1]);
+                            printf("h");
+                            break;
+                        }
                         Console.Write(dms(x[1], round_flag));
                         break;
                     case 'b':
                         if (is_label) { printf("lat.    "); break; }
                         if (OUTPUT_EXTRA_PRECISION != 0)
-                            printf("%# 11.9f", x[1]);
+                            printf("%# 11.11f", x[1]);
                         else
                             printf("%# 11.7f", x[1]);
                         break;
@@ -2410,7 +2510,7 @@ namespace SweTest
                     case 'a':     /* right ascension */
                         if (is_label) { printf("RA      "); break; }
                         if (OUTPUT_EXTRA_PRECISION != 0)
-                            printf("%# 11.9f", xequ[0]);
+                            printf("%# 11.11f", xequ[0]);
                         else
                             printf("%# 11.7f", xequ[0]);
                         break;
@@ -2421,7 +2521,7 @@ namespace SweTest
                     case 'd':     /* declination */
                         if (is_label) { printf("decl      "); break; }
                         if (OUTPUT_EXTRA_PRECISION != 0)
-                            printf("%# 11.9f", xequ[1]);
+                            printf("%# 11.11f", xequ[1]);
                         else
                             printf("%# 11.7f", xequ[1]);
                         break;
@@ -2812,84 +2912,145 @@ namespace SweTest
             return SwissEph.OK;
         }
 
+        static void print_rise_set_line(double trise, double tset, double[] geopos, ref string serr)
+        {
+            double t0;
+            int retc;
+            sout = string.Empty;
+            if (trise != 0) retc = ut_to_lmt_lat(trise, geopos, out trise, ref serr);
+            if (tset != 0) retc = ut_to_lmt_lat(tset, geopos, out tset, ref serr);
+            sout = "rise     ";
+            if (trise == 0)
+            {
+                sout += "         -                     ";
+            }
+            else
+            {
+                sweph.swe_revjul(trise, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
+            }
+            sout += "set      ";
+            if (tset == 0)
+            {
+                sout += "         -                     ";
+            }
+            else
+            {
+                sweph.swe_revjul(tset, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
+            }
+            if (trise != 0 && tset != 0)
+            {
+                t0 = (tset - trise) * 24;
+                sout += C.sprintf("dt = %s", hms(t0, BIT_LZEROES));
+            }
+            sout += "\n";
+            do_printf(sout);
+        }
+
         static Int32 call_rise_set(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
         {
-            int ii;
+            int ii, rval, loop_count;
             Int32 rsmi = 0;
-            double[] tret = new double[10]; double tret1sv = 0;
-            double t0, t1;
+            double[] tret = new double[10]; double trise = 0, tset = 0, tnext = 0, tret1sv = 0;
+            bool do_rise, do_set;
+            bool last_was_empty = false;
             Int32 retc = SwissEph.OK;
             sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
-            /* loop over days */
-            for (ii = 0; ii < nstep; ii++, t_ut = tret1sv + 0.1)
+            tnext = t_ut;
+            // the code is designed for looping with -nxxx over many days, during which
+            // the object might become circumpolar, or never rise at all.
+            while (special_event == SP_RISE_SET && tnext < t_ut + nstep)
             {
-                sout = String.Empty;
-                /* swetest -rise
-                 * calculate and print rising and setting */
-                if (special_event == SP_RISE_SET)
+                if (last_was_empty && string.IsNullOrEmpty(star))
                 {
-                    /* rising */
-                    rsmi = SwissEph.SE_CALC_RISE;
-                    if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
-                    if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                    if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
-                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, datm[0], datm[1], ref (tret[0]), ref serr) != SwissEph.OK)
+                    rval = sweph.swe_calc_ut(tnext, ipl, whicheph | SwissEph.SEFLG_EQUATORIAL, tret, ref serr);
+                    if (rval >= 0)
                     {
-                        do_printf(serr);
-                        Environment.Exit(0);
+                        double edist = geopos[1] + tret[1];
+                        double edist2 = geopos[1] - tret[1];
+                        if ((edist - 2 > 90 || edist + 2 < -90)
+                        || (edist2 - 2 > 90 || edist2 + 2 < -90))
+                        {
+                            tnext += 1;
+                            continue;
+                        }
                     }
-                    /* setting */
-                    rsmi = SwissEph.SE_CALC_SET;
-                    if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
-                    if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                    if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
-                    if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, rsmi, geopos, datm[0], datm[1], ref (tret[1]), ref serr) != SwissEph.OK)
-                    {
-                        do_printf(serr);
-                        Environment.Exit(0);
-                    }
-                    tret1sv = tret[1];
-                    if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
-                    {
-                        retc = ut_to_lmt_lat(tret[0], geopos, out (tret[0]), ref serr);
-                        retc = ut_to_lmt_lat(tret[1], geopos, out (tret[1]), ref serr);
-                    }
-                    t0 = 0; t1 = 0;
-                    sout = "rise     ";
-                    if (tret[0] == 0 || tret[0] > tret[1])
-                    {
-                        sout = "         -                     ";
-                    }
-                    else
-                    {
-                        t0 = tret[0];
-                        sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                        sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
-                    }
-                    sout += "set      ";
-                    if (tret[1] == 0)
-                    {
-                        sout += "         -                     \n";
-                    }
-                    else
-                    {
-                        t1 = tret[1];
-                        sweph.swe_revjul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                        sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
-                    }
-                    if (t0 != 0 && t1 != 0)
-                    {
-                        t0 = (t1 - t0) * 24;
-                        sout += C.sprintf("dt = %s", hms(t0, BIT_LZEROES));
-                    }
-                    sout += "\n";
-                    do_printf(sout);
                 }
-                /* swetest -metr
-                 * calculate and print transits over meridian (midheaven and lower
-                 * midheaven */
-                if (special_event == SP_MERIDIAN_TRANSIT)
+                /* rising */
+                rsmi = SwissEph.SE_CALC_RISE;
+                if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
+                if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
+                if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
+                rval = sweph.swe_rise_trans(tnext, ipl, star, whicheph, rsmi, geopos, datm[0], datm[1], ref trise, ref serr);
+                if (rval == SwissEph.ERR)
+                {
+                    do_printf(serr);
+                    Environment.Exit(0);
+                }
+                do_rise = (rval == SwissEph.OK);
+                /* setting */
+                rsmi = SwissEph.SE_CALC_SET;
+                if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
+                if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
+                if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
+                do_set = false;
+                loop_count = 0;
+                while (!do_set && loop_count < 2)
+                {
+                    rval = sweph.swe_rise_trans(tnext, ipl, star, whicheph, rsmi, geopos, datm[0], datm[1], ref tset, ref serr);
+                    if (rval == SwissEph.ERR)
+                    {
+                        do_printf(serr);
+                        Environment.Exit(0);
+                    }
+                    do_set = (rval == SwissEph.OK);
+                    if (!do_set && do_rise)
+                    {
+                        tnext = trise;
+                    }
+                    loop_count++;
+                }
+                if (do_rise && do_set && trise > tset)
+                {
+                    do_rise = false;    // ignore rises happening before setting
+                    trise = 0;  // we hope that exact time 0 never happens, is highly unlikely.
+                }
+                if (do_rise && do_set)
+                {
+                    print_rise_set_line(trise, tset, geopos, ref serr);
+                    last_was_empty = false;
+                    tnext = tset + 0.0001;
+                }
+                else if (do_rise && !do_set)
+                {
+                    print_rise_set_line(trise, 0, geopos, ref serr);
+                    last_was_empty = false;
+                    tnext = trise + 0.0001;
+                }
+                else if (do_set && !do_rise)
+                {
+                    tnext = tset + 0.0001;
+                    print_rise_set_line(0, tset, geopos, ref serr);
+                    last_was_empty = false;
+                }
+                else
+                { // neither rise nor set 
+                  // for sequences of days without rise or set, the line '-   -' is printed only once.
+                    if (!last_was_empty) print_rise_set_line(0, 0, geopos, ref serr);
+                    tnext += 1;
+                    last_was_empty = true;
+                }
+                if (nstep == 1) break;
+            }
+            /* swetest -metr
+             * calculate and print transits over meridian (midheaven and lower
+             * midheaven */
+            if (special_event == SP_MERIDIAN_TRANSIT)
+            {
+                /* loop over days */
+                for (ii = 0; ii < nstep; ii++, t_ut = tret1sv + 0.001)
                 {
                     /* transit over midheaven */
                     if (sweph.swe_rise_trans(t_ut, ipl, star, whicheph, SwissEph.SE_CALC_MTRANSIT, geopos, datm[0], datm[1], ref (tret[0]), ref serr) != SwissEph.OK)
@@ -2910,7 +3071,7 @@ namespace SweTest
                         retc = ut_to_lmt_lat(tret[1], geopos, out (tret[1]), ref serr);
                     }
                     sout = "mtransit ";
-                    if (tret[0] == 0) sout += "         -                     ";
+                    if (tret[0] == 0 || tret[0] > tret[1]) sout += "         -                     ";
                     else
                     {
                         sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
