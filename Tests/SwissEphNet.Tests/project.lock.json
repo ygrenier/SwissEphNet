@@ -1,4 +1,5 @@
 {
+  "locked": false,
   "version": 2,
   "targets": {
     ".NETCoreApp,Version=v1.0": {
@@ -2476,7 +2477,7 @@
           "lib/netstandard1.1/xunit.runner.utility.dotnet.dll": {}
         }
       },
-      "SwissEphNet/2.5.1.16": {
+      "SwissEphNet/2.6.0.18": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.0",
         "dependencies": {
@@ -2884,7 +2885,7 @@
           "lib/net45/xunit.runner.utility.desktop.dll": {}
         }
       },
-      "SwissEphNet/2.5.1.16": {
+      "SwissEphNet/2.6.0.18": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.0",
         "compile": {
@@ -7892,7 +7893,7 @@
         "xunit.runner.utility.nuspec"
       ]
     },
-    "SwissEphNet/2.5.1.16": {
+    "SwissEphNet/2.6.0.18": {
       "type": "project",
       "path": "../../SwissEphNet/project.json",
       "msbuildProject": "../../SwissEphNet/SwissEphNet.xproj"
@@ -7900,7 +7901,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "SwissEphNet >= 2.5.1.16",
+      "SwissEphNet >= 2.6.0.18",
       "dotnet-test-xunit >= 2.2.0-preview2-build1029",
       "xunit >= 2.2.0-beta5-build3474"
     ],
@@ -7912,8 +7913,5 @@
     ]
   },
   "tools": {},
-  "projectFileToolGroups": {},
-  "packageFolders": {
-    "C:\\Users\\yan_g\\.nuget\\packages\\": {}
-  }
+  "projectFileToolGroups": {}
 }

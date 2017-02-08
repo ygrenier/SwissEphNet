@@ -13,9 +13,9 @@ namespace SwissEphNet.Tests
                 double[] xin = new double[6], xaz = new double[6]; String serr = null;
                 swe.swe_calc(tjd, SwissEph.SE_SUN, SwissEph.SEFLG_MOSEPH, xin, ref serr);
                 swe.swe_azalt(tjd, SwissEph.SE_ECL2HOR, geopos, 0, 0, xin, xaz);
-                Assert.Equal(249.642425229358, xaz[0], 12);
-                Assert.Equal(-32.8340786097275, xaz[1], 12);
-                Assert.Equal(-32.8340786097275, xaz[2], 12);
+                Assert.Equal(249.642425229357, xaz[0], 12);
+                Assert.Equal(-32.834078609729, xaz[1], 12);
+                Assert.Equal(-32.834078609729, xaz[2], 12);
             }
         }
     }

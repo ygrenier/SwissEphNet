@@ -4179,6 +4179,8 @@ namespace SwissEphNet.CPort
             int jmax = 14;
             double t, te, tt, dt, twohrs = 1.0 / 12.0;
             double curdist;
+            int nazalt = 0;
+            int ncalc = 0;
             bool do_fixstar = !String.IsNullOrEmpty(starname);
             if (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX)
             {
@@ -4226,6 +4228,7 @@ namespace SwissEphNet.CPort
                     te = t + SE.swe_deltat_ex(t, epheflag, ref serr);
                     if (SE.swe_calc(te, ipl, iflag, xc, ref serr) == SwissEph.ERR)
                         return SwissEph.ERR;
+                    ncalc++;
                 }
                 /* diameter of object in km */
                 if (ii == 0) {
@@ -4252,6 +4255,7 @@ namespace SwissEphNet.CPort
                 rdi = Math.Asin(dd / 2 / Sweph.AUNIT / curdist) * SwissEph.RADTODEG;
                 /* true height of center of body */
                 swe_azalt(t, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, xh[ii]);
+                nazalt++;
                 if ((rsmi & SwissEph.SE_BIT_DISC_BOTTOM) != 0) {
                     /* true height of bottom point of body */
                     xh[ii][1] -= rdi;
@@ -4265,7 +4269,9 @@ namespace SwissEphNet.CPort
                     h[ii] = xh[ii][1];
                 } else {
                     swe_azalt_rev(t, SwissEph.SE_HOR2EQU, geopos, xh[ii], xc);
+                    nazalt++;
                     swe_azalt(t, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, xh[ii]);
+                    nazalt++;
                     xh[ii][1] -= horhgt;
                     xh[ii][2] -= horhgt;
                     h[ii] = xh[ii][2];
@@ -4292,7 +4298,9 @@ namespace SwissEphNet.CPort
                             if (!do_fixstar)
                                 if (SE.swe_calc(te, ipl, iflag, xc, ref serr) == SwissEph.ERR)
                                     return SwissEph.ERR;
+                            ncalc++;
                             swe_azalt(tt, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                            nazalt++;
                             ah[1] -= horhgt;
                             dc[i] = ah[1];
                         }
@@ -4319,6 +4327,7 @@ namespace SwissEphNet.CPort
                             te = tc[j] + SE.swe_deltat_ex(tc[j], epheflag, ref serr);
                             if (SE.swe_calc(te, ipl, iflag, xc, ref serr) == SwissEph.ERR)
                                 return SwissEph.ERR;
+                            ncalc++;
                         }
                         curdist = xc[2];
                         if ((rsmi & SwissEph.SE_BIT_FIXED_DISC_SIZE) != 0) {
@@ -4332,6 +4341,7 @@ namespace SwissEphNet.CPort
                         rdi = Math.Asin(dd / 2 / Sweph.AUNIT / curdist) * SwissEph.RADTODEG;
                         /* true height of center of body */
                         swe_azalt(tc[j], SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                        nazalt++;
                         if ((rsmi & SwissEph.SE_BIT_DISC_BOTTOM) != 0) {
                             /* true height of bottom point of body */
                             ah[1] -= rdi;
@@ -4345,7 +4355,9 @@ namespace SwissEphNet.CPort
                             h[j] = ah[1];
                         } else {
                             swe_azalt_rev(tc[j], SwissEph.SE_HOR2EQU, geopos, ah, xc);
+                            nazalt++;
                             swe_azalt(tc[j], SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                            nazalt++;
                             ah[1] -= horhgt;
                             ah[2] -= horhgt;
                             h[j] = ah[2];
@@ -4375,6 +4387,7 @@ namespace SwissEphNet.CPort
                         te = t + SE.swe_deltat_ex(t, epheflag, ref serr);
                         if (SE.swe_calc(te, ipl, iflag, xc, ref serr) == SwissEph.ERR)
                             return SwissEph.ERR;
+                        ncalc++;
                     }
                     curdist = xc[2];
                     if ((rsmi & SwissEph.SE_BIT_FIXED_DISC_SIZE) != 0) {
@@ -4388,6 +4401,7 @@ namespace SwissEphNet.CPort
                     rdi = Math.Asin(dd / 2 / Sweph.AUNIT / curdist) * SwissEph.RADTODEG;
                     /* true height of center of body */
                     swe_azalt(t, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                    nazalt++;
                     if ((rsmi & SwissEph.SE_BIT_DISC_BOTTOM) != 0) {
                         /* true height of bottom point of body */
                         ah[1] -= rdi;
@@ -4401,7 +4415,9 @@ namespace SwissEphNet.CPort
                         aha = ah[1];
                     } else {
                         swe_azalt_rev(t, SwissEph.SE_HOR2EQU, geopos, ah, xc);
+                        nazalt++;
                         swe_azalt(t, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                        nazalt++;
                         ah[1] -= horhgt;
                         ah[2] -= horhgt;
                         aha = ah[2];
@@ -4416,6 +4432,8 @@ namespace SwissEphNet.CPort
                 }
                 if (t > tjd_ut) {
                     tret = t;
+                    //  fprintf(stderr, "nazalt=%d\n", nazalt);
+                    //  fprintf(stderr, "ncalc=%d\n", ncalc);
                     return SwissEph.OK;
                 }
             }
@@ -5984,6 +6002,13 @@ static const double Gmsm_factor_AA[] = {
              * */
             ncnt = 182;
             dstep = 2;
+            for (i = 0; i < 3; i++)
+            { /* initialisation */
+                max_xouter[i] = 0;
+                max_xinner[i] = 0;
+                min_xouter[i] = 0;
+                min_xinner[i] = 0;
+            }
             for (j = 0; j < ncnt; j++)
             {
                 eano = (double)j * dstep;
@@ -6075,8 +6100,26 @@ static const double Gmsm_factor_AA[] = {
          * if a non-zero height above sea is given in geopos, atpress is estimated.
          * dgsect is return area (pointer to a double)
          * serr is pointer to error string, may be NULL
+         * 
          */
-        public Int32 swe_gauquelin_sector(double t_ut, Int32 ipl, string starname, Int32 iflag, Int32 imeth, double[] geopos, double atpress, double attemp, ref double dgsect, ref string serr) {
+        public Int32 swe_gauquelin_sector(
+              double t_ut,      /* input time (UT) */
+              Int32 ipl,        /* planet number, if planet, or moon;
+                                 * ipl is ignored if the following parameter (starname) is set*/
+              string starname,  /* star name, if star; otherwise NULL or empty */
+              Int32 iflag,      /* flag for ephemeris and SEFLG_TOPOCTR */
+              Int32 imeth,      /* method: 0 = with lat., 1 = without lat., 
+		                         *         2 = from rise/set, 3 = from rise/set with refraction */
+              double[] geopos,  /* array of three doubles containing
+		                         * geograph. long., lat., height of observer */
+              double atpress,   /* atmospheric pressure, only useful with imeth=3; 
+		                         * if 0, default = 1013.25 mbar is used */
+              double attemp,    /* atmospheric temperature in degrees Celsius, 
+                                 *only useful with imeth=3 */
+              ref double dgsect, /* return address for gauquelin sector position */
+              ref string serr    /* return address for error message */
+            )
+        {
             bool rise_found = true;
             bool set_found = true;
             Int32 retval;
