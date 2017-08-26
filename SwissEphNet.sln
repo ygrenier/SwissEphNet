@@ -20,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{D0592369-8075-
 		make-dist.ps1 = make-dist.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DFFCE096-F3E7-48B3-BE8C-15C22B8304CE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SweMini", "Programs\SweMini\SweMini.csproj", "{67BE4773-CC1F-4C5B-A3A6-38A163C9768C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwissEphNet", "SwissEphNet\SwissEphNet.csproj", "{067B4733-56FD-46A1-81B5-0FD31D76E68F}"
