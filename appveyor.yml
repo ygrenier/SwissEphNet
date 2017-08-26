@@ -1,11 +1,12 @@
 # Master branch: production
 -
-  version: 2.5.1.{build}
+  version: 2.6.0.{build}
   branches:
     only:
       - master
 
   max_jobs: 1
+  image: Visual Studio 2015
   configuration: Release
   before_build:
     - ps: >-
@@ -38,12 +39,13 @@
 
 # Develop: tests
 -
-  version: 2.5.1.{build}-dev
+  version: 2.6.0.{build}-dev
   branches:
     only:
       - develop
 
   max_jobs: 1
+  image: Visual Studio 2015
   configuration: Debug
   before_build:
     - ps: >-
