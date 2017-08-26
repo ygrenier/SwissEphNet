@@ -30,8 +30,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SweTest", "Programs\SweTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweWin", "Programs\SweWin\SweWin.csproj", "{D1AE1640-218C-4CCB-BD09-EADCAE96335A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwissEphNet-Net40", "SwissEphNet\SwissEphNet-Net40.csproj", "{8895A5B1-E188-4926-B204-87B921EE040C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,10 +56,6 @@ Global
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1AE1640-218C-4CCB-BD09-EADCAE96335A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8895A5B1-E188-4926-B204-87B921EE040C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
