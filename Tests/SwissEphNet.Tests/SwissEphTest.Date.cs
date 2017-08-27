@@ -83,6 +83,33 @@ namespace SwissEphNet.Tests
             }
         }
 
+        [Fact]
+        public void LoadDeltaT()
+        {
+            using (var swe = new SwissEph())
+            {
+                var tjd_ut = swe.swe_julday(2017, 8, 26, 11.25, SwissEph.SE_GREG_CAL);
+                Assert.Equal(0.00079744, swe.swe_deltat(tjd_ut), 8);
+            }
+            using (var swe = new SwissEph())
+            {
+                var tjd_ut = swe.swe_julday(2017, 8, 26, 11.25, SwissEph.SE_GREG_CAL);
+                bool isLoaded = false;
+                swe.OnLoadFile += (s, e) =>
+                {
+                    if (e.FileName == "[ephe]\\sedeltat.txt")
+                    {
+                        var asm = this.GetType().GetAssembly();
+                        String sr = e.FileName.Replace("[ephe]", @"SwissEphNet.Tests.files").Replace("/", ".").Replace("\\", ".");
+                        e.File = asm.GetManifestResourceStream(sr);
+                        isLoaded = true;
+                    }
+                };
+                Assert.Equal(0.00079744, swe.swe_deltat(tjd_ut), 8);
+                Assert.Equal(true, isLoaded);
+            }
+        }
+
         //[Fact]
         //public void TestDeltaT_with_ESPENAK_MEEUS_2006() {
         //    using (var swe = new SwissEph()) {
