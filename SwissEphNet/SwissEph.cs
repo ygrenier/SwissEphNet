@@ -94,10 +94,10 @@ namespace SwissEphNet
         internal protected CFile LoadFile(String filename) {
             var h = OnLoadFile;
             if (h != null) {
-                var e = new LoadFileEventArgs(filename);
+                var e = new LoadFileEventArgs(filename) { Encoding = DefaultEncoding };
                 h(this, e);
                 if (e.File == null) return null;
-                return new CFile(e.File, DefaultEncoding);
+                return new CFile(e.File, e.Encoding ?? DefaultEncoding);
             }
             return null;
         }
