@@ -6,7 +6,7 @@
     <RootNamespace>SwissEphNet</RootNamespace>
     <PackageId>SwissEphNet</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.6.0.21-beta1</Version>
+    <Version>2.6.0.21</Version>
     <Authors>Yan Grenier</Authors>
     <Company>Yan Grenier</Company>
     <Product>SwissEphNet</Product>
