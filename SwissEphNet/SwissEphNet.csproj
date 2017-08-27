@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.0;net40</TargetFrameworks>
+    <AssemblyName>SwissEphNet</AssemblyName>
+    <RootNamespace>SwissEphNet</RootNamespace>
+    <PackageId>SwissEphNet</PackageId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.6.0.21</Version>
+    <Authors>Yan Grenier</Authors>
+    <Company>Yan Grenier</Company>
+    <Product>SwissEphNet</Product>
+    <Description>Swiss Ephemeris .Net portage</Description>
+    <Copyright>Copyright © Yan Grenier 2014-2017</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/ygrenier/SwissEphNet/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ygrenier/SwissEphNet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ygrenier/SwissEphNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Swiss Ephemeris</PackageTags>
+    <PackageReleaseNotes>2.6.0.21:
+- Update to VS 2017 project
+
+2.6.0.18:
+- Update the code to the Swiss Ephemeris 2.06.00 version.
+
+2.5.1.16:
+- Add .NETCore 5.0
+- Add PCL Profile 111
+- Add PCL Profile 259
+- Change PCL profile 136 to profile 328
+
+2.5.1.14:
+- Update package to .net Core
+
+
+2.5.1.13 :
+- Update the code to the Swiss Ephemeris 2.05.01 version.
+
+2.4.0.12 :
+- Bug fixes.
+
+
+2.4.0.11 :
+- Bug fix on the sideral calculation.
+
+2.4.0.10 :
+- Update the code to the Swiss Ephemeris 2.04.00 version.
+- Correct the code remove all static fields to permit multiple calculations with multiple SwissEph instances.
+
+2.2.1.9 :
+- Update the code to the Swiss Ephemeris 2.02.01 version.
+</PackageReleaseNotes>
+    <NeutralLanguage>Anglais</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;RELEASE;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD1_0;NETSTANDARD;NOTYPECODE;USETYPEINFO;NOASMATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <DefineConstants>$(DefineConstants);NET40;NOASMATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+  
+</Project>

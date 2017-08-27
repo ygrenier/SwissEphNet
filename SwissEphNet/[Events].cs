@@ -48,5 +48,9 @@ namespace SwissEphNet
         /// </summary>
         public Stream File { get; set; }
 
+        /// <summary>
+        /// File encoding
+        /// </summary>
+        public Encoding Encoding { get; set; }
     }
 }

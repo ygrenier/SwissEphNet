@@ -41,7 +41,7 @@ namespace SwissEphNet
         /// </summary>
         public static Assembly GetAssembly(this Type type)
         {
-#if NET_STANDARD || NOTYPECODE
+#if USETYPEINFO
             return type?.GetTypeInfo()?.Assembly;
 #else
             return type?.Assembly;

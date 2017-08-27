@@ -99,9 +99,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SwissEphNet\SwissEphNet-Net40.csproj">
-      <Project>{8895a5b1-e188-4926-b204-87b921ee040c}</Project>
-      <Name>SwissEphNet-Net40</Name>
+    <ProjectReference Include="..\..\SwissEphNet\SwissEphNet.csproj">
+      <Project>{067b4733-56fd-46a1-81b5-0fd31d76e68f}</Project>
+      <Name>SwissEphNet</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

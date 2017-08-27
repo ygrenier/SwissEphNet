@@ -1,25 +1,26 @@
 # Master branch: production
 -
-  version: 2.5.1.{build}
+  version: 2.6.0.{build}
   branches:
     only:
       - master
 
   max_jobs: 1
+  image: Visual Studio 2017
   configuration: Release
   before_build:
     - ps: >-
         nuget restore .\SwissEphNet.sln
 
-        dotnet restore .\SwissEphNet\
+        dotnet restore .\SwissEphNet.sln
 
-        dotnet build .\SwissEphNet\ -c Release
+        dotnet build .\SwissEphNet.sln -c Release
 
   build:
     verbosity: minimal
   after_build:
     - ps: >-
-        dotnet pack .\SwissEphNet\ -c Release
+        dotnet pack .\SwissEphNet\SwissEphNet.csproj -c Release
 
         Get-ChildItem . -Recurse -Include "*.symbols.nupkg" | Remove-Item
 
@@ -38,26 +39,27 @@
 
 # Develop: tests
 -
-  version: 2.5.1.{build}-dev
+  version: 2.6.0.{build}-dev
   branches:
     only:
       - develop
 
   max_jobs: 1
+  image: Visual Studio 2017
   configuration: Debug
   before_build:
     - ps: >-
         nuget restore .\SwissEphNet.sln
 
-        dotnet restore .\SwissEphNet\
+        dotnet restore .\SwissEphNet.sln
 
-        dotnet build .\SwissEphNet\ -c Debug
+        dotnet build .\SwissEphNet.sln -c Debug
 
   build:
     verbosity: minimal
   after_build:
     - ps: >-
-        dotnet pack .\SwissEphNet\ -c Debug
+        dotnet pack .\SwissEphNet\SwissEphNet.csproj -c Debug
 
         Get-ChildItem . -Recurse -Include "*.symbols.nupkg" | Remove-Item
 

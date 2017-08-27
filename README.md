@@ -1,16 +1,11 @@
 # SwissEphNet
 
 This project is an Astrodienst Swiss Ephemeris (http://www.astro.com/swisseph/) .Net portage from 
-C (version 2.05.01) to C# in a PCL/.Net Core project for cross platform usage.
+C (version 2.06) to C# in a PCL/.Net Core project for cross platform usage.
 
-Since version 2.5.1.16, the nuget package includes 6 versions:
+Since version 2.6.0.21, the nuget package includes 2 versions:
 - .Net 4.0
-- .Net Core 5.0 (UWP)
 - .Net Standard 1.0
-- PCL Profile 136 : (.NET Framework 4.0, Silverlight 5.0, Windows 8.0, Windows Phone Silverlight 8.0)
-- PCL Profile 111 : (.NET Framework 4.5, Windows 8, Windows Phone 8.1)
-- PCL Profile 259 : (.NET Framework 4.5, Windows 8, Windows Phone 8.1, Windows Phone Silverlight 8)
-
 
 The programs SweMini and SweTest are availables in 2 versions:
 - .Net 4.0
@@ -18,7 +13,29 @@ The programs SweMini and SweTest are availables in 2 versions:
 
 These programs are available in the "binary.zip" of [each release](https://github.com/ygrenier/SwissEphNet/releases).
 
+## Samples
+
+A new repos was created https://github.com/ygrenier/SwissEphNet.Samples containing
+lot of sample applications for using the library on different application types.
+
+## Works with async
+
+For working with the async context read the [this paragraph](https://github.com/ygrenier/SwissEphNet/wiki/Loading-files#works-in-an-async-context).
+
 # Breaking changes
+
+## V:2.6.0.21
+
+Since .NETStandard are supported, this library is not compiled on PCL version. Only
+2 version are available: .NET 4.0 for old legacy application, .NETStandard 1.0
+for the new framework.
+
+.NETStandard 1.0 is supported by VS 2015.3 and VS 2017, so PCL are not usefull.
+
+The new repos of https://github.com/ygrenier/SwissEphNet.Samples contains applications
+using only this version of the library.
+
+## V:2.5.1.16
 
 Since 2.5.1.16 some libraries don't supports the "Windows-1252" code page. In this case, the default encoding become "UTF-8".
 
