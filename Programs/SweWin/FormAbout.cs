@@ -13,6 +13,11 @@ namespace SweWin
     {
         public FormAbout() {
             InitializeComponent();
+            using (var sweph = new SwissEphNet.SwissEph())
+            {
+                lblVersion.Text = $"Version {sweph.swe_version()}";
+                lblDotnetVersion.Text = $".Net Version {sweph.swe_dotnet_version()}";
+            }
         }
     }
 }
