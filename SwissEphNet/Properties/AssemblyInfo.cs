@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿#if !NOASMATTRIBUTES
+using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -26,5 +27,6 @@ using System.Runtime.InteropServices;
 [assembly: GuidAttribute("067b4733-56fd-46a1-81b5-0fd31d76e68f")]
 #endif
 
-[assembly: AssemblyVersion("2.6.0.19")]
-[assembly: AssemblyFileVersion("2.6.0.19")]
+[assembly: AssemblyVersion("2.6.0.20")]
+[assembly: AssemblyFileVersion("2.6.0.20")]
+#endif
