@@ -83,10 +83,9 @@ namespace SwissEphNet.CPort
     {
         public SweHouse(SwissEph se)
             : base(se) {
-            swed = SE.Sweph.swed;
         }
 
-        Sweph.swe_data swed;
+        Sweph.swe_data swed => SE.Sweph.swed;
 
         const double MILLIARCSEC = (1.0 / 3600000.0);
 
