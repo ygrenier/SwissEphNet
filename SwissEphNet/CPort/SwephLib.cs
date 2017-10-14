@@ -103,13 +103,12 @@ namespace SwissEphNet.CPort
             cls = SweNut200a.cls;
             npl = SweNut200a.npl;
             icpl = SweNut200a.icpl;
-            swed = SE.Sweph.swed;
         }
         Int16[] nls;
         Int32[] cls;
         Int16[] npl;
         Int16[] icpl;
-        Sweph.swe_data swed;
+        Sweph.swe_data swed => SE.Sweph.swed;
         //static void init_crc32(void);
         //static int init_dt(void);
         //static double adjust_for_tidacc(double ans, double Y, double tid_acc, double tid_acc0, AS_BOOL adjust_after_1955);
