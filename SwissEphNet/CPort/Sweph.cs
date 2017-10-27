@@ -84,6 +84,7 @@ namespace SwissEphNet.CPort
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Reflection;
+    using static C;
 
     partial class Sweph : BaseCPort
     {
@@ -1486,7 +1487,7 @@ namespace SwissEphNet.CPort
             if (fp == null)
                 return; /* return without error as existence of file is not mandatory */
             while ((s = fp.ReadLine()) != null) {
-                mjd = int.Parse(s.Substring(7));
+                mjd = atoi(s.Substring(7));
                 if (mjd + TJDOFS <= swed.eop_tjd_end)
                     continue;
                 if (n >= Sweph.SWE_DATA_DPSI_DEPS)
@@ -1500,12 +1501,12 @@ namespace SwissEphNet.CPort
                     return;
                 }
                 /* dpsi, deps Bulletin B */
-                dpsi = double.Parse(s.Substring(168), CultureInfo.InvariantCulture);
-                deps = double.Parse(s.Substring(178), CultureInfo.InvariantCulture);
+                dpsi = atof(s.Substring(168));
+                deps = atof(s.Substring(178));
                 if (dpsi == 0) {
                     /* try dpsi, deps Bulletin A */
-                    dpsi = double.Parse(s.Substring(99), CultureInfo.InvariantCulture);
-                    deps = double.Parse(s.Substring(118), CultureInfo.InvariantCulture);
+                    dpsi = atof(s.Substring(99));
+                    deps = atof(s.Substring(118));
                 }
                 if (dpsi == 0) {
                     swed.eop_dpsi_loaded = 2;
