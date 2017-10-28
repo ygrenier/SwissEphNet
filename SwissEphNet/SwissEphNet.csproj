@@ -6,7 +6,7 @@
     <RootNamespace>SwissEphNet</RootNamespace>
     <PackageId>SwissEphNet</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.6.0.22</Version>
+    <Version>2.6.0.23</Version>
     <Authors>Yan Grenier</Authors>
     <Company>Yan Grenier</Company>
     <Product>SwissEphNet</Product>
@@ -17,7 +17,10 @@
     <RepositoryUrl>https://github.com/ygrenier/SwissEphNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Swiss Ephemeris</PackageTags>
-    <PackageReleaseNotes>2.6.0.22:
+    <PackageReleaseNotes>2.6.0.23:
+- Fix the #29 issue
+
+2.6.0.22:
 - Fix the #27 issue
 
 2.6.0.21:
