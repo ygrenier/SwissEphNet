@@ -12,7 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="files\**" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <None Remove="files\eop_1962_today.txt" />
+    <None Remove="files\eop_finals.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="files\eop_1962_today.txt" />
+    <EmbeddedResource Include="files\eop_finals.txt" />
+    <EmbeddedResource Include="files\se00005s.se1" />
+    <EmbeddedResource Include="files\sedeltat.txt" />
   </ItemGroup>
 
   <ItemGroup>
