@@ -2970,7 +2970,7 @@ namespace SwissEphNet.CPort
                 swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA) {
                 star = "Spica"; /* Citra */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                 {
                     return ERR;
                 }
@@ -2980,7 +2980,7 @@ namespace SwissEphNet.CPort
             }
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI) {
                 star = ",zePsc"; /* Revati */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 359.8333333333);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -2988,7 +2988,7 @@ namespace SwissEphNet.CPort
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA)
             {
                 star = ",deCnc"; /* Pushya = Asellus Australis */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 106);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -2996,7 +2996,7 @@ namespace SwissEphNet.CPort
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_MULA)
             {
                 star = ",laSco"; /* Mula = lambda Scorpionis */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 240);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -3004,7 +3004,7 @@ namespace SwissEphNet.CPort
             if (sip.sid_mode == SwissEph.SE_SIDM_GALCENT_0SAG)
             {
                 star = ",SgrA*"; /* Galactic Centre */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 240.0);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -3013,7 +3013,7 @@ namespace SwissEphNet.CPort
             if (sip.sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND)
             {
                 star = ",SgrA*"; /* Galactic Centre */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 210.0 - 90.0 * 0.3819660113);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -3024,7 +3024,7 @@ namespace SwissEphNet.CPort
                 star = ",SgrA*"; /* Galactic Centre */
                 /* right ascension in polar projection onto the ecliptic, 
                  * and that point is put in the middle of Mula */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_true | SwissEph.SEFLG_EQUATORIAL, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true | SwissEph.SEFLG_EQUATORIAL, x, ref serr)) == ERR)
                     return ERR;
                 eps = SE.SwephLib.swi_epsiln(tjd_et, iflag) * SwissEph.RADTODEG;
                 daya = SE.SweHouse.swi_armc_to_mc(x[0], eps);
@@ -3035,7 +3035,7 @@ namespace SwissEphNet.CPort
             if (sip.sid_mode == SwissEph.SE_SIDM_GALEQU_IAU1958)
             {
                 star = ",GP1958"; /* Galactic Pole IAU 1958 */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 150);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -3043,7 +3043,7 @@ namespace SwissEphNet.CPort
             if (sip.sid_mode == SwissEph.SE_SIDM_GALEQU_TRUE)
             {
                 star = ",GPol"; /* Galactic Pole modern, true */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 150);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -3051,7 +3051,7 @@ namespace SwissEphNet.CPort
             if (sip.sid_mode == SwissEph.SE_SIDM_GALEQU_MULA)
             {
                 star = ",GPol"; /* Galactic Pole modern, true */
-                if ((retflag = swe_fixstar(star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_galequ, x, ref serr)) == ERR)
                     return ERR;
                 daya = SE.swe_degnorm(x[0] - 150 - 6.6666666667);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
@@ -6051,7 +6051,7 @@ namespace SwissEphNet.CPort
         string slast_stardata = String.Empty;
         string slast_starname = String.Empty;
         string sdummy = null;
-        public Int32 swe_fixstar(string star, double tjd, Int32 iflag,
+        public Int32 swe_fixstar(ref string star, double tjd, Int32 iflag,
           double[] xx, ref string serr) {
             int i;
             int star_nr = 0;
@@ -6261,6 +6261,7 @@ namespace SwissEphNet.CPort
         found:
             slast_stardata = s;
             slast_starname = sstar;
+            // star = sstar;
             //i = swi_cutstr(s, ",", cpos, 20);
             //swi_right_trim(cpos[0]);
             //swi_right_trim(cpos[1]);
@@ -6563,7 +6564,7 @@ namespace SwissEphNet.CPort
             return retc;
         }
 
-        public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag,
+        public Int32 swe_fixstar_ut(ref string star, double tjd_ut, Int32 iflag,
           double[] xx, ref string serr) {
               double deltat;
               Int32 retflag;
@@ -6578,11 +6579,11 @@ namespace SwissEphNet.CPort
               }
               deltat = SE.swe_deltat_ex(tjd_ut, iflag, ref serr);
               /* if ephe required is not ephe returned, adjust delta t: */
-              retflag = swe_fixstar(star, tjd_ut + deltat, iflag, xx, ref serr);
+              retflag = swe_fixstar(ref star, tjd_ut + deltat, iflag, xx, ref serr);
               if ((retflag & SwissEph.SEFLG_EPHMASK) != epheflag)
               {
                   deltat = SE.swe_deltat_ex(tjd_ut, retflag, ref sdummy);
-                  retflag = swe_fixstar(star, tjd_ut + deltat, iflag, xx, ref sdummy);
+                  retflag = swe_fixstar(ref star, tjd_ut + deltat, iflag, xx, ref sdummy);
               }
               return retflag;
           }

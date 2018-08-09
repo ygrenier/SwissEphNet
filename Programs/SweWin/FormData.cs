@@ -664,7 +664,7 @@ namespace SweWin
                         continue;
                 /* ecliptic position */
                 if (ipl == SwissEph.SE_FIXSTAR) {
-                    iflgret = sweph.swe_fixstar(star, tjd_et, iflag, x, ref serr);
+                    iflgret = sweph.swe_fixstar(ref star, tjd_et, iflag, x, ref serr);
                     se_pname = star;
                 } else {
                     iflgret = sweph.swe_calc(tjd_et, ipl, iflag, x, ref serr);
@@ -694,7 +694,7 @@ namespace SweWin
                 if (fmt.IndexOfAny("aADdQ".ToCharArray()) >= 0) {
                     iflag2 = iflag | SwissEph.SEFLG_EQUATORIAL;
                     if (ipl == SwissEph.SE_FIXSTAR)
-                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xequ, ref serr);
+                        iflgret = sweph.swe_fixstar(ref star, tjd_et, iflag2, xequ, ref serr);
                     else
                         iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xequ, ref serr);
                 }
@@ -702,7 +702,7 @@ namespace SweWin
                 if (fmt.IndexOfAny("XU".ToCharArray()) >= 0) {
                     iflag2 = iflag | SwissEph.SEFLG_XYZ;
                     if (ipl == SwissEph.SE_FIXSTAR)
-                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xcart, ref serr);
+                        iflgret = sweph.swe_fixstar(ref star, tjd_et, iflag2, xcart, ref serr);
                     else
                         iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xcart, ref serr);
                 }
@@ -710,7 +710,7 @@ namespace SweWin
                 if (fmt.IndexOfAny("xu".ToCharArray()) >= 0) {
                     iflag2 = iflag | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_EQUATORIAL;
                     if (ipl == SwissEph.SE_FIXSTAR)
-                        iflgret = sweph.swe_fixstar(star, tjd_et, iflag2, xcartq, ref serr);
+                        iflgret = sweph.swe_fixstar(ref star, tjd_et, iflag2, xcartq, ref serr);
                     else
                         iflgret = sweph.swe_calc(tjd_et, ipl, iflag2, xcartq, ref serr);
                 }
