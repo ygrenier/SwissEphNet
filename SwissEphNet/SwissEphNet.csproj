@@ -6,18 +6,21 @@
     <RootNamespace>SwissEphNet</RootNamespace>
     <PackageId>SwissEphNet</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.6.0.23</Version>
+    <Version>2.6.0.24</Version>
     <Authors>Yan Grenier</Authors>
     <Company>Yan Grenier</Company>
     <Product>SwissEphNet</Product>
     <Description>Swiss Ephemeris .Net portage</Description>
-    <Copyright>Copyright © Yan Grenier 2014-2017</Copyright>
+    <Copyright>Copyright © Yan Grenier 2014-2018</Copyright>
     <PackageLicenseUrl>https://raw.githubusercontent.com/ygrenier/SwissEphNet/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ygrenier/SwissEphNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ygrenier/SwissEphNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Swiss Ephemeris</PackageTags>
-    <PackageReleaseNotes>2.6.0.23:
+    <PackageReleaseNotes>2.6.0.24:
+- Include the PR #32 - Make fixed star name parameter ref  - thanks to aleksamagicka
+
+2.6.0.23:
 - Fix the #29 issue
 
 2.6.0.22:

@@ -14,6 +14,7 @@
   <ItemGroup>
     <None Remove="files\eop_1962_today.txt" />
     <None Remove="files\eop_finals.txt" />
+    <None Remove="files\sefstars.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
     <EmbeddedResource Include="files\eop_finals.txt" />
     <EmbeddedResource Include="files\se00005s.se1" />
     <EmbeddedResource Include="files\sedeltat.txt" />
+    <EmbeddedResource Include="files\sefstars.txt" />
   </ItemGroup>
 
   <ItemGroup>

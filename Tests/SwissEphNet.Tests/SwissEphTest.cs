@@ -43,7 +43,7 @@ namespace SwissEphNet.Tests
         public void TestVersion() {
             using (var target = new SwissEph()) {
                 Assert.Equal("2.06", target.swe_version());
-                Assert.Equal("2.06.00-net-0023", target.swe_dotnet_version());
+                Assert.Equal("2.06.00-net-0024", target.swe_dotnet_version());
             }
         }
 
@@ -121,27 +121,6 @@ namespace SwissEphNet.Tests
             using (var target = new SwissEph()) {
                 //public Int32 swe_topo_arcus_visionis(double tjdut, double[] dgeo, double[] datm, double[] dobs, Int32 helflag, double mag,
                 //    double azi_obj, double alt_obj, double azi_sun, double azi_moon, double alt_moon, ref double dret, ref string serr);
-            }
-        }
-
-        [Fact(Skip = "")]
-        public void Test_swe_fixstar() {
-            using (var target = new SwissEph()) {
-                //public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr);
-            }
-        }
-
-        [Fact(Skip = "")]
-        public void Test_swe_fixstar_ut() {
-            using (var target = new SwissEph()) {
-                //public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr);
-            }
-        }
-
-        [Fact(Skip = "")]
-        public void Test_swe_fixstar_mag() {
-            using (var target = new SwissEph()) {
-                //public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr);
             }
         }
 

@@ -671,13 +671,13 @@ namespace SwissEphNet
         /// <summary>
         /// fixed stars
         /// </summary>
-        public Int32 swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr)
+        public Int32 swe_fixstar(ref string star, double tjd, Int32 iflag, double[] xx, ref string serr)
         {
-            return Sweph.swe_fixstar(star, tjd, iflag, xx, ref serr);
+            return Sweph.swe_fixstar(ref star, tjd, iflag, xx, ref serr);
         }
-        public Int32 swe_fixstar_ut(string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr)
+        public Int32 swe_fixstar_ut(ref string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr)
         {
-            return Sweph.swe_fixstar_ut(star, tjd_ut, iflag, xx, ref serr);
+            return Sweph.swe_fixstar_ut(ref star, tjd_ut, iflag, xx, ref serr);
         }
         public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr)
         {
