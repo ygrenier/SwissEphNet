@@ -382,7 +382,7 @@ namespace SwissEphNet.CPort
         Int32 call_swe_fixstar(string star, double tjd, Int32 iflag, double[] xx, ref string serr) {
             Int32 retval;
             string star2 = star;
-            retval = SE.swe_fixstar(star2, tjd, iflag, xx, ref serr);
+            retval = SE.swe_fixstar(ref star2, tjd, iflag, xx, ref serr);
             return retval;
         }
 
@@ -2411,7 +2411,7 @@ namespace SwissEphNet.CPort
             string star2;
             star2 = star;
             if (ipl == -1) {
-                if ((retval = SE.swe_fixstar(star2, tjd, epheflag | SwissEph.SEFLG_EQUATORIAL, x, ref serr)) == SwissEph.ERR)
+                if ((retval = SE.swe_fixstar(ref star2, tjd, epheflag | SwissEph.SEFLG_EQUATORIAL, x, ref serr)) == SwissEph.ERR)
                     return SwissEph.ERR;
             } else {
                 if ((retval = SE.swe_calc(tjd, ipl, epheflag | SwissEph.SEFLG_EQUATORIAL, x, ref serr)) == SwissEph.ERR)

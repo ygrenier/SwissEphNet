@@ -879,7 +879,7 @@ namespace SwissEphNet.CPort
             if (String.IsNullOrEmpty(starname)) {
                 retc = SE.swe_calc(tjd_et, ipl, iflag, x, ref serr);
             } else {
-                if ((retc = SE.swe_fixstar(starname, tjd_et, iflag, x, ref serr)) == SwissEph.OK) {
+                if ((retc = SE.swe_fixstar(ref starname, tjd_et, iflag, x, ref serr)) == SwissEph.OK) {
                     /* fixstars have the standard distance 1. 
                      * in the occultation routines, this might lead to errors 
                      * if interpreted as AU distance. To avoid this, we make it very high.
@@ -4219,7 +4219,7 @@ namespace SwissEphNet.CPort
              * western half of the sky for a short time. 
              */
             if (do_fixstar) {
-                if (SE.swe_fixstar(starname, tjd_et, iflag, xc, ref serr) == SwissEph.ERR)
+                if (SE.swe_fixstar(ref starname, tjd_et, iflag, xc, ref serr) == SwissEph.ERR)
                     return SwissEph.ERR;
             }
             for (ii = 0, t = tjd_ut - twohrs; ii <= jmax; ii++, t += twohrs) {
@@ -4463,7 +4463,7 @@ namespace SwissEphNet.CPort
                 armc0 += 24;
             armc0 *= 15;
             if (do_fixstar) {
-                if (SE.swe_fixstar(starname, tjd_et, iflag, x0, ref serr) == SwissEph.ERR)
+                if (SE.swe_fixstar(ref starname, tjd_et, iflag, x0, ref serr) == SwissEph.ERR)
                     return SwissEph.ERR;
             } else {
                 if (SE.swe_calc(tjd_et, ipl, iflag, x0, ref serr) == SwissEph.ERR)
@@ -6150,7 +6150,7 @@ static const double Gmsm_factor_AA[] = {
                 nutlo[1] *= SwissEph.RADTODEG;
                 armc = SE.swe_degnorm(SE.swe_sidtime0(t_ut, eps + nutlo[1], nutlo[0]) * 15 + geopos[0]);
                 if (do_fixstar) {
-                    if (SE.swe_fixstar(starname, t_et, iflag, x0, ref serr) == SwissEph.ERR)
+                    if (SE.swe_fixstar(ref starname, t_et, iflag, x0, ref serr) == SwissEph.ERR)
                         return SwissEph.ERR;
                 } else {
                     if (SE.swe_calc(t_et, ipl, iflag, x0, ref serr) == SwissEph.ERR)

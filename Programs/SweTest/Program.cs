@@ -1724,7 +1724,7 @@ namespace SweTest
                                 iflag = iflag_f;
                             if (ipl == SwissEph.SE_FIXSTAR)
                             {
-                                iflgret = sweph.swe_fixstar(star, te, iflag, x, ref serr);
+                                iflgret = sweph.swe_fixstar(ref star, te, iflag, x, ref serr);
                                 /* magnitude, etc. */
                                 if (iflgret != SwissEph.ERR && fmt.IndexOf('=') >= 0)
                                 {
@@ -1827,7 +1827,7 @@ namespace SweTest
                             {
                                 iflag2 = iflag | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(star, te, iflag2, xequ, ref serr);
+                                    iflgret = sweph.swe_fixstar(ref star, te, iflag2, xequ, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xequ, ref serr);
                                 if (diff_mode != 0)
@@ -1859,7 +1859,7 @@ namespace SweTest
                                 /* first, get topocentric equatorial positions */
                                 iflgt = whicheph | SwissEph.SEFLG_EQUATORIAL | SwissEph.SEFLG_TOPOCTR;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(star, te, iflgt, xt, ref serr);
+                                    iflgret = sweph.swe_fixstar(ref star, te, iflgt, xt, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflgt, xt, ref serr);
                                 /* to azimuth/height */
@@ -1897,7 +1897,7 @@ namespace SweTest
                             {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(star, te, iflag2, xcart, ref serr);
+                                    iflgret = sweph.swe_fixstar(ref star, te, iflag2, xcart, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xcart, ref serr);
                                 if (diff_mode != 0)
@@ -1919,7 +1919,7 @@ namespace SweTest
                             {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(star, te, iflag2, xcartq, ref serr);
+                                    iflgret = sweph.swe_fixstar(ref star, te, iflag2, xcartq, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xcartq, ref serr);
                                 if (diff_mode != 0)
