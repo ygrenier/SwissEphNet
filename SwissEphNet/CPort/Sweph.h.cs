@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.06";
+        public const String SE_VERSION = "2.07.01";
 
         /// <summary>
         /// 2000 January 1.5
@@ -317,7 +317,8 @@ namespace SwissEphNet.CPort
         public const double EARTH_OBLATENESS = (1.0 / 298.25642);	/* AA 2006 K6 */
         public const double EARTH_ROT_SPEED = (7.2921151467e-5 * 86400); /* in rad/day, expl. suppl., p 162 */
 
-        public const double LIGHTTIME_AUNIT = (499.0047838061 / 3600 / 24); 	/* 8.3167 minutes (days), AA 2006 K6 */
+        public const double LIGHTTIME_AUNIT = (499.0047838061 / 3600 / 24);     /* 8.3167 minutes (days), AA 2006 K6 */
+        public const double PARSEC_TO_AUNIT = 206264.8062471;                   /* 648000/PI, according to IAU Resolution B2, 2016 */
 
         /* node of ecliptic measured on ecliptic 2000 */
         public const double SSY_PLANE_NODE_E2000 = (107.582569 * SwissEph.DEGTORAD);
@@ -438,10 +439,12 @@ namespace SwissEphNet.CPort
             new aya_init{t0=1911797.740782065, ayan_t0=0, t0_is_UT=true},	     /*37: Kali 3623 = 522 CE, Ujjain (75.7684565), 
                                                   *    based on Kali midnight and SS year length */
             new aya_init{t0=1721057.5, ayan_t0=-3.2, t0_is_UT=true},             /*38: Babylonian (Britton 2010) */
-            /*{2061539.789532065, 6.83333333, TRUE}, *38: Manjula's Laghumanasa, 10 March 932,
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},                       /*39: Sunil Sheoran ("Vedic") */
+            /*{0, 0, FALSE},                       *40: Galactic Center at 0 Capricon (Cochrane) */
+            /*{2061539.789532065, 6.83333333, TRUE}, *41: Manjula's Laghumanasa, 10 March 932,
                                                   *    12 PM LMT Ujjain (75.7684565 E),
 				                  *    ayanamsha = 6°50' */
-            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*39: - */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*40: - */
             };
 
         /*
@@ -466,9 +469,13 @@ namespace SwissEphNet.CPort
         //extern int32 swi_set_tid_acc(double tjd_ut, int32 iflag, int32 denum, char *serr);
         //extern int32 swi_get_tid_acc(double tjd_ut, int32 iflag, int32 denum, int32 *denumret, double *tid_acc, char *serr);
 
-        //double swi_armc_to_mc(double armc, double eps);
+        //extern int32 swi_get_ayanamsa_ex(double tjd_et, int32 iflag, double* daya, char* serr);
+        //extern int32 swi_get_ayanamsa_ex_ut(double tjd_ut, int32 iflag, double* daya, char* serr);
+        //extern int32 swi_get_ayanamsa_with_speed(double tjd_et, int32 iflag, double* daya, char* serr);
 
-        //int32 swi_get_denum(int32 ipli, int32 iflag);
+        //extern double swi_armc_to_mc(double armc, double eps);
+
+        //extern int32 swi_get_denum(int32 ipli, int32 iflag);
 
         /* nutation */
         public class nut
@@ -586,6 +593,15 @@ namespace SwissEphNet.CPort
             public bool t0_is_UT;
         };
 
+        public struct fixed_star
+        {
+            public string skey;
+            public string starname;
+            public string starbayer;
+            public string starno;
+            public double epoch, ra, de, ramot, demot, radvel, parall, mag;
+        };
+
         /* dpsi and deps loaded for 100 years after 1962 */
         static int SWE_DATA_DPSI_DEPS = 36525;
 
@@ -678,6 +694,10 @@ namespace SwissEphNet.CPort
             public nut nutv { get; internal set; }
             public topo_data topd { get; internal set; }
             public sid_data sidd;
+            public bool n_fixstars_real { get; internal set; }    // real number of fixed stars in sefstars.txt
+            public bool n_fixstars_named { get; internal set; }   // number of fixed stars with tradtional name
+            public bool n_fixstars_records { get; internal set; } // number of fixed stars records in fixed_stars
+            public fixed_star[] fixed_stars { get; private set; }
         }
 
         //extern TLS struct swe_data FAR swed;
