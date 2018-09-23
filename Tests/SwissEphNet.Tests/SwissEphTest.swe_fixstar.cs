@@ -32,8 +32,8 @@ namespace SwissEphNet.Tests
                 Assert.Null(serr);
 
                 Assert.Equal("Aldebaran,alTau", name);
-                Assert.Equal(69.437854677212, xx[0], 12);
-                Assert.Equal(-5.468620686643, xx[1], 12);
+                Assert.Equal(69.437854677212, xx[0], 11);
+                Assert.Equal(-5.468620686643, xx[1], 11);
                 Assert.Equal(1.0, xx[2], 12);
                 Assert.Equal(0, xx[3], 12);
                 Assert.Equal(0, xx[4], 12);
