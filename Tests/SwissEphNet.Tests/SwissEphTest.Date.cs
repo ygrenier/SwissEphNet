@@ -106,7 +106,7 @@ namespace SwissEphNet.Tests
                     }
                 };
                 Assert.Equal(0.00079744, swe.swe_deltat(tjd_ut), 8);
-                Assert.Equal(true, isLoaded);
+                Assert.True(isLoaded);
             }
         }
 
@@ -284,20 +284,20 @@ namespace SwissEphNet.Tests
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2442275.5213563, dret[0], 7);
                 Assert.Equal(2442275.52083417, dret[1], 7);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2442288.5213563, dret[0], 7);
                 Assert.Equal(2442288.52083377, dret[1], 7);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
 
                 // leap second
                 res = swe.swe_utc_to_jd(year, 12, 31, 23, 59, 60, SwissEph.SE_GREG_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2442413.50052296, dret[0], 7);
                 Assert.Equal(2442413.49999659, dret[1], 7);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
 
                 res = swe.swe_utc_to_jd(year, 12, 31, 23, 59, 60, SwissEph.SE_JUL_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.ERR, res);
@@ -310,13 +310,13 @@ namespace SwissEphNet.Tests
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2437162.52122023, dret[0], 7);
                 Assert.Equal(2437162.52083333, dret[1], 7);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2437175.52122041, dret[0], 7);
                 Assert.Equal(2437175.52083333, dret[1], 7);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
 
                 // Date > today (after last leap date)
                 year = 2030;
@@ -324,13 +324,13 @@ namespace SwissEphNet.Tests
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2462729.5216884, dret[0], 7);
                 Assert.Equal(2462729.52083333, dret[1], 7);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2462742.5216885, dret[0], 7);
                 Assert.Equal(2462742.52083333, dret[1], 7);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
 
                 // Errors
                 year = 1974;
@@ -543,7 +543,7 @@ namespace SwissEphNet.Tests
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2458849.50082389, dret[0], 8);
                 Assert.Equal(2458849.50001255, dret[1], 8);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
             }
 
             // We adding a lot of lines in 'file' for code coverage purpose
@@ -564,7 +564,7 @@ namespace SwissEphNet.Tests
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2458849.50082389, dret[0], 8);
                 Assert.Equal(2458849.50001255, dret[1], 8);
-                Assert.Equal(null, serr);
+                Assert.Null(serr);
             }
         }
 

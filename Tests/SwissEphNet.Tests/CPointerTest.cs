@@ -10,16 +10,16 @@ namespace SwissEphNet.Tests
         [Fact]
         public void TestCreate() {
             CPointer<int> target = new CPointer<int>();
-            Assert.Equal(true, target.IsNull);
+            Assert.True(target.IsNull);
             Assert.Equal(0, target.Length);
 
             int[] array = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             target = new CPointer<int>(array);
-            Assert.Equal(false, target.IsNull);
+            Assert.False(target.IsNull);
             Assert.Equal(10, target.Length);
 
             target = new CPointer<int>(array, 5);
-            Assert.Equal(false, target.IsNull);
+            Assert.False(target.IsNull);
             Assert.Equal(5, target.Length);
         }
 
@@ -89,11 +89,11 @@ namespace SwissEphNet.Tests
         public void TestEquals() {
             int[] array = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             CPointer<int> target = new CPointer<int>(array);
-            Assert.Equal(false, target.Equals(null));
-            Assert.Equal(false, target.Equals(5));
-            Assert.Equal(true, target.Equals(array));
-            Assert.Equal(true, target.Equals(new CPointer<int>(array)));
-            Assert.Equal(false, target.Equals(new CPointer<int>(array, 5)));
+            Assert.False(target.Equals(null));
+            Assert.False(target.Equals(5));
+            Assert.True(target.Equals(array));
+            Assert.True(target.Equals(new CPointer<int>(array)));
+            Assert.False(target.Equals(new CPointer<int>(array, 5)));
 
         }
 
