@@ -7,8 +7,8 @@ namespace SwissEphNet.Tests
     
     public class CPrintfTest
     {
-        private string sepDecimal = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-        private string sep1000 = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
+        private readonly string sepDecimal = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+        private readonly string sep1000 = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
 
         #region Tests
         #region Special Formats
@@ -642,7 +642,7 @@ namespace SwissEphNet.Tests
             Assert.Equal((Int32)0, C.ToInteger((Single)0.345, true));
             Assert.Equal((Int64)0, C.ToInteger((Double)0.345, true));
             Assert.Equal((Decimal)0, C.ToInteger((Decimal)0.345, true));
-            Assert.Equal(null, C.ToInteger((Char)0, true));
+            Assert.Null(C.ToInteger((Char)0, true));
 
             Assert.Equal((sbyte)0, C.ToInteger((sbyte)0, false));
             Assert.Equal((byte)0, C.ToInteger((byte)0, false));
@@ -658,7 +658,7 @@ namespace SwissEphNet.Tests
             Assert.Equal((Int32)0, C.ToInteger((Single)0.345, false));
             Assert.Equal((Int64)0, C.ToInteger((Double)0.345, false));
             Assert.Equal((Decimal)0.345, C.ToInteger((Decimal)0.345, false));
-            Assert.Equal(null, C.ToInteger((Char)0, false));
+            Assert.Null(C.ToInteger((Char)0, false));
 
             Assert.Equal((sbyte)10, C.ToInteger((sbyte)10, true));
             Assert.Equal((byte)10, C.ToInteger((byte)10, true));
@@ -674,7 +674,7 @@ namespace SwissEphNet.Tests
             Assert.Equal((Int32)10, C.ToInteger((Single)10.345, true));
             Assert.Equal((Int64)10, C.ToInteger((Double)10.345, true));
             Assert.Equal((Decimal)10, C.ToInteger((Decimal)10.345, true));
-            Assert.Equal(null, C.ToInteger((Char)10, true));
+            Assert.Null(C.ToInteger((Char)10, true));
 
             Assert.Equal((sbyte)10, C.ToInteger((sbyte)10, false));
             Assert.Equal((byte)10, C.ToInteger((byte)10, false));
@@ -690,7 +690,7 @@ namespace SwissEphNet.Tests
             Assert.Equal((Int32)10, C.ToInteger((Single)10.345, false));
             Assert.Equal((Int64)10, C.ToInteger((Double)10.345, false));
             Assert.Equal((Decimal)10.345, C.ToInteger((Decimal)10.345, false));
-            Assert.Equal(null, C.ToInteger((Char)10, false));
+            Assert.Null(C.ToInteger((Char)10, false));
 
             Assert.Equal((sbyte)(-10), C.ToInteger((sbyte)(-10), true));
             Assert.Equal((Int16)(-10), C.ToInteger((Int16)(-10), true));
@@ -714,8 +714,8 @@ namespace SwissEphNet.Tests
             Assert.Equal((Int64)(-10), C.ToInteger((Double)(-10.345), false));
             Assert.Equal((Decimal)(-10.345), C.ToInteger((Decimal)(-10.345), false));
 
-            Assert.Equal(null, C.ToInteger("", true));
-            Assert.Equal(null, C.ToInteger("", false));
+            Assert.Null(C.ToInteger("", true));
+            Assert.Null(C.ToInteger("", false));
         }
 
         [Fact]
@@ -735,7 +735,7 @@ namespace SwissEphNet.Tests
             Assert.Equal((UInt32)0, C.ToUnsigned((Single)0.345));
             Assert.Equal((UInt64)0, C.ToUnsigned((Double)0.345));
             Assert.Equal((UInt64)0, C.ToUnsigned((Decimal)0.345));
-            Assert.Equal(null, C.ToUnsigned((Char)0));
+            Assert.Null(C.ToUnsigned((Char)0));
 
             Assert.Equal((byte)10, C.ToUnsigned((sbyte)10));
             Assert.Equal((byte)10, C.ToUnsigned((byte)10));
@@ -751,7 +751,7 @@ namespace SwissEphNet.Tests
             Assert.Equal((UInt32)10, C.ToUnsigned((Single)10.345));
             Assert.Equal((UInt64)10, C.ToUnsigned((Double)10.345));
             Assert.Equal((UInt64)10, C.ToUnsigned((Decimal)10.345));
-            Assert.Equal(null, C.ToUnsigned((Char)10));
+            Assert.Null(C.ToUnsigned((Char)10));
 
             Assert.Equal((byte)(246), C.ToUnsigned((sbyte)(-10)));
             Assert.Equal((UInt16)(65526), C.ToUnsigned((Int16)(-10)));
@@ -764,8 +764,8 @@ namespace SwissEphNet.Tests
             Assert.Equal((UInt64)(18446744073709551606), C.ToUnsigned((Double)(-10.345)));
             //Assert.Equal((UInt64)(18446744073709551606), C.ToUnsigned((Decimal)(-10.345)));
 
-            Assert.Equal(null, C.ToUnsigned(""));
-            Assert.Equal(null, C.ToUnsigned(""));
+            Assert.Null(C.ToUnsigned(""));
+            Assert.Null(C.ToUnsigned(""));
         }
 
         [Fact]

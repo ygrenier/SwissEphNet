@@ -234,7 +234,7 @@ namespace SwissEphNet.Tests
             String r1 = null;
 
             Assert.Equal(0, C.sscanf(" ", "%s", ref r1));
-            Assert.Equal(null, r1);
+            Assert.Null(r1);
 
             Assert.Equal(1, C.sscanf("abc", "%s", ref r1));
             Assert.Equal("abc", r1);
@@ -282,7 +282,7 @@ namespace SwissEphNet.Tests
             r3 = null;
 
             Assert.Equal(0, C.sscanf("( ", "(%[itluM]", ref r3));
-            Assert.Equal(null, r3);
+            Assert.Null(r3);
 
             Assert.Equal(1, C.sscanf("(Multi-Word message)", "(%[itluM]", ref r3));
             Assert.Equal("Multi", r3);
@@ -341,22 +341,22 @@ namespace SwissEphNet.Tests
             Assert.Equal(1, C.sscanf(test, "Copyright %d", ref r1));
             Assert.Equal(2009, r1);
             Assert.Equal(0, r2);
-            Assert.Equal(null, r3);
-            Assert.Equal(null, r4);
+            Assert.Null(r3);
+            Assert.Null(r4);
 
             r1 = r2 = 0; r3 = r4 = null;
             Assert.Equal(2, C.sscanf(test, "Copyright %d-%d", ref r1, ref r2));
             Assert.Equal(2009, r1);
             Assert.Equal(2011, r2);
-            Assert.Equal(null, r3);
-            Assert.Equal(null, r4);
+            Assert.Null(r3);
+            Assert.Null(r4);
 
             r1 = r2 = 0; r3 = r4 = null;
             Assert.Equal(3, C.sscanf(test, "Copyright %d-%d %s", ref r1, ref r2, ref r3));
             Assert.Equal(2009, r1);
             Assert.Equal(2011, r2);
             Assert.Equal("CompanyName", r3);
-            Assert.Equal(null, r4);
+            Assert.Null(r4);
 
             r1 = r2 = 0; r3 = r4 = null;
             Assert.Equal(4, C.sscanf(test, "Copyright %d-%d %s (%[^)]", ref r1, ref r2, ref r3, ref r4));
