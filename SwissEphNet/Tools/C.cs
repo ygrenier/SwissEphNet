@@ -99,7 +99,7 @@ namespace SwissEphNet
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static void strncpy(out string a, string b, int n)
-            => a = b != null ? b.Substring(0, n) : null;
+            => a = b != null ? b.Substring(0, Math.Min(n, b.Length)) : null;
 
 #if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

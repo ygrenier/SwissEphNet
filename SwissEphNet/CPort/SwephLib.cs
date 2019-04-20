@@ -3708,7 +3708,8 @@ namespace SwissEphNet.CPort
             //}
             //if (n < nmax) cpos[n] = NULL;
             //return (n);
-            cpos = s.Split(cutlist, nmax, StringSplitOptions.RemoveEmptyEntries);
+            cpos = s?.Split(cutlist, nmax, StringSplitOptions.RemoveEmptyEntries) ??
+                Enumerable.Range(0, nmax).Select(i => string.Empty).ToArray();
             return cpos.Length;
         }	/* cutstr */
 

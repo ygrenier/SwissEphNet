@@ -32,12 +32,12 @@ namespace SwissEphNet.Tests
                 Assert.Null(serr);
 
                 Assert.Equal("Aldebaran,alTau", name);
-                Assert.Equal(69.437854677212, xx[0], 11);
-                Assert.Equal(-5.468620686643, xx[1], 11);
-                Assert.Equal(1.0, xx[2], 12);
-                Assert.Equal(0, xx[3], 12);
-                Assert.Equal(0, xx[4], 12);
-                Assert.Equal(0, xx[5], 12);
+                Assert.Equal(69.43785467706, xx[0], 11);
+                Assert.Equal(-5.46862068665, xx[1], 11);
+                Assert.Equal(4214065.97278593667, xx[2], 11);
+                Assert.Equal(0.00013214702, xx[3], 11);
+                Assert.Equal(0.00000203067, xx[4], 11);
+                Assert.Equal(0.01628316977, xx[5], 11);
 
                 name = "test";
                 iflag = swe.swe_fixstar(ref name, tjd, SwissEph.SEFLG_MOSEPH, xx, ref serr);
@@ -69,12 +69,12 @@ namespace SwissEphNet.Tests
                 Assert.Null(serr);
 
                 Assert.Equal("Aldebaran,alTau", name);
-                Assert.Equal(69.439402029787, xx[0], 12);
-                Assert.Equal(-5.469136284371, xx[1], 12);
-                Assert.Equal(1.0, xx[2], 12);
-                Assert.Equal(0, xx[3], 12);
-                Assert.Equal(0, xx[4], 12);
-                Assert.Equal(0, xx[5], 12);
+                Assert.Equal(69.43785475383, xx[0], 11);
+                Assert.Equal(-5.46862068520, xx[1], 11);
+                Assert.Equal(4214065.97281017154, xx[2], 11);
+                Assert.Equal(0.00013401939, xx[3], 11);
+                Assert.Equal(0.00000139627, xx[4], 11);
+                Assert.Equal(0.01542237974, xx[5], 11);
             }
         }
 

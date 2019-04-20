@@ -6231,7 +6231,7 @@ namespace SwissEphNet.CPort
         /* function cuts a comma-separated fixed star data record from sefstars.txt 
          * and fills it into a struct fixed_star.
          */
-        Int32 fixstar_cut_string(string srecord, string star, ref fixed_star stardata, ref string serr)
+        Int32 fixstar_cut_string(string srecord, ref string star, ref fixed_star stardata, ref string serr)
         {
             int i;
             string s;
@@ -6385,7 +6385,7 @@ namespace SwissEphNet.CPort
                 if (s.StartsWith("\r")) continue;
                 line++;
                 srecord = s;
-                retc = fixstar_cut_string(srecord, null, ref fstdata, ref serr);
+                retc = fixstar_cut_string(srecord, ref sdummy, ref fstdata, ref serr);
                 if (retc == ERR) return ERR;
                 // if star has a traditional name, save it with that name as its search key
                 if (!string.IsNullOrEmpty(fstdata.starname))
@@ -6763,7 +6763,7 @@ namespace SwissEphNet.CPort
         /* function searches a star in fixed stars list, i.e. the data loaded from file 
          * sefstars.txt
          */
-        Int32 search_star_in_list(string sstar, ref fixed_star stardata, ref string serr)
+        Int32 search_star_in_list(ref string sstar, ref fixed_star stardata, ref string serr)
         {
             int i, star_nr = 0, ndata = 0, len;
             int sp;
@@ -6855,7 +6855,7 @@ namespace SwissEphNet.CPort
             }
         }
 
-        static bool get_builtin_star(string star, out string sstar, out string srecord)
+        static bool get_builtin_star(ref string star, out string sstar, out string srecord)
         {
             /* some stars are built-in, because they are required for Hindu
              * sidereal ephemerides */
@@ -6977,16 +6977,16 @@ namespace SwissEphNet.CPort
                 stardata = last_stardata;
                 goto found;
             }
-            if (get_builtin_star(star, out sstar, out srecord)) {
+            if (get_builtin_star(ref star, out sstar, out srecord)) {
                 is_builtin_star = true;
             }
             if (is_builtin_star) {
-                retc = fixstar_cut_string(srecord, star, ref stardata, ref serr);
+                retc = fixstar_cut_string(srecord, ref star, ref stardata, ref serr);
                 //printf("builtin: %s, %s, %s, %f\n", stardata.skey, stardata.starname, stardata.starbayer, stardata.mag);
                 goto found;
                 /* sequential fixed star number: get it from array directly */
             }
-            retc = search_star_in_list(sstar, ref stardata, ref serr);
+            retc = search_star_in_list(ref sstar, ref stardata, ref serr);
             if (retc == ERR)
                 goto return_err;
             /******************************************************/
@@ -7064,7 +7064,7 @@ namespace SwissEphNet.CPort
                 stardata = last_stardata;
                 goto found;
             }
-            retc = search_star_in_list(sstar, ref stardata, ref serr);
+            retc = search_star_in_list(ref sstar, ref stardata, ref serr);
             if (retc == ERR)
                 goto return_err;
             /******************************************************/
@@ -7597,7 +7597,7 @@ namespace SwissEphNet.CPort
         }
 
         //#if 1
-        Int32 swi_fixstar_load_record(string star, out string srecord, out string sname, out string sbayer, CPointer<double> dparams, ref string serr)
+        Int32 swi_fixstar_load_record(ref string star, out string srecord, out string sname, out string sbayer, CPointer<double> dparams, ref string serr)
         {
             string sdummy = null;
             //char s[AS_MAXCH + 20], *sp, *sp2;   /* 20 byte for SE_STARFILE */
@@ -7692,7 +7692,7 @@ namespace SwissEphNet.CPort
                 //*sp = '\0';    /* cut off after first field to get star name, ',' -> '\0' */
                 strncpy(out fstar, s.Substring(0, sp), SwissEph.SE_MAX_STNAME);
                 //*sp = ',';  /* add comma again */
-                fstar = fstar.Substring(0, SwissEph.SE_MAX_STNAME);	/* force termination */
+                fstar = fstar.Substr(0, SwissEph.SE_MAX_STNAME);	/* force termination */
                 // remove white spaces from star name
                 //while ((sp = strchr(fstar, ' ')) != -1)
                 //  swi_strcpy(sp, sp+1);
@@ -7710,18 +7710,18 @@ namespace SwissEphNet.CPort
                 if (strncmp(fstar, sstar, cmplen) == 0)
                     goto found;
             }
-            if (serr != null)
+            //if (serr != null)
             {
                 //sprintf(serr, "star  not found");
                 //if (strlen(serr) + strlen(star) < SwissEph.AS_MAXCH)
                 //{
-                sprintf(serr, "star %s not found", star);
+                serr = sprintf("star %s not found", star);
                 //}
                 return ERR;
             }
             found:
             strcpy(out srecord, s);
-            retc = fixstar_cut_string(srecord, star, ref stardata, ref serr);
+            retc = fixstar_cut_string(srecord, ref star, ref stardata, ref serr);
             if (retc == ERR) return ERR;
             if (dparams != null)
             {
@@ -7755,7 +7755,7 @@ namespace SwissEphNet.CPort
          * char *serr        error return string
          */
         double[] xearth = new double[6], xearth_dt = new double[6], xsun = new double[6], xsun_dt = new double[6];
-        Int32 swi_fixstar_calc_from_record(string srecord, double tjd, Int32 iflag, string star, CPointer<double> xx, ref string serr)
+        Int32 swi_fixstar_calc_from_record(string srecord, double tjd, Int32 iflag, ref string star, CPointer<double> xx, ref string serr)
         {
             int i;
             Int32 retc = OK;
@@ -7812,7 +7812,7 @@ namespace SwissEphNet.CPort
              * nutation                               * 
              ******************************************/
             swi_check_nutation(tjd, iflag);
-            retc = fixstar_cut_string(srecord, star, ref stardata, ref serr);
+            retc = fixstar_cut_string(srecord, ref star, ref stardata, ref serr);
             if (retc == ERR) return ERR;
             epoch = stardata.epoch;
             ra_pm = stardata.ramot; de_pm = stardata.demot;
@@ -8136,7 +8136,7 @@ namespace SwissEphNet.CPort
                 strcpy(out srecord, slast_stardata);
                 goto found;
             }
-            if (get_builtin_star(star, out sstar, out srecord))
+            if (get_builtin_star(ref star, out sstar, out srecord))
             {
                 goto found;
             }
@@ -8147,12 +8147,12 @@ namespace SwissEphNet.CPort
              * All other stars can be accessed by name.
              * Comment lines start with # and are ignored.
              ******************************************************/
-            if ((retc = swi_fixstar_load_record(star, out srecord, out sdummy, out sdummy, null, ref serr)) != OK)
+            if ((retc = swi_fixstar_load_record(ref star, out srecord, out sdummy, out sdummy, null, ref serr)) != OK)
                 goto return_err;
             found:
             strcpy(out slast_stardata, srecord);
             strcpy(out slast_starname, sstar);
-            if ((retc = swi_fixstar_calc_from_record(srecord, tjd, iflag, star, xx, ref serr)) == ERR)
+            if ((retc = swi_fixstar_calc_from_record(srecord, tjd, iflag, ref star, xx, ref serr)) == ERR)
                 goto return_err;
 #if TRACE
             trace_swe_fixstar(2, star, tjd, iflag, xx, ref serr);
@@ -8243,7 +8243,7 @@ namespace SwissEphNet.CPort
              * All other stars can be accessed by name.
              * Comment lines start with # and are ignored.
              ******************************************************/
-            if ((retc = swi_fixstar_load_record(star, out srecord, out sdummy, out sdummy, dparams, ref serr)) != OK)
+            if ((retc = swi_fixstar_load_record(ref star, out srecord, out sdummy, out sdummy, dparams, ref serr)) != OK)
                 goto return_err;
             found:
             strcpy(out slast_stardata, srecord);

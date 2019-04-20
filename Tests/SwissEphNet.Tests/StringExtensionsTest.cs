@@ -61,5 +61,20 @@ namespace SwissEphNet.Tests
 
         }
 
+        [Fact]
+        public void TestSubstr()
+        {
+            Assert.Equal("bc", "abc".Substr(1));
+            Assert.Equal("", "abc".Substr(10));
+            Assert.Equal("abc", "abc".Substr(-1));
+
+            Assert.Equal("bcd", "abcdef".Substr(1, 3));
+            Assert.Equal("", "abcdef".Substr(10, 3));
+            Assert.Equal("abc", "abcdef".Substr(-1, 3));
+
+            Assert.Equal("cd", "abcdef".Substr(2, 2));
+            Assert.Equal("cdef", "abcdef".Substr(2, 10));
+            Assert.Equal("", "abcdef".Substr(2, -1));
+        }
     }
 }
