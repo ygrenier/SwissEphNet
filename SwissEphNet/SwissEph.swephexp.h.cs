@@ -702,17 +702,17 @@ namespace SwissEphNet
 
         public Int32 swe_fixstar2(ref string star, double tjd, Int32 iflag, double[] xx, ref string serr)
         {
-#error To implement
+            return Sweph.swe_fixstar2(ref star, tjd, iflag, xx, ref serr);
         }
 
         public Int32 swe_fixstar2_ut(ref string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr)
         {
-#error To implement
+            return Sweph.swe_fixstar2_ut(ref star, tjd_ut, iflag, xx, ref serr);
         }
 
         public Int32 swe_fixstar2_mag(ref string star, ref double mag, ref string serr)
         {
-#error To implement
+            return Sweph.swe_fixstar2_mag(ref star, ref mag, ref serr);
         }
 
         /// <summary>
@@ -733,7 +733,7 @@ namespace SwissEphNet
         /// <summary>
         /// get planet name
         /// </summary>
-        public string swe_get_planet_name(int ipl) { return Sweph.swe_get_planet_name(ipl); }
+        public string swe_get_planet_name(int ipl) { string sdummy = null; return Sweph.swe_get_planet_name(ipl, ref sdummy); }
 
         /// <summary>
         /// set geographic position of observer

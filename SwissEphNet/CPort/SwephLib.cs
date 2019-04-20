@@ -3676,44 +3676,51 @@ namespace SwissEphNet.CPort
             //#endif
         }
 
-        ///**************************************************************
-        //cut the string s at any char in cutlist; put pointers to partial strings
-        //into cpos[0..n-1], return number of partial strings;
-        //if less than nmax fields are found, the first empty pointer is
-        //set to NULL.
-        //More than one character of cutlist in direct sequence count as one
-        //separator only! cut_str_any("word,,,word2",","..) cuts only two parts,
-        //cpos[0] = "word" and cpos[1] = "word2".
-        //If more than nmax fields are found, nmax is returned and the
-        //last field nmax-1 rmains un-cut.
-        //**************************************************************/
-        //int swi_cutstr(char *s, char *cutlist, char *cpos[], int nmax)
-        //{
-        //  int n = 1;
-        //  cpos [0] = s;
-        //  while (*s != '\0') {
-        //    if ((strchr(cutlist, (int) *s) != NULL) && n < nmax) {
-        //      *s = '\0';
-        //      while (*(s + 1) != '\0' && strchr (cutlist, (int) *(s + 1)) != NULL) s++;
-        //      cpos[n++] = s + 1;
-        //    }
-        //    if (*s == '\n' || *s == '\r') {	/* treat nl or cr like end of string */
-        //      *s = '\0';
-        //      break;
-        //    }
-        //    s++;
-        //  }
-        //  if (n < nmax) cpos[n] = NULL;
-        //  return (n);
-        //}	/* cutstr */
+        /**************************************************************
+        cut the string s at any char in cutlist; put pointers to partial strings
+        into cpos[0..n-1], return number of partial strings;
+        if less than nmax fields are found, the first empty pointer is
+        set to NULL.
+        More than one character of cutlist in direct sequence count as one
+        separator only! cut_str_any("word,,,word2",","..) cuts only two parts,
+        cpos[0] = "word" and cpos[1] = "word2".
+        If more than nmax fields are found, nmax is returned and the
+        last field nmax-1 rmains un-cut.
+        **************************************************************/
+        public static int swi_cutstr(string s, char[] cutlist, out string[] cpos, int nmax)
+        {
+            //int n = 1;
+            //cpos[0] = s;
+            //while (*s != '\0')
+            //{
+            //    if ((strchr(cutlist, (int)*s) != NULL) && n < nmax)
+            //    {
+            //        *s = '\0';
+            //        while (*(s + 1) != '\0' && strchr(cutlist, (int)*(s + 1)) != NULL) s++;
+            //        cpos[n++] = s + 1;
+            //    }
+            //    if (*s == '\n' || *s == '\r')
+            //    {   /* treat nl or cr like end of string */
+            //        *s = '\0';
+            //        break;
+            //    }
+            //    s++;
+            //}
+            //if (n < nmax) cpos[n] = NULL;
+            //return (n);
+            cpos = s.Split(cutlist, nmax, StringSplitOptions.RemoveEmptyEntries);
+            return cpos.Length;
+        }	/* cutstr */
 
-        //char *swi_right_trim(char *s)
-        //{
-        //  char *sp = s + strlen(s) - 1;
-        //  while (isspace((int)(unsigned char) *sp) && sp >= s)
-        //    *sp-- = '\0';
-        //  return s;
-        //}
+        public static string swi_right_trim(ref string s)
+        {
+            //char* sp = s + strlen(s) - 1;
+            //while (isspace((int)(unsigned char) * sp) && sp >= s)
+            //*sp-- = '\0';
+            //return s;
+            s = s.TrimEnd();
+            return s;
+        }
 
         /*
          * The following C code (by Rob Warnock rpw3@sgi.com) does CRC-32 in
@@ -4656,6 +4663,7 @@ namespace SwissEphNet.CPort
         //}
 
 #if TRACE
+        internal void swi_open_trace(out string serr) { serr = null; }
         //void swi_open_trace(out string serr) {
         //swi_trace_count++;
         //serr = null;

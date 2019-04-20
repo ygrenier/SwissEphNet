@@ -129,41 +129,41 @@ namespace SwissEphNet.CPort
         //                "",		/* jplfnam, JPL file name, default */
         //#endif
         //                0,		/* jpldenum */
-		//	              0,          /* last_epheflag */
+        //	              0,          /* last_epheflag */
         //                FALSE,	/* geopos_is_set, for topocentric */
         //                FALSE,	/* ayana_is_set, ayanamsa is set */
         //                FALSE,	/* is_old_starfile, fixstars.cat is used (default is sefstars.txt) */
-                //0.0, 0.0, 0.0, 0.0, /* eop_tjd_... */
-                //0,		/* eop_dpsi_loaded */
-                //0,          /* eop_dpsi_loaded */
-                //0.0,     /* tid_acc */
-                //FALSE,    /* is_tid_acc_manual */
-                //FALSE,    /* init_dt_done */
-                //FALSE,	/* swed_is_initialised */
-			    //FALSE,	/* delta_t_userdef_is_set */
-			    //0.0,	/* delta_t_userdef */
-			    //0.0,	/* ast_G */
-			    //0.0,	/* ast_H */
-			    //0.0,	/* ast_diam */
-			    //"",		/* astelem[] */
-			    //0, 		/* i_saved_planet_name */
-			    //"",		/* saved_planet_name[] */
-			    //NULL,	/* dpsi */
-			    //NULL,	/* deps */
-			    //0,		/* timeout */
-			    //{0,0,0,0,0,0,0,0,}, /* astro_models */
+        //0.0, 0.0, 0.0, 0.0, /* eop_tjd_... */
+        //0,		/* eop_dpsi_loaded */
+        //0,          /* eop_dpsi_loaded */
+        //0.0,     /* tid_acc */
+        //FALSE,    /* is_tid_acc_manual */
+        //FALSE,    /* init_dt_done */
+        //FALSE,	/* swed_is_initialised */
+        //FALSE,	/* delta_t_userdef_is_set */
+        //0.0,	/* delta_t_userdef */
+        //0.0,	/* ast_G */
+        //0.0,	/* ast_H */
+        //0.0,	/* ast_diam */
+        //"",		/* astelem[] */
+        //0, 		/* i_saved_planet_name */
+        //"",		/* saved_planet_name[] */
+        //NULL,	/* dpsi */
+        //NULL,	/* deps */
+        //0,		/* timeout */
+        //{0,0,0,0,0,0,0,0,}, /* astro_models */
         //                };
         internal swe_data swed = new swe_data() {
             ephe_path_is_set = false,
             jpl_file_is_open = false,
             fixfp = null,
-//#if 0
+            //#if 0
             ephepath = SwissEph.SE_EPHE_PATH,
             jplfnam = SwissEph.SE_FNAME_DFT,
-//#else
+            //#else
             //ephepath = "",
             //jplfnam = "",
-//#endif
+            //#endif
             jpldenum = 0,
             last_epheflag = 0,          /* last_epheflag */
             geopos_is_set = false,
@@ -236,6 +236,8 @@ namespace SwissEphNet.CPort
            "Dhruva/Gal.Center/Mula (Wilhelm)", /* 36 SE_SIDM_GALCENT_MULA_WILHELM */
            "Aryabhata 522",                    /* 37 SE_SIDM_ARYABHATA_522 */
            "Babylonian/Britton",               /* 38 SE_SIDM_BABYL_BRITTON */
+           "\"Vedic\"/Sheoran",                /* 39 SE_SIDM_TRUE_SHEORAN */
+           /*"Cochrane (Gal.Center = 0 Cap)",    * 40 SE_SIDM_GALCENT_COCHRANE */
            /*"Manjula/Laghumanasa",*/
         };
         //int[] pnoint2jpl = PNOINT2JPL;
@@ -296,17 +298,17 @@ namespace SwissEphNet.CPort
             return SE_VERSION;
         }
 
-#if !NO_SWE_GLP	// -DNO_SWE_GLP to suppress this function
-//#if MSDOS
-//HANDLE dllhandle = NULL;        // global used in swe_version
-//                // if DLL, set by DllMain()
-//#else		
-//#if __GNUC__
-//#define __USE_GNU
-//#include <dlfcn.h>		// must be linked with -ldl
-//  static Dl_info dli;
-//#endif
-//#endif // MSDOS
+#if !NO_SWE_GLP    // -DNO_SWE_GLP to suppress this function
+        //#if MSDOS
+        //HANDLE dllhandle = NULL;        // global used in swe_version
+        //                // if DLL, set by DllMain()
+        //#else		
+        //#if __GNUC__
+        //#define __USE_GNU
+        //#include <dlfcn.h>		// must be linked with -ldl
+        //  static Dl_info dli;
+        //#endif
+        //#endif // MSDOS
 
         public string swe_get_library_path()
         {
@@ -423,37 +425,37 @@ namespace SwissEphNet.CPort
              * or vice-versa.
              */
             epheflag = iflag & SwissEph.SEFLG_EPHMASK;
-              if ((epheflag & SwissEph.SEFLG_MOSEPH)!=0)
+            if ((epheflag & SwissEph.SEFLG_MOSEPH) != 0)
                 epheflag = SwissEph.SEFLG_MOSEPH;
-              else if ((epheflag & SwissEph.SEFLG_JPLEPH)!=0)
+            else if ((epheflag & SwissEph.SEFLG_JPLEPH) != 0)
                 epheflag = SwissEph.SEFLG_JPLEPH;
-              else 
+            else
                 epheflag = SwissEph.SEFLG_SWIEPH;
-              if (swi_init_swed_if_start() == 1 && 0==(epheflag & SwissEph.SEFLG_MOSEPH) ) {
-                serr= "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_calc() or swe_calc_ut()";
-              }
-              if (swed.last_epheflag != epheflag)
-              {
-                  free_planets();
-                  /* close and free ephemeris files */
-                  if (ipl != SwissEph.SE_ECL_NUT)
-                  {  /* because file will not be reopened with this ipl */
-                      if (swed.jpl_file_is_open)
-                      {
-                          SE.SweJPL.swi_close_jpl_file();
-                          swed.jpl_file_is_open = false;
-                      }
-                      for (i = 0; i < SEI_NEPHFILES; i++)
-                      {
-                          if (swed.fidat[i].fptr != null)
-                              //fclose(swed.fidat[i].fptr);
-                              swed.fidat[i].fptr.Dispose();
-                          //memset((void *) &swed.fidat[i], 0, sizeof(struct file_data));
-                          swed.fidat[i] = new file_data();
-                      }
-                      swed.last_epheflag = epheflag;
-                  }
-              }
+            if (swi_init_swed_if_start() == 1 && 0 == (epheflag & SwissEph.SEFLG_MOSEPH)) {
+                serr = "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_calc() or swe_calc_ut()";
+            }
+            if (swed.last_epheflag != epheflag)
+            {
+                free_planets();
+                /* close and free ephemeris files */
+                if (ipl != SwissEph.SE_ECL_NUT)
+                {  /* because file will not be reopened with this ipl */
+                    if (swed.jpl_file_is_open)
+                    {
+                        SE.SweJPL.swi_close_jpl_file();
+                        swed.jpl_file_is_open = false;
+                    }
+                    for (i = 0; i < SEI_NEPHFILES; i++)
+                    {
+                        if (swed.fidat[i].fptr != null)
+                            //fclose(swed.fidat[i].fptr);
+                            swed.fidat[i].fptr.Dispose();
+                        //memset((void *) &swed.fidat[i], 0, sizeof(struct file_data));
+                        swed.fidat[i] = new file_data();
+                    }
+                    swed.last_epheflag = epheflag;
+                }
+            }
             /* high precision speed prevails fast speed */
             if ((iflag & SwissEph.SEFLG_SPEED3) != 0 && (iflag & SwissEph.SEFLG_SPEED) != 0)
                 iflag = iflag & ~SwissEph.SEFLG_SPEED3;
@@ -484,7 +486,7 @@ namespace SwissEphNet.CPort
              * save area.
              */
             if (sd.tsave == tjd && tjd != 0 && ipl == sd.ipl) {
-                if ((sd.iflgsave & ~SwissEph.SEFLG_COORDSYS) == (iflag & ~SwissEph.SEFLG_COORDSYS)) 
+                if ((sd.iflgsave & ~SwissEph.SEFLG_COORDSYS) == (iflag & ~SwissEph.SEFLG_COORDSYS))
                     goto end_swe_calc;
             }
             /* 
@@ -533,7 +535,7 @@ namespace SwissEphNet.CPort
                 denormalize_positions(x0, sd.xsaves, x2);
                 calc_speed(x0, sd.xsaves, x2, dt);
             }
-        end_swe_calc:
+            end_swe_calc:
             if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0) {
                 xs = sd.xsaves.GetPointer(12);	/* equatorial coordinates */
             } else {
@@ -582,7 +584,7 @@ namespace SwissEphNet.CPort
             trace_swe_calc(2, tjd, ipl, iflag, xx, serr);
 #endif
             return iflag;
-        return_error:
+            return_error:
             for (i = 0; i <= 5; i++)
                 xx[i] = 0;
 #if TRACE
@@ -724,7 +726,7 @@ namespace SwissEphNet.CPort
                         }
                         break;
                     case SwissEph.SEFLG_SWIEPH:
-                    sweph_moon:
+                        sweph_moon:
                         //#if 0
                         //    /* for hel. or bary. position, we need earth and sun as well;
                         //         * this is done by sweplan(), but not by swemoon() */
@@ -750,7 +752,7 @@ namespace SwissEphNet.CPort
                         }
                         break;
                     case SwissEph.SEFLG_MOSEPH:
-                    moshier_moon:
+                        moshier_moon:
                         retc = SE.SwemMoon.swi_moshmoon(tjd, DO_SAVE, null, ref serr);/**/
                         if (retc == ERR)
                             goto return_error;
@@ -809,7 +811,7 @@ namespace SwissEphNet.CPort
                         psdp.teval = tjd;
                         break;
                     case SwissEph.SEFLG_SWIEPH:
-                    sweph_sbar:
+                        sweph_sbar:
                         /* sweplan() provides barycentric sun as a by-product in save area;
                          * it is saved in swed.pldat[SEI_SUNBARY].x */
                         retc = sweplan(tjd, SEI_EARTH, SEI_FILE_PLANET, iflag, DO_SAVE, null, null, null, null, ref serr);
@@ -839,7 +841,7 @@ namespace SwissEphNet.CPort
                         //    moshier_sbar:
                         //#endif
                         return ERR;
-                    //break;
+                        //break;
                 }
                 /* flags */
                 if ((retc = app_pos_etc_sbar(iflag, ref serr)) != OK)
@@ -1102,7 +1104,7 @@ namespace SwissEphNet.CPort
                         PHOLUS_START, PHOLUS_END);
                     return ERR;
                 }
-            do_asteroid:
+                do_asteroid:
                 /* earth and sun are also needed */
                 retc = main_planet(tjd, SEI_EARTH, epheflag, iflag, ref serr);
                 if (retc == ERR)
@@ -1158,7 +1160,7 @@ namespace SwissEphNet.CPort
                 ipli = SEI_ANYBODY;
                 pdp = swed.pldat[ipli];
                 xp = pdp.xreturn;
-            do_fict_plan:
+                do_fict_plan:
                 /* the earth for geocentric position */
                 retc = main_planet(tjd, SEI_EARTH, epheflag, iflag, ref serr);
                 /* iflag (ephemeris bit) has possibly changed in main_planet() */
@@ -1193,10 +1195,10 @@ namespace SwissEphNet.CPort
             for (i = 0; i < 24; i++)
                 x[i] = xp[i];
             return (iflag);
-        /*********************************************** 
-         * return error                                * 
-         ***********************************************/
-        return_error: ;
+            /*********************************************** 
+             * return error                                * 
+             ***********************************************/
+            return_error:;
             for (i = 0; i < 24; i++)
                 x[i] = 0;
             return ERR;
@@ -1312,20 +1314,28 @@ namespace SwissEphNet.CPort
             swed.ayana_is_set = false;
             swed.is_old_starfile = false;
             swed.i_saved_planet_name = 0;
-            swed.saved_planet_name=String.Empty;
+            swed.saved_planet_name = String.Empty;
             swed.topd = new topo_data();
             swed.sidd = new sid_data();
             swed.timeout = 0;
             swed.last_epheflag = 0;
             if (swed.dpsi != null)
             {
-              //free(swed.dpsi);
-              swed.dpsi = null;
+                //free(swed.dpsi);
+                swed.dpsi = null;
             }
             if (swed.deps != null)
             {
                 //free(swed.deps);
                 swed.deps = null;
+            }
+            if (swed.n_fixstars_records > 0)
+            {
+                //free(swed.fixed_stars);
+                swed.fixed_stars = null;
+                swed.n_fixstars_real = 0;
+                swed.n_fixstars_named = 0;
+                swed.n_fixstars_records = 0;
             }
             /*  swed.ephe_path_is_set = FALSE;
               *swed.ephepath = '\0'; */
@@ -1437,7 +1447,7 @@ namespace SwissEphNet.CPort
             CFile fp;
             string s, sdummy = String.Empty;
             string[] cpos;
-            int n = 0, np, iyear, mjd = 0, mjdsv = 0;
+            int n = 0, iyear, mjd = 0, mjdsv = 0;
             double dpsi, deps, TJDOFS = 2400000.5;
             if (swed.eop_dpsi_loaded > 0)
                 return;
@@ -1459,7 +1469,6 @@ namespace SwissEphNet.CPort
             swed.eop_tjd_beg_horizons = SwephLib.DPSI_DEPS_IAU1980_TJD0_HORIZONS;
             while ((s = fp.ReadLine()) != null) {
                 cpos = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                np = cpos.Length;
                 if ((iyear = int.Parse(cpos[0])) == 0)
                     continue;
                 mjd = int.Parse(cpos[3]);
@@ -1474,7 +1483,7 @@ namespace SwissEphNet.CPort
                     swed.eop_tjd_beg = mjd + TJDOFS;
                 swed.dpsi[n] = double.Parse(cpos[8], CultureInfo.InvariantCulture);
                 swed.deps[n] = double.Parse(cpos[9], CultureInfo.InvariantCulture);
-                /*    fprintf(stderr, "tjd=%f, dpsi=%f, deps=%f\n", mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);exit(0);*/
+                /*    fprintf(stderr, "n=%d, tjd=%f, dpsi=%f, deps=%f\n", n, mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);exit(0);*/
                 n++;
                 mjdsv = mjd;
             }
@@ -1654,7 +1663,7 @@ namespace SwissEphNet.CPort
                     }
                     break;
                 case SwissEph.SEFLG_SWIEPH:
-                sweph_planet:
+                    sweph_planet:
                     /* compute barycentric planet (+ earth, sun, moon) */
                     retc = sweplan(tjd, ipli, SEI_FILE_PLANET, iflag, DO_SAVE, null, null, null, null, ref serr);
                     if (retc == ERR)
@@ -1686,13 +1695,13 @@ namespace SwissEphNet.CPort
                     }
                     break;
                 case SwissEph.SEFLG_MOSEPH:
-                moshier_planet:
+                    moshier_planet:
                     retc = SE.SwemPlan.swi_moshplan(tjd, ipli, DO_SAVE, null, null, ref serr);/**/
                     if (retc == ERR)
                         return ERR;
                     /* geocentric, lighttime etc. */
                     if (ipli == SEI_SUN)
-                        retc = app_pos_etc_sun(iflag, ref  serr)/**/;
+                        retc = app_pos_etc_sun(iflag, ref serr)/**/;
                     else
                         retc = app_pos_etc_plan(ipli, iflag, ref serr);
                     if (retc == ERR)
@@ -1744,7 +1753,7 @@ namespace SwissEphNet.CPort
                     }
                     break;
                 case SwissEph.SEFLG_SWIEPH:
-                sweph_planet:
+                    sweph_planet:
                     /* compute barycentric planet (+ earth, sun, moon) */
                     retc = sweplan(tjd, ipli, SEI_FILE_PLANET, iflag, do_save, xp, xe, xs, xm, ref serr);
                     //#if 1
@@ -2234,7 +2243,7 @@ namespace SwissEphNet.CPort
                     subdirlen = 0;
                 }
                 s = fname;
-            again:
+                again:
                 fdp.fptr = swi_fopen(ifno, s, swed.ephepath, ref serr);
                 if (fdp.fptr == null) {
                     /*
@@ -2319,7 +2328,10 @@ namespace SwissEphNet.CPort
                 else
                     xp[i + 3] = 0;	/* von Alois als billiger fix, evtl. illegal */
             }
-            /* if planet wanted is barycentric sun and must be computed
+            /* if planet wanted is barycentric sun:
+             * current sepl* files have do not have barycentric sun,
+             * but have heliocentric earth and barycentric earth.
+             * So barycentric sun and must be computed
              * from heliocentric earth and barycentric earth: the 
              * computation above gives heliocentric earth, therefore we
              * have to compute barycentric earth and subtract heliocentric
@@ -2422,7 +2434,7 @@ namespace SwissEphNet.CPort
             serr = C.sprintf("SwissEph file '%s' not found in PATH '%s'", fname, ephepath);
             return null;
         }
-        
+
         public Int32 swi_get_denum(Int32 ipli, Int32 iflag)
         {
             file_data fdp = null;
@@ -2486,7 +2498,7 @@ namespace SwissEphNet.CPort
             plan_data pdp;
             epsilon oe = swed.oec2000;
             Int32 epheflag = iflag & SwissEph.SEFLG_EPHMASK;
-            t = dtsave_for_defl = 0;	/* dummy assignment to silence gcc */
+            dtsave_for_defl = 0;
             /* ephemeris file */
             if (ipli > SwissEph.SE_AST_OFFSET) {
                 ifno = SEI_FILE_ANY_AST;
@@ -2506,6 +2518,7 @@ namespace SwissEphNet.CPort
                 ibody = IS_PLANET;
                 pdp = swed.pldat[ipli];
             }
+            t = pdp.teval;
             //#if 0
             //  {
             //  struct plan_data *psp = &swed.pldat[SEI_SUNBARY];
@@ -2538,7 +2551,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pedp.teval
                   || swed.topd.teval == 0) {
-                      if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
+                    if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -2636,7 +2649,7 @@ namespace SwissEphNet.CPort
                         /* for accuracy in speed, we need earth as well */
                         if ((iflag & SwissEph.SEFLG_SPEED) != 0
                           && 0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR)) {
-                              retc = SE.SweJPL.swi_pleph(t, SweJPL.J_EARTH, SweJPL.J_SBARY, xearth, ref serr);
+                            retc = SE.SweJPL.swi_pleph(t, SweJPL.J_EARTH, SweJPL.J_SBARY, xearth, ref serr);
                             if (retc != OK) {
                                 SE.SweJPL.swi_close_jpl_file();
                                 swed.jpl_file_is_open = false;
@@ -2796,7 +2809,7 @@ namespace SwissEphNet.CPort
                                CPointer<double> xx, CPointer<double> x2000,
                                ref epsilon oe, ref string serr) {
             int i;
-            double daya;
+            double[] daya = new double[2];
             double[] xxsv = new double[24];
             /************************************************
              * nutation                                     *
@@ -2837,17 +2850,18 @@ namespace SwissEphNet.CPort
                 } else {
                     /* traditional algorithm */
                     SE.SwephLib.swi_cartpol_sp(pdp.xreturn.GetPointer(6), pdp.xreturn);
-                    /* note, swe_get_ayanamsa_ex() disturbs present calculations, if sun is calculated with 
+                    /* note, swi_get_ayanamsa_ex() disturbs present calculations, if sun is calculated with 
                      * TRUE_CHITRA ayanamsha, because the ayanamsha also calculates the sun.
                      * Therefore current values are saved... */
                     for (i = 0; i < 24; i++)
                         xxsv[i] = pdp.xreturn[i];
-                    if (SE.swe_get_ayanamsa_ex(pdp.teval, iflag, out daya, ref serr) == ERR)
+                    if (swi_get_ayanamsa_with_speed(pdp.teval, iflag, daya, ref serr) == ERR)
                         return ERR;
                     /* ... and restored */
                     for (i = 0; i < 24; i++)
                         pdp.xreturn[i] = xxsv[i];
-                    pdp.xreturn[0] -= daya * SwissEph.DEGTORAD;
+                    pdp.xreturn[0] -= daya[0] * SwissEph.DEGTORAD;
+                    pdp.xreturn[3] -= daya[1] * SwissEph.DEGTORAD;
                     SE.SwephLib.swi_polcart_sp(pdp.xreturn, pdp.xreturn.GetPointer(6));
                 }
             }
@@ -2889,20 +2903,23 @@ namespace SwissEphNet.CPort
                       || sid_mode == SwissEph.SE_SIDM_J1900
                       || sid_mode == SwissEph.SE_SIDM_B1950
                       || sid_mode == SwissEph.SE_SIDM_GALALIGN_MARDYKS
-	                  ) {
+                      ) {
                     sip.sid_mode &= ~SwissEph.SE_SIDBIT_SSY_PLANE;
                     sip.sid_mode |= SwissEph.SE_SIDBIT_ECL_T0;
                 }
                 if (sid_mode == SwissEph.SE_SIDM_TRUE_CITRA
                     || sid_mode == SwissEph.SE_SIDM_TRUE_REVATI
                     || sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA
+                    || sid_mode == SwissEph.SE_SIDM_TRUE_SHEORAN
                     || sid_mode == SwissEph.SE_SIDM_TRUE_MULA
                     || sid_mode == SwissEph.SE_SIDM_GALCENT_0SAG
+                    //|| sid_mode == SwissEph.SE_SIDM_GALCENT_COCHRANE 
                     || sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND
                     || sid_mode == SwissEph.SE_SIDM_GALCENT_MULA_WILHELM
                     || sid_mode == SwissEph.SE_SIDM_GALEQU_IAU1958
                     || sid_mode == SwissEph.SE_SIDM_GALEQU_TRUE
-                    || sid_mode == SwissEph.SE_SIDM_GALEQU_MULA)
+                    || sid_mode == SwissEph.SE_SIDM_GALEQU_MULA
+                    )
                     sip.sid_mode &= ~(SwissEph.SE_SIDBIT_ECL_T0 | SwissEph.SE_SIDBIT_SSY_PLANE | SwissEph.SE_SIDBIT_USER_UT);
                 if (sid_mode >= SwissEph.SE_NSIDM_PREDEF && sid_mode != SwissEph.SE_SIDM_USER)
                     sip.sid_mode = sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
@@ -2925,7 +2942,25 @@ namespace SwissEphNet.CPort
             swi_force_app_pos_etc();
         }
 
-        public Int32 swe_get_ayanamsa_ex(double tjd_et, Int32 iflag, out double daya, ref string serr) {
+        public Int32 swe_get_ayanamsa_ex(double tjd_et, Int32 iflag, out double daya, ref string serr)
+        {
+            nut nuttmp = new nut();
+            nut nutp = nuttmp;  /* dummy assign, to silence gcc warning */
+            Int32 retval = swi_get_ayanamsa_ex(tjd_et, iflag, out daya, ref serr);
+            if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
+                if (tjd_et == swed.nut.tnut) {
+                    nutp = swed.nut;
+                } else {
+                    nutp = nuttmp;
+                    SE.SwephLib.swi_nutation(tjd_et, iflag, nutp.nutlo);
+                }
+                daya += nutp.nutlo[0] * SwissEph.RADTODEG;
+            }
+            return retval;
+        }
+
+        public Int32 swi_get_ayanamsa_ex(double tjd_et, Int32 iflag, out double daya, ref string serr)
+        {
             double[] x = new double[6]; double eps, t0;
             sid_data sip = swed.sidd;
             string star = string.Empty; //string sdummy = null;
@@ -2936,14 +2971,14 @@ namespace SwissEphNet.CPort
             daya = 0.0;
             iflag &= SwissEph.SEFLG_EPHMASK;
             iflag |= SwissEph.SEFLG_NONUT;
-              /* ayanamshas based on the intersection point of galactic equator and
-               * ecliptic always need SEFLG_TRUEPOS, because position of galactic
-               * pole is required without aberration or light deflection */
+            /* ayanamshas based on the intersection point of galactic equator and
+             * ecliptic always need SEFLG_TRUEPOS, because position of galactic
+             * pole is required without aberration or light deflection */
             iflag_galequ = iflag | SwissEph.SEFLG_TRUEPOS;
             //#if 1
-              /* _TRUE_ ayanamshas can have the following SEFLG_s;
-               * The star will have the intended fixed position even if these flags are 
-               * provided */
+            /* _TRUE_ ayanamshas can have the following SEFLG_s;
+             * The star will have the intended fixed position even if these flags are 
+             * provided */
             iflag_true = iflag;
             if ((otherflag & SwissEph.SEFLG_TRUEPOS) != 0) iflag_true |= SwissEph.SEFLG_TRUEPOS;
             if ((otherflag & SwissEph.SEFLG_NOABERR) != 0) iflag_true |= SwissEph.SEFLG_NOABERR;
@@ -2951,12 +2986,14 @@ namespace SwissEphNet.CPort
             //#endif
             /* warning, if swe_set_ephe_path() or swe_set_jplfile() was not called yet,
              * although ephemeris files are required */
-            if (swi_init_swed_if_start() == 1 && 0==(epheflag & SwissEph.SEFLG_MOSEPH)
+            if (swi_init_swed_if_start() == 1 && 0 == (epheflag & SwissEph.SEFLG_MOSEPH)
                && (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA
                 || sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI
                 || sip.sid_mode == SwissEph.SE_SIDM_TRUE_PUSHYA
+                || sip.sid_mode == SwissEph.SE_SIDM_TRUE_SHEORAN
                 || sip.sid_mode == SwissEph.SE_SIDM_TRUE_MULA
                 || sip.sid_mode == SwissEph.SE_SIDM_GALCENT_0SAG
+                //|| sip.sid_mode == SwissEph.SE_SIDM_GALCENT_COCHRANE
                 || sip.sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND
                 || sip.sid_mode == SwissEph.SE_SIDM_GALCENT_MULA_WILHELM
                 || sip.sid_mode == SwissEph.SE_SIDM_GALEQU_IAU1958
@@ -2993,6 +3030,14 @@ namespace SwissEphNet.CPort
                 daya = SE.swe_degnorm(x[0] - 106);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
             }
+            if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_SHEORAN)
+            {
+                star = ",deCnc"; /* Asellus Australis */
+                if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
+                    return ERR;
+                daya = SE.swe_degnorm(x[0] - 103.49264221625);
+                return (retflag & SwissEph.SEFLG_EPHMASK);
+            }
             if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_MULA)
             {
                 star = ",laSco"; /* Mula = lambda Scorpionis */
@@ -3010,6 +3055,16 @@ namespace SwissEphNet.CPort
                 return (retflag & SwissEph.SEFLG_EPHMASK);
                 /*return swe_degnorm(x[0] - 359.83333333334);*/
             }
+#if FALSE
+  if (sip->sid_mode ==  SE_SIDM_GALCENT_COCHRANE) {
+    strcpy(star, ",SgrA*"); /* Galactic Centre */
+    if ((retflag = swe_fixstar(star, tjd_et, iflag_true, x, serr)) == ERR)
+      return ERR;
+    *daya = swe_degnorm(x[0] - 270.0);
+    return (retflag & SEFLG_EPHMASK);
+    /*return swe_degnorm(x[0] - 359.83333333334);*/
+  }
+#endif
             if (sip.sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND)
             {
                 star = ",SgrA*"; /* Galactic Centre */
@@ -3079,6 +3134,22 @@ namespace SwissEphNet.CPort
             return iflag;
         }
 
+        Int32 swi_get_ayanamsa_with_speed(double tjd_et, Int32 iflag, double[] daya, ref string serr)
+        {
+            double daya_t2, t2;
+            double tintv = 0.001;
+            Int32 retflag;
+            t2 = tjd_et - tintv;
+            retflag = swi_get_ayanamsa_ex(t2, iflag, out daya_t2, ref serr);
+            if (retflag == ERR)
+                return ERR;
+            retflag = swi_get_ayanamsa_ex(tjd_et, iflag, out daya[0], ref serr);
+            if (retflag == ERR)
+                return ERR;
+            daya[1] = (daya[0] - daya_t2) / tintv;
+            return retflag;
+        }
+
         public Int32 swe_get_ayanamsa_ex_ut(double tjd_ut, Int32 iflag, out double daya, ref string serr)
         {
             double deltat;
@@ -3090,6 +3161,7 @@ namespace SwissEphNet.CPort
                 iflag |= SwissEph.SEFLG_SWIEPH;
             }
             deltat = SE.swe_deltat_ex(tjd_ut, iflag, ref serr);
+            // swe... includes nutation, unless SEFLG_NONUT
             retflag = swe_get_ayanamsa_ex(tjd_ut + deltat, iflag, out daya, ref serr);
             /* if ephe required is not ephe returned, adjust delta t: */
             if ((retflag & SwissEph.SEFLG_EPHMASK) != epheflag)
@@ -3110,7 +3182,8 @@ namespace SwissEphNet.CPort
             double daya;
             string sdummy = null;
             Int32 iflag = SE.SwephLib.swi_guess_ephe_flag();
-            swe_get_ayanamsa_ex(tjd_et, iflag, out daya, ref sdummy);
+            // swi... function never includes nutation
+            swi_get_ayanamsa_ex(tjd_et, iflag, out daya, ref sdummy);
             return daya;
         }
 
@@ -3118,7 +3191,7 @@ namespace SwissEphNet.CPort
             double daya;
             string sdummy = null;
             Int32 iflag = SE.SwephLib.swi_guess_ephe_flag();
-            swe_get_ayanamsa_ex(tjd_ut + SE.swe_deltat_ex(tjd_ut, iflag, ref sdummy), 0, out daya, ref sdummy);
+            swi_get_ayanamsa_ex(tjd_ut + SE.swe_deltat_ex(tjd_ut, iflag, ref sdummy), 0, out daya, ref sdummy);
             return daya;
         }
 
@@ -3246,7 +3319,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pedp.teval
                   || swed.topd.teval == 0) {
-                      if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
+                    if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -3488,6 +3561,62 @@ namespace SwissEphNet.CPort
          *              and gravitational light deflection
          * xe    	earth's position and speed
          */
+        void aberr_light(CPointer<double> xx, CPointer<double> xe)
+        {
+            int i;
+            double[] xxs = new double[6], v = new double[6], u = new double[6];
+            double ru;
+            double b_1, f1, f2;
+            double v2;
+            for (i = 0; i <= 5; i++)
+                u[i] = xxs[i] = xx[i];
+            ru = Math.Sqrt(square_sum(u));
+            for (i = 0; i <= 2; i++)
+                v[i] = xe[i + 3] / 24.0 / 3600.0 / CLIGHT * AUNIT;
+            v2 = square_sum(v);
+            b_1 = Math.Sqrt(1 - v2);
+            f1 = dot_prod(u, v) / ru;
+            f2 = 1.0 + f1 / (1.0 + b_1);
+            for (i = 0; i <= 2; i++)
+                xx[i] = (b_1 * xx[i] + f2 * ru * v[i]) / (1.0 + f1);
+        }
+
+        /* computes 'annual' aberration
+         * xx		planet's position accounted for light-time 
+         *              and gravitational light deflection
+         * xe    	earth's position and speed
+         */
+        void swi_aberr_light_ex(CPointer<double> xx, CPointer<double> xe, CPointer<double> xe_dt, double dt, Int32 iflag)
+        {
+            int i;
+            double[] xxs = new double[6];
+            double[] xx2 = new double[6];
+            for (i = 0; i <= 5; i++)
+            {
+                xxs[i] = xx[i];
+            }
+            aberr_light(xx, xe);
+            /* correction of speed
+             * the influence of aberration on apparent velocity can
+             * reach 0.4"/day
+             */
+            if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+            {
+                for (i = 0; i <= 2; i++)
+                    xx2[i] = xxs[i] - dt * xxs[i + 3];
+                aberr_light(xx2, xe_dt);
+                for (i = 0; i <= 2; i++)
+                {
+                    xx[i + 3] = (xx[i] - xx2[i]) / dt;
+                }
+            }
+        }
+
+        /* computes 'annual' aberration
+         * xx		planet's position accounted for light-time 
+         *              and gravitational light deflection
+         * xe    	earth's position and speed
+         */
         public void swi_aberr_light(CPointer<double> xx, CPointer<double> xe, Int32 iflag) {
             int i;
             double[] xxs = new double[6], v = new double[6], u = new double[6]; double ru;
@@ -3711,7 +3840,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pedp.teval
                   || swed.topd.teval == 0) {
-                      if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
+                    if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -3905,7 +4034,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
                 if (swed.topd.teval != pdp.teval
                   || swed.topd.teval == 0) {
-                      if (swi_get_observer(pdp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
+                    if (swi_get_observer(pdp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
                 } else {
                     for (i = 0; i <= 5; i++)
@@ -4299,7 +4428,7 @@ namespace SwissEphNet.CPort
             //  }
             //#endif
             return (OK);
-        return_error_gns:
+            return_error_gns:
             fdp.fptr.Dispose();
             fdp.fptr = null;
             free_planets();
@@ -4671,14 +4800,14 @@ namespace SwissEphNet.CPort
                 }/**/
             }
             return (OK);
-        file_damage:
+            file_damage:
             //if (serr != null) {
             //*serr = '\0';
             //if (strlen(serr_file_damage) + strlen(fdp.fnam) < AS_MAXCH) {
             serr = C.sprintf(serr_file_damage, fdp.fnam);
-        //}
-        //}
-        return_error:
+            //}
+            //}
+            return_error:
             fdp.fptr.Dispose();
             fdp.fptr = null;
             free_planets();
@@ -5009,7 +5138,7 @@ namespace SwissEphNet.CPort
             Int32 epheflag = SwissEph.SEFLG_DEFAULTEPH;
             int retc = ERR;
             Int32 flg1, flg2;
-            double daya;
+            double[] daya = new double[2];
             //#if 0
             //  struct node_data *ndp, *ndnp, *ndap;
             //#else
@@ -5091,7 +5220,7 @@ namespace SwissEphNet.CPort
             //if (serr != NULL)
             //    *serr = '\0';
             serr = String.Empty;
-        three_positions:
+            three_positions:
             switch (epheflag) {
                 case SwissEph.SEFLG_JPLEPH:
                     speed_intv = NODE_CALC_INTV;
@@ -5405,9 +5534,10 @@ namespace SwissEphNet.CPort
                              * sidereal code together */
                         } else {
                             SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(6), ndp.xreturn);
-                            if (swe_get_ayanamsa_ex(ndp.teval, iflag, out daya, ref serr) == ERR)
+                            if (swi_get_ayanamsa_with_speed(ndp.teval, iflag, daya, ref serr) == ERR)
                                 return ERR;
-                            ndp.xreturn[0] -= daya * SwissEph.DEGTORAD;
+                            ndp.xreturn[0] -= daya[0] * SwissEph.DEGTORAD;
+                            ndp.xreturn[3] -= daya[1] * SwissEph.DEGTORAD;
                             SE.SwephLib.swi_polcart_sp(ndp.xreturn, ndp.xreturn.GetPointer(6));
                         }
                     } else if ((iflag & SwissEph.SEFLG_J2000) != 0) {
@@ -5453,7 +5583,7 @@ namespace SwissEphNet.CPort
             plan_data ndp;
             epsilon oe;
             nut nut;
-            double daya;
+            double[] daya = new double[2];
             double speed_intv = 0.1;
             double t, dt;
             double[][] xpos = CreateArray<Double>(3, 6); double[] xx = new double[6], x = new double[6];
@@ -5539,9 +5669,10 @@ namespace SwissEphNet.CPort
                 } else {
                     /* traditional algorithm */
                     SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(6), ndp.xreturn);
-                    if (SE.swe_get_ayanamsa_ex(ndp.teval, iflag, out daya, ref serr) == ERR)
+                    if (swi_get_ayanamsa_with_speed(ndp.teval, iflag, daya, ref serr) == ERR)
                         return ERR;
-                    ndp.xreturn[0] -= daya * SwissEph.DEGTORAD;
+                    ndp.xreturn[0] -= daya[0] * SwissEph.DEGTORAD;
+                    ndp.xreturn[3] -= daya[1] * SwissEph.DEGTORAD;
                     SE.SwephLib.swi_polcart_sp(ndp.xreturn, ndp.xreturn.GetPointer(6));
                     SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(18), ndp.xreturn.GetPointer(12));
                 }
@@ -5741,9 +5872,9 @@ namespace SwissEphNet.CPort
                 SE.SwephLib.swi_polcart_sp(xx, xx);
             } else
                 if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
-                    SE.SwephLib.swi_coortrf2(xx, xx, nutp.snut, nutp.cnut);
-                    SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, nutp.snut, nutp.cnut);
-                }
+                SE.SwephLib.swi_coortrf2(xx, xx, nutp.snut, nutp.cnut);
+                SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, nutp.snut, nutp.cnut);
+            }
             return (OK);
         }
 
@@ -5926,7 +6057,7 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_NONUT) == 0
               && (tjd != swed.nut.tnut || tjd == 0
               || (speedf1 == 0 && speedf2 != 0))) {
-                  SE.SwephLib.swi_nutation(tjd, iflag, swed.nut.nutlo);
+                SE.SwephLib.swi_nutation(tjd, iflag, swed.nut.nutlo);
                 swed.nut.tnut = tjd;
                 swed.nut.snut = Math.Sin(swed.nut.nutlo[1]);
                 swed.nut.cnut = Math.Cos(swed.nut.nutlo[1]);
@@ -5945,6 +6076,10 @@ namespace SwissEphNet.CPort
             }
         }
 
+        /* function
+         * - corrects nonsensical iflags
+         * - completes incomplete iflags
+         */
         Int32 plaus_iflag(Int32 iflag, Int32 ipl, double tjd, out string serr) {
             Int32 epheflag = 0;
             serr = null;
@@ -6002,11 +6137,8 @@ namespace SwissEphNet.CPort
                 iflag = iflag & ~(SwissEph.SEFLG_JPLHOR | SwissEph.SEFLG_JPLHOR_APPROX);
             /* SwissEph.SEFLG_JPLHOR requires SwissEph.SEFLG_ICRS, if calculated with * precession/nutation IAU 1980 and corrections dpsi, deps */
             if ((iflag & SwissEph.SEFLG_JPLHOR) != 0) {
-                if (swed.eop_dpsi_loaded <= 0
-                   || ((tjd < swed.eop_tjd_beg || tjd > swed.eop_tjd_end)
-                   && jplhor_model != SwissEph.SEMOD_JPLHOR_LONG_AGREEMENT))
+                if (swed.eop_dpsi_loaded <= 0)
                 {
-                    /*&& !USE_HORIZONS_METHOD_BEFORE_1980)) {*/
                     switch (swed.eop_dpsi_loaded)
                     {
                         case 0:
@@ -6028,252 +6160,117 @@ namespace SwissEphNet.CPort
             }
             if ((iflag & SwissEph.SEFLG_JPLHOR) != 0)
                 iflag |= SwissEph.SEFLG_ICRS;
-            /*if ((iflag & SwissEph.SEFLG_JPLHOR_APPROX) && FRAME_BIAS_APPROX_HORIZONS) */
-            /*if ((iflag & SEFLG_JPLHOR_APPROX) && !APPROXIMATE_HORIZONS_ASTRODIENST)*/
-            if ((iflag & SwissEph.SEFLG_JPLHOR_APPROX)!=0 && jplhora_model != SwissEph.SEMOD_JPLHORA_1)
+            if ((iflag & SwissEph.SEFLG_JPLHOR_APPROX) != 0 && jplhora_model == SwissEph.SEMOD_JPLHORA_2)
                 iflag |= SwissEph.SEFLG_ICRS;
             return iflag;
         }
 
-        /**********************************************************
-         * get fixstar positions
-         * parameters:
-         * star 	name of star or line number in star file 
-         *		(start from 1, don't count comment).
-         *    		If no error occurs, the name of the star is returned
-         *	        in the format trad_name, nomeclat_name
-         *
-         * tjd 		absolute julian day
-         * iflag	s. swecalc(); speed bit does not function
-         * x		pointer for returning the ecliptic coordinates
-         * serr		error return string
-        **********************************************************/
-        string slast_stardata = String.Empty;
-        string slast_starname = String.Empty;
-        string sdummy = null;
-        public Int32 swe_fixstar(ref string star, double tjd, Int32 iflag,
-          double[] xx, ref string serr) {
-            int i;
-            int star_nr = 0;
-            bool isnomclat = false;
-            int cmplen;
-            double daya;
-            double[] x = new double[6], xxsv = new double[6], xobs = new double[6]; CPointer<double> xpo = null;
-            string[] cpos;
-            string sstar = String.Empty;
-            string fstar = String.Empty;
-            string s = String.Empty; string sp = String.Empty/*, sp2*/;	/* 20 byte for SE_STARFILE */
-            double ra_s, ra_pm, de_pm, ra, de, t, cosra, cosde, sinra, sinde;
-            double ra_h, ra_m, de_d, de_m, de_s;
-            string sde_d;
-            double epoch, radv, parall, u;
-            int line = 0;
-            int fline = 0;
-            plan_data pedp = swed.pldat[SEI_EARTH];
-            plan_data psdp = swed.pldat[SEI_SUNBARY];
-            epsilon oe = swed.oec2000;
-            int retc = 0;
-            Int32 epheflag, iflgsave;
-            iflag |= SwissEph.SEFLG_SPEED; /* we need this in order to work correctly */
-            iflgsave = iflag;
-            serr = String.Empty;
-#if TRACE
-            //swi_open_trace(serr);
-            trace_swe_fixstar(1, star, tjd, iflag, xx, serr);
-#endif //* TRACE */
-            iflag = plaus_iflag(iflag, -1, tjd, out serr);
-              epheflag = iflag & SwissEph.SEFLG_EPHMASK;
-              if (swi_init_swed_if_start() == 1 && 0==(epheflag & SwissEph.SEFLG_MOSEPH) ) {
-                serr= "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_fixstar() or swe_fixstar_ut()";
-              }
-              if (swed.last_epheflag != epheflag)
-              {
-                  free_planets();
-                  /* close and free ephemeris files */
-                  if (swed.jpl_file_is_open)
-                  {
-                      SE.SweJPL.swi_close_jpl_file();
-                      swed.jpl_file_is_open = false;
-                  }
-                  for (i = 0; i < SEI_NEPHFILES; i++)
-                  {
-                      if (swed.fidat[i].fptr != null)
-                          swed.fidat[i].fptr.Dispose();
-                      swed.fidat[i] = new file_data();
-                  }
-                  swed.last_epheflag = epheflag;
-              }
-              /* high precision speed prevails fast speed */
-            /* JPL Horizons is only reproduced with SwissEph.SEFLG_JPLEPH */
-            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0 && !swed.ayana_is_set)
-                swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
-            /****************************************** 
-             * obliquity of ecliptic 2000 and of date * 
-             ******************************************/
-            swi_check_ecliptic(tjd, iflag);
-            /******************************************
-             * nutation                               * 
-             ******************************************/
-            swi_check_nutation(tjd, iflag);
-            sstar = star.Length >= SwissEph.SE_MAX_STNAME ? star.Substring(0, SwissEph.SE_MAX_STNAME) : star;
-            //sstar[SE_MAX_STNAME] = '\0';
-            if (sstar[0] == ',') {
-                isnomclat = true;
-            } else if (Char.IsDigit(sstar[0])) {
-                star_nr = int.Parse(sstar);
-            } else {
-                /* traditional name of star to lower case */
-                //for (sp = sstar; *sp != '\0'; sp++)
-                //    *sp = tolower((int)*sp);
-                //if ((sp = strchr(sstar, ',')) != NULL)
-                //    *sp = '\0';
+        /* function formats the input search name of a star:
+         * - remove white spaces
+         * - traditional name to lower case (Bayer designation remains as it is)
+         */
+        static Int32 fixstar_format_search_name(string star, ref string sstar, ref string serr)
+        {
+            sstar = star ?? string.Empty;
+            // remove whitespaces from search name
+            sstar = sstar.Replace(" ", string.Empty);
+            /* traditional name of star to lower case;
+             * keep uppercase with Bayer/Flamsteed designations after comma */
+            int p = sstar.IndexOf(',');
+            if (p >= 0)
+                sstar = sstar.Substring(0, p - 1).ToLower() + sstar.Substring(p);
+            else
                 sstar = sstar.ToLower();
+            if (sstar == string.Empty)
+            {
+                serr = "swe_fixstar(): star name empty";
+                return ERR;
             }
-            /*swi_right_trim(sstar);*/
-            //while ((sp = strchr(sstar, ' ')) != NULL)
-            //    sp = sp + 1;
-            sstar = sstar.TrimEnd();
-            cmplen = sstar.Length;
-            if (cmplen == 0) {
-                serr = C.sprintf("swe_fixstar(): star name empty");
-                retc = ERR;
-                goto return_err;
-            }
-            /* star elements from last call: */
-            //if (*slast_stardata != '\0' && strcmp(slast_starname, sstar) == 0) {
-            if (!String.IsNullOrWhiteSpace(slast_stardata) && slast_starname.Equals(sstar)) {
-                s = slast_stardata;
-                goto found;
-            }
-            /******************************************************
-             * Star file
-             * close to the beginning, a few stars selected by Astrodienst.
-             * These can be accessed by giving their number instead of a name.
-             * All other stars can be accessed by name.
-             * Comment lines start with # and are ignored.
-             ******************************************************/
-            if (swed.fixfp == null) {
-                if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE, swed.ephepath, ref serr)) == null) {
-                    swed.is_old_starfile = true;
-                    if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null) {
-                        swed.is_old_starfile = false;
-                        /* no fixed star file available. If Spica is called, we provide it
-                         * even without a star file, because Spica is required for the
-                         * Ayanamsha SE_SIDM_TRUE_CITRA */
-                        if (star.StartsWith("Spica")) {
-                            s = "Spica,alVir,ICRS,13,25,11.5793,-11,09,40.759,-42.50,-31.73,1.0,12.44,1.04,-10,3672";
-                            sstar = "spica";
-                            goto found;
-                            /* Ayanamsha SE_SIDM_TRUE_REVATI */
-                        }
-                        else if (star.Contains(",zePsc") || star.StartsWith("Revati"))
-                        {
-                            s = "Revati,zePsc,ICRS,01,13,43.8857,7,34,31.274,141.66,-55.62,0.0,22.09,5.204,06,174";
-                            sstar = "revati";
-                            goto found;
-                        }
-                        /* Ayanamsha SE_SIDM_TRUE_PUSHYA */
-                        else if (star.Contains(",deCnc") || star.StartsWith("Pushya"))
-                        {
-                            s = "Pushya,deCnc,ICRS,08,44,41.0996,+18,09,15.511,-17.10,-228.46,17.14,23.97,3.94,18,2027";
-                            sstar = "pushya";
-                            goto found;
-                        }
-                        /* Ayanamsha SE_SIDM_TRUE_MULA */
-                        else if (star.Contains(",laSco") || star.StartsWith("Mula"))
-                        {
-                            s = "Mula,laSco,ICRS,17,33,36.520,-37,06,13.76,-8.90,-29.95,-3,4.64,1.62,-37,11673";
-                            sstar = "mula";
-                            goto found;
-                        }
-                        /* Ayanamsha SE_SIDM_GALCENT_0SAG */
-                        else if (star.Contains(",SgrA*"))
-                        {
-                            s = "Gal. Center,SgrA*,2000,17,45,40.0409,-29,00,28.118,-2.755718425,-5.547,0.0,0.0000,999.99,0,0";
-                            sstar = ",sgra*";
-                            goto found;
-                        }
-                        /* Ayanamsha SE_SIDM_GALCENT_RGILBRAND */
-                        else if (star.Contains(",SgrA*"))
-                        {
-                            s = "Gal. Center,SgrA*,2000,17,45,40.0409,-29,00,28.118,-2.755718425,-5.547,0.0,0.0000,999.99,0,0";
-                            sstar = ",sgra*";
-                            goto found;
-                        }
-                        /* Ayanamsha SE_SIDM_GALEQU_IAU1958 */
-                        else if (star.Contains(",GP1958"))
-                        {
-                            s = "Gal. Pole IAU1958,GP1958,1950,12,49,0.0,27,24,0.0,0.0,0.0,0.0,0.0,0.0,0,0";
-                            sstar = ",gp1958";
-                            goto found;
-                        }
-                        /* Ayanamsha SE_SIDM_GALEQU_TRUE */
-                        else if (star.Contains(",GPol"))
-                        {
-                            s = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
-                            sstar = ",gpol";
-                            goto found;
-                        }
-                        /* Ayanamsha SE_SIDM_GALEQU_MULA */
-                        else if (star.Contains(",GPol"))
-                        {
-                            s = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
-                            sstar = ",gpol";
-                            goto found;
-                        }
-                        retc = ERR;
-                        goto return_err;
-                    }
+            return OK;
+        }
+
+        /* function saves a fixstar in fixed stars list
+         */
+        Int32 save_star_in_struct(int nrecs, fixed_star fstp, ref string serr)
+        {
+            //int sizestru = sizeof(struct fixed_star);
+            //struct fixed_star *ftarget;
+            //string serr_alloc = "error in function load_all_fixed_stars(): could not resize fixed stars array";
+            //if ((swed.fixed_stars = realloc(swed.fixed_stars, nrecs * sizestru)) == NULL) {
+            //  if (serr != NULL) strcpy(serr, serr_alloc);
+            //  return ERR;
+            //}
+            var newfstars = new fixed_star[nrecs];
+            if (swed.fixed_stars != null)
+                swed.fixed_stars.CopyTo(newfstars, 0);
+            swed.fixed_stars = newfstars;
+            //ftarget = swed.fixed_stars + (nrecs - 1);
+            //memcpy((void *) ftarget, (void *) fstp, sizestru);
+            swed.fixed_stars[nrecs - 1] = fstp;
+            return OK;
+        }
+
+        /* function for sorting fixed stars with qsort() */
+        static int fixedstar_name_compare(fixed_star star1, fixed_star star2)
+        {
+            return string.Compare(star1.skey, star2.skey);
+        }
+
+        /* help function for finding a fixed star with bsearch() */
+        /*static int fstar_node_compare(fixed_star node1, fixed_star node2)
+        {
+            const struct fixed_star *n1 = (const struct fixed_star *) node1;
+            const struct fixed_star *n2 = (const struct fixed_star *) node2;
+            return strcmp(n1->skey, n2->skey);
+        }*/
+        static int fstar_node_compare(string key, fixed_star value)
+        {
+            return string.Compare(key, value.skey);
+        }
+
+        /* function cuts a comma-separated fixed star data record from sefstars.txt 
+         * and fills it into a struct fixed_star.
+         */
+        Int32 fixstar_cut_string(string srecord, string star, ref fixed_star stardata, ref string serr)
+        {
+            int i;
+            string s;
+            string sde_d;
+            string[] cpos;
+            double epoch, radv, parall, mag;
+            double ra_s, ra_pm, de_pm, ra, de;
+            double ra_h, ra_m, de_d, de_m, de_s;
+            s = srecord;
+            i = SwephLib.swi_cutstr(s, new char[] { ',' }, out cpos, 20);
+            /* return trad. name, nomeclature name */
+            SwephLib.swi_right_trim(ref cpos[0]);
+            SwephLib.swi_right_trim(ref cpos[1]);
+            if (i < 14)
+            {
+                if (i >= 2)
+                {
+                    serr = C.sprintf("data of star '%s,%s' incomplete", cpos[0], cpos[1]);
                 }
-            }
-            swed.fixfp.Seek(0, SeekOrigin.Begin);
-            while ((s = swed.fixfp.ReadLine()) != null) {
-                fline++;
-                if (s.StartsWith("#")) continue;
-                line++;
-                if (star_nr == line)
-                    goto found;
-                else if (star_nr > 0)
-                    continue;
-                var spi = s.IndexOf(',');
-                if (spi < 0) {
-                    serr = C.sprintf("star file %s damaged at line %d", SwissEph.SE_STARFILE, fline);
-                    retc = ERR;
-                    goto return_err;
+                else
+                {
+                    //if (s.Length > 200) s[200] = '\0';
+                    serr = C.sprintf("invalid line in fixed stars file: '%s'", s);
                 }
-                if (isnomclat) {
-                    if (!sp.StartsWith(sstar.Substring(0, cmplen)))
-                        goto found;
-                    else
-                        continue;
-                }
-                fstar = s.Substring(0, spi);
-                fstar = fstar.TrimEnd();
-                i = fstar.Length;
-                if (i < (int)cmplen)
-                    continue;
-                if (sstar.Equals(fstar, StringComparison.CurrentCultureIgnoreCase))
-                    goto found;
+                return ERR;
             }
-            serr = C.sprintf("star %s not found", star);
-            retc = ERR;
-            goto return_err;
-        found:
-            slast_stardata = s;
-            slast_starname = sstar;
-            // star = sstar;
-            //i = swi_cutstr(s, ",", cpos, 20);
-            //swi_right_trim(cpos[0]);
-            //swi_right_trim(cpos[1]);
-            cpos = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            i = cpos.Length;
-            cpos[0] = cpos[0].TrimEnd();
-            cpos[1] = cpos[1].TrimEnd();
-            if (i < 13) {
-                serr = C.sprintf("data of star '%s,%s' incomplete", cpos[0], cpos[1]);
-                retc = ERR;
-                goto return_err;
+            if (cpos[0].Length > SwissEph.SE_MAX_STNAME)
+                cpos[0] = cpos[0].Substring(0, SwissEph.SE_MAX_STNAME);
+            if (cpos[1].Length > SwissEph.SE_MAX_STNAME - 1)
+                cpos[1] = cpos[1].Substring(0, SwissEph.SE_MAX_STNAME - 1);
+            if (star != null)
+            {
+                star = cpos[0];
+                if (cpos[0].Length + cpos[1].Length + 1 < SwissEph.SE_MAX_STNAME - 1)
+                    star += C.sprintf(",%s", cpos[1]);
             }
+            stardata.starname = cpos[0];
+            stardata.starbayer = cpos[1];
+            // star data
             epoch = C.atof(cpos[2]);
             ra_h = C.atof(cpos[3]);
             ra_m = C.atof(cpos[4]);
@@ -6286,14 +6283,7 @@ namespace SwissEphNet.CPort
             de_pm = C.atof(cpos[10]);
             radv = C.atof(cpos[11]);
             parall = C.atof(cpos[12]);
-            /* return trad. name, nomeclature name */
-            if (cpos[0].Length > SwissEph.SE_MAX_STNAME)
-                cpos[0] = cpos[0].Substring(0, SwissEph.SE_MAX_STNAME);
-            if (cpos[1].Length > SwissEph.SE_MAX_STNAME - 1)
-                cpos[1] = cpos[1].Substring(0, SwissEph.SE_MAX_STNAME);
-            star = cpos[0];
-            if (cpos[0].Length + cpos[1].Length + 1 < SwissEph.SE_MAX_STNAME - 1)
-                star += C.sprintf(",%s", cpos[1]);
+            mag = C.atof(cpos[13]);
             /****************************************
              * position and speed (equinox)
              ****************************************/
@@ -6304,10 +6294,13 @@ namespace SwissEphNet.CPort
             else
                 de = -de_s / 3600.0 - de_m / 60.0 + de_d;
             /* speed in ra and de, degrees per century */
-            if (swed.is_old_starfile == true) {
+            if (swed.is_old_starfile == true)
+            {
                 ra_pm = ra_pm * 15 / 3600.0;
                 de_pm = de_pm / 3600.0;
-            } else {
+            }
+            else
+            {
                 ra_pm = ra_pm / 10.0 / 3600.0;
                 de_pm = de_pm / 10.0 / 3600.0;
                 parall /= 1000.0;
@@ -6327,9 +6320,197 @@ namespace SwissEphNet.CPort
             de_pm *= SwissEph.DEGTORAD;
             ra_pm /= Math.Cos(de); /* catalogues give proper motion in RA as great circle */
             parall *= SwissEph.DEGTORAD;
+            stardata.epoch = epoch;
+            stardata.ra = ra;
+            stardata.de = de;
+            stardata.ramot = ra_pm;
+            stardata.demot = de_pm;
+            stardata.parall = parall;
+            stardata.radvel = radv;
+            stardata.mag = mag;
+            return OK;
+        }
+
+        /* function loads all fixed stars from file sefstars.txt,
+         * into swed.fixed_stars, which is a pointer to an array
+         * of struct fixed_stars.
+         * Every star has a record with its Bayer/Flamsteed designation 
+         * as its search key.
+         * Every star also has a record with its sequential number in
+         * the file as its search key. (Good for calculating all stars in a loop.)
+         * If a star has a traditional name, we create a record that has 
+         * this name as its search key.
+         * The array is sorted in ascending order by search key. 
+         *
+         * If an error occurs, the function returns value ERR.
+         * If the stars were loaded at an earlier time the function returns
+         * value -2, without doing anything and without error string.
+         * On success, the function returns value OK.
+         * */
+        Int32 load_all_fixed_stars(ref string serr)
+        {
+            Int32 retc = OK;
+            int nstars = 0, line = 0, fline = 0, nrecs = 0, nnamed = 0;
+            //char s[AS_MAXCH], *sp;
+            string s, sdummy = null;
+            string srecord;
+            fixed_star fstdata = new fixed_star();
+            string last_starbayer = string.Empty;
+            if (swed.n_fixstars_records > 0)
+            {
+                return -2;
+            }
+            if (swed.fixfp == null)
+            {
+                if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE, swed.ephepath, ref serr)) == null)
+                {
+                    swed.is_old_starfile = false;
+                    if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null)
+                    {
+                        swed.is_old_starfile = false;
+                        /* no fixed star file available, error message is already in serr. */
+                        return ERR;
+                    }
+                }
+            }
+            swed.fixfp.Seek(0, SeekOrigin.Begin);
+            swed.fixed_stars = null;
+            while ((s = swed.fixfp.ReadLine()) != null)
+            {
+                fline++;
+                // skip comment lines
+                if (string.IsNullOrEmpty(s)) continue;
+                if (s.StartsWith("#")) continue;
+                if (s.StartsWith("\n")) continue;
+                if (s.StartsWith("\r")) continue;
+                line++;
+                srecord = s;
+                retc = fixstar_cut_string(srecord, null, ref fstdata, ref serr);
+                if (retc == ERR) return ERR;
+                // if star has a traditional name, save it with that name as its search key
+                if (!string.IsNullOrEmpty(fstdata.starname))
+                {
+                    nrecs++;
+                    nnamed++;
+                    fstdata.skey = fstdata.starname;
+                    // remove white spaces from star name
+                    fstdata.skey = fstdata.skey.Replace(" ", string.Empty);
+                    // star name to lowercase and compare with search string
+                    fstdata.skey = fstdata.skey.ToLower();
+                    if ((retc = save_star_in_struct(nrecs, fstdata, ref serr)) == ERR) return ERR;
+                }
+                // also save it with Bayer designation as search key;
+                // only if it has not been saved already
+                if (string.Equals(fstdata.starbayer, last_starbayer))
+                    continue;
+                nstars++;
+                nrecs++;
+                //sprintf(fstdata.skey, "~%s", fstdata.starbayer); // ~ sorts after alnum
+                fstdata.skey = C.sprintf(",%s", fstdata.starbayer); // , sorts before alnum
+                                                                    // remove white spaces from star bayer name
+                fstdata.skey = fstdata.skey.Replace(" ", string.Empty);
+                last_starbayer = fstdata.starbayer;
+                if ((retc = save_star_in_struct(nrecs, fstdata, ref serr)) == ERR) return ERR;
+                // also save it with sequential star number as search key (NO!!!!)
+                // nrecs++;
+                // sprintf(fstdata.skey, "%07d", nstars);
+                // if ((retc = save_star_in_struct(nrecs, &fstdata, serr)) == ERR) return ERR;
+            }
+            swed.n_fixstars_real = nstars;
+            swed.n_fixstars_named = nnamed;
+            swed.n_fixstars_records = nrecs;
+            //printf("nstars=%d, nrecords=%d\n", nstars, nrecs);
+            qsort(swed.fixed_stars.GetPointer(), nrecs, fixedstar_name_compare);
+            return retc;
+        }
+
+        /* function calculates a fixstar from a star data struct 
+         * input:
+         * struct fixed_star stardata      fixed star data struct
+         * double tjd        julian daynumber 
+         * int32 iflag       SEFLG_ specifications
+         * output:
+         * char *star        star name, Bayer designation
+         * double xx[6]      position and speed
+         * char *serr        error return string
+         */
+        Int32 fixstar_calc_from_struct(ref fixed_star stardata, double tjd, Int32 iflag, string star, CPointer<double> xx, ref string serr)
+        {
+            int i;
+            Int32 retc = OK;
+            double epoch, radv, parall;
+            double ra_pm, de_pm, ra, de, t, cosra, cosde, sinra, sinde;
+            double[] daya = new double[2]; double rdist;
+            double[] x = new double[6], xxsv = new double[6], xobs = new double[6], xobs_dt = new double[6];
+            CPointer<double> xpo = null, xpo_dt = null;
+            double[] xearth = new double[6], xearth_dt = new double[6], xsun = new double[6], xsun_dt = new double[6];
+            double dt = PLAN_SPEED_INTV * 0.1;
+            Int32 epheflag, iflgsave;
+            epsilon oe = swed.oec2000;
+            iflgsave = iflag;
+            iflag |= SwissEph.SEFLG_SPEED; /* we need this in order to work correctly */
+                                           //if (serr != NULL)
+                                           //  *serr = '\0';
+            iflag = plaus_iflag(iflag, -1, tjd, out serr);
+            epheflag = iflag & SwissEph.SEFLG_EPHMASK;
+            if (swi_init_swed_if_start() == 1 && 0 == (epheflag & SwissEph.SEFLG_MOSEPH) /*&& serr != NULL*/)
+            {
+                serr = "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_fixstar() or swe_fixstar_ut()";
+            }
+            if (swed.last_epheflag != epheflag)
+            {
+                free_planets();
+                /* close and free ephemeris files */
+                if (swed.jpl_file_is_open)
+                {
+                    SE.SweJPL.swi_close_jpl_file();
+                    swed.jpl_file_is_open = false;
+                }
+                for (i = 0; i < SEI_NEPHFILES; i++)
+                {
+                    if (swed.fidat[i].fptr != null)
+                        //fclose(swed.fidat[i].fptr);
+                        swed.fidat[i].fptr.Dispose();
+                    //memset((void*)&swed.fidat[i], 0, sizeof(struct file_data));
+                    swed.fidat[i] = null;
+                }
+                swed.last_epheflag = epheflag;
+            }
+            /* high precision speed prevails fast speed */
+            /* JPL Horizons is only reproduced with SEFLG_JPLEPH */
+            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0 && !swed.ayana_is_set)
+                swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
+            /****************************************** 
+             * obliquity of ecliptic 2000 and of date * 
+             ******************************************/
+            swi_check_ecliptic(tjd, iflag);
+            /******************************************
+             * nutation                               * 
+             ******************************************/
+            swi_check_nutation(tjd, iflag);
+            star = sprintf("%s,%s", stardata.starname, stardata.starbayer);
+            epoch = stardata.epoch;
+            ra_pm = stardata.ramot; de_pm = stardata.demot;
+            radv = stardata.radvel; parall = stardata.parall;
+            ra = stardata.ra; de = stardata.de;
+            if (epoch == 1950)
+                t = (tjd - B1950);  /* days since 1950.0 */
+            else /* epoch == 2000 */
+                t = (tjd - J2000);  /* days since 2000.0 */
             x[0] = ra;
             x[1] = de;
-            x[2] = 1;	/* -> unit vector */
+            x[2] = 1;   /* -> unit vector */
+            if (parall == 0)
+            {
+                rdist = 1000000;
+            }
+            else
+            {
+                rdist = 1.0 / (parall * SwissEph.RADTODEG * 3600) * PARSEC_TO_AUNIT;
+                rdist += t * radv / 36525.0;
+            }
+            // rdist = 10000;  // to reproduce pre-SE2.07 star positions
+            x[2] = rdist;
             /* cartesian */
             SE.SwephLib.swi_polcart(x, x);
             /*space motion vector */
@@ -6337,105 +6518,122 @@ namespace SwissEphNet.CPort
             cosde = Math.Cos(de);
             sinra = Math.Sin(ra);
             sinde = Math.Sin(de);
-            x[3] = -ra_pm * cosde * sinra - de_pm * sinde * cosra
-                      + radv * parall * cosde * cosra;
-            x[4] = ra_pm * cosde * cosra - de_pm * sinde * sinra
-                      + radv * parall * cosde * sinra;
-            x[5] = de_pm * cosde + radv * parall * sinde;
-            x[3] /= 36525;
-            x[4] /= 36525;
-            x[5] /= 36525;
+            x[3] = -ra_pm * cosde * sinra - de_pm * sinde * cosra;
+            x[4] = ra_pm * cosde * cosra - de_pm * sinde * sinra;
+            x[5] = de_pm * cosde;
+            x[3] /= 36525.0;
+            x[4] /= 36525.0;
+            x[5] /= 36525.0;
+            x[3] += (radv * parall * cosde * cosra) / 36525.0;
+            x[4] += (radv * parall * cosde * sinra) / 36525.0;
+            x[5] += (radv * parall * sinde) / 36525.0;
+            for (i = 3; i < 6; i++)
+                x[i] *= rdist;
             /******************************************
              * FK5
              ******************************************/
-            if (epoch == 1950) {
+            if (epoch == 1950)
+            {
                 SE.SwephLib.swi_FK4_FK5(x, B1950);
                 SE.SwephLib.swi_precess(x, B1950, 0, J_TO_J2000);
-                SE.SwephLib.swi_precess(x.GetPointer(3), B1950, 0, J_TO_J2000);
+                SE.SwephLib.swi_precess(x.GetPointer() + 3, B1950, 0, J_TO_J2000);
             }
             /* FK5 to ICRF, if jpl ephemeris is referred to ICRF.
              * With data that are already ICRF, epoch = 0 */
-            if (epoch != 0) {
+            if (epoch != 0)
+            {
                 SE.SwephLib.swi_icrs2fk5(x, iflag, true); /* backward, i. e. to icrf */
                 /* with ephemerides < DE403, we now convert to J2000 */
-                if (swi_get_denum(SEI_SUN, iflag) >= 403) {
+                if (swi_get_denum(SEI_SUN, iflag) >= 403)
+                {
                     SE.SwephLib.swi_bias(x, J2000, SwissEph.SEFLG_SPEED, false);
                 }
             }
-            //#if 0
-            //  if (((iflag & SEFLG_NOGDEFL) == 0 || (iflag & SEFLG_NOABERR) == 0)
-            //    && (iflag & SEFLG_HELCTR) == 0
-            //    && (iflag & SEFLG_BARYCTR) == 0
-            //    && (iflag & SEFLG_TRUEPOS) == 0) 
-            //#endif
             /**************************************************** 
              * earth/sun 
              * for parallax, light deflection, and aberration,
              ****************************************************/
-            if (0 == (iflag & SwissEph.SEFLG_BARYCTR) && (0 == (iflag & SwissEph.SEFLG_HELCTR) || 0 == (iflag & SwissEph.SEFLG_MOSEPH))) {
-                if ((retc = main_planet(tjd, SEI_EARTH, epheflag, iflag, ref serr)) != OK) {
-//#if 1
-      retc = ERR;
-      goto return_err;
-//#else
-//      *serr = '\0';
-//#endif
-                    //iflag &= ~(SwissEph.SEFLG_TOPOCTR | SwissEph.SEFLG_HELCTR);
-                    ///* on error, we provide barycentric position: */
-                    //iflag |= SwissEph.SEFLG_BARYCTR | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_NOGDEFL;
-                    //retc = iflag;
-                } else {
-                    /* iflag (ephemeris bit) may have changed in main_planet() */
-                    iflag = swed.pldat[SEI_EARTH].xflgs;
+            if (0 == (iflag & SwissEph.SEFLG_BARYCTR) && (0 == (iflag & SwissEph.SEFLG_HELCTR) || 0 == (iflag & SwissEph.SEFLG_MOSEPH)))
+            {
+                if ((retc = main_planet_bary(tjd - dt, SEI_EARTH, epheflag, iflag, NO_SAVE, xearth_dt, xearth_dt, xsun_dt, null, ref serr)) != OK)
+                {
+                    return ERR;
+                }
+                if ((retc = main_planet_bary(tjd, SEI_EARTH, epheflag, iflag, DO_SAVE, xearth, xearth, xsun, null, ref serr)) != OK)
+                {
+                    return ERR;
                 }
             }
             /************************************
              * observer: geocenter or topocenter
              ************************************/
             /* if topocentric position is wanted  */
-            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
-                if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs, ref serr) != OK)
-                    goto return_err;
+            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+            {
+                if (swi_get_observer(tjd - dt, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs_dt, ref serr) != OK)
+                    return ERR;
+                if (swi_get_observer(tjd, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs, ref serr) != OK)
+                    return ERR;
                 /* barycentric position of observer */
                 for (i = 0; i <= 5; i++)
-                    xobs[i] = xobs[i] + pedp.x[i];
-            } else if (0 == (iflag & SwissEph.SEFLG_BARYCTR) && (0 == (iflag & SwissEph.SEFLG_HELCTR) || 0 == (iflag & SwissEph.SEFLG_MOSEPH))) {
+                {
+                    xobs[i] = xobs[i] + xearth[i];
+                    xobs_dt[i] = xobs_dt[i] + xearth_dt[i];
+                }
+            }
+            else if (0 == (iflag & SwissEph.SEFLG_BARYCTR) && (0 == (iflag & SwissEph.SEFLG_HELCTR) || 0 == (iflag & SwissEph.SEFLG_MOSEPH)))
+            {
                 /* barycentric position of geocenter */
                 for (i = 0; i <= 5; i++)
-                    xobs[i] = pedp.x[i];
+                {
+                    xobs[i] = xearth[i];
+                    xobs_dt[i] = xearth_dt[i];
+                }
             }
             /************************************
              * position and speed at tjd        *
              ************************************/
-            if (epoch == 1950)
-                t = (tjd - B1950);	/* days since 1950.0 */
-            else /* epoch == 2000 */
-                t = (tjd - J2000);	/* days since 2000.0 */
             /* for parallax */
             if ((iflag & SwissEph.SEFLG_HELCTR) != 0 && (iflag & SwissEph.SEFLG_MOSEPH) != 0)
+            {
                 xpo = null;		/* no parallax, if moshier and heliocentric */
+                xpo_dt = null;  /* no parallax, if moshier and heliocentric */
+            }
             else if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
-                xpo = psdp.x;
+            {
+                xpo = xsun;//psdp->x;
+                xpo_dt = xsun_dt;
+            }
             else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0)
+            {
                 xpo = null;		/* no parallax, if barycentric */
+                xpo_dt = null;  /* no parallax, if moshier and heliocentric */
+            }
             else
+            {
                 xpo = xobs;
-            if (xpo == null) {
+                xpo_dt = xobs_dt;
+            }
+            if (xpo == null)
+            {
                 for (i = 0; i <= 2; i++)
+                {
                     x[i] += t * x[i + 3];
-            } else {
-                for (i = 0; i <= 2; i++) {
-                    x[i] += t * x[i + 3] - parall * xpo[i];
-                    x[i + 3] -= parall * xpo[i + 3];
+                }
+            }
+            else
+            {
+                for (i = 0; i <= 2; i++)
+                {
+                    x[i] += t * x[i + 3] - parall * xpo[i] * rdist;
+                    x[i + 3] -= parall * xpo[i + 3] * rdist;
                 }
             }
             /************************************
              * relativistic deflection of light *
              ************************************/
-            for (i = 0; i <= 5; i++)
-                x[i] *= 10000;	/* great distance, to allow 
-             * algorithm used with planets */
-            if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && (iflag & SwissEph.SEFLG_NOGDEFL) == 0) {
+            if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && (iflag & SwissEph.SEFLG_NOGDEFL) == 0)
+            {
                 swi_deflect_light(x, 0, iflag & SwissEph.SEFLG_SPEED);
             }
             /**********************************
@@ -6443,78 +6641,75 @@ namespace SwissEphNet.CPort
              * speed is incorrect !!!         *
              **********************************/
             if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && (iflag & SwissEph.SEFLG_NOABERR) == 0)
-                swi_aberr_light(x, xpo, iflag & SwissEph.SEFLG_SPEED);
+                swi_aberr_light_ex(x, xpo, xpo_dt, dt, iflag & SwissEph.SEFLG_SPEED);
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && (swi_get_denum(SEI_SUN, iflag) >= 403 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && (swi_get_denum(SEI_SUN, iflag) >= 403 || (iflag & SwissEph.SEFLG_BARYCTR) != 0))
+            {
                 SE.SwephLib.swi_bias(x, tjd, iflag, false);
             }/**/
-            /* save J2000 coordinates; required for sidereal positions */
+             /* save J2000 coordinates; required for sidereal positions */
             for (i = 0; i <= 5; i++)
                 xxsv[i] = x[i];
             /************************************************
              * precession, equator 2000 -> equator of date *
              ************************************************/
             /*x[0] = -0.374018403; x[1] = -0.312548592; x[2] = -0.873168719;*/
-            if ((iflag & SwissEph.SEFLG_J2000) == 0) {
+            if ((iflag & SwissEph.SEFLG_J2000) == 0)
+            {
                 SE.SwephLib.swi_precess(x, tjd, iflag, J2000_TO_J);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     swi_precess_speed(x, tjd, iflag, J2000_TO_J);
                 oe = swed.oec;
-            } else
+            }
+            else
                 oe = swed.oec2000;
             /************************************************
              * nutation                                     *
              ************************************************/
             if (0 == (iflag & SwissEph.SEFLG_NONUT))
                 swi_nutate(x, 0, false);
-            //if (false) {
-            //    double r = Math.Sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
+            //if (false)
+            //{
+            //    double r = sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
             //    printf("%.17f %.17f %f\n", x[0] / r, x[1] / r, x[2] / r);
             //}
-            /************************************************
-             * unit vector (distance = 1)                   *
-             ************************************************/
-            u = Math.Sqrt(square_sum(x));
-            for (i = 0; i <= 5; i++)
-                x[i] /= u;
-            u = Math.Sqrt(square_sum(xxsv));
-            for (i = 0; i <= 5; i++)
-                xxsv[i] /= u;
-            /************************************************
-             * set speed = 0, because not correct (aberration) 
-             ************************************************/
-            for (i = 3; i <= 5; i++)
-                x[i] = xxsv[i] = 0;
             /************************************************
              * transformation to ecliptic.                  *
              * with sidereal calc. this will be overwritten *
              * afterwards.                                  *
              ************************************************/
-            if ((iflag & SwissEph.SEFLG_EQUATORIAL) == 0) {
+            if ((iflag & SwissEph.SEFLG_EQUATORIAL) == 0)
+            {
                 SE.SwephLib.swi_coortrf2(x, x, oe.seps, oe.ceps);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
-                    SE.SwephLib.swi_coortrf2(x.GetPointer(3), x.GetPointer(3), oe.seps, oe.ceps);
-                if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
+                    SE.SwephLib.swi_coortrf2(x.GetPointer() + 3, x.GetPointer() + 3, oe.seps, oe.ceps);
+                if (0 == (iflag & SwissEph.SEFLG_NONUT))
+                {
                     SE.SwephLib.swi_coortrf2(x, x, swed.nut.snut, swed.nut.cnut);
                     if ((iflag & SwissEph.SEFLG_SPEED) != 0)
-                        SE.SwephLib.swi_coortrf2(x.GetPointer(3), x.GetPointer(3), swed.nut.snut, swed.nut.cnut);
+                        SE.SwephLib.swi_coortrf2(x.GetPointer() + 3, x.GetPointer() + 3, swed.nut.snut, swed.nut.cnut);
                 }
             }
+            //  printf("%.17f, %.17f\n", x[0], x[3]);
             /************************************
              * sidereal positions               *
              ************************************/
-            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+            {
                 /* rigorous algorithm */
-                if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0) {
+                if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0)
+                {
                     if (swi_trop_ra2sid_lon(xxsv, x, xxsv, iflag) != OK)
-                        goto return_err;
+                        return ERR;
                     if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
                     {
                         for (i = 0; i <= 5; i++)
                             x[i] = xxsv[i];
                     }
                     /* project onto solar system equator */
-                } else if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0) {
+                }
+                else if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0)
+                {
                     if (swi_trop_ra2sid_lon_sosy(xxsv, x, iflag) != OK)
                         return ERR;
                     if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
@@ -6523,9 +6718,1334 @@ namespace SwissEphNet.CPort
                             x[i] = xxsv[i];
                     }
                     /* traditional algorithm */
-                } else {
+                }
+                else
+                {
                     SE.SwephLib.swi_cartpol_sp(x, x);
-                    if (swe_get_ayanamsa_ex(tjd, iflag, out daya, ref serr) == ERR)
+                    // ACHTUNG: siehe Z. 2770!!!!!
+                    if (swi_get_ayanamsa_with_speed(tjd, iflag, daya, ref serr) == ERR)
+                        return ERR;
+                    x[0] -= daya[0] * SwissEph.DEGTORAD;
+                    x[3] -= daya[1] * SwissEph.DEGTORAD;
+                    SE.SwephLib.swi_polcart_sp(x, x);
+                }
+            }
+            /************************************************
+             * transformation to polar coordinates          *
+             ************************************************/
+            if ((iflag & SwissEph.SEFLG_XYZ) == 0)
+                SE.SwephLib.swi_cartpol_sp(x, x);
+            /********************** 
+             * radians to degrees *
+             **********************/
+            if ((iflag & SwissEph.SEFLG_RADIANS) == 0 && (iflag & SwissEph.SEFLG_XYZ) == 0)
+            {
+                for (i = 0; i < 2; i++)
+                {
+                    x[i] *= SwissEph.RADTODEG;
+                    x[i + 3] *= SwissEph.RADTODEG;
+                }
+            }
+            for (i = 0; i <= 5; i++)
+                xx[i] = x[i];
+            if (0 == (iflgsave & SwissEph.SEFLG_SPEED))
+            {
+                for (i = 3; i <= 5; i++)
+                    xx[i] = 0;
+            }
+            /* if no ephemeris has been specified, do not return chosen ephemeris */
+            if ((iflgsave & SwissEph.SEFLG_EPHMASK) == 0)
+                iflag = iflag & ~SwissEph.SEFLG_DEFAULTEPH;
+            iflag = iflag & ~SwissEph.SEFLG_SPEED;
+            return iflag;
+        }
+
+        /* function searches a star in fixed stars list, i.e. the data loaded from file 
+         * sefstars.txt
+         */
+        Int32 search_star_in_list(string sstar, ref fixed_star stardata, ref string serr)
+        {
+            int i, star_nr = 0, ndata = 0, len;
+            int sp;
+            string searchkey;
+            bool is_bayer = false;
+            CPointer<fixed_star> stardatap;
+            CPointer<fixed_star> stardatabegp;
+            if (sstar.StartsWith(","))
+            {
+                is_bayer = true;
+            }
+            else if (sstar.Length > 0 && Char.IsDigit(sstar[0]))
+            {
+                star_nr = atoi(sstar);
+            }
+            else
+            {
+                sp = sstar.IndexOf(',');
+                if (sp >= 0)
+                {
+                    sstar = sstar.Substring(sp);
+                    is_bayer = true;
+                }
+            }
+            if (star_nr > 0)
+            {
+                if (star_nr > swed.n_fixstars_real)
+                {
+                    //if (serr != NULL)
+                    serr = sprintf("error, swe_fixstar(): sequential fixed star number %d is not available", star_nr);
+                    return ERR;
+                }
+                stardata = swed.fixed_stars[star_nr - 1]; // keys start from 1
+                                                           //printf("seq.number: %s, %s, %s, %f\n", stardata.skey, stardata.starname, stardata.starbayer, stardata.mag);
+                return OK;
+                /* traditional name with wildcard '%' at end of string */
+            }
+            else if (!is_bayer && (sp = sstar.IndexOf('%')) >= 0)
+            {
+                stardatabegp = swed.fixed_stars.GetPointer() + swed.n_fixstars_real;
+                ndata = swed.n_fixstars_named;
+                if (sp != sstar.Length - 1)
+                {
+                    //if (serr != NULL)
+                    serr = sprintf("error, swe_fixstar(): invalid search string %s", sstar);
+                    return ERR;
+                }
+                searchkey = sstar;
+                len = sstar.Length - 1;
+                //searchkey[len] = '\0';
+                searchkey = searchkey.Substring(0, len);
+                for (i = 0; i < ndata; i++)
+                {
+                    if (string.Equals(stardatabegp[i].skey.Substring(0, len), searchkey))
+                    {
+                        stardata = stardatabegp[i];
+                        return OK;
+                    }
+                }
+                //if (serr != NULL)
+                serr = sprintf("error, swe_fixstar(): star search string %s did not match", sstar);
+                return ERR;
+                /* traditional name or Bayer/Flamsteed: find it with binary search */
+            } else {
+                searchkey = sstar;
+                if (is_bayer)
+                {
+                    //*searchkey = '~';
+                    //stardatabegp = &(swed.fixed_stars[swed.n_fixstars_real + swed.n_fixstars_named]);
+                    //stardatabegp = &(swed.fixed_stars[0]);
+                    stardatabegp = swed.fixed_stars;
+                    ndata = swed.n_fixstars_real;
+                }
+                else
+                {
+                    stardatabegp = swed.fixed_stars.GetPointer() + swed.n_fixstars_real;
+                    ndata = swed.n_fixstars_named;
+                }
+                stardatap = bsearch(searchkey, stardatabegp, ndata, fstar_node_compare);
+                if (stardatap.IsNull)
+                {
+                    //if (serr != NULL)
+                    serr = sprintf("error, swe_fixstar(): could not find star name %s", sstar);
+                    return ERR;
+                }
+                stardata = stardatap[0];
+                //printf("name search: %s, %s, %s, %f\n", stardata.skey, stardata.starname, stardata.starbayer, stardata.mag);
+                return OK;
+            }
+        }
+
+        static bool get_builtin_star(string star, out string sstar, out string srecord)
+        {
+            /* some stars are built-in, because they are required for Hindu
+             * sidereal ephemerides */
+            /* Ayanamsha SE_SIDM_TRUE_CITRA */
+            if (strncmp(star, "spica", 5) == 0)
+            {
+                srecord = "Spica,alVir,ICRS,13,25,11.57937,-11,09,40.7501,-42.35,-30.67,1,13.06,0.97,-10,3672";
+                sstar = "spica";
+                return true;
+                /* Ayanamsha SE_SIDM_TRUE_REVATI */
+            }
+            else if (strstr(star, ",zePsc") > -1 || strncmp(star, "revati", 6) == 0)
+            {
+                srecord = "Revati,zePsc,ICRS,01,13,43.88735,+07,34,31.2745,145,-55.69,15,18.76,5.187,06,174";
+                sstar = "revati";
+                return true;
+                /* Ayanamsha SE_SIDM_TRUE_PUSHYA */
+            }
+            else if (strstr(star, ",deCnc") > -1 || strncmp(star, "pushya", 6) == 0)
+            {
+                srecord = "Pushya,deCnc,ICRS,08,44,41.09921,+18,09,15.5034,-17.67,-229.26,17.14,24.98,3.94,18,2027";
+                sstar = "pushya";
+                return true;
+                /* Ayanamsha SE_SIDM_TRUE_SHEORAN */
+            }
+            else if (strstr(star, ",deCnc") > -1 || strncmp(star, "pushya", 6) == 0)
+            {
+                srecord = "Pushya,deCnc,ICRS,08,44,41.09921,+18,09,15.5034,-17.67,-229.26,17.14,24.98,3.94,18,2027";
+                sstar = "pushya";
+                return true;
+                /* Ayanamsha SE_SIDM_TRUE_MULA */
+            }
+            else if (strstr(star, ",laSco") > -1 || strncmp(star, "mula", 6) == 0)
+            {
+                srecord = "Mula,laSco,ICRS,17,33,36.52012,-37,06,13.7648,-8.53,-30.8,-3,5.71,1.62,-37,11673";
+                sstar = "mula";
+                return true;
+                /* Ayanamsha SE_SIDM_GALCENT_0SAG */
+                /* Ayanamsha SE_SIDM_GALCENT_COCHRANE */
+                /* Ayanamsha SE_SIDM_GALCENT_RGILBRAND */
+            }
+            else if (strstr(star, ",SgrA*") > -1)
+            {
+                srecord = "Gal. Center,SgrA*,2000,17,45,40.03599,-29,00,28.1699,-2.755718425,-5.547,0.0,0.125,999.99,0,0";
+                sstar = ",SgrA*";
+                return true;
+                /* Ayanamsha SE_SIDM_GALEQU_IAU1958 */
+            }
+            else if (strstr(star, ",GP1958") > -1)
+            {
+                srecord = "Gal. Pole IAU1958,GP1958,1950,12,49,0.0,27,24,0.0,0.0,0.0,0.0,0.0,0.0,0,0";
+                sstar = ",GP1958";
+                return true;
+                /* Ayanamsha SE_SIDM_GALEQU_TRUE */
+            }
+            else if (strstr(star, ",GPol") > -1)
+            {
+                srecord = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
+                sstar = ",GPol";
+                return true;
+                /* Ayanamsha SE_SIDM_GALEQU_MULA */
+            }
+            else if (strstr(star, ",GPol") > -1)
+            {
+                srecord = "Gal. Pole,GPol,ICRS,12,51,36.7151981,27,06,11.193172,0.0,0.0,0.0,0.0,0.0,0,0";
+                sstar = ",GPol";
+                return true;
+            }
+            srecord = null;
+            sstar = null;
+            return false;
+        }
+
+        /**********************************************************
+         * function gets fixstar positions
+         * parameters:
+         * star 	name of star or line number in star file 
+         *		(start from 1, don't count comment).
+         *    		If no error occurs, the name of the star is returned
+         *	        in the format trad_name, nomeclat_name
+         *
+         * tjd 		absolute julian day
+         * iflag	s. swecalc(); speed bit does not function
+         * x		pointer to 6 doubles for returning position coordinates
+         * serr		error return string
+        **********************************************************/
+        string slast_starname = String.Empty;
+        fixed_star last_stardata = new fixed_star();
+        public Int32 swe_fixstar2(ref string star, double tjd, Int32 iflag, double[] xx, ref string serr)
+        {
+            int i;
+            bool is_builtin_star = false;
+            string sstar = null;
+            //static TLS char slast_stardata[AS_MAXCH];
+            //static TLS char slast_starname[AS_MAXCH];
+            //static TLS struct fixed_star last_stardata;
+            //char srecord[AS_MAXCH + 20];  /* 20 byte for SE_STARFILE */
+            string srecord = null;
+            int retc;
+            fixed_star stardata = new fixed_star();
+            //if (serr != NULL) *serr = '\0';
+#if TRACE
+            //swi_open_trace(serr);
+            trace_swe_fixstar(1, star, tjd, iflag, xx, ref serr);
+#endif //* TRACE */
+            load_all_fixed_stars(ref serr); // loads stars unless loaded with an earlier call of function
+#if FALSE
+            for (i = 0; i < swed.n_fixstars_records; i++) {
+              printf("%s, %s, %s, %f\n", swed.fixed_stars[i].skey, swed.fixed_stars[i].starname, swed.fixed_stars[i].starbayer, swed.fixed_stars[i].mag);
+            }
+            exit(0);
+#endif
+            retc = fixstar_format_search_name(star, ref sstar, ref serr);
+            if (retc == ERR)
+                goto return_err;
+            /* star elements from last call: */
+            if (swed.n_fixstars_records > 0 && strcmp(slast_starname, sstar) == 0) {
+                //   strcpy(srecord, slast_stardata);
+                stardata = last_stardata;
+                goto found;
+            }
+            if (get_builtin_star(star, out sstar, out srecord)) {
+                is_builtin_star = true;
+            }
+            if (is_builtin_star) {
+                retc = fixstar_cut_string(srecord, star, ref stardata, ref serr);
+                //printf("builtin: %s, %s, %s, %f\n", stardata.skey, stardata.starname, stardata.starbayer, stardata.mag);
+                goto found;
+                /* sequential fixed star number: get it from array directly */
+            }
+            retc = search_star_in_list(sstar, ref stardata, ref serr);
+            if (retc == ERR)
+                goto return_err;
+            /******************************************************/
+            found:
+            //strcpy(slast_stardata, srecord);
+            last_stardata = stardata;
+            slast_starname = sstar;
+            if ((retc = fixstar_calc_from_struct(ref stardata, tjd, iflag, star, xx, ref serr)) == ERR)
+                goto return_err;
+#if TRACE
+            trace_swe_fixstar(2, star, tjd, iflag, xx, ref serr);
+#endif
+            return iflag;
+            return_err:
+            for (i = 0; i <= 5; i++)
+                xx[i] = 0;
+#if TRACE
+            trace_swe_fixstar(2, star, tjd, iflag, xx, ref serr);
+#endif
+            return retc;
+        }
+
+        public Int32 swe_fixstar2_ut(ref string star, double tjd_ut, Int32 iflag, double[] xx, ref string serr)
+        {
+            double deltat;
+            Int32 retflag;
+            Int32 epheflag = 0;
+            iflag = plaus_iflag(iflag, -1, tjd_ut, out serr);
+            epheflag = iflag & SwissEph.SEFLG_EPHMASK;
+            if (epheflag == 0)
+            {
+                epheflag = SwissEph.SEFLG_SWIEPH;
+                iflag |= SwissEph.SEFLG_SWIEPH;
+            }
+            deltat = SE.swe_deltat_ex(tjd_ut, iflag, ref serr);
+            /* if ephe required is not ephe returned, adjust delta t: */
+            retflag = swe_fixstar2(ref star, tjd_ut + deltat, iflag, xx, ref serr);
+            if (retflag != ERR && (retflag & SwissEph.SEFLG_EPHMASK) != epheflag)
+            {
+                deltat = SE.swe_deltat_ex(tjd_ut, retflag, ref sdummy);
+                retflag = swe_fixstar2(ref star, tjd_ut + deltat, iflag, xx, ref sdummy);
+            }
+            return retflag;
+        }
+
+        /**********************************************************
+         * get fixstar magnitude
+         * parameters:
+         * star 	name of star or line number in star file 
+         *		(start from 1, don't count comment).
+         *    		If no error occurs, the name of the star is returned
+         *	        in the format trad_name, nomeclat_name
+         *
+         * mag 		pointer to a double, for star magnitude
+         * serr		error return string
+        **********************************************************/
+        public Int32 swe_fixstar2_mag(ref string star, ref double mag, ref string serr)
+        {
+            string sstar = null;
+            //static TLS char slast_stardata[AS_MAXCH];
+            //static TLS char slast_starname[AS_MAXCH];
+            //static TLS struct fixed_star last_stardata;
+            int retc;
+            fixed_star stardata = new fixed_star(); ;
+            //if (serr != NULL)
+            //  *serr = '\0';
+            load_all_fixed_stars(ref serr); // loads stars unless loaded with an earlier call of function
+            retc = fixstar_format_search_name(star, ref sstar, ref serr);
+            if (retc == ERR)
+                goto return_err;
+            /* star elements from last call: */
+            if (swed.n_fixstars_records > 0 && strcmp(slast_starname, sstar) == 0)
+            {
+                //   strcpy(srecord, slast_stardata);
+                stardata = last_stardata;
+                goto found;
+            }
+            retc = search_star_in_list(sstar, ref stardata, ref serr);
+            if (retc == ERR)
+                goto return_err;
+            /******************************************************/
+            found:
+            last_stardata = stardata;
+            slast_starname = sstar;
+            mag = stardata.mag;
+            star = sprintf("%s,%s", stardata.starname, stardata.starbayer);
+            return OK;
+            return_err:
+            mag = 0;
+            return retc;
+        }
+
+        public string swe_get_planet_name(int ipl, ref string s)
+        {
+            //int i;
+            //Int32 retc;
+            double[] xp = new double[6];
+            string sdummy = null;
+#if TRACE
+            //swi_open_trace(null);
+            trace_swe_get_planet_name(1, ipl, s);
+#endif
+            swi_init_swed_if_start();
+            /* function calls for Pluto with asteroid number 134340
+             * are treated as calls for Pluto as main body SE_PLUTO */
+            if (ipl == SwissEph.SE_AST_OFFSET + 134340)
+                ipl = SwissEph.SE_PLUTO;
+            if (ipl != 0 && ipl == swed.i_saved_planet_name)
+            {
+                s = swed.saved_planet_name;
+                return s;
+            }
+            switch (ipl)
+            {
+                case SwissEph.SE_SUN:
+                    strcpy(out s, SE_NAME_SUN);
+                    break;
+                case SwissEph.SE_MOON:
+                    strcpy(out s, SE_NAME_MOON);
+                    break;
+                case SwissEph.SE_MERCURY:
+                    strcpy(out s, SE_NAME_MERCURY);
+                    break;
+                case SwissEph.SE_VENUS:
+                    strcpy(out s, SE_NAME_VENUS);
+                    break;
+                case SwissEph.SE_MARS:
+                    strcpy(out s, SE_NAME_MARS);
+                    break;
+                case SwissEph.SE_JUPITER:
+                    strcpy(out s, SE_NAME_JUPITER);
+                    break;
+                case SwissEph.SE_SATURN:
+                    strcpy(out s, SE_NAME_SATURN);
+                    break;
+                case SwissEph.SE_URANUS:
+                    strcpy(out s, SE_NAME_URANUS);
+                    break;
+                case SwissEph.SE_NEPTUNE:
+                    strcpy(out s, SE_NAME_NEPTUNE);
+                    break;
+                case SwissEph.SE_PLUTO:
+                    strcpy(out s, SE_NAME_PLUTO);
+                    break;
+                case SwissEph.SE_MEAN_NODE:
+                    strcpy(out s, SE_NAME_MEAN_NODE);
+                    break;
+                case SwissEph.SE_TRUE_NODE:
+                    strcpy(out s, SE_NAME_TRUE_NODE);
+                    break;
+                case SwissEph.SE_MEAN_APOG:
+                    strcpy(out s, SE_NAME_MEAN_APOG);
+                    break;
+                case SwissEph.SE_OSCU_APOG:
+                    strcpy(out s, SE_NAME_OSCU_APOG);
+                    break;
+                case SwissEph.SE_INTP_APOG:
+                    strcpy(out s, SE_NAME_INTP_APOG);
+                    break;
+                case SwissEph.SE_INTP_PERG:
+                    strcpy(out s, SE_NAME_INTP_PERG);
+                    break;
+                case SwissEph.SE_EARTH:
+                    strcpy(out s, SE_NAME_EARTH);
+                    break;
+                case SwissEph.SE_CHIRON:
+                case SwissEph.SE_AST_OFFSET + MPC_CHIRON:
+                    strcpy(out s, SE_NAME_CHIRON);
+                    break;
+                case SwissEph.SE_PHOLUS:
+                case SwissEph.SE_AST_OFFSET + MPC_PHOLUS:
+                    strcpy(out s, SE_NAME_PHOLUS);
+                    break;
+                case SwissEph.SE_CERES:
+                case SwissEph.SE_AST_OFFSET + MPC_CERES:
+                    strcpy(out s, SE_NAME_CERES);
+                    break;
+                case SwissEph.SE_PALLAS:
+                case SwissEph.SE_AST_OFFSET + MPC_PALLAS:
+                    strcpy(out s, SE_NAME_PALLAS);
+                    break;
+                case SwissEph.SE_JUNO:
+                case SwissEph.SE_AST_OFFSET + MPC_JUNO:
+                    strcpy(out s, SE_NAME_JUNO);
+                    break;
+                case SwissEph.SE_VESTA:
+                case SwissEph.SE_AST_OFFSET + MPC_VESTA:
+                    strcpy(out s, SE_NAME_VESTA);
+                    break;
+                default:
+                    /* fictitious planets */
+                    if (ipl >= SwissEph.SE_FICT_OFFSET && ipl <= SwissEph.SE_FICT_MAX)
+                    {
+                        s = SE.SwemPlan.swi_get_fict_name(ipl - SwissEph.SE_FICT_OFFSET);
+                        break;
+                    }
+                    /* asteroids */
+                    if (ipl > SwissEph.SE_AST_OFFSET)
+                    {
+                        /* if name is already available */
+                        if (ipl == swed.fidat[SEI_FILE_ANY_AST].ipl[0])
+                            s = swed.fidat[SEI_FILE_ANY_AST].astnam;
+                        /* else try to get it from ephemeris file */
+                        else
+                        {
+                            var retc = sweph(J2000, ipl, SEI_FILE_ANY_AST, 0, null, NO_SAVE, xp, ref sdummy);
+                            if (retc != ERR && retc != NOT_AVAILABLE)
+                                s = swed.fidat[SEI_FILE_ANY_AST].astnam;
+                            else
+                                s = C.sprintf("%d: not found", ipl - SwissEph.SE_AST_OFFSET);
+                        }
+                        /* If there is a provisional designation only in ephemeris file,
+                         * we look for a name in seasnam.txt, which can be updated by
+                         * the user.
+                         * Some old ephemeris files return a '?' in the first position.
+                         * There are still a couple of unnamed bodies that got their
+                         * provisional designation before 1925, when the current method
+                         * of provisional designations was introduced. They have an 'A'
+                         * as the first character, e.g. A924 RC. 
+                         * The file seasnam.txt may contain comments starting with '#'.
+                         * There must be at least two columns: 
+                         * 1. asteroid catalog number
+                         * 2. asteroid name
+                         * The asteroid number may or may not be in brackets
+                         */
+                        if (s[0] == '?' || Char.IsDigit(s[1]))
+                        {
+                            int ipli = (int)(ipl - SwissEph.SE_AST_OFFSET), iplf = 0;
+                            CFile fp;
+                            String sp;
+                            //char si[AS_MAXCH], *sp, *sp2;
+                            if ((fp = swi_fopen(-1, SwissEph.SE_ASTNAMFILE, swed.ephepath, ref sdummy)) != null)
+                            {
+                                while (ipli != iplf && ((sp = fp.ReadLine()) != null))
+                                {
+                                    sp = sp.TrimStart(' ', '\t', '(', '[', '{');
+                                    if (String.IsNullOrWhiteSpace(sp) || sp.StartsWith("#"))
+                                        continue;
+                                    /* catalog number of body of current line */
+                                    int spi = sp.IndexOfFirstNot('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+                                    if (spi < 0) continue;
+                                    iplf = int.Parse(sp.Substring(0, spi));
+                                    if (ipli != iplf)
+                                        continue;
+                                    sp = sp.Substring(spi);
+                                    /* set pointer after catalog number */
+                                    spi = sp.IndexOfAny(new char[] { ' ', '\t' });
+                                    if (spi < 0) continue;
+                                    s = sp.Substring(spi).TrimStart(' ', '\t');
+                                }
+                                fp.Dispose();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        s = C.sprintf("%d", ipl);
+                    }
+                    break;
+            }
+#if TRACE
+            //swi_open_trace(null);
+            trace_swe_get_planet_name(2, ipl, s);
+#endif
+            //if (strlen(s) < 80)
+            {
+                swed.i_saved_planet_name = ipl;
+                strcpy(out swed.saved_planet_name, s);
+            }
+            return s;
+        }
+
+        public string swe_get_ayanamsa_name(Int32 isidmode)
+        {
+            isidmode %= SwissEph.SE_SIDBITS;
+            if (isidmode < SwissEph.SE_NSIDM_PREDEF)
+                return ayanamsa_name[isidmode];
+            return null;
+        }
+
+#if TRACE
+        void trace_swe_calc(int swtch, double tjd, int ipl, Int32 iflag, CPointer<double> xx, string serr)
+        {
+            //  if (swi_trace_count >= TRACE_COUNT_MAX)
+            //    return;
+            switch (swtch)
+            {
+                case 1:
+                    //trace(true, "\n/*SWE_CALC*/");
+                    //trace(true, "  tjd = %.9f; ipl = %d; iflag = %d;", tjd, ipl, iflag);
+                    //trace(true, "  iflgret = swe_calc(tjd, ipl, iflag, xx, serr);");
+                    //fprintf(swi_fp_trace_c, "	/* xx = %p */\n", xx);
+                    break;
+                case 2:
+                    //trace(true, "  printf(\"swe_calc: %f\\t%d\\t%d\\t%f\\t%f\\t%f\\t%f\\t%f\\t%f\\t\", "); 
+                    //trace(true, "\ttjd, ipl, iflgret, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5]);");
+                    //trace(true, "  if (*serr != '\\0') printf(serr); printf(\"\\n\");");
+                    trace("swe_calc: %f\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s", tjd, ipl, iflag, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5], serr);
+                    break;
+                    //    default:
+                    //      break;
+            }
+        }
+
+        void trace_swe_fixstar(int swtch, string star, double tjd, Int32 iflag, CPointer<double> xx, ref string serr)
+        {
+            //if (swi_trace_count >= TRACE_COUNT_MAX)
+            //    return;
+            switch (swtch)
+            {
+                case 1:
+                    //if (swi_fp_trace_c != NULL) {
+                    //    fputs("\n/*SWE_FIXSTAR*/\n", swi_fp_trace_c);
+                    //    fprintf(swi_fp_trace_c, "  strcpy(star, \"%s\");", star);
+                    //    fprintf(swi_fp_trace_c, " tjd = %.9f;", tjd);
+                    //    fprintf(swi_fp_trace_c, " iflag = %d;\n", iflag);
+                    //    fprintf(swi_fp_trace_c, "  iflgret = swe_fixstar(star, tjd, iflag, xx, serr);");
+                    //    fprintf(swi_fp_trace_c, "   /* xx = %d */\n", (int32)xx);
+                    //    fflush(swi_fp_trace_c);
+                    //}
+                    break;
+                case 2:
+                    //if (swi_fp_trace_c != NULL) {
+                    //    fputs("  printf(\"swe_fixstar: %s\\t%f\\t%d\\t%f\\t%f\\t%f\\t%f\\t%f\\t%f\\t\", ", swi_fp_trace_c);
+                    //    fputs("\n\tstar, tjd, iflgret, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5]);\n", swi_fp_trace_c);/**/
+                    //    fputs("  if (*serr != '\\0')", swi_fp_trace_c);
+                    //    fputs(" printf(serr);", swi_fp_trace_c);
+                    //    fputs(" printf(\"\\n\");\n", swi_fp_trace_c);
+                    //    fflush(swi_fp_trace_c);
+                    //}
+                    //if (swi_fp_trace_out != NULL) {
+                    trace("swe_fixstar: %s\t%f\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s",
+                          star, tjd, iflag, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5], serr);
+                    //if (serr != NULL && *serr != '\0') {
+                    //    fputs(serr, swi_fp_trace_out);
+                    //}
+                    //fputs("\n", swi_fp_trace_out);
+                    //fflush(swi_fp_trace_out);
+                    //}
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        void trace_swe_get_planet_name(int swtch, int ipl, string s)
+        {
+            //if (swi_trace_count >= TRACE_COUNT_MAX)
+            //    return;
+            switch (swtch)
+            {
+                case 1:
+                    //if (swi_fp_trace_c != NULL) {
+                    //trace(true, "\n/*SWE_GET_PLANET_NAME*/");
+                    //trace(true, "  ipl = %d;", ipl);
+                    //trace(true, "  swe_get_planet_name(ipl, s);   /* s = %s */", s);
+                    //    fflush(swi_fp_trace_c);
+                    //}
+                    break;
+                case 2:
+                    //if (swi_fp_trace_c != NULL) {
+                    //trace(true, "  printf(\"swe_get_planet_name: %d\\t%s\\t\\n\", ipl, s);", ipl, s);/**/
+                    //    fflush(swi_fp_trace_c);
+                    //}
+                    //if (swi_fp_trace_out != NULL) {
+                    trace("swe_get_planet_name: %d\t%s\t", ipl, s);
+                    //    fflush(swi_fp_trace_out);
+                    //}
+                    break;
+                    //default:
+                    //    break;
+            }
+        }
+
+#endif
+
+        /* set geographic position and altitude of observer */
+        public void swe_set_topo(double geolon, double geolat, double geoalt)
+        {
+            swi_init_swed_if_start();
+            if (swed.geopos_is_set == true
+              && swed.topd.geolon == geolon
+              && swed.topd.geolat == geolat
+              && swed.topd.geoalt == geoalt)
+            {
+                return;
+            }
+            swed.topd.geolon = geolon;
+            swed.topd.geolat = geolat;
+            swed.topd.geoalt = geoalt;
+            swed.geopos_is_set = true;
+            /* to force new calculation of observer position vector */
+            swed.topd.teval = 0;
+            /* to force new calculation of light-time etc. 
+             */
+            swi_force_app_pos_etc();
+        }
+
+        public void swi_force_app_pos_etc()
+        {
+            int i;
+            for (i = 0; i < SEI_NPLANETS; i++)
+                swed.pldat[i].xflgs = -1;
+            for (i = 0; i < SEI_NNODE_ETC; i++)
+                swed.nddat[i].xflgs = -1;
+            for (i = 0; i < SwissEph.SE_NPLANETS; i++)
+            {
+                swed.savedat[i].tsave = 0;
+                swed.savedat[i].iflgsave = -1;
+            }
+        }
+
+        public int swi_get_observer(double tjd, Int32 iflag,
+            bool do_save, CPointer<double> xobs, ref string serr)
+        {
+            int i;
+            double sidt, delt, tjd_ut, eps, nut; double[] nutlo = new double[2];
+            double f = EARTH_OBLATENESS;
+            double re = EARTH_RADIUS;
+            double cosfi, sinfi, cc, ss, cosl, sinl, h;
+            if (!swed.geopos_is_set)
+            {
+                serr = "geographic position has not been set";
+                return ERR;
+            }
+            /* geocentric position of observer depends on sidereal time,
+             * which depends on UT. 
+             * compute UT from ET. this UT will be slightly different
+             * from the user's UT, but this difference is extremely small.
+             */
+            delt = SE.swe_deltat_ex(tjd, iflag, ref serr);
+            tjd_ut = tjd - delt;
+            if (swed.oec.teps == tjd && swed.nut.tnut == tjd)
+            {
+                eps = swed.oec.eps;
+                nutlo[1] = swed.nut.nutlo[1];
+                nutlo[0] = swed.nut.nutlo[0];
+            }
+            else
+            {
+                eps = SE.SwephLib.swi_epsiln(tjd, iflag);
+                if (0 == (iflag & SwissEph.SEFLG_NONUT))
+                    SE.SwephLib.swi_nutation(tjd, iflag, nutlo);
+            }
+            if ((iflag & SwissEph.SEFLG_NONUT) != 0)
+            {
+                nut = 0;
+            }
+            else
+            {
+                eps += nutlo[1];
+                nut = nutlo[0];
+            }
+            /* mean or apparent sidereal time, depending on whether or
+             * not SEFLG_NONUT is set */
+            sidt = SE.swe_sidtime0(tjd_ut, eps * SwissEph.RADTODEG, nut * SwissEph.RADTODEG);
+            sidt *= 15;	/* in degrees */
+            /* length of position and speed vectors;
+             * the height above sea level must be taken into account.
+             * with the moon, an altitude of 3000 m makes a difference 
+             * of about 2 arc seconds.
+             * height is referred to the average sea level. however, 
+             * the spheroid (geoid), which is defined by the average 
+             * sea level (or rather by all points of same gravitational
+             * potential), is of irregular shape and cannot easily
+             * be taken into account. therefore, we refer height to 
+             * the surface of the ellipsoid. the resulting error 
+             * is below 500 m, i.e. 0.2 - 0.3 arc seconds with the moon.
+             */
+            cosfi = Math.Cos(swed.topd.geolat * SwissEph.DEGTORAD);
+            sinfi = Math.Sin(swed.topd.geolat * SwissEph.DEGTORAD);
+            cc = 1 / Math.Sqrt(cosfi * cosfi + (1 - f) * (1 - f) * sinfi * sinfi);
+            ss = (1 - f) * (1 - f) * cc;
+            /* neglect polar motion (displacement of a few meters), as long as 
+             * we use the earth ellipsoid */
+            /* ... */
+            /* add sidereal time */
+            cosl = Math.Cos((swed.topd.geolon + sidt) * SwissEph.DEGTORAD);
+            sinl = Math.Sin((swed.topd.geolon + sidt) * SwissEph.DEGTORAD);
+            h = swed.topd.geoalt;
+            xobs[0] = (re * cc + h) * cosfi * cosl;
+            xobs[1] = (re * cc + h) * cosfi * sinl;
+            xobs[2] = (re * ss + h) * sinfi;
+            /* polar coordinates */
+            SE.SwephLib.swi_cartpol(xobs, xobs);
+            /* speed */
+            xobs[3] = EARTH_ROT_SPEED;
+            xobs[4] = xobs[5] = 0;
+            SE.SwephLib.swi_polcart_sp(xobs, xobs);
+            /* to AUNIT */
+            for (i = 0; i <= 5; i++)
+                xobs[i] /= AUNIT;
+            /* subtract nutation, set backward flag */
+            if (0 == (iflag & SwissEph.SEFLG_NONUT))
+            {
+                SE.SwephLib.swi_coortrf2(xobs, xobs, -swed.nut.snut, swed.nut.cnut);
+                /* speed of xobs is always required, namely for aberration!!! */
+                /*if (iflag & SEFLG_SPEED)*/
+                SE.SwephLib.swi_coortrf2(xobs + 3, xobs + 3, -swed.nut.snut, swed.nut.cnut);
+                swi_nutate(xobs, iflag | SwissEph.SEFLG_SPEED, true);
+            }
+            /* precess to J2000 */
+            SE.SwephLib.swi_precess(xobs, tjd, iflag, J_TO_J2000);
+            /*if ((iflag & SwissEph.SEFLG_SPEED) != 0)*/
+            swi_precess_speed(xobs, tjd, iflag, J_TO_J2000);
+            /* neglect frame bias (displacement of 45cm) */
+            /* ... */
+            /* save */
+            if (do_save)
+            {
+                for (i = 0; i <= 5; i++)
+                    swed.topd.xobs[i] = xobs[i];
+                swed.topd.teval = tjd;
+                swed.topd.tjd_ut = tjd_ut;	/* -> save area */
+            }
+            return OK;
+        }
+
+        /* Equation of Time
+         *
+         * The function returns the difference between 
+         * local apparent and local mean time in days.
+         * E = LAT - LMT
+         * Input variable tjd is UT.
+         */
+        public Int32 swe_time_equ(double tjd_ut, out double E, ref string serr)
+        {
+            Int32 retval; E = 0;
+            double t, dt; double[] x = new double[6];
+            double sidt = SE.swe_sidtime(tjd_ut);
+            Int32 iflag = SwissEph.SEFLG_EQUATORIAL;
+            iflag = plaus_iflag(iflag, -1, tjd_ut, out serr);
+            if (swi_init_swed_if_start() == 1 && 0 == (iflag & SwissEph.SEFLG_MOSEPH))
+            {
+                serr = "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_time_equ(), swe_lmt_to_lat() or swe_lat_to_lmt()";
+            }
+            if (swed.jpl_file_is_open)
+                iflag |= SwissEph.SEFLG_JPLEPH;
+            t = tjd_ut + 0.5;
+            dt = t - Math.Floor(t);
+            sidt -= dt * 24;
+            sidt *= 15;
+            if ((retval = swe_calc_ut(tjd_ut, SwissEph.SE_SUN, iflag, x, ref serr)) == ERR)
+            {
+                E = 0;
+                return ERR;
+            }
+            dt = SE.swe_degnorm(sidt - x[0] - 180);
+            if (dt > 180)
+                dt -= 360;
+            dt *= 4;
+            E = dt / 1440.0;
+            return OK;
+        }
+
+        public Int32 swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, ref string serr)
+        {
+            Int32 retval; serr = null;
+            double E, tjd_lmt0;
+            tjd_lmt0 = tjd_lmt - geolon / 360.0;
+            retval = swe_time_equ(tjd_lmt0, out E, ref serr);
+            tjd_lat = tjd_lmt + E;
+            return retval;
+        }
+
+        public Int32 swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, ref string serr)
+        {
+            Int32 retval; serr = null;
+            double E, tjd_lmt0;
+            tjd_lmt0 = tjd_lat - geolon / 360.0;
+            retval = swe_time_equ(tjd_lmt0, out E, ref serr);
+            /* iteration */
+            retval = swe_time_equ(tjd_lmt0 - E, out E, ref serr);
+            retval = swe_time_equ(tjd_lmt0 - E, out E, ref serr);
+            tjd_lmt = tjd_lat - E;
+            return retval;
+        }
+
+        int open_jpl_file(CPointer<double> ss, string fname, string fpath, ref string serr)
+        {
+            int retc;
+            string serr2 = String.Empty;
+            retc = SE.SweJPL.swi_open_jpl_file(ss, fname, fpath, ref serr);
+            /* If we fail with default JPL ephemeris (DE431), we try the second default
+             * (DE406), but only if serr is not NULL and an warning message can be 
+             * returned. */
+            if (retc != OK && fname.Contains(SwissEph.SE_FNAME_DFT))
+            {
+                retc = SE.SweJPL.swi_open_jpl_file(ss, SwissEph.SE_FNAME_DFT2, fpath, ref serr2);
+                if (retc == OK)
+                {
+                    swed.jplfnam = SwissEph.SE_FNAME_DFT2;
+                    serr2 = "Error with JPL ephemeris file ";
+                    serr2 += SwissEph.SE_FNAME_DFT;
+                    serr2 += C.sprintf(": %s", serr);
+                    serr2 += ". Defaulting to ";
+                    serr2 += SwissEph.SE_FNAME_DFT2;
+                    serr = serr2;
+                }
+            }
+            if (retc == OK)
+            {
+                swed.jpldenum = (short)SE.SweJPL.swi_get_jpl_denum();
+                swed.jpl_file_is_open = true;
+                SE.SwephLib.swi_set_tid_acc(0, 0, swed.jpldenum, ref serr);
+            }
+            return retc;
+        }
+
+        //#if 1
+        Int32 swi_fixstar_load_record(string star, out string srecord, out string sname, out string sbayer, CPointer<double> dparams, ref string serr)
+        {
+            string sdummy = null;
+            //char s[AS_MAXCH + 20], *sp, *sp2;   /* 20 byte for SE_STARFILE */
+            string s;
+            int sp;
+            //char sstar[SE_MAX_STNAME + 1];
+            string sstar = null;
+            //char fstar[SE_MAX_STNAME + 1];
+            string fstar;
+            int i, star_nr = 0;
+            int line = 0;
+            int fline = 0;
+            Int32 retc = OK;
+            bool is_bayer = false;
+            int cmplen;
+            fixed_star stardata = new fixed_star();
+            srecord = sname = sbayer = null;
+            /* function formats the input search name of a star:
+             * - remove white spaces
+             * - traditional name to lower case (Bayer designation remains as it is)
+             */
+            retc = fixstar_format_search_name(star, ref sstar, ref serr);
+            if (retc == ERR)
+                return ERR;
+            // search name is Bayer designation
+            if (sstar.StartsWith(","))
+            {
+                is_bayer = true;
+                // search name star number in sefstars.txt
+            }
+            else if (char.IsDigit(sstar[0]))
+            {
+                star_nr = atoi(sstar);
+                // traditional name: cut off Bayer designation
+            }
+            else
+            {
+                if ((sp = strchr(sstar, ',')) != -1)
+                    sstar = sstar.Substring(0, sp);
+            }
+            cmplen = strlen(sstar);
+            /******************************************************
+             * Star file
+             * close to the beginning, a few stars selected by Astrodienst.
+             * These can be accessed by giving their number instead of a name.
+             * All other stars can be accessed by name.
+             * Comment lines start with # and are ignored.
+             ******************************************************/
+            if (swed.fixfp == null)
+            {
+                if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE, swed.ephepath, ref serr)) == null)
+                {
+                    swed.is_old_starfile = true;
+                    if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null)
+                    {
+                        swed.is_old_starfile = false;
+                        /* no fixed star file available, error message is already in serr. */
+                        return ERR;
+                    }
+                }
+            }
+            rewind(swed.fixfp);
+            while ((s = swed.fixfp.ReadLine()) != null)
+            {
+                fline++;
+                // skip comment lines
+                if (s.StartsWith("#")) continue;
+                line++;
+                // search string is star number in sefstars.txt
+                if (star_nr == line)
+                    goto found;
+                else if (star_nr > 0)
+                    continue;
+                // invalid line without comma
+                if ((sp = strchr(s, ',')) == -1)
+                {
+                    if (serr != null)
+                    {
+                        sprintf(serr, "star file %s damaged at line %d", SwissEph.SE_STARFILE, fline);
+                    }
+                    return ERR;
+                }
+                // search string is Bayer or Flamsteed designation
+                if (is_bayer)
+                {
+                    if (strncmp(s.Substring(sp), sstar, cmplen) == 0)
+                        goto found;
+                    else
+                        continue;
+                }
+                // search string is traditional name
+                //*sp = '\0';    /* cut off after first field to get star name, ',' -> '\0' */
+                strncpy(out fstar, s.Substring(0, sp), SwissEph.SE_MAX_STNAME);
+                //*sp = ',';  /* add comma again */
+                fstar = fstar.Substring(0, SwissEph.SE_MAX_STNAME);	/* force termination */
+                // remove white spaces from star name
+                //while ((sp = strchr(fstar, ' ')) != -1)
+                //  swi_strcpy(sp, sp+1);
+                fstar = fstar.Trim(' ');
+                i = strlen(fstar);
+                // length of star name differs from length of search string: continue
+                if (i < cmplen)
+                    continue;
+                // star name to lowercase and compare with search string
+                fstar = fstar.ToLower();
+                //for (sp2 = fstar; *sp2 != '\0'; sp2++)
+                //{
+                //    *sp2 = tolower((int)*sp2);
+                //}
+                if (strncmp(fstar, sstar, cmplen) == 0)
+                    goto found;
+            }
+            if (serr != null)
+            {
+                //sprintf(serr, "star  not found");
+                //if (strlen(serr) + strlen(star) < SwissEph.AS_MAXCH)
+                //{
+                sprintf(serr, "star %s not found", star);
+                //}
+                return ERR;
+            }
+            found:
+            strcpy(out srecord, s);
+            retc = fixstar_cut_string(srecord, star, ref stardata, ref serr);
+            if (retc == ERR) return ERR;
+            if (dparams != null)
+            {
+                dparams[0] = stardata.epoch; // epoch
+                                             // RA(epoch)
+                dparams[1] = stardata.ra;
+                // Decl(epoch)
+                dparams[2] = stardata.de;
+                // RA proper motion
+                dparams[3] = stardata.ramot;
+                // decl proper motion
+                dparams[4] = stardata.demot;
+                // radial velocity
+                dparams[5] = stardata.radvel;
+                // parallax
+                dparams[6] = stardata.parall;
+                // magnitude V
+                dparams[7] = stardata.mag;
+            }
+            return OK;
+        }
+
+        /* function calculates a fixstar from a record from sefstars.txt
+         * input:
+         * char *srecord     fixed star data record from sefstars.txt
+         * double tjd        julian daynumber 
+         * int32 iflag       SEFLG_ specifications
+         * output:
+         * char *star        star name, Bayer designation
+         * double xx[6]      position and speed
+         * char *serr        error return string
+         */
+        double[] xearth = new double[6], xearth_dt = new double[6], xsun = new double[6], xsun_dt = new double[6];
+        Int32 swi_fixstar_calc_from_record(string srecord, double tjd, Int32 iflag, string star, CPointer<double> xx, ref string serr)
+        {
+            int i;
+            Int32 retc = OK;
+            double epoch, radv, parall;
+            double ra_pm, de_pm, ra, de, t, cosra, cosde, sinra, sinde;
+            fixed_star stardata = new fixed_star();
+            double daya, rdist;
+            double[] x = new double[6], xxsv = new double[6], xobs = new double[6], xobs_dt = new double[6];
+            //, *xpo = NULL, *xpo_dt = NULL;
+            CPointer<double> xpo, xpo_dt;
+            //static TLS double xearth[6], xearth_dt[6], xsun[6], xsun_dt[6];
+            double dt = PLAN_SPEED_INTV * 0.1;
+            Int32 epheflag, iflgsave;
+            // char s[AS_MAXCH];
+            //struct epsilon *oe = &swed.oec2000;
+            epsilon oe = swed.oec2000;
+            iflag |= SwissEph.SEFLG_SPEED; /* we need this in order to work correctly */
+            iflgsave = iflag;
+            //if (serr != NULL)
+            //  *serr = '\0';
+            iflag = plaus_iflag(iflag, -1, tjd, out serr);
+            epheflag = iflag & SwissEph.SEFLG_EPHMASK;
+            if (swi_init_swed_if_start() == 1 && (epheflag & SwissEph.SEFLG_MOSEPH) == 0 && serr != null)
+            {
+                strcpy(out serr, "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_fixstar() or swe_fixstar_ut()");
+            }
+            if (swed.last_epheflag != epheflag)
+            {
+                free_planets();
+                /* close and free ephemeris files */
+                if (swed.jpl_file_is_open)
+                {
+                    SE.SweJPL.swi_close_jpl_file();
+                    swed.jpl_file_is_open = false;
+                }
+                for (i = 0; i < SEI_NEPHFILES; i++)
+                {
+                    if (swed.fidat[i].fptr != null)
+                        fclose(swed.fidat[i].fptr);
+                    //memset((void *) &swed.fidat[i], 0, sizeof(struct file_data));
+                    swed.fidat[i].fptr = null;
+                }
+                swed.last_epheflag = epheflag;
+            }
+            /* high precision speed prevails fast speed */
+            /* JPL Horizons is only reproduced with SEFLG_JPLEPH */
+            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0 && !swed.ayana_is_set)
+                swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
+            /****************************************** 
+             * obliquity of ecliptic 2000 and of date * 
+             ******************************************/
+            swi_check_ecliptic(tjd, iflag);
+            /******************************************
+             * nutation                               * 
+             ******************************************/
+            swi_check_nutation(tjd, iflag);
+            retc = fixstar_cut_string(srecord, star, ref stardata, ref serr);
+            if (retc == ERR) return ERR;
+            epoch = stardata.epoch;
+            ra_pm = stardata.ramot; de_pm = stardata.demot;
+            radv = stardata.radvel; parall = stardata.parall;
+            ra = stardata.ra; de = stardata.de;
+            if (epoch == 1950)
+                t = (tjd - B1950);  /* days since 1950.0 */
+            else /* epoch == 2000 */
+                t = (tjd - J2000);  /* days since 2000.0 */
+            x[0] = ra;
+            x[1] = de;
+            x[2] = 1;   /* -> unit vector */
+            if (parall == 0)
+            {
+                rdist = 1000000;
+            }
+            else
+            {
+                rdist = 1.0 / (parall * SwissEph.RADTODEG * 3600) * PARSEC_TO_AUNIT;
+                rdist += t * radv / 36525.0;
+            }
+            // rdist = 10000;  // to reproduce pre-SE2.07 star positions
+            x[2] = rdist;
+            /* cartesian */
+            SE.SwephLib.swi_polcart(x, x);
+            /*space motion vector */
+            cosra = Math.Cos(ra);
+            cosde = Math.Cos(de);
+            sinra = Math.Sin(ra);
+            sinde = Math.Sin(de);
+            x[3] = -ra_pm * cosde * sinra - de_pm * sinde * cosra;
+            x[4] = ra_pm * cosde * cosra - de_pm * sinde * sinra;
+            x[5] = de_pm * cosde;
+            x[3] /= 36525.0;
+            x[4] /= 36525.0;
+            x[5] /= 36525.0;
+            x[3] += (radv * parall * cosde * cosra) / 36525.0;
+            x[4] += (radv * parall * cosde * sinra) / 36525.0;
+            x[5] += (radv * parall * sinde) / 36525.0;
+            for (i = 3; i < 6; i++)
+                x[i] *= rdist;
+            /******************************************
+             * FK5
+             ******************************************/
+            if (epoch == 1950)
+            {
+                SE.SwephLib.swi_FK4_FK5(x, B1950);
+                SE.SwephLib.swi_precess(x, B1950, 0, J_TO_J2000);
+                SE.SwephLib.swi_precess((CPointer<double>)x + 3, B1950, 0, J_TO_J2000);
+            }
+            /* FK5 to ICRF, if jpl ephemeris is referred to ICRF.
+             * With data that are already ICRF, epoch = 0 */
+            if (epoch != 0)
+            {
+                SE.SwephLib.swi_icrs2fk5(x, iflag, true); /* backward, i. e. to icrf */
+                                                          /* with ephemerides < DE403, we now convert to J2000 */
+                if (swi_get_denum(SEI_SUN, iflag) >= 403)
+                {
+                    SE.SwephLib.swi_bias(x, J2000, SwissEph.SEFLG_SPEED, false);
+                }
+            }
+            /**************************************************** 
+             * earth/sun 
+             * for parallax, light deflection, and aberration,
+             ****************************************************/
+            if (0 == (iflag & SwissEph.SEFLG_BARYCTR) && (0 == (iflag & SwissEph.SEFLG_HELCTR) || 0 == (iflag & SwissEph.SEFLG_MOSEPH)))
+            {
+                if ((retc = main_planet_bary(tjd - dt, SEI_EARTH, epheflag, iflag, NO_SAVE, xearth_dt, xearth_dt, xsun_dt, null, ref serr)) == ERR)
+                {
+                    return ERR;
+                }
+                if ((retc = main_planet_bary(tjd, SEI_EARTH, epheflag, iflag, DO_SAVE, xearth, xearth, xsun, null, ref serr)) == ERR)
+                {
+                    return ERR;
+                }
+            }
+            /************************************
+             * observer: geocenter or topocenter
+             ************************************/
+            /* if topocentric position is wanted  */
+            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+            {
+                if (swi_get_observer(tjd - dt, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs_dt, ref serr) != OK)
+                    return ERR;
+                if (swi_get_observer(tjd, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs, ref serr) != OK)
+                    return ERR;
+                /* barycentric position of observer */
+                for (i = 0; i <= 5; i++)
+                {
+                    xobs[i] = xobs[i] + xearth[i];
+                    xobs_dt[i] = xobs_dt[i] + xearth_dt[i];
+                }
+            }
+            else if (0 == (iflag & SwissEph.SEFLG_BARYCTR) && (0 == (iflag & SwissEph.SEFLG_HELCTR) || 0 == (iflag & SwissEph.SEFLG_MOSEPH)))
+            {
+                /* barycentric position of geocenter */
+                for (i = 0; i <= 5; i++)
+                {
+                    xobs[i] = xearth[i];
+                    xobs_dt[i] = xearth_dt[i];
+                }
+            }
+            /************************************
+             * position and speed at tjd        *
+             ************************************/
+            /* for parallax */
+            if ((iflag & SwissEph.SEFLG_HELCTR) != 0 && (iflag & SwissEph.SEFLG_MOSEPH) != 0)
+            {
+                xpo = null;     /* no parallax, if moshier and heliocentric */
+                xpo_dt = null;  /* no parallax, if moshier and heliocentric */
+            }
+            else if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+            {
+                xpo = xsun;//psdp->x;
+                xpo_dt = xsun_dt;
+            }
+            else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0)
+            {
+                xpo = null;     /* no parallax, if barycentric */
+                xpo_dt = null;  /* no parallax, if moshier and heliocentric */
+            }
+            else
+            {
+                xpo = xobs;
+                xpo_dt = xobs_dt;
+            }
+            if (xpo == null)
+            {
+                for (i = 0; i <= 2; i++)
+                {
+                    x[i] += t * x[i + 3];
+                }
+            }
+            else
+            {
+                for (i = 0; i <= 2; i++)
+                {
+                    x[i] += t * x[i + 3] - parall * xpo[i] * rdist;
+                    x[i + 3] -= parall * xpo[i + 3] * rdist;
+                }
+            }
+            /************************************
+             * relativistic deflection of light *
+             ************************************/
+            if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && (iflag & SwissEph.SEFLG_NOGDEFL) == 0)
+            {
+                swi_deflect_light(x, 0, iflag & SwissEph.SEFLG_SPEED);
+            }
+            /**********************************
+             * 'annual' aberration of light   *
+             * speed is incorrect !!!         *
+             **********************************/
+            if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && (iflag & SwissEph.SEFLG_NOABERR) == 0)
+                swi_aberr_light_ex(x, xpo, xpo_dt, dt, iflag & SwissEph.SEFLG_SPEED);
+            /* ICRS to J2000 */
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && (swi_get_denum(SEI_SUN, iflag) >= 403 || (iflag & SwissEph.SEFLG_BARYCTR) != 0))
+            {
+                SE.SwephLib.swi_bias(x, tjd, iflag, false);
+            }/**/
+             /* save J2000 coordinates; required for sidereal positions */
+            for (i = 0; i <= 5; i++)
+                xxsv[i] = x[i];
+            /************************************************
+             * precession, equator 2000 -> equator of date *
+             ************************************************/
+            /*x[0] = -0.374018403; x[1] = -0.312548592; x[2] = -0.873168719;*/
+            if ((iflag & SwissEph.SEFLG_J2000) == 0)
+            {
+                SE.SwephLib.swi_precess(x, tjd, iflag, J2000_TO_J);
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                    swi_precess_speed(x, tjd, iflag, J2000_TO_J);
+                oe = swed.oec;
+            }
+            else
+                oe = swed.oec2000;
+            /************************************************
+             * nutation                                     *
+             ************************************************/
+            if (0 == (iflag & SwissEph.SEFLG_NONUT))
+                swi_nutate(x, 0, false);
+            //if (false) {
+            //  double r = Math.Sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
+            //  printf("%.17f %.17f %f\n", x[0]/r, x[1]/r, x[2]/r);
+            //}
+            /************************************************
+             * transformation to ecliptic.                  *
+             * with sidereal calc. this will be overwritten *
+             * afterwards.                                  *
+             ************************************************/
+            if ((iflag & SwissEph.SEFLG_EQUATORIAL) == 0)
+            {
+                SE.SwephLib.swi_coortrf2(x, x, oe.seps, oe.ceps);
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                    SE.SwephLib.swi_coortrf2((CPointer<double>)x + 3, (CPointer<double>)x + 3, oe.seps, oe.ceps);
+                if (0 == (iflag & SwissEph.SEFLG_NONUT))
+                {
+                    SE.SwephLib.swi_coortrf2(x, x, swed.nut.snut, swed.nut.cnut);
+                    if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                        SE.SwephLib.swi_coortrf2((CPointer<double>)x + 3, (CPointer<double>)x + 3, swed.nut.snut, swed.nut.cnut);
+                }
+            }
+            /************************************
+             * sidereal positions               *
+             ************************************/
+            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+            {
+                /* rigorous algorithm */
+                if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0)
+                {
+                    if (swi_trop_ra2sid_lon(xxsv, x, xxsv, iflag) != OK)
+                        return ERR;
+                    if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
+                    {
+                        for (i = 0; i <= 5; i++)
+                            x[i] = xxsv[i];
+                    }
+                    /* project onto solar system equator */
+                }
+                else if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0)
+                {
+                    if (swi_trop_ra2sid_lon_sosy(xxsv, x, iflag) != OK)
+                        return ERR;
+                    if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
+                    {
+                        for (i = 0; i <= 5; i++)
+                            x[i] = xxsv[i];
+                    }
+                    /* traditional algorithm */
+                }
+                else
+                {
+                    SE.SwephLib.swi_cartpol_sp(x, x);
+                    if (swi_get_ayanamsa_ex(tjd, iflag, out daya, ref serr) == ERR)
                         return ERR;
                     x[0] -= daya * SwissEph.DEGTORAD;
                     SE.SwephLib.swi_polcart_sp(x, x);
@@ -6539,54 +8059,138 @@ namespace SwissEphNet.CPort
             /********************** 
              * radians to degrees *
              **********************/
-            if ((iflag & SwissEph.SEFLG_RADIANS) == 0 && (iflag & SwissEph.SEFLG_XYZ) == 0) {
-                for (i = 0; i < 2; i++) {
+            if ((iflag & SwissEph.SEFLG_RADIANS) == 0 && (iflag & SwissEph.SEFLG_XYZ) == 0)
+            {
+                for (i = 0; i < 2; i++)
+                {
                     x[i] *= SwissEph.RADTODEG;
                     x[i + 3] *= SwissEph.RADTODEG;
                 }
             }
             for (i = 0; i <= 5; i++)
                 xx[i] = x[i];
+            if (0 == (iflgsave & SwissEph.SEFLG_SPEED))
+            {
+                for (i = 3; i <= 5; i++)
+                    xx[i] = 0;
+            }
             /* if no ephemeris has been specified, do not return chosen ephemeris */
             if ((iflgsave & SwissEph.SEFLG_EPHMASK) == 0)
                 iflag = iflag & ~SwissEph.SEFLG_DEFAULTEPH;
             iflag = iflag & ~SwissEph.SEFLG_SPEED;
+            return iflag;
+        }
+
+        //#endif
+
+        /**********************************************************
+         * get fixstar positions
+         * parameters:
+         * star 	name of star or line number in star file 
+         *		(start from 1, don't count comment).
+         *    		If no error occurs, the name of the star is returned
+         *	        in the format trad_name, nomeclat_name
+         *
+         * tjd 		absolute julian day
+         * iflag	s. swecalc(); speed bit does not function
+         * x		pointer for returning the ecliptic coordinates
+         * serr		error return string
+        **********************************************************/
+        string slast_stardata = String.Empty;
+        string sdummy = null;
+        public Int32 swe_fixstar(ref string star, double tjd, Int32 iflag,
+          CPointer<double> xx, ref string serr)
+        {
+            int i;
+            string sstar = string.Empty;
+            //static TLS char slast_stardata[AS_MAXCH];
+            //static TLS char slast_starname[AS_MAXCH];
+            string srecord; int sp;   /* 20 byte for SE_STARFILE */
+            int retc;
+            //if (serr != null)
+            serr = string.Empty;
 #if TRACE
-            trace_swe_fixstar(2, star, tjd, iflag, xx, serr);
+            SE.SwephLib.swi_open_trace(out serr);
+            trace_swe_fixstar(1, star, tjd, iflag, xx, ref serr);
+#endif //* TRACE */
+            retc = fixstar_format_search_name(star, ref sstar, ref serr);
+            if (retc == ERR)
+                goto return_err;
+            if (sstar.StartsWith(","))
+            {
+                ; // is Bayer designation
+            }
+            else if (sstar.Length > 0 && char.IsDigit(sstar[0]))
+            {
+                ; // is a sequential star number
+            }
+            else
+            {
+                if ((sp = strchr(sstar, ',')) != -1) // cut off Bayer, if trad. name
+                    //*sp = '\0';
+                    sstar = sstar.Substring(0, sp);
+            }
+            /* star elements from last call: */
+            if (!string.IsNullOrEmpty(slast_stardata) && strcmp(slast_starname, sstar) == 0)
+            {
+                strcpy(out srecord, slast_stardata);
+                goto found;
+            }
+            if (get_builtin_star(star, out sstar, out srecord))
+            {
+                goto found;
+            }
+            /******************************************************
+             * Star file
+             * close to the beginning, a few stars selected by Astrodienst.
+             * These can be accessed by giving their number instead of a name.
+             * All other stars can be accessed by name.
+             * Comment lines start with # and are ignored.
+             ******************************************************/
+            if ((retc = swi_fixstar_load_record(star, out srecord, out sdummy, out sdummy, null, ref serr)) != OK)
+                goto return_err;
+            found:
+            strcpy(out slast_stardata, srecord);
+            strcpy(out slast_starname, sstar);
+            if ((retc = swi_fixstar_calc_from_record(srecord, tjd, iflag, star, xx, ref serr)) == ERR)
+                goto return_err;
+#if TRACE
+            trace_swe_fixstar(2, star, tjd, iflag, xx, ref serr);
 #endif
             return iflag;
         return_err:
             for (i = 0; i <= 5; i++)
                 xx[i] = 0;
 #if TRACE
-            trace_swe_fixstar(2, star, tjd, iflag, xx, serr);
+            trace_swe_fixstar(2, star, tjd, iflag, xx, ref serr);
 #endif
             return retc;
         }
 
         public Int32 swe_fixstar_ut(ref string star, double tjd_ut, Int32 iflag,
-          double[] xx, ref string serr) {
-              double deltat;
-              Int32 retflag;
-              string sdummy = null;
-              Int32 epheflag = 0;
-              iflag = plaus_iflag(iflag, -1, tjd_ut, out serr);
-              epheflag = iflag & SwissEph.SEFLG_EPHMASK;
-              if (epheflag == 0)
-              {
-                  epheflag = SwissEph.SEFLG_SWIEPH;
-                  iflag |= SwissEph.SEFLG_SWIEPH;
-              }
-              deltat = SE.swe_deltat_ex(tjd_ut, iflag, ref serr);
-              /* if ephe required is not ephe returned, adjust delta t: */
-              retflag = swe_fixstar(ref star, tjd_ut + deltat, iflag, xx, ref serr);
-              if ((retflag & SwissEph.SEFLG_EPHMASK) != epheflag)
-              {
-                  deltat = SE.swe_deltat_ex(tjd_ut, retflag, ref sdummy);
-                  retflag = swe_fixstar(ref star, tjd_ut + deltat, iflag, xx, ref sdummy);
-              }
-              return retflag;
-          }
+          double[] xx, ref string serr)
+        {
+            double deltat;
+            Int32 retflag;
+            string sdummy = null;
+            Int32 epheflag = 0;
+            iflag = plaus_iflag(iflag, -1, tjd_ut, out serr);
+            epheflag = iflag & SwissEph.SEFLG_EPHMASK;
+            if (epheflag == 0)
+            {
+                epheflag = SwissEph.SEFLG_SWIEPH;
+                iflag |= SwissEph.SEFLG_SWIEPH;
+            }
+            deltat = SE.swe_deltat_ex(tjd_ut, iflag, ref serr);
+            /* if ephe required is not ephe returned, adjust delta t: */
+            retflag = swe_fixstar(ref star, tjd_ut + deltat, iflag, xx, ref serr);
+            if (retflag != ERR && (retflag & SwissEph.SEFLG_EPHMASK) != epheflag)
+            {
+                deltat = SE.swe_deltat_ex(tjd_ut, retflag, ref sdummy);
+                retflag = swe_fixstar(ref star, tjd_ut + deltat, iflag, xx, ref sdummy);
+            }
+            return retflag;
+        }
 
         /**********************************************************
          * get fixstar magnitude
@@ -6599,19 +8203,39 @@ namespace SwissEphNet.CPort
          * mag 		pointer to a double, for star magnitude
          * serr		error return string
         **********************************************************/
-        public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr) {
-            int i;
-            int star_nr = 0;
-            bool isnomclat = false;
-            int cmplen;
-            string[] cpos = new string[20];
-            string sstar; string sdummy = null;
-            string fstar;
-            string s = String.Empty/*, sp, sp2*/;	/* 20 byte for SE_STARFILE */
-            int line = 0;
-            int fline = 0;
-            int retc; int spi;
-            serr = String.Empty;
+        public Int32 swe_fixstar_mag(ref string star, ref double mag, ref string serr)
+        {
+            //char sstar[SE_MAX_STNAME + 1];
+            string sstar = string.Empty;
+            //char srecord[AS_MAXCH + 20], *sp;   /* 20 byte for SE_STARFILE */
+            string srecord; int sp;
+            int retc;
+            double[] dparams = new double[20];
+            //if (serr != NULL)
+                serr = string.Empty;
+            retc = fixstar_format_search_name(star, ref sstar, ref serr);
+            if (retc == ERR)
+                goto return_err;
+            if (sstar.StartsWith(","))
+            {
+                ; // is Bayer designation
+            }
+            else if (sstar.Length>0 && char.IsDigit(sstar[0]))
+            {
+                ; // is a sequential star number
+            }
+            else
+            {
+                if ((sp = strchr(sstar, ',')) != -1) // cut off Bayer, if trad. name
+                    //*sp = '\0';
+                    sstar = sstar.Substring(0, sp);
+            }
+            /* star elements from last call: */
+            if (!string.IsNullOrEmpty(slast_stardata) && strcmp(slast_starname, sstar) == 0)
+            {
+                strcpy(out srecord, slast_stardata);
+                goto found;
+            }
             /******************************************************
              * Star file
              * close to the beginning, a few stars selected by Astrodienst.
@@ -6619,93 +8243,12 @@ namespace SwissEphNet.CPort
              * All other stars can be accessed by name.
              * Comment lines start with # and are ignored.
              ******************************************************/
-            if (swed.fixfp == null) {
-                if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE, swed.ephepath, ref serr)) == null) {
-                    swed.is_old_starfile = true;
-                    if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null) {
-                        retc = ERR;
-                        goto return_err;
-                    }
-                }
-            }
-            swed.fixfp.Seek(0, SeekOrigin.Begin);
-            sstar = star;
-            if (sstar.StartsWith(",")) {
-                isnomclat = true;
-            } else if (sstar.Length > 1 && Char.IsDigit(sstar[0])) {
-                star_nr = int.Parse(sstar);
-            } else {
-                /* traditional name of star to lower case */
-                sstar = sstar.ToLower();
-                spi = sstar.IndexOf(',');
-                if (spi >= 0)
-                    sstar = sstar.Substring(0, spi);
-            }
-            /*swi_right_trim(sstar);*/
-            //while ((sp = strchr(sstar, ' ')) != NULL)
-            //    swi_strcpy(sp, sp + 1);
-            //sstar = sstar.TrimEnd();
-            sstar = sstar.Replace(" ", "");
-            cmplen = sstar.Length;
-            if (cmplen == 0) {
-                serr = C.sprintf("swe_fixstar_mag(): star name empty");
-                retc = ERR;
+            if ((retc = swi_fixstar_load_record(star, out srecord, out sdummy, out sdummy, dparams, ref serr)) != OK)
                 goto return_err;
-            }
-            while ((s = swed.fixfp.ReadLine()) != null) {
-                fline++;
-                if (s.StartsWith("#")) continue;
-                line++;
-                if (star_nr == line)
-                    goto found;
-                else if (star_nr > 0)
-                    continue;
-                if ((spi = s.IndexOf(",")) == 0) {
-                    serr = C.sprintf("star file %s damaged at line %d", SwissEph.SE_STARFILE, fline);
-                    retc = ERR;
-                    goto return_err;
-                }
-                if (isnomclat) {
-                    if (s.StartsWith(sstar))
-                        goto found;
-                    else
-                        continue;
-                }
-                //sp = '\0';	/* cut off first field */
-                //strncpy(fstar, s, SE_MAX_STNAME);
-                //*sp = ','; /* restore comma */
-                //fstar[SE_MAX_STNAME] = '\0';	/* force termination */
-                fstar = s.Substring(0, spi).TrimEnd();
-                /*swi_right_trim(fstar);*/
-                //while ((sp = strchr(fstar, ' ')) != NULL)
-                //    swi_strcpy(sp, sp + 1);
-                fstar = fstar.Replace(" ", "");
-                i = fstar.Length;
-                if (i < (int)cmplen)
-                    continue;
-                //for (sp2 = fstar; *sp2 != '\0'; sp2++) {
-                //    *sp2 = tolower((int)*sp2);
-                //}
-                fstar = fstar.ToLower();
-                if (fstar.StartsWith(sstar))
-                    goto found;
-            }
-            serr = C.sprintf("star %s not found", star);
-            retc = ERR;
-            goto return_err;
-        found:
-            cpos = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            i = cpos.Length;
-            cpos[0] = cpos[0].TrimEnd();
-            cpos[1] = cpos[1].TrimEnd();
-            if (i < 13) {
-                serr = C.sprintf("data of star '%s,%s' incomplete", cpos[0], cpos[1]);
-                retc = ERR;
-                goto return_err;
-            }
-            mag = double.Parse(cpos[13], CultureInfo.InvariantCulture);
-            /* return trad. name, nomeclature name */
-            star = String.Format("{0},{1}", cpos[0], cpos[1]);
+            found:
+            strcpy(out slast_stardata, srecord);
+            strcpy(out slast_starname, sstar);
+            mag = dparams[7];
             return OK;
         return_err:
             mag = 0;
@@ -6750,484 +8293,6 @@ namespace SwissEphNet.CPort
         //}
 
         //#endif
-
-
-        public string swe_get_planet_name(int ipl) {
-            //int i;
-            //Int32 retc;
-            double[] xp = new double[6];
-            string s = String.Empty, sdummy = String.Empty;
-#if TRACE
-            //  swi_open_trace(NULL);
-            trace_swe_get_planet_name(1, ipl, s);
-#endif
-            swi_init_swed_if_start();
-            /* function calls for Pluto with asteroid number 134340
-               * are treated as calls for Pluto as main body SE_PLUTO */
-            if (ipl == SwissEph.SE_AST_OFFSET + 134340)
-                ipl = SwissEph.SE_PLUTO;
-            if (ipl != 0 && ipl == swed.i_saved_planet_name) {
-                return swed.saved_planet_name;
-            }
-            switch (ipl) {
-                case SwissEph.SE_SUN:
-                    s = SE_NAME_SUN;
-                    break;
-                case SwissEph.SE_MOON:
-                    s = SE_NAME_MOON;
-                    break;
-                case SwissEph.SE_MERCURY:
-                    s = SE_NAME_MERCURY;
-                    break;
-                case SwissEph.SE_VENUS:
-                    s = SE_NAME_VENUS;
-                    break;
-                case SwissEph.SE_MARS:
-                    s = SE_NAME_MARS;
-                    break;
-                case SwissEph.SE_JUPITER:
-                    s = SE_NAME_JUPITER;
-                    break;
-                case SwissEph.SE_SATURN:
-                    s = SE_NAME_SATURN;
-                    break;
-                case SwissEph.SE_URANUS:
-                    s = SE_NAME_URANUS;
-                    break;
-                case SwissEph.SE_NEPTUNE:
-                    s = SE_NAME_NEPTUNE;
-                    break;
-                case SwissEph.SE_PLUTO:
-                    s = SE_NAME_PLUTO;
-                    break;
-                case SwissEph.SE_MEAN_NODE:
-                    s = SE_NAME_MEAN_NODE;
-                    break;
-                case SwissEph.SE_TRUE_NODE:
-                    s = SE_NAME_TRUE_NODE;
-                    break;
-                case SwissEph.SE_MEAN_APOG:
-                    s = SE_NAME_MEAN_APOG;
-                    break;
-                case SwissEph.SE_OSCU_APOG:
-                    s = SE_NAME_OSCU_APOG;
-                    break;
-                case SwissEph.SE_INTP_APOG:
-                    s = SE_NAME_INTP_APOG;
-                    break;
-                case SwissEph.SE_INTP_PERG:
-                    s = SE_NAME_INTP_PERG;
-                    break;
-                case SwissEph.SE_EARTH:
-                    s = SE_NAME_EARTH;
-                    break;
-                case SwissEph.SE_CHIRON:
-                case SwissEph.SE_AST_OFFSET + MPC_CHIRON:
-                    s = SE_NAME_CHIRON;
-                    break;
-                case SwissEph.SE_PHOLUS:
-                case SwissEph.SE_AST_OFFSET + MPC_PHOLUS:
-                    s = SE_NAME_PHOLUS;
-                    break;
-                case SwissEph.SE_CERES:
-                case SwissEph.SE_AST_OFFSET + MPC_CERES:
-                    s = SE_NAME_CERES;
-                    break;
-                case SwissEph.SE_PALLAS:
-                case SwissEph.SE_AST_OFFSET + MPC_PALLAS:
-                    s = SE_NAME_PALLAS;
-                    break;
-                case SwissEph.SE_JUNO:
-                case SwissEph.SE_AST_OFFSET + MPC_JUNO:
-                    s = SE_NAME_JUNO;
-                    break;
-                case SwissEph.SE_VESTA:
-                case SwissEph.SE_AST_OFFSET + MPC_VESTA:
-                    s = SE_NAME_VESTA;
-                    break;
-                default:
-                    /* fictitious planets */
-                    if (ipl >= SwissEph.SE_FICT_OFFSET && ipl <= SwissEph.SE_FICT_MAX) {
-                        s = SE.SwemPlan.swi_get_fict_name(ipl - SwissEph.SE_FICT_OFFSET);
-                        break;
-                    }
-                    /* asteroids */
-                    if (ipl > SwissEph.SE_AST_OFFSET) {
-                        /* if name is already available */
-                        if (ipl == swed.fidat[SEI_FILE_ANY_AST].ipl[0])
-                            s = swed.fidat[SEI_FILE_ANY_AST].astnam;
-                        /* else try to get it from ephemeris file */
-                        else {
-                            var retc = sweph(J2000, ipl, SEI_FILE_ANY_AST, 0, null, NO_SAVE, xp, ref sdummy);
-                            if (retc != ERR && retc != NOT_AVAILABLE)
-                                s = swed.fidat[SEI_FILE_ANY_AST].astnam;
-                            else
-                                s = C.sprintf("%d: not found", ipl - SwissEph.SE_AST_OFFSET);
-                        }
-                        /* If there is a provisional designation only in ephemeris file,
-                         * we look for a name in seasnam.txt, which can be updated by
-                         * the user.
-                         * Some old ephemeris files return a '?' in the first position.
-                         * There are still a couple of unnamed bodies that got their
-                         * provisional designation before 1925, when the current method
-                         * of provisional designations was introduced. They have an 'A'
-                         * as the first character, e.g. A924 RC. 
-                         * The file seasnam.txt may contain comments starting with '#'.
-                         * There must be at least two columns: 
-                         * 1. asteroid catalog number
-                         * 2. asteroid name
-                         * The asteroid number may or may not be in brackets
-                         */
-                        if (s[0] == '?' || Char.IsDigit(s[1])) {
-                            int ipli = (int)(ipl - SwissEph.SE_AST_OFFSET), iplf = 0;
-                            CFile fp;
-                            String sp;
-                            //char si[AS_MAXCH], *sp, *sp2;
-                            if ((fp = swi_fopen(-1, SwissEph.SE_ASTNAMFILE, swed.ephepath, ref sdummy)) != null) {
-                                while (ipli != iplf && ((sp = fp.ReadLine()) != null)) {
-                                    sp = sp.TrimStart(' ', '\t', '(', '[', '{');
-                                    if (String.IsNullOrWhiteSpace(sp) || sp.StartsWith("#"))
-                                        continue;
-                                    /* catalog number of body of current line */
-                                    int spi = sp.IndexOfFirstNot('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-                                    if (spi < 0) continue;
-                                    iplf = int.Parse(sp.Substring(0, spi));
-                                    if (ipli != iplf)
-                                        continue;
-                                    sp = sp.Substring(spi);
-                                    /* set pointer after catalog number */
-                                    spi = sp.IndexOfAny(new char[] { ' ', '\t' });
-                                    if (spi < 0) continue;
-                                    s = sp.Substring(spi).TrimStart(' ', '\t');
-                                }
-                                fp.Dispose();
-                            }
-                        }
-                    } else {
-                        s = C.sprintf("%d", ipl);
-                    }
-                    break;
-            }
-#if TRACE
-            //  swi_open_trace(NULL);
-            trace_swe_get_planet_name(2, ipl, s);
-#endif
-            //if (strlen(s) < 80) {
-            swed.i_saved_planet_name = ipl;
-            swed.saved_planet_name = s;
-            //}
-            return s;
-        }
-
-        public string swe_get_ayanamsa_name(Int32 isidmode) {
-            isidmode %= SwissEph.SE_SIDBITS;
-            if (isidmode < SwissEph.SE_NSIDM_PREDEF)
-                return ayanamsa_name[isidmode];
-            return null;
-        }
-
-#if TRACE
-        void trace_swe_calc(int swtch, double tjd, int ipl, Int32 iflag, CPointer<double> xx, string serr) {
-            //  if (swi_trace_count >= TRACE_COUNT_MAX)
-            //    return;
-            switch (swtch) {
-                case 1:
-                    //trace(true, "\n/*SWE_CALC*/");
-                    //trace(true, "  tjd = %.9f; ipl = %d; iflag = %d;", tjd, ipl, iflag);
-                    //trace(true, "  iflgret = swe_calc(tjd, ipl, iflag, xx, serr);");
-                    //fprintf(swi_fp_trace_c, "	/* xx = %p */\n", xx);
-                    break;
-                case 2:
-                    //trace(true, "  printf(\"swe_calc: %f\\t%d\\t%d\\t%f\\t%f\\t%f\\t%f\\t%f\\t%f\\t\", "); 
-                    //trace(true, "\ttjd, ipl, iflgret, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5]);");
-                    //trace(true, "  if (*serr != '\\0') printf(serr); printf(\"\\n\");");
-                    trace("swe_calc: %f\t%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s", tjd, ipl, iflag, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5], serr);
-                    break;
-                //    default:
-                //      break;
-            }
-        }
-
-        void trace_swe_fixstar(int swtch, string star, double tjd, Int32 iflag, CPointer<double> xx, string serr) {
-            //if (swi_trace_count >= TRACE_COUNT_MAX)
-            //    return;
-            switch (swtch) {
-                case 1:
-                    //if (swi_fp_trace_c != NULL) {
-                    //    fputs("\n/*SWE_FIXSTAR*/\n", swi_fp_trace_c);
-                    //    fprintf(swi_fp_trace_c, "  strcpy(star, \"%s\");", star);
-                    //    fprintf(swi_fp_trace_c, " tjd = %.9f;", tjd);
-                    //    fprintf(swi_fp_trace_c, " iflag = %d;\n", iflag);
-                    //    fprintf(swi_fp_trace_c, "  iflgret = swe_fixstar(star, tjd, iflag, xx, serr);");
-                    //    fprintf(swi_fp_trace_c, "   /* xx = %d */\n", (int32)xx);
-                    //    fflush(swi_fp_trace_c);
-                    //}
-                    break;
-                case 2:
-                    //if (swi_fp_trace_c != NULL) {
-                    //    fputs("  printf(\"swe_fixstar: %s\\t%f\\t%d\\t%f\\t%f\\t%f\\t%f\\t%f\\t%f\\t\", ", swi_fp_trace_c);
-                    //    fputs("\n\tstar, tjd, iflgret, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5]);\n", swi_fp_trace_c);/**/
-                    //    fputs("  if (*serr != '\\0')", swi_fp_trace_c);
-                    //    fputs(" printf(serr);", swi_fp_trace_c);
-                    //    fputs(" printf(\"\\n\");\n", swi_fp_trace_c);
-                    //    fflush(swi_fp_trace_c);
-                    //}
-                    //if (swi_fp_trace_out != NULL) {
-                    trace("swe_fixstar: %s\t%f\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s",
-                          star, tjd, iflag, xx[0], xx[1], xx[2], xx[3], xx[4], xx[5], serr);
-                    //if (serr != NULL && *serr != '\0') {
-                    //    fputs(serr, swi_fp_trace_out);
-                    //}
-                    //fputs("\n", swi_fp_trace_out);
-                    //fflush(swi_fp_trace_out);
-                    //}
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        void trace_swe_get_planet_name(int swtch, int ipl, string s) {
-            //if (swi_trace_count >= TRACE_COUNT_MAX)
-            //    return;
-            switch (swtch) {
-                case 1:
-                    //if (swi_fp_trace_c != NULL) {
-                    //trace(true, "\n/*SWE_GET_PLANET_NAME*/");
-                    //trace(true, "  ipl = %d;", ipl);
-                    //trace(true, "  swe_get_planet_name(ipl, s);   /* s = %s */", s);
-                    //    fflush(swi_fp_trace_c);
-                    //}
-                    break;
-                case 2:
-                    //if (swi_fp_trace_c != NULL) {
-                    //trace(true, "  printf(\"swe_get_planet_name: %d\\t%s\\t\\n\", ipl, s);", ipl, s);/**/
-                    //    fflush(swi_fp_trace_c);
-                    //}
-                    //if (swi_fp_trace_out != NULL) {
-                    trace("swe_get_planet_name: %d\t%s\t", ipl, s);
-                    //    fflush(swi_fp_trace_out);
-                    //}
-                    break;
-                //default:
-                //    break;
-            }
-        }
-
-#endif
-
-        /* set geographic position and altitude of observer */
-        public void swe_set_topo(double geolon, double geolat, double geoalt) {
-            swi_init_swed_if_start();
-            if (swed.geopos_is_set == true
-              && swed.topd.geolon == geolon
-              && swed.topd.geolat == geolat
-              && swed.topd.geoalt == geoalt)
-            {
-                return;
-            }
-            swed.topd.geolon = geolon;
-            swed.topd.geolat = geolat;
-            swed.topd.geoalt = geoalt;
-            swed.geopos_is_set = true;
-            /* to force new calculation of observer position vector */
-            swed.topd.teval = 0;
-            /* to force new calculation of light-time etc. 
-             */
-            swi_force_app_pos_etc();
-        }
-
-        public void swi_force_app_pos_etc() {
-            int i;
-            for (i = 0; i < SEI_NPLANETS; i++)
-                swed.pldat[i].xflgs = -1;
-            for (i = 0; i < SEI_NNODE_ETC; i++)
-                swed.nddat[i].xflgs = -1;
-            for (i = 0; i < SwissEph.SE_NPLANETS; i++) {
-                swed.savedat[i].tsave = 0;
-                swed.savedat[i].iflgsave = -1;
-            }
-        }
-
-        public int swi_get_observer(double tjd, Int32 iflag,
-            bool do_save, CPointer<double> xobs, ref string serr) {
-            int i;
-            double sidt, delt, tjd_ut, eps, nut; double[] nutlo = new double[2];
-            double f = EARTH_OBLATENESS;
-            double re = EARTH_RADIUS;
-            double cosfi, sinfi, cc, ss, cosl, sinl, h;
-            if (!swed.geopos_is_set) {
-                serr = "geographic position has not been set";
-                return ERR;
-            }
-            /* geocentric position of observer depends on sidereal time,
-             * which depends on UT. 
-             * compute UT from ET. this UT will be slightly different
-             * from the user's UT, but this difference is extremely small.
-             */
-            delt = SE.swe_deltat_ex(tjd, iflag, ref serr);
-            tjd_ut = tjd - delt;
-            if (swed.oec.teps == tjd && swed.nut.tnut == tjd) {
-                eps = swed.oec.eps;
-                nutlo[1] = swed.nut.nutlo[1];
-                nutlo[0] = swed.nut.nutlo[0];
-            } else {
-                eps = SE.SwephLib.swi_epsiln(tjd, iflag);
-                if (0 == (iflag & SwissEph.SEFLG_NONUT))
-                    SE.SwephLib.swi_nutation(tjd, iflag, nutlo);
-            }
-            if ((iflag & SwissEph.SEFLG_NONUT) != 0) {
-                nut = 0;
-            } else {
-                eps += nutlo[1];
-                nut = nutlo[0];
-            }
-            /* mean or apparent sidereal time, depending on whether or
-             * not SEFLG_NONUT is set */
-            sidt = SE.swe_sidtime0(tjd_ut, eps * SwissEph.RADTODEG, nut * SwissEph.RADTODEG);
-            sidt *= 15;	/* in degrees */
-            /* length of position and speed vectors;
-             * the height above sea level must be taken into account.
-             * with the moon, an altitude of 3000 m makes a difference 
-             * of about 2 arc seconds.
-             * height is referred to the average sea level. however, 
-             * the spheroid (geoid), which is defined by the average 
-             * sea level (or rather by all points of same gravitational
-             * potential), is of irregular shape and cannot easily
-             * be taken into account. therefore, we refer height to 
-             * the surface of the ellipsoid. the resulting error 
-             * is below 500 m, i.e. 0.2 - 0.3 arc seconds with the moon.
-             */
-            cosfi = Math.Cos(swed.topd.geolat * SwissEph.DEGTORAD);
-            sinfi = Math.Sin(swed.topd.geolat * SwissEph.DEGTORAD);
-            cc = 1 / Math.Sqrt(cosfi * cosfi + (1 - f) * (1 - f) * sinfi * sinfi);
-            ss = (1 - f) * (1 - f) * cc;
-            /* neglect polar motion (displacement of a few meters), as long as 
-             * we use the earth ellipsoid */
-            /* ... */
-            /* add sidereal time */
-            cosl = Math.Cos((swed.topd.geolon + sidt) * SwissEph.DEGTORAD);
-            sinl = Math.Sin((swed.topd.geolon + sidt) * SwissEph.DEGTORAD);
-            h = swed.topd.geoalt;
-            xobs[0] = (re * cc + h) * cosfi * cosl;
-            xobs[1] = (re * cc + h) * cosfi * sinl;
-            xobs[2] = (re * ss + h) * sinfi;
-            /* polar coordinates */
-            SE.SwephLib.swi_cartpol(xobs, xobs);
-            /* speed */
-            xobs[3] = EARTH_ROT_SPEED;
-            xobs[4] = xobs[5] = 0;
-            SE.SwephLib.swi_polcart_sp(xobs, xobs);
-            /* to AUNIT */
-            for (i = 0; i <= 5; i++)
-                xobs[i] /= AUNIT;
-            /* subtract nutation, set backward flag */
-            if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
-                SE.SwephLib.swi_coortrf2(xobs, xobs, -swed.nut.snut, swed.nut.cnut);
-                /* speed of xobs is always required, namely for aberration!!! */
-                /*if (iflag & SEFLG_SPEED)*/
-                SE.SwephLib.swi_coortrf2(xobs + 3, xobs + 3, -swed.nut.snut, swed.nut.cnut);
-                swi_nutate(xobs, iflag | SwissEph.SEFLG_SPEED, true);
-            }
-            /* precess to J2000 */
-            SE.SwephLib.swi_precess(xobs, tjd, iflag, J_TO_J2000);
-            /*if ((iflag & SwissEph.SEFLG_SPEED) != 0)*/
-                swi_precess_speed(xobs, tjd, iflag, J_TO_J2000);
-            /* neglect frame bias (displacement of 45cm) */
-            /* ... */
-            /* save */
-            if (do_save) {
-                for (i = 0; i <= 5; i++)
-                    swed.topd.xobs[i] = xobs[i];
-                swed.topd.teval = tjd;
-                swed.topd.tjd_ut = tjd_ut;	/* -> save area */
-            }
-            return OK;
-        }
-
-        /* Equation of Time
-         *
-         * The function returns the difference between 
-         * local apparent and local mean time in days.
-         * E = LAT - LMT
-         * Input variable tjd is UT.
-         */
-        public Int32 swe_time_equ(double tjd_ut, out double E, ref string serr) {
-            Int32 retval; E = 0;
-            double t, dt; double[] x = new double[6];
-            double sidt = SE.swe_sidtime(tjd_ut);
-            Int32 iflag = SwissEph.SEFLG_EQUATORIAL;
-            iflag = plaus_iflag(iflag, -1, tjd_ut, out serr);
-            if (swi_init_swed_if_start() == 1 && 0 == (iflag & SwissEph.SEFLG_MOSEPH) )
-            {
-                serr = "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_time_equ(), swe_lmt_to_lat() or swe_lat_to_lmt()";
-            }
-            if (swed.jpl_file_is_open)
-                iflag |= SwissEph.SEFLG_JPLEPH;
-            t = tjd_ut + 0.5;
-            dt = t - Math.Floor(t);
-            sidt -= dt * 24;
-            sidt *= 15;
-            if ((retval = swe_calc_ut(tjd_ut, SwissEph.SE_SUN, iflag, x, ref serr)) == ERR) {
-                E = 0;
-                return ERR;
-            }
-            dt = SE.swe_degnorm(sidt - x[0] - 180);
-            if (dt > 180)
-                dt -= 360;
-            dt *= 4;
-            E = dt / 1440.0;
-            return OK;
-        }
-
-        public Int32 swe_lmt_to_lat(double tjd_lmt, double geolon, out double tjd_lat, ref string serr) {
-            Int32 retval; serr = null;
-            double E, tjd_lmt0;
-            tjd_lmt0 = tjd_lmt - geolon / 360.0;
-            retval = swe_time_equ(tjd_lmt0, out E, ref serr);
-            tjd_lat = tjd_lmt + E;
-            return retval;
-        }
-
-        public Int32 swe_lat_to_lmt(double tjd_lat, double geolon, out double tjd_lmt, ref string serr) {
-            Int32 retval; serr = null;
-            double E, tjd_lmt0;
-            tjd_lmt0 = tjd_lat - geolon / 360.0;
-            retval = swe_time_equ(tjd_lmt0, out E, ref serr);
-            /* iteration */
-            retval = swe_time_equ(tjd_lmt0 - E, out E, ref serr);
-            retval = swe_time_equ(tjd_lmt0 - E, out E, ref serr);
-            tjd_lmt = tjd_lat - E;
-            return retval;
-        }
-
-        int open_jpl_file(CPointer<double> ss, string fname, string fpath, ref string serr) {
-            int retc;
-            string serr2 = String.Empty;
-            retc = SE.SweJPL.swi_open_jpl_file(ss, fname, fpath, ref serr);
-            /* If we fail with default JPL ephemeris (DE431), we try the second default
-             * (DE406), but only if serr is not NULL and an warning message can be 
-             * returned. */
-            if (retc != OK && fname.Contains(SwissEph.SE_FNAME_DFT)) {
-                retc = SE.SweJPL.swi_open_jpl_file(ss, SwissEph.SE_FNAME_DFT2, fpath, ref serr2);
-                if (retc == OK) {
-                    swed.jplfnam = SwissEph.SE_FNAME_DFT2;
-                    serr2 = "Error with JPL ephemeris file ";
-                    serr2 += SwissEph.SE_FNAME_DFT;
-                    serr2 += C.sprintf(": %s", serr);
-                    serr2 += ". Defaulting to ";
-                    serr2 += SwissEph.SE_FNAME_DFT2;
-                    serr = serr2;
-                }
-            }
-            if (retc == OK) {
-                swed.jpldenum = (short)SE.SweJPL.swi_get_jpl_denum();
-                swed.jpl_file_is_open = true;
-                SE.SwephLib.swi_set_tid_acc(0, 0, swed.jpldenum, ref serr);
-            }
-            return retc;
-        }
-
 
         //#if 0
         //void FAR PASCAL_CONV swe_set_timeout(int32 tsec)

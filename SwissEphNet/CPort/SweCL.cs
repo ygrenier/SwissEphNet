@@ -5541,7 +5541,7 @@ namespace SwissEphNet.CPort
                             return SwissEph.ERR;
                     } else {
                         /* traditional algorithm */
-                        if (SE.swi_get_ayanamsa_ex(tjd_et, iflag, out daya, ref serr) == SwissEph.ERR)
+                        if (SE.Sweph.swi_get_ayanamsa_ex(tjd_et, iflag, out daya, ref serr) == SwissEph.ERR)
                             return SwissEph.ERR;
                         pldat.xreturn[0] -= daya * SwissEph.DEGTORAD;
                         SE.SwephLib.swi_polcart_sp(pldat.xreturn, pldat.xreturn.GetPointer(6));

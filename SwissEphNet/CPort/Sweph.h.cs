@@ -694,10 +694,10 @@ namespace SwissEphNet.CPort
             public nut nutv { get; internal set; }
             public topo_data topd { get; internal set; }
             public sid_data sidd;
-            public bool n_fixstars_real { get; internal set; }    // real number of fixed stars in sefstars.txt
-            public bool n_fixstars_named { get; internal set; }   // number of fixed stars with tradtional name
-            public bool n_fixstars_records { get; internal set; } // number of fixed stars records in fixed_stars
-            public fixed_star[] fixed_stars { get; private set; }
+            public int n_fixstars_real { get; internal set; }    // real number of fixed stars in sefstars.txt
+            public int n_fixstars_named { get; internal set; }   // number of fixed stars with tradtional name
+            public int n_fixstars_records { get; internal set; } // number of fixed stars records in fixed_stars
+            public fixed_star[] fixed_stars { get; internal set; }
         }
 
         //extern TLS struct swe_data FAR swed;
