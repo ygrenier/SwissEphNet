@@ -94,494 +94,494 @@ namespace SweTest
 
         #region Strings
         /* attention: Microsoft Compiler does not accept strings > 2048 char */
-        static string infocmd0 = @"\n\
-  Swetest computes a complete set of geocentric planetary positions,\n\
-  for a given date or a sequence of dates.\n\
-  Input can either be a date or an absolute julian day number.\n\
-  0:00 (midnight).\n\
-  With the proper options, swetest can be used to output a printed\n\
-  ephemeris and transfer the data into other programs like spreadsheets\n\
-  for graphical display.\n\
-  Version: $Header: /users/dieter/sweph/RCS/swetest.c,v 1.78 2010/06/25 07:22:10 dieter Exp $\n\
-\n";
-        static string infocmd1 = @"\n\
-  Command line options:\n\
-     help commands:\n\
-        -?, -h  display whole info\n\
-        -hcmd   display commands\n\
-        -hplan  display planet numbers\n\
-        -hform  display format characters\n\
-        -hdate  display input date format\n\
-        -hexamp  display examples\n\
-        -glp  report file location of library\n\
-     input time formats:\n\
-        -bDATE  begin date; e.g. -b1.1.1992 if\n\
-                Note: the date format is day month year (European style).\n\
-        -bj...  begin date as an absolute Julian day number; e.g. -bj2415020.5\n\
-        -j...   same as -bj\n\
-        -tHH.MMSS  input time (as Ephemeris Time)\n\
-        -ut     input date is Universal Time (UT1)\n\
-    -utHH:MM:SS input time (as Universal Time)\n\
-    -utHH.MMSS input time (as Universal Time)\n\
-    -utcHH.MM:SS input time (as Universal Time Coordinated UTC)\n\
-     output time for eclipses, occultations, risings/settings is UT by default\n\
-        -lmt    output date/time is LMT (with -geopos)\n\
-        -lat    output date/time is LAT (with -geopos)\n\
-     object, number of steps, step with\n\
-        -pSEQ   planet sequence to be computed.\n\
-                See the letter coding below.\n\
-        -dX     differential ephemeris: print differential ephemeris between\n\
-                body X and each body in list given by -p\n\
-                example: -p2 -d0 -fJl -n366 -b1.1.1992 prints the longitude\n\
-                distance between SUN (planet 0) and MERCURY (planet 2)\n\
-                for a full year starting at 1 Jan 1992.\n\
-    -DX	midpoint ephemeris, works the same way as the differential\n\
-        mode -d described above, but outputs the midpoint position.\n\
-        -nN     output data for N consecutive days; if no -n option\n\
-                is given, the default is 1. If the option -n without a\n\
-                number is given, the default is 20.\n\
-        -sN     timestep N days, default 1. This option is only meaningful\n\
-                when combined with option -n.\n\
-                If an 'y' is appended, the time step is in years instead of days, \n\
-                for example -s10y for a time step of 10 years.\n\
-                If an 'mo' is appended, the time step is in months instead of days, \n\
-                for example -s3mo for a time step of 3 months.\n\
-                If an 'm' is appended, the time step is in minutes instead of days, \n\
-                for example -s15m for a time step of 15 minutes.\n\
-                If an 's' is appended, the time step is in seconds instead of days, \n\
-                for example -s1s for a time step of 1 second.\n\
+        static string infocmd0 = @"
+  Swetest computes a complete set of geocentric planetary positions,
+  for a given date or a sequence of dates.
+  Input can either be a date or an absolute julian day number.
+  0:00 (midnight).
+  With the proper options, swetest can be used to output a printed
+  ephemeris and transfer the data into other programs like spreadsheets
+  for graphical display.
+  Version:                                                                                   " + "\n";
+        static string infocmd1 = @"
+  Command line options:
+     help commands:
+        -?, -h  display whole info
+        -hcmd   display commands
+        -hplan  display planet numbers
+        -hform  display format characters
+        -hdate  display input date format
+        -hexamp  display examples
+        -glp  report file location of library
+     input time formats:
+        -bDATE  begin date; e.g. -b1.1.1992 if
+                Note: the date format is day month year (European style).
+        -bj...  begin date as an absolute Julian day number; e.g. -bj2415020.5
+        -j...   same as -bj
+        -tHH.MMSS  input time (as Ephemeris Time)
+        -ut     input date is Universal Time (UT1)
+    -utHH:MM:SS input time (as Universal Time)
+    -utHH.MMSS input time (as Universal Time)
+    -utcHH.MM:SS input time (as Universal Time Coordinated UTC)
+     output time for eclipses, occultations, risings/settings is UT by default
+        -lmt    output date/time is LMT (with -geopos)
+        -lat    output date/time is LAT (with -geopos)
+     object, number of steps, step with
+        -pSEQ   planet sequence to be computed.
+                See the letter coding below.
+        -dX     differential ephemeris: print differential ephemeris between
+                body X and each body in list given by -p
+                example: -p2 -d0 -fJl -n366 -b1.1.1992 prints the longitude
+                distance between SUN (planet 0) and MERCURY (planet 2)
+                for a full year starting at 1 Jan 1992.
+    -DX	midpoint ephemeris, works the same way as the differential
+        mode -d described above, but outputs the midpoint position.
+        -nN     output data for N consecutive days; if no -n option
+                is given, the default is 1. If the option -n without a
+                number is given, the default is 20.
+        -sN     timestep N days, default 1. This option is only meaningful
+                when combined with option -n.
+                If an 'y' is appended, the time step is in years instead of days, 
+                for example -s10y for a time step of 10 years.
+                If an 'mo' is appended, the time step is in months instead of days, 
+                for example -s3mo for a time step of 3 months.
+                If an 'm' is appended, the time step is in minutes instead of days, 
+                for example -s15m for a time step of 15 minutes.
+                If an 's' is appended, the time step is in seconds instead of days, 
+                for example -s1s for a time step of 1 second.
 ";
         static string infocmd2 = @"\
-     output format:\n\
-        -fSEQ   use SEQ as format sequence for the output columns;\n\
-                default is PLBRS.\n\
-        -head   don\'t print the header before the planet data. This option\n\
-                is useful when you want to paste the output into a\n\
-                spreadsheet for displaying graphical ephemeris.\n\
-        +head   header before every step (with -s..) \n\
-        -gPPP   use PPP as gap between output columns; default is a single\n\
-                blank.  -g followed by white space sets the\n\
-                gap to the TAB character; which is useful for data entry\n\
-                into spreadsheets.\n\
-        -hor	list data for multiple planets 'horizontally' in same line.\n\
-		all columns of -fSEQ are repeated except time colums tTJyY.\n\
-     astrological house system:\n\
-        -house[long,lat,hsys]	\n\
-        include house cusps. The longitude, latitude (degrees with\n\
-        DECIMAL fraction) and house system letter can be given, with\n\
-        commas separated, + for east and north. If none are given,\n\
-        Greenwich UK and Placidus is used: 0.00,51.50,p.\n\
-		The output lists 12 house cusps, Asc, MC, ARMC, Vertex,\n\
-		Equatorial Ascendant, co-Ascendant as defined by Walter Koch, \n\
-		co-Ascendant as defined by Michael Munkasey, and Polar Ascendant. \n\
-        Houses can only be computed if option -ut is given.\n\
-                   A  equal\n\
-                   B  Alcabitius\n\
-                   C  Campanus\n\
-                   D  equal / MC\n\
-                   E  equal = A\n\
-                   F  Carter poli-equatorial\n\
-                   G  36 Gauquelin sectors\n\
-                   H  horizon / azimuth\n\
-                   I  Sunshine\n\
-                   i  Sunshine alternative\n\
-                   K  Koch\n\
-                   L  Pullen S-delta\n\
-                   M  Morinus\n\
-                   N  Whole sign, Aries = 1st house\n\
-                   O  Porphyry\n\
-                   P  Placidus\n\
-                   Q  Pullen S-ratio\n\
-                   R  Regiomontanus\n\
-                   S  Sripati\n\
-                   T  Polich/Page (""topocentric"")\n\
-                   U  Krusinski-Pisa-Goelzer\n\
-                   V  equal Vehlow\n\
-                   W  equal, whole sign\n\
-                   X  axial rotation system/ Meridian houses\n\
-                   Y  APC houses\n\
-		 The use of lower case letters is deprecated. They will have a\n\
-		 different meaning in future releases of Swiss Ephemeris.\n\
-        -hsy[hsys]	\n\
-		 house system to be used (for house positions of planets)\n\
-		 for long, lat, hsys, see -house\n\
-		 The use of lower case letters is deprecated. They will have a\n\
-		 different meaning in future releases of Swiss Ephemeris.\n\
+     output format:
+        -fSEQ   use SEQ as format sequence for the output columns;
+                default is PLBRS.
+        -head   don\'t print the header before the planet data. This option
+                is useful when you want to paste the output into a
+                spreadsheet for displaying graphical ephemeris.
+        +head   header before every step (with -s..) 
+        -gPPP   use PPP as gap between output columns; default is a single
+                blank.  -g followed by white space sets the
+                gap to the TAB character; which is useful for data entry
+                into spreadsheets.
+        -hor	list data for multiple planets 'horizontally' in same line.
+		all columns of -fSEQ are repeated except time colums tTJyY.
+     astrological house system:
+        -house[long,lat,hsys]	
+        include house cusps. The longitude, latitude (degrees with
+        DECIMAL fraction) and house system letter can be given, with
+        commas separated, + for east and north. If none are given,
+        Greenwich UK and Placidus is used: 0.00,51.50,p.
+		The output lists 12 house cusps, Asc, MC, ARMC, Vertex,
+		Equatorial Ascendant, co-Ascendant as defined by Walter Koch, 
+		co-Ascendant as defined by Michael Munkasey, and Polar Ascendant. 
+        Houses can only be computed if option -ut is given.
+                   A  equal
+                   B  Alcabitius
+                   C  Campanus
+                   D  equal / MC
+                   E  equal = A
+                   F  Carter poli-equatorial
+                   G  36 Gauquelin sectors
+                   H  horizon / azimuth
+                   I  Sunshine
+                   i  Sunshine alternative
+                   K  Koch
+                   L  Pullen S-delta
+                   M  Morinus
+                   N  Whole sign, Aries = 1st house
+                   O  Porphyry
+                   P  Placidus
+                   Q  Pullen S-ratio
+                   R  Regiomontanus
+                   S  Sripati
+                   T  Polich/Page (""topocentric"")
+                   U  Krusinski-Pisa-Goelzer
+                   V  equal Vehlow
+                   W  equal, whole sign
+                   X  axial rotation system/ Meridian houses
+                   Y  APC houses
+		 The use of lower case letters is deprecated. They will have a
+		 different meaning in future releases of Swiss Ephemeris.
+        -hsy[hsys]	
+		 house system to be used (for house positions of planets)
+		 for long, lat, hsys, see -house
+		 The use of lower case letters is deprecated. They will have a
+		 different meaning in future releases of Swiss Ephemeris.
 ";
-        static string infocmd3 = @"\
-        -geopos[long,lat,elev]	\n\
-        Geographic position. Can be used for azimuth and altitude\n\
-                or topocentric or house cups calculations.\n\
-                The longitude, latitude (degrees with DECIMAL fraction)\n\
-        and elevation (meters) can be given, with\n\
-        commas separated, + for east and north. If none are given,\n\
-        Greenwich is used: 0,51.5,0\n\
-     sidereal astrology:\n\
-    -ay..   ayanamsha, with number of method, e.g. ay0 for Fagan/Bradley\n\
-    -sid..    sidereal, with number of method (see below)\n\
-    -sidt0..  sidereal, projection on ecliptic of t0 \n\
-    -sidsp..  sidereal, projection on solar system plane \n\
-           number of ayanamsha method:\n\
-       0 for Fagan/Bradley\n\
-       1 for Lahiri\n\
-       2 for De Luce\n\
-       3 for Raman\n\
-       4 for Ushashashi\n\
-       5 for Krishnamurti\n\
-       6 for Djwhal Khul\n\
-       7 for Yukteshwar\n\
-       8 for J.N. Bhasin\n\
-       9 for Babylonian/Kugler 1\n\
-       10 for Babylonian/Kugler 2\n\
-       11 for Babylonian/Kugler 3\n\
-       12 for Babylonian/Huber\n\
-       13 for Babylonian/Eta Piscium\n\
-       14 for Babylonian/Aldebaran = 15 Tau\n\
-       15 for Hipparchos\n\
-       16 for Sassanian\n\
-       17 for Galact. Center = 0 Sag\n\
-       18 for J2000\n\
-       19 for J1900\n\
-       20 for B1950\n\
-       21 for Suryasiddhanta\n\
-       22 for Suryasiddhanta, mean Sun\n\
-       23 for Aryabhata\n\
-       24 for Aryabhata, mean Sun\n\
-       25 for SS Citra\n\
-       26 for SS Revati\n\
-       27 for True Citra\n\
-       28 for True Revati\n\
-       29 for True Pushya\n\
-	   30 for Galactic (Gil Brand)\n\
-	   31 for Galactic Equator (IAU1958)\n\
-	   32 for Galactic Equator\n\
-	   33 for Galactic Equator mid-Mula\n\
-	   34 for Skydram (Mardyks)\n\
-	   35 for True Mula (Chandra Hari)\n\
-	   36 Dhruva/Gal.Center/Mula (Wilhelm)\n\
-	   37 Aryabhata 522\n\
-	   38 Babylonian/Britton\n\
-     ephemeris specifications:\n\
-        -edirPATH change the directory of the ephemeris files \n\
-        -eswe   swiss ephemeris\n\
-        -ejpl   jpl ephemeris (DE431), or with ephemeris file name\n\
-                -ejplde200.eph \n\
-        -emos   moshier ephemeris\n\
-        -true             true positions\n\
-        -noaberr          no aberration\n\
-        -nodefl           no gravitational light deflection\n\
-    -noaberr -nodefl  astrometric positions\n\
-        -j2000            no precession (i.e. J2000 positions)\n\
-        -icrs             ICRS (use Internat. Celestial Reference System)\n\
-        -nonut            no nutation \n\
+        static string infocmd3 = @"
+        -geopos[long,lat,elev]	
+        Geographic position. Can be used for azimuth and altitude
+                or topocentric or house cups calculations.
+                The longitude, latitude (degrees with DECIMAL fraction)
+        and elevation (meters) can be given, with
+        commas separated, + for east and north. If none are given,
+        Greenwich is used: 0,51.5,0
+     sidereal astrology:
+    -ay..   ayanamsha, with number of method, e.g. ay0 for Fagan/Bradley
+    -sid..    sidereal, with number of method (see below)
+    -sidt0..  sidereal, projection on ecliptic of t0 
+    -sidsp..  sidereal, projection on solar system plane 
+           number of ayanamsha method:
+       0 for Fagan/Bradley
+       1 for Lahiri
+       2 for De Luce
+       3 for Raman
+       4 for Ushashashi
+       5 for Krishnamurti
+       6 for Djwhal Khul
+       7 for Yukteshwar
+       8 for J.N. Bhasin
+       9 for Babylonian/Kugler 1
+       10 for Babylonian/Kugler 2
+       11 for Babylonian/Kugler 3
+       12 for Babylonian/Huber
+       13 for Babylonian/Eta Piscium
+       14 for Babylonian/Aldebaran = 15 Tau
+       15 for Hipparchos
+       16 for Sassanian
+       17 for Galact. Center = 0 Sag
+       18 for J2000
+       19 for J1900
+       20 for B1950
+       21 for Suryasiddhanta
+       22 for Suryasiddhanta, mean Sun
+       23 for Aryabhata
+       24 for Aryabhata, mean Sun
+       25 for SS Citra
+       26 for SS Revati
+       27 for True Citra
+       28 for True Revati
+       29 for True Pushya
+	   30 for Galactic (Gil Brand)
+	   31 for Galactic Equator (IAU1958)
+	   32 for Galactic Equator
+	   33 for Galactic Equator mid-Mula
+	   34 for Skydram (Mardyks)
+	   35 for True Mula (Chandra Hari)
+	   36 Dhruva/Gal.Center/Mula (Wilhelm)
+	   37 Aryabhata 522
+	   38 Babylonian/Britton
+     ephemeris specifications:
+        -edirPATH change the directory of the ephemeris files 
+        -eswe   swiss ephemeris
+        -ejpl   jpl ephemeris (DE431), or with ephemeris file name
+                -ejplde200.eph 
+        -emos   moshier ephemeris
+        -true             true positions
+        -noaberr          no aberration
+        -nodefl           no gravitational light deflection
+    -noaberr -nodefl  astrometric positions
+        -j2000            no precession (i.e. J2000 positions)
+        -icrs             ICRS (use Internat. Celestial Reference System)
+        -nonut            no nutation 
 ";
-        static string infocmd4 = @"\
-        -speed            calculate high precision speed \n\
-        -speed3           'low' precision speed from 3 positions \n\
-                          do not use this option. -speed parameter\n\
-              is faster and more precise \n\
-    -iXX	          force iflag to value XX\n\
-        -testaa96         test example in AA 96, B37,\n\
-                          i.e. venus, j2450442.5, DE200.\n\
-                          attention: use precession IAU1976\n\
-                          and nutation 1980 (s. swephlib.h)\n\
-        -testaa95\n\
-        -testaa97\n\
-        -roundsec         round to seconds\n\
-        -roundmin         round to minutes\n\
-     observer position:\n\
-        -hel    compute heliocentric positions\n\
-        -bary   compute barycentric positions (bar. earth instead of node) \n\
-        -topo[long,lat,elev]	\n\
-        topocentric positions. The longitude, latitude (degrees with\n\
-        DECIMAL fraction) and elevation (meters) can be given, with\n\
-        commas separated, + for east and north. If none are given,\n\
-        Zuerich is used: 8.55,47.38,400\n\
-     orbital elements:\n\
-        -orbel  compute osculating orbital elements relative to the\n\
-	        mean ecliptic J2000. (Note, all values, including time of\n\
-		pericenter vary considerably depending on the date for which the\n\
-		osculating ellipse is calculated\n\
-\n\
-     special events:\n\
-        -solecl solar eclipse\n\
-                output 1st line:\n\
-                  eclipse date,\n\
-                  time of maximum (UT),\n\
-                  core shadow width (negative with total eclipses),\n\
-                  fraction of solar diameter that is eclipsed\n\
-          Julian day number (6-digit fraction) of maximum\n\
-                output 2nd line:\n\
-                  start and end times for partial and total phase\n\
-                output 3rd line:\n\
-                  geographical longitude and latitude of maximum eclipse,\n\
-                  totality duration at that geographical position,\n\
-                output with -local, see below.\n\
-        -occult occultation of planet or star by the moon. Use -p to \n\
-                specify planet (-pf -xfAldebaran for stars) \n\
-                output format same as with -solecl\n\
+        static string infocmd4 = @"
+        -speed            calculate high precision speed 
+        -speed3           'low' precision speed from 3 positions 
+                          do not use this option. -speed parameter
+              is faster and more precise 
+    -iXX	          force iflag to value XX
+        -testaa96         test example in AA 96, B37,
+                          i.e. venus, j2450442.5, DE200.
+                          attention: use precession IAU1976
+                          and nutation 1980 (s. swephlib.h)
+        -testaa95
+        -testaa97
+        -roundsec         round to seconds
+        -roundmin         round to minutes
+     observer position:
+        -hel    compute heliocentric positions
+        -bary   compute barycentric positions (bar. earth instead of node) 
+        -topo[long,lat,elev]	
+        topocentric positions. The longitude, latitude (degrees with
+        DECIMAL fraction) and elevation (meters) can be given, with
+        commas separated, + for east and north. If none are given,
+        Zuerich is used: 8.55,47.38,400
+     orbital elements:
+        -orbel  compute osculating orbital elements relative to the
+	        mean ecliptic J2000. (Note, all values, including time of
+		pericenter vary considerably depending on the date for which the
+		osculating ellipse is calculated
+
+     special events:
+        -solecl solar eclipse
+                output 1st line:
+                  eclipse date,
+                  time of maximum (UT),
+                  core shadow width (negative with total eclipses),
+                  fraction of solar diameter that is eclipsed
+          Julian day number (6-digit fraction) of maximum
+                output 2nd line:
+                  start and end times for partial and total phase
+                output 3rd line:
+                  geographical longitude and latitude of maximum eclipse,
+                  totality duration at that geographical position,
+                output with -local, see below.
+        -occult occultation of planet or star by the moon. Use -p to 
+                specify planet (-pf -xfAldebaran for stars) 
+                output format same as with -solecl
 ";
-        static string infocmd5 = @"\
-        -lunecl lunar eclipse\n\
-                output 1st line:\n\
-                  eclipse date,\n\
-                  time of maximum (UT),\n\
-          Julian day number (6-digit fraction) of maximum\n\
-                output 2nd line:\n\
-                  6 contacts for start and end of penumbral, partial, and\n\
-                  total phase\n\
-        -local  only with -solecl or -occult, if the next event of this\n\
-                kind is wanted for a given geogr. position.\n\
-                Use -geopos[long,lat,elev] to specify that position.\n\
-                If -local is not set, the program \n\
-                searches for the next event anywhere on earth.\n\
-                output 1st line:\n\
-                  eclipse date,\n\
-                  time of maximum,\n\
-                  fraction of solar diameter that is eclipsed\n\
-                output 2nd line:\n\
-                  local eclipse duration,\n\
-                  local four contacts,\n\
-        -hev[type] heliacal events,\n\
-        type 1 = heliacal rising\n\
-        type 2 = heliacal setting\n\
-        type 3 = evening first\n\
-        type 4 = morning last\n\
-            type 0 or missing = all four events are listed.\n\
-        -rise   rising and setting of a planet or star.\n\
-                Use -geopos[long,lat,elev] to specify geographical position.\n\
-        -metr   southern and northern meridian transit of a planet of star\n\
-                Use -geopos[long,lat,elev] to specify geographical position.\n\
-     specifications for eclipses:\n\
-        -total  total eclipse (only with -solecl, -lunecl)\n\
-        -partial partial eclipse (only with -solecl, -lunecl)\n\
-        -annular annular eclipse (only with -solecl)\n\
-        -anntot annular-total (hybrid) eclipse (only with -solecl)\n\
-        -penumbral penumbral lunar eclipse (only with -lunecl)\n\
-        -central central eclipse (only with -solecl, nonlocal)\n\
-        -noncentral non-central eclipse (only with -solecl, nonlocal)\n\
+        static string infocmd5 = @"
+        -lunecl lunar eclipse
+                output 1st line:
+                  eclipse date,
+                  time of maximum (UT),
+          Julian day number (6-digit fraction) of maximum
+                output 2nd line:
+                  6 contacts for start and end of penumbral, partial, and
+                  total phase
+        -local  only with -solecl or -occult, if the next event of this
+                kind is wanted for a given geogr. position.
+                Use -geopos[long,lat,elev] to specify that position.
+                If -local is not set, the program 
+                searches for the next event anywhere on earth.
+                output 1st line:
+                  eclipse date,
+                  time of maximum,
+                  fraction of solar diameter that is eclipsed
+                output 2nd line:
+                  local eclipse duration,
+                  local four contacts,
+        -hev[type] heliacal events,
+        type 1 = heliacal rising
+        type 2 = heliacal setting
+        type 3 = evening first
+        type 4 = morning last
+            type 0 or missing = all four events are listed.
+        -rise   rising and setting of a planet or star.
+                Use -geopos[long,lat,elev] to specify geographical position.
+        -metr   southern and northern meridian transit of a planet of star
+                Use -geopos[long,lat,elev] to specify geographical position.
+     specifications for eclipses:
+        -total  total eclipse (only with -solecl, -lunecl)
+        -partial partial eclipse (only with -solecl, -lunecl)
+        -annular annular eclipse (only with -solecl)
+        -anntot annular-total (hybrid) eclipse (only with -solecl)
+        -penumbral penumbral lunar eclipse (only with -lunecl)
+        -central central eclipse (only with -solecl, nonlocal)
+        -noncentral non-central eclipse (only with -solecl, nonlocal)
 ";
-        static string infocmd6 = @"\
-     specifications for risings and settings:\n\
-        -norefrac   neglect refraction (with option -rise)\n\
-        -disccenter find rise of disc center (with option -rise)\n\
-        -discbottom find rise of disc bottom (with option -rise)\n\
-    -hindu      hindu version of sunrise (with option -rise)\n\
-     specifications for heliacal events:\n\
-        -at[press,temp,rhum,visr]:\n\
-                pressure in hPa\n\
-            temperature in degrees Celsius\n\
-            relative humidity in %\n\
-            visual range, interpreted as follows:\n\
-              > 1 : meteorological range in km\n\
-              1>visr>0 : total atmospheric coefficient (ktot)\n\
-              = 0 : calculated from press, temp, rhum\n\
-            Default values are -at1013.25,15,40,0\n\
-         -obs[age,SN] age of observer and Snellen ratio\n\
-                Default values are -obs36,1\n\
-         -opt[age,SN,binocular,magn,diam,transm]\n\
-                age and SN as with -obs\n\
-            0 monocular or 1 binocular\n\
-            telescope magnification\n\
-            optical aperture in mm\n\
-            optical transmission\n\
-            Default values: -opt36,1,1,1,0,0 (naked eye)\n\
-     backward search:\n\
-        -bwd\n";
+        static string infocmd6 = @"
+     specifications for risings and settings:
+        -norefrac   neglect refraction (with option -rise)
+        -disccenter find rise of disc center (with option -rise)
+        -discbottom find rise of disc bottom (with option -rise)
+    -hindu      hindu version of sunrise (with option -rise)
+     specifications for heliacal events:
+        -at[press,temp,rhum,visr]:
+                pressure in hPa
+            temperature in degrees Celsius
+            relative humidity in %
+            visual range, interpreted as follows:
+              > 1 : meteorological range in km
+              1>visr>0 : total atmospheric coefficient (ktot)
+              = 0 : calculated from press, temp, rhum
+            Default values are -at1013.25,15,40,0
+         -obs[age,SN] age of observer and Snellen ratio
+                Default values are -obs36,1
+         -opt[age,SN,binocular,magn,diam,transm]
+                age and SN as with -obs
+            0 monocular or 1 binocular
+            telescope magnification
+            optical aperture in mm
+            optical transmission
+            Default values: -opt36,1,1,1,0,0 (naked eye)
+     backward search:
+        -bwd";
         /* characters still available:
           bcgijklruvx
          */
-        static string infoplan = @"\n\
-  Planet selection letters:\n\
-     planetary lists:\n\
-        d (default) main factors 0123456789mtABCcg\n\
-        p main factors as above, plus main asteroids DEFGHI\n\
-        h ficticious factors J..X\n\
-        a all factors\n\
-        (the letters above can only appear as a single letter)\n\n\
-     single body numbers/letters:\n\
-        0 Sun (character zero)\n\
-        1 Moon (character 1)\n\
-        2 Mercury\n\
-        3 Venus\n\
-        4 Mars\n\
-        5 Jupiter\n\
-        6 Saturn\n\
-        7 Uranus\n\
-        8 Neptune\n\
-        9 Pluto\n\
-        m mean lunar node\n\
-        t true lunar node\n\
-        n nutation\n\
-        o obliquity of ecliptic\n\
-    q delta t\n\
-    y time equation\n\
-        A mean lunar apogee (Lilith, Black Moon) \n\
-        B osculating lunar apogee \n\
-        c intp. lunar apogee \n\
-        g intp. lunar perigee \n\
-        C Earth (in heliocentric or barycentric calculation)\n\
-     dwarf planets, plutoids\n\
-        F Ceres\n\
-    9 Pluto\n\
-    s -xs136199   Eris\n\
-    s -xs136472   Makemake\n\
-    s -xs136108   Haumea\n\
-     some minor planets:\n\
-        D Chiron\n\
-        E Pholus\n\
-        G Pallas \n\
-        H Juno \n\
-        I Vesta \n\
-        s minor planet, with MPC number given in -xs\n\
-     fixed stars:\n\
-        f fixed star, with name or number given in -xf option\n\
-    f -xfSirius   Sirius\n\
-     fictitious objects:\n\
-        J Cupido \n\
-        K Hades \n\
-        L Zeus \n\
-        M Kronos \n\
-        N Apollon \n\
-        O Admetos \n\
-        P Vulkanus \n\
-        Q Poseidon \n\
-        R Isis (Sevin) \n\
-        S Nibiru (Sitchin) \n\
-        T Harrington \n\
-        U Leverrier's Neptune\n\
-        V Adams' Neptune\n\
-        W Lowell's Pluto\n\
-        X Pickering's Pluto\n\
-        Y Vulcan\n\
-        Z White Moon\n\
-    w Waldemath's dark Moon\n\
-        z hypothetical body, with number given in -xz\n\
-     sidereal time:\n\
-        x sidereal time\n\
-        e print a line of labels\n\
-          \n";
+        static string infoplan = @"
+  Planet selection letters:
+     planetary lists:
+        d (default) main factors 0123456789mtABCcg
+        p main factors as above, plus main asteroids DEFGHI
+        h ficticious factors J..X
+        a all factors
+        (the letters above can only appear as a single letter)n\
+     single body numbers/letters:
+        0 Sun (character zero)
+        1 Moon (character 1)
+        2 Mercury
+        3 Venus
+        4 Mars
+        5 Jupiter
+        6 Saturn
+        7 Uranus
+        8 Neptune
+        9 Pluto
+        m mean lunar node
+        t true lunar node
+        n nutation
+        o obliquity of ecliptic
+    q delta t
+    y time equation
+	b ayanamsha
+        A mean lunar apogee (Lilith, Black Moon) 
+        B osculating lunar apogee 
+        c intp. lunar apogee 
+        g intp. lunar perigee 
+        C Earth (in heliocentric or barycentric calculation)
+     dwarf planets, plutoids
+        F Ceres
+    9 Pluto
+    s -xs136199   Eris
+    s -xs136472   Makemake
+    s -xs136108   Haumea
+     some minor planets:
+        D Chiron
+        E Pholus
+        G Pallas 
+        H Juno 
+        I Vesta 
+        s minor planet, with MPC number given in -xs
+     fixed stars:
+        f fixed star, with name or number given in -xf option
+    f -xfSirius   Sirius
+     fictitious objects:
+        J Cupido 
+        K Hades 
+        L Zeus 
+        M Kronos 
+        N Apollon 
+        O Admetos 
+        P Vulkanus 
+        Q Poseidon 
+        R Isis (Sevin) 
+        S Nibiru (Sitchin) 
+        T Harrington 
+        U Leverrier's Neptune
+        V Adams' Neptune
+        W Lowell's Pluto
+        X Pickering's Pluto
+        Y Vulcan
+        Z White Moon
+    w Waldemath's dark Moon
+        z hypothetical body, with number given in -xz
+     sidereal time:
+        x sidereal time
+        e print a line of labels
+          ";
         /* characters still available 
            CcEeMmOoqWwz
         */
-        static string infoform = @"\n\
-  Output format SEQ letters:\n\
-  In the standard setting five columns of coordinates are printed with\n\
-  the default format PLBRS. You can change the default by providing an\n\
-  option like -fCCCC where CCCC is your sequence of columns.\n\
-  The coding of the sequence is like this:\n\
-        y year\n\
-        Y year.fraction_of_year\n\
-        p planet index\n\
-        P planet name\n\
-        J absolute juldate\n\
-        T date formatted like 23.02.1992 \n\
-        t date formatted like 920223 for 1992 february 23\n\
-        L longitude in degree ddd mm'ss\""\n\
-        l longitude decimal\n\
-        Z longitude ddsignmm'ss\""\n\
-        S speed in longitude in degree ddd:mm:ss per day\n\
-        SS speed for all values specified in fmt\n\
-        s speed longitude decimal (degrees/day)\n\
-        ss speed for all values specified in fmt\n\
-        B latitude degree\n\
-        b latitude decimal\n\
-        R distance decimal in AU\n\
-        r distance decimal in AU, Moon in seconds parallax\n\
-        q relative distance (1000=nearest, 0=furthest)\n\
-        A right ascension in hh:mm:ss\n\
-        a right ascension hours decimal\n\
-        D declination degree\n\
-        d declination decimal\n\
-        I azimuth degree\n\
-        i azimuth decimal\n\
-        H altitude degree\n\
-        h altitude decimal\n\
-        K altitude (with refraction) degree\n\
-        k altitude (with refraction) decimal\n\
-        G house position in degrees\n\
-        g house position in degrees decimal\n\
-        j house number 1.0 - 12.99999\n\
-        X x-, y-, and z-coordinates ecliptical\n\
-        x x-, y-, and z-coordinates equatorial\n\
-        U unit vector ecliptical\n\
-        u unit vector equatorial\n\
-        Q l, b, r, dl, db, dr, a, d, da, dd\n\
-    n nodes (mean): ascending/descending (Me - Ne); longitude decimal\n\
-    N nodes (osculating): ascending/descending, longitude; decimal\n\
-    f apsides (mean): perihel, aphel, second focal point; longitude dec.\n\
-    F apsides (osc.): perihel, aphel, second focal point; longitude dec.\n\
-    + phase angle\n\
-    - phase\n\
-    * elongation\n\
-    / apparent diameter of disc (without refraction)\n\
-    = magnitude\n";
-        static string infoform2 = @"\
-        v (reserved)\n\
-        V (reserved)\n\
+        static string infoform = @"
+  Output format SEQ letters:
+  In the standard setting five columns of coordinates are printed with
+  the default format PLBRS. You can change the default by providing an
+  option like -fCCCC where CCCC is your sequence of columns.
+  The coding of the sequence is like this:
+        y year
+        Y year.fraction_of_year
+        p planet index
+        P planet name
+        J absolute juldate
+        T date formatted like 23.02.1992 
+        t date formatted like 920223 for 1992 february 23
+        L longitude in degree ddd mm'ss\""
+        l longitude decimal
+        Z longitude ddsignmm'ss\""
+        S speed in longitude in degree ddd:mm:ss per day
+        SS speed for all values specified in fmt
+        s speed longitude decimal (degrees/day)
+        ss speed for all values specified in fmt
+        B latitude degree
+        b latitude decimal
+        R distance decimal in AU
+        r distance decimal in AU, Moon in seconds parallax
+        q relative distance (1000=nearest, 0=furthest)
+        A right ascension in hh:mm:ss
+        a right ascension hours decimal
+        D declination degree
+        d declination decimal
+        I azimuth degree
+        i azimuth decimal
+        H altitude degree
+        h altitude decimal
+        K altitude (with refraction) degree
+        k altitude (with refraction) decimal
+        G house position in degrees
+        g house position in degrees decimal
+        j house number 1.0 - 12.99999
+        X x-, y-, and z-coordinates ecliptical
+        x x-, y-, and z-coordinates equatorial
+        U unit vector ecliptical
+        u unit vector equatorial
+        Q l, b, r, dl, db, dr, a, d, da, dd
+    n nodes (mean): ascending/descending (Me - Ne); longitude decimal
+    N nodes (osculating): ascending/descending, longitude; decimal
+    f apsides (mean): perihel, aphel, second focal point; longitude dec.
+    F apsides (osc.): perihel, aphel, second focal point; longitude dec.
+    + phase angle
+    - phase
+    * elongation
+    / apparent diameter of disc (without refraction)
+    = magnitude";
+        static string infoform2 = @"
+        v (reserved)
+        V (reserved)
     ";
-        static string infodate = @"\n\
-  Date entry:\n\
-  In the interactive mode, when you are asked for a start date,\n\
-  you can enter data in one of the following formats:\n\
-\n\
-        1.2.1991        three integers separated by a nondigit character for\n\
-                        day month year. Dates are interpreted as Gregorian\n\
-                        after 4.10.1582 and as Julian Calendar before.\n\
-                        Time is always set to midnight (0 h).\n\
-                        If the three letters jul are appended to the date,\n\
-                        the Julian calendar is used even after 1582.\n\
-                        If the four letters greg are appended to the date,\n\
-                        the Gregorian calendar is used even before 1582.\n\
-\n\
-        j2400123.67     the letter j followed by a real number, for\n\
-                        the absolute Julian daynumber of the start date.\n\
-                        Fraction .5 indicates midnight, fraction .0\n\
-                        indicates noon, other times of the day can be\n\
-                        chosen accordingly.\n\
-\n\
-        <RETURN>        repeat the last entry\n\
-        \n\
-        .               stop the program\n\
-\n\
-        +20             advance the date by 20 days\n\
-\n\
-        -10             go back in time 10 days\n";
-        static string infoexamp = @"\n\
-\n\
-  Examples:\n\
-\n\
-    swetest -p2 -b1.12.1900 -n15 -s2\n\
-    ephemeris of Mercury (-p2) starting on 1 Dec 1900,\n\
-    15 positions (-n15) in two-day steps (-s2)\n\
-\n\
-    swetest -p2 -b1.12.1900 -n15 -s2 -fTZ -roundsec -g, -head\n\
-    same, but output format =  date and zodiacal position (-fTZ),\n\
-    separated by comma (-g,) and rounded to seconds (-roundsec),\n\
-    without header (-head).\n\
-\n\
-    swetest -ps -xs433 -b1.12.1900\n\
-    position of asteroid 433 Eros (-ps -xs433)\n\
-\n\
-    swetest -pf -xfAldebaran -b1.1.2000\n\
-    position of fixed star Aldebaran \n\
-\n\
-    swetest -p1 -d0 -b1.12.1900 -n10 -fPTl -head\n\
-    angular distance of moon (-p1) from sun (-d0) for 10\n\
-    consecutive days (-n10).\n\
-\n\
-    swetest -p6 -DD -b1.12.1900 -n100 -s5 -fPTZ -head -roundmin\n\
-      Midpoints between Saturn (-p6) and Chiron (-DD) for 100\n\
-      consecutive steps (-n100) with 5-day steps (-s5) with\n\
-      longitude in degree-sign format (-f..Z) rounded to minutes (-roundmin)\n\
-\n\
-    swetest -b5.1.2002 -p -house12.05,49.50,K -ut12:30\n\
-	Koch houses for a location in Germany at a given date and time\n\
-\n\
-    swetest -b1.1.2016  -g -fTlbR -p0123456789Dmte -hor -n366 -roundsec\n\
-	tabular ephemeris (all planets Sun - Pluto, Chiron, mean node, true node)\n\
-	in one horizontal row, tab-separated, for 366 days. For each planet\n\
-	list longitude, latitude and geocentric distance.\n";
+        static string infodate = @"
+  Date entry:
+  In the interactive mode, when you are asked for a start date,
+  you can enter data in one of the following formats:
+
+        1.2.1991        three integers separated by a nondigit character for
+                        day month year. Dates are interpreted as Gregorian
+                        after 4.10.1582 and as Julian Calendar before.
+                        Time is always set to midnight (0 h).
+                        If the three letters jul are appended to the date,
+                        the Julian calendar is used even after 1582.
+                        If the four letters greg are appended to the date,
+                        the Gregorian calendar is used even before 1582.
+
+        j2400123.67     the letter j followed by a real number, for
+                        the absolute Julian daynumber of the start date.
+                        Fraction .5 indicates midnight, fraction .0
+                        indicates noon, other times of the day can be
+                        chosen accordingly.
+
+        <RETURN>        repeat the last entry
+        
+        .               stop the program
+
+        +20             advance the date by 20 days
+
+        -10             go back in time 10 days";
+        static string infoexamp = @"
+
+  Examples:
+
+    swetest -p2 -b1.12.1900 -n15 -s2
+    ephemeris of Mercury (-p2) starting on 1 Dec 1900,
+    15 positions (-n15) in two-day steps (-s2)
+
+    swetest -p2 -b1.12.1900 -n15 -s2 -fTZ -roundsec -g, -head
+    same, but output format =  date and zodiacal position (-fTZ),
+    separated by comma (-g,) and rounded to seconds (-roundsec),
+    without header (-head).
+
+    swetest -ps -xs433 -b1.12.1900
+    position of asteroid 433 Eros (-ps -xs433)
+
+    swetest -pf -xfAldebaran -b1.1.2000
+    position of fixed star Aldebaran 
+
+    swetest -p1 -d0 -b1.12.1900 -n10 -fPTl -head
+    angular distance of moon (-p1) from sun (-d0) for 10
+    consecutive days (-n10).
+
+    swetest -p6 -DD -b1.12.1900 -n100 -s5 -fPTZ -head -roundmin
+      Midpoints between Saturn (-p6) and Chiron (-DD) for 100
+      consecutive steps (-n100) with 5-day steps (-s5) with
+      longitude in degree-sign format (-f..Z) rounded to minutes (-roundmin)
+
+    swetest -b5.1.2002 -p -house12.05,49.50,K -ut12:30
+	Koch houses for a location in Germany at a given date and time
+
+    swetest -b1.1.2016  -g -fTlbR -p0123456789Dmte -hor -n366 -roundsec
+	tabular ephemeris (all planets Sun - Pluto, Chiron, mean node, true node)
+	in one horizontal row, tab-separated, for 366 days. For each planet
+	list longitude, latitude and geocentric distance.";
         #endregion
 
         /**************************************************************/
@@ -646,10 +646,12 @@ namespace SweTest
         const char DIFF_MIDP = 'D';
         const int MODE_HOUSE = 1;
         const int MODE_LABEL = 2;
+        const int MODE_AYANAMSA = 4;
 
         const int SEARCH_RANGE_LUNAR_CYCLES = 20000;
 
         static int OUTPUT_EXTRA_PRECISION = 0;
+        static int LEN_SOUT = 1000; // length of output string variable
 
         static string se_pname = String.Empty;
         static string[] zod_nam = new String[]{"ar", "ta", "ge", "cn", "le", "vi",
@@ -659,7 +661,7 @@ namespace SweTest
         static string sastno = "433";
         static string shyp = "1";
         //static char *dms(double x, int32 iflag);
-        //static int make_ephemeris_path(int32 iflag, char *argv0, char *ephepath);
+        //static int make_ephemeris_path(char *argv0, char *ephepath);
         //static int letter_to_ipl(int letter);
         //static int print_line(int mode, AS_BOOL is_first);
         //static int do_special_event(double tjd, int32 ipl, char* star, int32 special_event, int32 special_mode, double* geopos, double* datm, double* dobs, char* serr);
@@ -671,6 +673,7 @@ namespace SweTest
         //#if MSDOS
         //static int cut_str_any(char *s, char *cutlist, char *cpos[], int nmax);
         //#endif
+        //static int32 call_swe_fixstar(char *star, double te, int32 iflag, double *x, char *serr);
 
         /* globals shared between main() and print_line() */
         static string fmt = "PLBRS";
@@ -711,6 +714,7 @@ namespace SweTest
         static double tjd = 2415020.5;
         static Int32 nstep = 1, istep;
         static Int32 search_flag = 0;
+        //static char sout[LEN_SOUT];
         static string sout = String.Empty;
         static Int32 whicheph = SwissEph.SEFLG_SWIEPH;
         static char psp;
@@ -718,12 +722,15 @@ namespace SweTest
         static Int32 disccenter = 0;
         static string ephepath = String.Empty;
         static Int32 discbottom = 0;
+        static Int32 hindu = 0;
         /* for test of old models only */
         static string astro_models;
         static bool do_set_astro_models = false;
         //static char smod[2000];
         static string smod;
         static bool inut = false; /* for Astrodienst internal feature */
+        static bool have_gap_parameter = false;
+        static bool use_swe_fixstar2 = false;
 
         const int SP_LUNAR_ECLIPSE = 1;
         const int SP_SOLAR_ECLIPSE = 2;
@@ -749,7 +756,7 @@ namespace SweTest
         {
             string sdate_save = String.Empty;
             string s1 = String.Empty, s2 = String.Empty;
-            string sp/*, sp2*/; int spi, sp2i;
+            string sp; int spi, sp2i, sp2;
             char spno;
             string plsel = PLSEL_D;
             //#if HPUNIX
@@ -774,6 +781,7 @@ namespace SweTest
             bool with_glp = false;
             bool with_header_always = false;
             bool do_ayanamsa = false;
+            bool no_speed = false;
             Int32 sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
             double t2, tstep = 1, thour = 0;
             double delt;
@@ -970,6 +978,10 @@ namespace SweTest
                     {
                         iflag |= SwissEph.SEFLG_SPEED;
                     }
+                    else if (String.Compare(argv[i], "-nospeed") == 0)
+                    {
+                        no_speed = true;
+                    }
                     else if (argv[i].StartsWith("-testaa"))
                     {
                         whicheph = SwissEph.SEFLG_JPLEPH;
@@ -1075,6 +1087,7 @@ namespace SweTest
                     }
                     else if (String.Compare(argv[i], "-hindu") == 0)
                     {
+                        hindu = 1;
                         norefrac = 1;
                         disccenter = 1;
                     }
@@ -1175,21 +1188,25 @@ namespace SweTest
                         /* name or number of fixed star */
                         star = argv[i].Substring(2);
                     }
+                    else if (argv[i].StartsWith("-nut"))
+                    {
+                        inut = true;
+                    }
                     else if (argv[i].StartsWith("-n"))
                     {
                         nstep = int.Parse(argv[i].Substring(2));
                         if (nstep == 0)
                             nstep = 20;
                     }
-                    else if (argv[i].StartsWith("-inut"))
-                    {
-                        inut = true;
-                    }
                     else if (argv[i].StartsWith("-i"))
                     {
                         iflag_f = int.Parse(argv[i].Substring(2));
                         if ((iflag_f & SwissEph.SEFLG_XYZ) != 0)
                             fmt = "PX";
+                    }
+                    else if (argv[i].StartsWith("-swefixstar2"))
+                    {
+                        use_swe_fixstar2 = true;
                     }
                     else if (argv[i].StartsWith("-s"))
                     {
@@ -1220,6 +1237,7 @@ namespace SweTest
                     }
                     else if (argv[i].StartsWith("-g"))
                     {
+                        have_gap_parameter = true;
                         gap = argv[i].Substring(2);
                         if (String.IsNullOrEmpty(gap)) gap = "\t";
                     }
@@ -1253,7 +1271,13 @@ namespace SweTest
                         sp = argv[i].Length > 2 ? argv[i].Substring(2, 1) : String.Empty;
                         if (sp == "c" || sp == String.Empty)
                         {
-                            Console.Write(infocmd0);
+                            string si0 = infocmd0;
+                            sout = sweph.swe_version();
+                            //strcpy(si0, infocmd0);
+                            sp2 = C.strstr(si0, "Version:");
+                            if (sp2 >= 0 && si0.Length - sp2 > 10 + C.strlen(sout))
+                                si0 = si0.Substring(0, sp2 + 9) + sout + si0.Substring(sp2 + 9 + sout.Length);
+                            Console.Write(si0);
                             Console.Write(infocmd1);
                             Console.Write(infocmd2);
                             Console.Write(infocmd3);
@@ -1291,29 +1315,35 @@ namespace SweTest
                 {
                     ipl = letter_to_ipl(string.IsNullOrEmpty(plsel) ? '\0' : plsel[0]);
                     if (plsel == "f")
+                    {
                         ipl = SwissEph.SE_FIXSTAR;
+                    }
                     else
+                    {
+                        if (plsel == "s")
+                            ipl = C.atoi(sastno) + 10000;
                         star = String.Empty;
+                    }
                     if (special_event == SP_OCCULTATION && ipl == 1)
                         ipl = 2; /* no occultation of moon by moon */
                 }
                 if (!string.IsNullOrEmpty(stimein))
                 {
+                    t = 0;
                     if ((spi = stimein.IndexOf(':')) >= 0)
                     {
-                        s1 = String.Concat(stimein.Substring(0, spi), ".", stimein.Substring(spi + 1));
-                        if ((spi = s1.IndexOf(':')) >= 0)
+                        if ((sp2i = stimein.IndexOf(':', spi + 1)) >= 0)
                         {
-                            s1 = String.Concat(s1.Substring(0, spi), s1.Substring(spi + 1));
+                            t += C.atof(stimein.Substring(sp2i + 1)) / 60.0;
                         }
+                        t += C.atof(stimein.Substring(spi + 1));
+                        t /= 60.0;
                     }
-                    thour = double.Parse(s1);
-                    thour += (thour < 0 ? -.00005 : .00005);
-                    /* h.mmss -> decimal */
-                    t = (thour % 1) * 100;
-                    j = (int)t;
-                    t = (int)((t % 1.0) * 100);
-                    thour = (int)thour + j / 60.0 + t / 3600.0;
+                    if (C.atoi(stimein) < 0)
+                        t = -t;
+                    t += C.atoi(stimein);
+                    //t += 0.0000000001;
+                    thour = t;
                 }
                 //#if HPUNIX
                 //  gethostname (hostname, 80);
@@ -1334,11 +1364,11 @@ namespace SweTest
                     }
                 }
                 iflag = (iflag & ~SEFLG_EPHMASK) | whicheph;
-                if (fmt.IndexOfAny("SsQ".ToCharArray()) >= 0 && (iflag & SwissEph.SEFLG_SPEED3) == 0)
+                if (fmt.IndexOfAny("SsQ".ToCharArray()) >= 0 && (iflag & SwissEph.SEFLG_SPEED3) == 0 && !no_speed)
                     iflag |= SwissEph.SEFLG_SPEED;
                 if (String.IsNullOrEmpty(ephepath))
                 {
-                    if (make_ephemeris_path(iflag, argv[0], ref ephepath) == SwissEph.ERR)
+                    if (make_ephemeris_path(argv[0], ref ephepath) == SwissEph.ERR)
                     {
                         iflag = (iflag & ~SwissEph.SEFLG_EPHMASK) | SwissEph.SEFLG_MOSEPH;
                         whicheph = SwissEph.SEFLG_MOSEPH;
@@ -1354,10 +1384,10 @@ namespace SweTest
                     sweph.swe_set_astro_models(astro_models, iflag); /* secret test feature for dieter */
                     sweph.swe_get_astro_models(astro_models, out smod, iflag);
                 }
-#if N0
-  if (inut) /* Astrodienst internal feature */
-    sweph.swe_set_interpolate_nut(true);
-#endif
+                //#if 1
+                if (inut) /* Astrodienst internal feature */
+                    sweph.swe_set_interpolate_nut(true);
+                //#endif
                 if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0 || do_ayanamsa)
                     sweph.swe_set_sid_mode(sid_mode, 0, 0);
                 geopos[0] = top_long;
@@ -1551,12 +1581,17 @@ namespace SweTest
                                 Console.Write(" greg.");
                             else
                                 Console.Write(" jul.");
-                            t2 = jut + (jut < 0 ? -0.5 : 0.5) / 3600.0;
-                            printf("  % 2d:", (int)t2);
+                            t2 = jut + 0.5 / 3600000.0; // rounding to millisec
+                            printf("  % 2d:", (int)t2); // hour
                             t2 = (t2 - (Int32)t2) * 60;
-                            printf("%02d:", (int)t2);
+                            printf("%02d:", (int)t2);  // min
                             t2 = (t2 - (Int32)t2) * 60;
-                            printf("%02d", (int)t2);
+                            printf("%02d", (int)t2); // sec
+                            t2 = (t2 - (Int32)t2) * 1000;
+                            if ((Int32)t2 > 0)
+                            {
+                                printf(".%03d", (int)t2); // millisec, if > 0
+                            }
                             if (universal_time)
                             {
                                 if ((time_flag & BIT_TIME_LMT) != 0)
@@ -1566,7 +1601,7 @@ namespace SweTest
                             }
                             else
                             {
-                                printf(" ET");
+                                printf(" TT");
                             }
                             printf("\t\tversion %s", sweph.swe_version());
                         }
@@ -1653,10 +1688,15 @@ namespace SweTest
                                 printf("   error in swe_get_ayanamsa_ex(): %s\n", serr);
                                 return 1;
                             }
+#if N0
                             Console.Write("Ayanamsa");
                             Console.Write(gap);
                             Console.Write(dms(daya, round_flag));
                             Console.Write("\n");
+#else
+                            x[0] = daya;
+                            print_line(MODE_AYANAMSA, true);
+#endif
                             /*printf("Ayanamsa%s%s\n", gap, dms(daya, round_flag));*/
                             continue;
                         }
@@ -1724,7 +1764,7 @@ namespace SweTest
                                 iflag = iflag_f;
                             if (ipl == SwissEph.SE_FIXSTAR)
                             {
-                                iflgret = sweph.swe_fixstar(ref star, te, iflag, x, ref serr);
+                                iflgret = call_swe_fixstar(ref star, te, iflag, x, ref serr);
                                 /* magnitude, etc. */
                                 if (iflgret != SwissEph.ERR && fmt.IndexOf('=') >= 0)
                                 {
@@ -1773,6 +1813,16 @@ namespace SweTest
                                 x[0] *= 86400; /* in seconds */;
                                 x[1] = x[2] = x[3] = 0;
                                 se_pname = "Time Equ.";
+                            }
+                            if (psp == 'b')
+                            {/* ayanamsha */
+                                if (sweph.swe_get_ayanamsa_ex(te, iflag, out (x[0]), ref serr) == SwissEph.ERR)
+                                {
+                                    printf("   error in swe_get_ayanamsa_ex(): %s\n", serr);
+                                    iflgret = -1;
+                                }
+                                x[1] = 0;
+                                se_pname = "Ayanamsha";
                             }
                             if (iflgret < 0)
                             {
@@ -1827,7 +1877,7 @@ namespace SweTest
                             {
                                 iflag2 = iflag | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(ref star, te, iflag2, xequ, ref serr);
+                                    iflgret = call_swe_fixstar(ref star, te, iflag2, xequ, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xequ, ref serr);
                                 if (diff_mode != 0)
@@ -1859,7 +1909,7 @@ namespace SweTest
                                 /* first, get topocentric equatorial positions */
                                 iflgt = whicheph | SwissEph.SEFLG_EQUATORIAL | SwissEph.SEFLG_TOPOCTR;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(ref star, te, iflgt, xt, ref serr);
+                                    iflgret = call_swe_fixstar(ref star, te, iflgt, xt, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflgt, xt, ref serr);
                                 /* to azimuth/height */
@@ -1897,7 +1947,7 @@ namespace SweTest
                             {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(ref star, te, iflag2, xcart, ref serr);
+                                    iflgret = call_swe_fixstar(ref star, te, iflag2, xcart, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xcart, ref serr);
                                 if (diff_mode != 0)
@@ -1919,7 +1969,7 @@ namespace SweTest
                             {
                                 iflag2 = iflag | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_EQUATORIAL;
                                 if (ipl == SwissEph.SE_FIXSTAR)
-                                    iflgret = sweph.swe_fixstar(ref star, te, iflag2, xcartq, ref serr);
+                                    iflgret = call_swe_fixstar(ref star, te, iflag2, xcartq, ref serr);
                                 else
                                     iflgret = sweph.swe_calc(te, ipl, iflag2, xcartq, ref serr);
                                 if (diff_mode != 0)
@@ -2084,7 +2134,7 @@ namespace SweTest
                     }
                 }             /* while 1 */
                               /* close open files and free allocated space */
-                end_main:
+            end_main:
                 if (do_set_astro_models)
                 {
                     printf(smod);
@@ -2106,6 +2156,14 @@ namespace SweTest
                     e.File = new System.IO.FileStream(f, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
                 }
             }
+        }
+
+        static Int32 call_swe_fixstar(ref string star, double te, Int32 iflag, double[] x, ref string serr)
+        {
+            if (use_swe_fixstar2)
+                return sweph.swe_fixstar2(ref star, te, iflag, x, ref serr);
+            else
+                return sweph.swe_fixstar(ref star, te, iflag, x, ref serr);
         }
 
         /* This function calculates the geocentric relative distance of a planet,
@@ -2174,6 +2232,7 @@ namespace SweTest
             string pnam = string.Empty;
             bool is_house = ((mode & MODE_HOUSE) != 0);
             bool is_label = ((mode & MODE_LABEL) != 0);
+            bool is_ayana = ((mode & MODE_AYANAMSA) != 0);
             Int32 iflgret, dar;
             // build planet name column, just in case
             if (is_house)
@@ -2211,6 +2270,7 @@ namespace SweTest
             {
                 sp = fmt[spi];
                 if (is_house && "bBsSrRxXuUQnNfFj+-*/=".IndexOf(sp) >= 0) continue;
+                if (is_ayana && "bBsSrRxXuUQnNfFj+-*/=".IndexOf(sp) >= 0) continue;
                 //if (sp != fmt)
                 if (spi > 0)
                     Console.Write(gap);
@@ -2265,6 +2325,10 @@ namespace SweTest
                             {
                                 printf("%-15s", hs_nam[ipl - nhouses]);
                             }
+                        }
+                        else if (is_ayana)
+                        {
+                            printf("Ayanamsha       ");
                         }
                         else if (diff_mode == DIFF_DIFF)
                         {
@@ -2326,7 +2390,9 @@ namespace SweTest
                         break;
                     case 'L':
                         if (is_label) { printf(slon); break; }
-                        if (psp == 'q' || psp == 'y') { /* delta t or time equation */
+                        if (/*!string.IsNullOrEmpty(psp) &&*/ (psp == 'q' || psp == 'y'))
+                        { /* delta t or time equation */
+                            //if (psp == 'q' || psp == 'y') { /* delta t or time equation */
                             printf("%# 11.7f", x[0]);
                             printf("s");
                             break;
@@ -2825,7 +2891,7 @@ namespace SweTest
                 s1 = C.sprintf(".%04d", k);
             }
             s += s1;
-            return_dms:;
+        return_dms:;
             int spi;
             if (sgn < 0)
             {
@@ -2862,6 +2928,7 @@ namespace SweTest
                 case 'q': /* swetest: delta t */
                 case 'y': /* swetest: time equation */
                 case 'x': /* swetest: sidereal time */
+                case 'b': /* swetest: ayanamsha */
                 case 's': /* swetest: an asteroid, with number given in -xs[number] */
                 case 'z': /* swetest: a fictitious body, number given in -xz[number] */
                 case 'd': /* swetest: default (main) factors 0123456789mtABC */
@@ -2912,14 +2979,29 @@ namespace SweTest
             return SwissEph.OK;
         }
 
-        static void print_rise_set_line(double trise, double tset, double[] geopos, ref string serr)
+        static void insert_gap_string_for_tabs(ref string sout, string gap)
+        {
+            //char* sp;
+            //char s[LEN_SOUT];
+            //if (!have_gap_parameter)
+            //    return;
+            //while ((sp = strchr(sout, '\t')) != NULL && strlen(sout) + strlen(gap) < LEN_SOUT) {
+            //    strcpy(s, sp + 1);
+            //    strcpy(sp, gap);
+            //    strcat(sp, s);
+            //}
+            sout = sout?.Replace("\t", gap);
+        }
+
+        static int print_rise_set_line(double trise, double tset, double[] geopos, ref string serr)
         {
             double t0;
-            int retc;
+            int retc = SwissEph.OK;
             sout = string.Empty;
             if (trise != 0) retc = ut_to_lmt_lat(trise, geopos, out trise, ref serr);
             if (tset != 0) retc = ut_to_lmt_lat(tset, geopos, out tset, ref serr);
             sout = "rise     ";
+            if (have_gap_parameter) sout += "\t";  // C.sprintf(sout + strlen(sout), "\t");
             if (trise == 0)
             {
                 sout += "         -                     ";
@@ -2930,6 +3012,7 @@ namespace SweTest
                 sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
             }
             sout += "set      ";
+            if (have_gap_parameter) sout += "\t";  // C.sprintf(sout + strlen(sout), "\t");
             if (tset == 0)
             {
                 sout += "         -                     ";
@@ -2941,21 +3024,34 @@ namespace SweTest
             }
             if (trise != 0 && tset != 0)
             {
+                if (have_gap_parameter) sout += "\t";  // C.sprintf(sout + strlen(sout), "\t");
+                sout += "dt =";
+                if (have_gap_parameter) sout += "\t";  // C.sprintf(sout + strlen(sout), "\t");
                 t0 = (tset - trise) * 24;
-                sout += C.sprintf("dt = %s", hms(t0, BIT_LZEROES));
+                sout += C.sprintf("%s", hms(t0, BIT_LZEROES));
             }
             sout += "\n";
+            if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
             do_printf(sout);
+            return retc;
         }
 
-        static Int32 call_rise_set(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
+        static Int32 call_rise_set(double t_ut, Int32 ipl, string star, Int32 whicheph, double[] geopos, ref string serr)
         {
             int ii, rval, loop_count;
             Int32 rsmi = 0;
+            double dayfrac = 0.0001;
             double[] tret = new double[10]; double trise = 0, tset = 0, tnext = 0, tret1sv = 0;
             bool do_rise, do_set;
             bool last_was_empty = false;
             Int32 retc = SwissEph.OK;
+            int rsmior = 0;
+            if (norefrac != 0) rsmior |= SwissEph.SE_BIT_NO_REFRACTION;
+            if (disccenter != 0) rsmior |= SwissEph.SE_BIT_DISC_CENTER;
+            if (discbottom != 0) rsmior |= SwissEph.SE_BIT_DISC_BOTTOM;
+            if (hindu != 0) rsmior |= SwissEph.SE_BIT_HINDU_RISING;
+            if (Math.Abs(geopos[1]) < 60 && ipl >= SwissEph.SE_SUN && ipl <= SwissEph.SE_PLUTO)
+                dayfrac = 0.01;
             sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
             tnext = t_ut;
@@ -2963,6 +3059,9 @@ namespace SweTest
             // the object might become circumpolar, or never rise at all.
             while (special_event == SP_RISE_SET && tnext < t_ut + nstep)
             {
+                // the following 'if' avoids unnecessary calculations for circumpolar 
+                // objects. even without it, the output would be correct, but 
+                // could be considerably slower.
                 if (last_was_empty && string.IsNullOrEmpty(star))
                 {
                     rval = sweph.swe_calc_ut(tnext, ipl, whicheph | SwissEph.SEFLG_EQUATORIAL, tret, ref serr);
@@ -2979,10 +3078,7 @@ namespace SweTest
                     }
                 }
                 /* rising */
-                rsmi = SwissEph.SE_CALC_RISE;
-                if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
-                if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
+                rsmi = SwissEph.SE_CALC_RISE | rsmior;
                 rval = sweph.swe_rise_trans(tnext, ipl, star, whicheph, rsmi, geopos, datm[0], datm[1], ref trise, ref serr);
                 if (rval == SwissEph.ERR)
                 {
@@ -2991,12 +3087,10 @@ namespace SweTest
                 }
                 do_rise = (rval == SwissEph.OK);
                 /* setting */
-                rsmi = SwissEph.SE_CALC_SET;
-                if (norefrac != 0) rsmi |= SwissEph.SE_BIT_NO_REFRACTION;
-                if (disccenter != 0) rsmi |= SwissEph.SE_BIT_DISC_CENTER;
-                if (discbottom != 0) rsmi |= SwissEph.SE_BIT_DISC_BOTTOM;
+                rsmi = SwissEph.SE_CALC_SET | rsmior;
                 do_set = false;
                 loop_count = 0;
+                //tnext = trise; // dieter 14-feb-17
                 while (!do_set && loop_count < 2)
                 {
                     rval = sweph.swe_rise_trans(tnext, ipl, star, whicheph, rsmi, geopos, datm[0], datm[1], ref tset, ref serr);
@@ -3019,28 +3113,33 @@ namespace SweTest
                 }
                 if (do_rise && do_set)
                 {
-                    print_rise_set_line(trise, tset, geopos, ref serr);
+                    rval = print_rise_set_line(trise, tset, geopos, ref serr);
                     last_was_empty = false;
-                    tnext = tset + 0.0001;
+                    tnext = tset + dayfrac;
                 }
                 else if (do_rise && !do_set)
                 {
-                    print_rise_set_line(trise, 0, geopos, ref serr);
+                    rval = print_rise_set_line(trise, 0, geopos, ref serr);
                     last_was_empty = false;
-                    tnext = trise + 0.0001;
+                    tnext = trise + dayfrac;
                 }
                 else if (do_set && !do_rise)
                 {
-                    tnext = tset + 0.0001;
-                    print_rise_set_line(0, tset, geopos, ref serr);
+                    tnext = tset + dayfrac;
+                    rval = print_rise_set_line(0, tset, geopos, ref serr);
                     last_was_empty = false;
                 }
                 else
                 { // neither rise nor set 
                   // for sequences of days without rise or set, the line '-   -' is printed only once.
-                    if (!last_was_empty) print_rise_set_line(0, 0, geopos, ref serr);
+                    if (!last_was_empty) rval = print_rise_set_line(0, 0, geopos, ref serr);
                     tnext += 1;
                     last_was_empty = true;
+                }
+                if (rval == SwissEph.ERR)
+                {
+                    do_printf(serr);
+                    Environment.Exit(0);
                 }
                 if (nstep == 1) break;
             }
@@ -3087,12 +3186,13 @@ namespace SweTest
                     do_printf(sout);
                 }
             }
+            if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
             return retc;
         }
 
         static Int32 call_lunar_eclipse(double t_ut, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
         {
-            int i, ii, retc, eclflag, ecl_type = 0;
+            int i, ii, retc = SwissEph.OK, eclflag, ecl_type = 0;
             int ihou, imin, isec, isgn;
             double dfrc, dt; double[] attr = new double[30];
             string s1 = string.Empty, sout_short = string.Empty, sfmt = string.Empty;
@@ -3157,7 +3257,14 @@ namespace SweTest
                         for (i = 0; i < 10; i++)
                         {
                             if (tret[i] != 0)
-                                retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
+                            {
+                                retc = ut_to_lmt_lat(tret[i], geopos, out tret[i], ref serr);
+                                if (retc == SwissEph.ERR)
+                                {
+                                    do_printf(serr);
+                                    return SwissEph.ERR;
+                                }
+                            }
                         }
                     }
                     t_ut = tret[0];
@@ -3190,30 +3297,37 @@ namespace SweTest
                     sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f\tsaros %d/%d\t%.6f\tdt=%.2f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[0], attr[1], (int)attr[9], (int)attr[10], t_ut, sweph.swe_deltat(t_ut) * 86400);
                     /* second line:
                      * eclipse times, penumbral, partial, total begin and end */
+                    if (have_gap_parameter) sout += "\t";
                     if ((eclflag & SwissEph.SE_ECL_PENUMBBEG_VISIBLE) != 0)
                         sout += C.sprintf("  %s ", hms_from_tjd(tret[6]));
                     else
                         sout += ("      -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if ((eclflag & SwissEph.SE_ECL_PARTBEG_VISIBLE) != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[2]));
                     else
                         sout += ("    -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if ((eclflag & SwissEph.SE_ECL_TOTBEG_VISIBLE) != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[4]));
                     else
                         sout += ("    -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if ((eclflag & SwissEph.SE_ECL_TOTEND_VISIBLE) != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[5]));
                     else
                         sout += ("    -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if ((eclflag & SwissEph.SE_ECL_PARTEND_VISIBLE) != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[3]));
                     else
                         sout += ("    -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if ((eclflag & SwissEph.SE_ECL_PENUMBEND_VISIBLE) != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[7]));
                     else
                         sout += ("    -         ");
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                     sout += ("\n");
                     /* global lunar eclipse */
@@ -3252,7 +3366,14 @@ namespace SweTest
                         for (i = 0; i < 10; i++)
                         {
                             if (tret[i] != 0)
-                                retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
+                            {
+                                retc = ut_to_lmt_lat(tret[i], geopos, out tret[i], ref serr);
+                                if (retc == SwissEph.ERR)
+                                {
+                                    do_printf(serr);
+                                    return SwissEph.ERR;
+                                }
+                            }
                         }
                     }
                     t_ut = tret[0];
@@ -3265,24 +3386,31 @@ namespace SweTest
                     sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f\tsaros %d/%d\t%.6f\tdt=%.2f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[0], attr[1], (int)attr[9], (int)attr[10], t_ut, sweph.swe_deltat_ex(t_ut, whicheph, ref serr) * 86400);
                     /* second line:
                      * eclipse times, penumbral, partial, total begin and end */
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("  %s ", hms_from_tjd(tret[6]));
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[2] != 0)
                         sout = C.sprintf("%s ", hms_from_tjd(tret[2]));
                     else
                         sout += ("   -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[4] != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[4]));
                     else
                         sout += ("   -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[5] != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[5]));
                     else
                         sout += ("   -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[3] != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[3]));
                     else
                         sout += ("   -         ");
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("%s", hms_from_tjd(tret[7]));
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                     sout += "\n";
                     if ((special_mode & SP_MODE_HOCAL) != 0)
@@ -3291,17 +3419,22 @@ namespace SweTest
                         sout = C.sprintf("\"%04d %02d %02d %02d.%02d %d\",\n", jyear, jmon, jday, ihou, imin, ecl_type);
                     }
                 }
+                if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                 if (short_output)
+                {
                     do_printf(sout_short);
+                }
                 else
+                {
                     do_printf(sout);
+                }
             }
             return SwissEph.OK;
         }
 
         static Int32 call_solar_eclipse(double t_ut, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
         {
-            int i, ii, retc, eclflag, ecl_type = 0;
+            int i, ii, retc = SwissEph.OK, eclflag, ecl_type = 0;
             double dt; double[] tret = new double[30], attr = new double[30], geopos_max = new double[3];
             string s1 = string.Empty, s2 = string.Empty, sout_short = string.Empty;
             bool has_found = false;
@@ -3346,6 +3479,7 @@ namespace SweTest
                             has_found = true;
                             ecl_type = ECL_SOL_PARTIAL;
                         }
+                        if (have_gap_parameter) sout += "\t";
                         if (!has_found)
                         {
                             ii--;
@@ -3358,7 +3492,14 @@ namespace SweTest
                                 for (i = 0; i < 10; i++)
                                 {
                                     if (tret[i] != 0)
-                                        retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
+                                    {
+                                        retc = ut_to_lmt_lat(tret[i], geopos, out tret[i], ref serr);
+                                        if (retc == SwissEph.ERR)
+                                        {
+                                            do_printf(serr);
+                                            return SwissEph.ERR;
+                                        }
+                                    }
                                 }
                             }
                             t_ut = tret[0];
@@ -3367,21 +3508,41 @@ namespace SweTest
                             sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[8], attr[0], attr[2], (int)attr[9], (int)attr[10], t_ut);
                             sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, (dt % 1.0) * 60);
                             if ((eclflag & SwissEph.SE_ECL_1ST_VISIBLE) != 0)
+                            {
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[1]));
+                            }
                             else
-                                sout += ("   -         ");
+                            {
+                                sout += "   -         ";
+                            }
+                            if (have_gap_parameter) sout += "\t";
                             if ((eclflag & SwissEph.SE_ECL_2ND_VISIBLE) != 0)
+                            {
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[2]));
+                            }
                             else
-                                sout += ("   -         ");
+                            {
+                                sout += "   -         ";
+                            }
+                            if (have_gap_parameter) sout += "\t";
                             if ((eclflag & SwissEph.SE_ECL_3RD_VISIBLE) != 0)
+                            {
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[3]));
+                            }
                             else
-                                sout += ("   -         ");
+                            {
+                                sout += "   -         ";
+                            }
+                            if (have_gap_parameter) sout += "\t";
                             if ((eclflag & SwissEph.SE_ECL_4TH_VISIBLE) != 0)
+                            {
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[4]));
+                            }
                             else
-                                sout += ("   -         ");
+                            {
+                                sout += "   -         ";
+                            }
+                            if (have_gap_parameter) sout += "\t";
                             //#if 0
                             //      sprintf(sout + strlen(sout), "\t%d min %4.2f sec   %s %s %s %s", 
                             //                (int) dt, fmod(dt, 1) * 60, 
@@ -3392,6 +3553,7 @@ namespace SweTest
                             //#endif
                             sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                             sout += ("\n");
+                            if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                             do_printf(sout);
                         }
                     }
@@ -3428,19 +3590,28 @@ namespace SweTest
                     }
                     if ((eclflag & SwissEph.SE_ECL_NONCENTRAL) != 0 && 0 == (eclflag & SwissEph.SE_ECL_PARTIAL))
                         sout += ("non-central ");
+                    if (have_gap_parameter) sout += "\t";
                     sweph.swe_sol_eclipse_where(t_ut, whicheph, geopos_max, attr, ref serr);
                     if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                     {
                         for (i = 0; i < 10; i++)
                         {
                             if (tret[i] != 0)
-                                retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
+                            {
+                                retc = ut_to_lmt_lat(tret[i], geopos, out tret[i], ref serr);
+                                if (retc == SwissEph.ERR)
+                                {
+                                    do_printf(serr);
+                                    return SwissEph.ERR;
+                                }
+                            }
                         }
                     }
                     sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     sout_short = C.sprintf("%s\t%2d.%2d.%4d\t%s\t%.3f", sout, jday, jmon, jyear, hms(jut, 0), attr[8]);
                     sout += C.sprintf("%2d.%02d.%04d\t%s\t%f km\t%.4f/%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, 0), attr[3], attr[8], attr[0], attr[2], (int)attr[9], (int)attr[10], tret[0]);
                     sout += C.sprintf("\t%s ", hms_from_tjd(tret[2]));
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[4] != 0)
                     {
                         sout += C.sprintf("%s ", hms_from_tjd(tret[4]));
@@ -3449,6 +3620,7 @@ namespace SweTest
                     {
                         sout += ("   -         ");
                     }
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[5] != 0)
                     {
                         sout += C.sprintf("%s ", hms_from_tjd(tret[5]));
@@ -3457,7 +3629,9 @@ namespace SweTest
                     {
                         sout += ("   -         ");
                     }
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("%s", hms_from_tjd(tret[3]));
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                     sout += "\n";
                     s1 = dms(geopos_max[0], BIT_ROUND_MIN);
@@ -3493,9 +3667,14 @@ namespace SweTest
                     }
                     /*printf("len=%ld\n", strlen(sout));*/
                     if (short_output)
+                    {
                         do_printf(sout_short);
+                    }
                     else
+                    {
+                        if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                         do_printf(sout);
+                    }
                 }
             }
             return SwissEph.OK;
@@ -3503,7 +3682,7 @@ namespace SweTest
 
         static Int32 call_lunar_occultation(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
         {
-            int i, ii, ecl_type = 0, eclflag, retc;
+            int i, ii, ecl_type = 0, eclflag, retc = SwissEph.OK;
             double dt; double[] tret = new double[30], attr = new double[30], geopos_max = new double[3];
             string s1 = String.Empty, s2 = String.Empty;
             bool has_found = false;
@@ -3552,7 +3731,14 @@ namespace SweTest
                             for (i = 0; i < 10; i++)
                             {
                                 if (tret[i] != 0)
-                                    retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
+                                {
+                                    retc = ut_to_lmt_lat(tret[i], geopos, out tret[i], ref serr);
+                                    if (retc == SwissEph.ERR)
+                                    {
+                                        do_printf(serr);
+                                        return SwissEph.ERR;
+                                    }
+                                }
                             }
                         }
                         has_found = false;
@@ -3584,6 +3770,7 @@ namespace SweTest
                             else if ((eclflag & SwissEph.SE_ECL_OCC_END_DAYLIGHT) != 0)
                                 sout += ("(sunrise)"); /* occultation occurs during the day */
                         }
+                        if (have_gap_parameter) sout += "\t";
                         while (sout.Length < 17)
                             sout += (" ");
                         if (!has_found)
@@ -3601,18 +3788,22 @@ namespace SweTest
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[1]));
                             else
                                 sout += ("   -         ");
+                            if (have_gap_parameter) sout += "\t";
                             if ((eclflag & SwissEph.SE_ECL_2ND_VISIBLE) != 0)
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[2]));
                             else
                                 sout += ("   -         ");
+                            if (have_gap_parameter) sout += "\t";
                             if ((eclflag & SwissEph.SE_ECL_3RD_VISIBLE) != 0)
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[3]));
                             else
                                 sout += ("   -         ");
+                            if (have_gap_parameter) sout += "\t";
                             if ((eclflag & SwissEph.SE_ECL_4TH_VISIBLE) != 0)
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[4]));
                             else
                                 sout += ("   -         ");
+                            if (have_gap_parameter) sout += "\t";
                             //#if 0
                             //      sprintf(sout + strlen(sout), "\t%d min %4.2f sec   %s %s %s %s", 
                             //                (int) dt, fmod(dt, 1) * 60, 
@@ -3623,6 +3814,7 @@ namespace SweTest
                             //#endif
                             sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                             sout += ("\n");
+                            if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                             do_printf(sout);
                         }
                     }
@@ -3665,26 +3857,40 @@ namespace SweTest
                         sout += ("non-central ");
                     t_ut = tret[0];
                     sweph.swe_lun_occult_where(t_ut, ipl, star, whicheph, geopos_max, attr, ref serr);
+                    /* for (i = 0; i < 8; i++) {
+                      printf("attr[%d]=%.17f\n", i, attr[i]);
+                    } */
                     if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                     {
                         for (i = 0; i < 10; i++)
                         {
                             if (tret[i] != 0)
-                                retc = ut_to_lmt_lat(tret[i], geopos, out (tret[i]), ref serr);
+                            {
+                                retc = ut_to_lmt_lat(tret[i], geopos, out tret[i], ref serr);
+                                if (retc == SwissEph.ERR)
+                                {
+                                    do_printf(serr);
+                                    return SwissEph.ERR;
+                                }
+                            }
                         }
                     }
                     sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                     sout += C.sprintf("%2d.%02d.%04d\t%s\t%f km\t%f o/o\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[3], attr[0]);
                     sout += C.sprintf("\t%s ", hms_from_tjd(tret[2]));
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[4] != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[4]));
                     else
                         sout += ("   -         ");
+                    if (have_gap_parameter) sout += "\t";
                     if (tret[5] != 0)
                         sout += C.sprintf("%s ", hms_from_tjd(tret[5]));
                     else
                         sout += ("   -         ");
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("%s", hms_from_tjd(tret[3]));
+                    if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                     sout += "\n";
                     s1 = (dms(geopos_max[0], BIT_ROUND_MIN));
@@ -3700,9 +3906,10 @@ namespace SweTest
                         if (Math.Abs(tret[0] - t_ut) > 2)
                             do_printf("when_loc returns wrong date\n");
                         dt = (tret[3] - tret[2]) * 24 * 60;
-                        sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, (dt % 1.0) * 60);
+                        sout += C.sprintf("\t%d min %4.2f sec", (int)dt, C.fmod(dt, 1) * 60);
                     }
                     sout += ("\n");
+                    if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                     if ((special_mode & SP_MODE_HOCAL) != 0)
                     {
                         int ihou, imin, isec, isgn;
@@ -3764,9 +3971,9 @@ namespace SweTest
             do_printf(sout);
         }
 
-        static Int32 call_heliacal_event(double t_ut, Int32 ipl, string star, Int32 whicheph, Int32 special_mode, double[] geopos, double[] datm, double[] dobs, ref string serr)
+        static Int32 call_heliacal_event(double t_ut, Int32 ipl, string star, Int32 whicheph, double[] geopos, double[] datm, double[] dobs, ref string serr)
         {
-            int ii, retc, event_type = 0, retflag;
+            int ii, retc = SwissEph.OK, event_type = 0, retflag;
             double[] dret = new double[40]; double tsave1, tsave2 = 0;
             string obj_name;
             helflag |= whicheph;
@@ -3801,8 +4008,13 @@ namespace SweTest
                 if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                 {
                     retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
-                    retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
-                    retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                    if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
+                    if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                    if (retc == SwissEph.ERR)
+                    {
+                        do_printf(serr);
+                        return SwissEph.ERR;
+                    }
                 }
                 do_print_heliacal(dret, event_type, obj_name);
                 /* list all events within synodic cycle */
@@ -3821,8 +4033,13 @@ namespace SweTest
                         if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                         {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
-                            retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
-                            retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc == SwissEph.ERR)
+                            {
+                                do_printf(serr);
+                                return SwissEph.ERR;
+                            }
                         }
                         do_print_heliacal(dret, event_type, obj_name);
                         tsave1 = dret[0];
@@ -3855,8 +4072,13 @@ namespace SweTest
                         if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                         {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
-                            retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
-                            retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc == SwissEph.ERR)
+                            {
+                                do_printf(serr);
+                                return SwissEph.ERR;
+                            }
                         }
                         do_print_heliacal(dret, event_type, obj_name);
                     }
@@ -3873,8 +4095,13 @@ namespace SweTest
                         if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                         {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
-                            retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
-                            retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc == SwissEph.ERR)
+                            {
+                                do_printf(serr);
+                                return SwissEph.ERR;
+                            }
                         }
                         do_print_heliacal(dret, event_type, obj_name);
                     }
@@ -3891,8 +4118,13 @@ namespace SweTest
                         if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                         {
                             retc = ut_to_lmt_lat(dret[0], geopos, out (dret[0]), ref serr);
-                            retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
-                            retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[1], geopos, out (dret[1]), ref serr);
+                            if (retc != SwissEph.ERR) retc = ut_to_lmt_lat(dret[2], geopos, out (dret[2]), ref serr);
+                            if (retc == SwissEph.ERR)
+                            {
+                                do_printf(serr);
+                                return SwissEph.ERR;
+                            }
                         }
                         do_print_heliacal(dret, event_type, obj_name);
                         //if (false && ipl == SwissEph.SE_MERCURY) {
@@ -3911,7 +4143,7 @@ namespace SweTest
             /* risings, settings, meridian transits */
             if (special_event == SP_RISE_SET ||
                 special_event == SP_MERIDIAN_TRANSIT)
-                retc = call_rise_set(tjd, ipl, star, whicheph, special_mode, geopos, ref serr);
+                retc = call_rise_set(tjd, ipl, star, whicheph, geopos, ref serr);
             /* lunar eclipses */
             if (special_event == SP_LUNAR_ECLIPSE)
                 retc = call_lunar_eclipse(tjd, whicheph, special_mode, geopos, ref serr);
@@ -3923,7 +4155,7 @@ namespace SweTest
                 retc = call_lunar_occultation(tjd, ipl, star, whicheph, special_mode, geopos, ref serr);
             /* heliacal event */
             if (special_event == SP_HELIACAL)
-                retc = call_heliacal_event(tjd, ipl, star, whicheph, special_mode, geopos, datm, dobs, ref serr);
+                retc = call_heliacal_event(tjd, ipl, star, whicheph, geopos, datm, dobs, ref serr);
             return retc;
         }
 
@@ -3966,7 +4198,7 @@ namespace SweTest
          *   +                              on program drive
          *   +                              on drive C:
          */
-        static int make_ephemeris_path(Int32 iflg, string argv0, ref string path)
+        static int make_ephemeris_path(string argv0, ref string path)
         {
             int spi;
             char dirglue = SwissEph.DIR_GLUE;
