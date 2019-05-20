@@ -72,3 +72,54 @@
       name: Nuget
     - path: binaries
       name: Binary
+
+# Beta: tests + nuget to beta
+-
+  version: 2.7.1.{build}-beta
+  branches:
+    only:
+      - feature/version-2.07.01
+
+  environment:
+    packageVersion: 2.7.1
+
+  init:
+    - ps: $env:buildVersion = "$env:packageVersion.$env:appveyor_build_number"
+    - ps: $env:nugetVersion = "$env:packageVersion-beta-$env:appveyor_build_number"
+    - ps: Update-AppveyorBuild -Version $env:buildVersion
+
+  assembly_info:
+    patch: true
+    file: '**\AssemblyInfo.*'
+    assembly_version: '$(buildVersion)'
+    assembly_file_version: '$(buildVersion)'
+    assembly_informational_version: '$(nugetVersion)'
+
+  max_jobs: 1
+  image: Visual Studio 2017
+  configuration: Debug
+  before_build:
+    - ps: >-
+        nuget restore .\SwissEphNet.sln
+
+        dotnet restore .\SwissEphNet.sln
+
+        dotnet build .\SwissEphNet.sln -c Debug
+
+  build:
+    verbosity: minimal
+  after_build:
+    - ps: >-
+        dotnet pack .\SwissEphNet\SwissEphNet.csproj -c Debug
+
+        Get-ChildItem . -Recurse -Include "*.symbols.nupkg" | Remove-Item
+
+        .\make-dist.ps1
+
+#  test_script:
+#    - cmd: dotnet test .\Tests\SwissEphNet.Tests\
+  artifacts:
+    - path: SwissEphNet/bin/$(configuration)/*.nupkg
+      name: Nuget
+    - path: binaries
+      name: Binary
