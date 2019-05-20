@@ -115,7 +115,8 @@
         Get-ChildItem . -Recurse -Include "*.symbols.nupkg" | Remove-Item
 
         .\make-dist.ps1
-
+  
+  test: off
 #  test_script:
 #    - cmd: dotnet test .\Tests\SwissEphNet.Tests\
   artifacts:
