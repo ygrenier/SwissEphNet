@@ -6,13 +6,13 @@
     <RootNamespace>SwissEphNet</RootNamespace>
     <PackageId>SwissEphNet</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.6.0.25</Version>
+    <Version>2.7.1.0-beta</Version>
     <Authors>Yan Grenier</Authors>
     <Company>Yan Grenier</Company>
     <Product>SwissEphNet</Product>
     <Description>Swiss Ephemeris .Net portage</Description>
     <Copyright>Copyright © Yan Grenier 2014-2018</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/ygrenier/SwissEphNet/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ygrenier/SwissEphNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ygrenier/SwissEphNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -60,6 +60,7 @@
 - Update the code to the Swiss Ephemeris 2.02.01 version.
 </PackageReleaseNotes>
     <NeutralLanguage>Anglais</NeutralLanguage>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -77,5 +78,12 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <DefineConstants>$(DefineConstants);NET40;NOASMATTRIBUTES</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
   
 </Project>
