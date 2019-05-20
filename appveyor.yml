@@ -104,13 +104,13 @@
 
         dotnet restore .\SwissEphNet.sln
 
-        dotnet build .\SwissEphNet.sln -c $(configuration)
+        dotnet build .\SwissEphNet.sln -c Release
 
   build:
     verbosity: minimal
   after_build:
     - ps: >-
-        dotnet pack .\SwissEphNet\SwissEphNet.csproj -c $(configuration)
+        dotnet pack .\SwissEphNet\SwissEphNet.csproj -c Release
 
         Get-ChildItem . -Recurse -Include "*.symbols.nupkg" | Remove-Item
 
