@@ -1,6 +1,6 @@
 # Master branch: production
 -
-  version: 2.6.0.{build}
+  version: 2.7.1.{build}
   branches:
     only:
       - master
@@ -39,7 +39,7 @@
 
 # Develop: tests
 -
-  version: 2.6.0.{build}-dev
+  version: 2.7.1.{build}-dev
   branches:
     only:
       - develop

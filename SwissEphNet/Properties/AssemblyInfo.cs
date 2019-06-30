@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Yan Grenier")]
 [assembly: AssemblyProduct("SwissEpheNet")]
-[assembly: AssemblyCopyright("Copyright © Yan Grenier 2014-2017")]
+[assembly: AssemblyCopyright("Copyright © Yan Grenier 2014-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
@@ -27,6 +27,6 @@ using System.Runtime.InteropServices;
 [assembly: GuidAttribute("067b4733-56fd-46a1-81b5-0fd31d76e68f")]
 #endif
 
-[assembly: AssemblyVersion("2.6.0.23")]
-[assembly: AssemblyFileVersion("2.6.0.23")]
+[assembly: AssemblyVersion("2.7.1.2")]
+[assembly: AssemblyFileVersion("2.7.1.2")]
 #endif
