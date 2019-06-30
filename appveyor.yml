@@ -26,8 +26,8 @@
 
         .\make-dist.ps1
 
-  test_script:
-    - cmd: dotnet test .\Tests\SwissEphNet.Tests\
+#  test_script:
+#    - cmd: dotnet test .\Tests\SwissEphNet.Tests\
   artifacts:
     - path: SwissEphNet/bin/$(configuration)/*.nupkg
       name: Nuget
