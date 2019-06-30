@@ -51,6 +51,12 @@ namespace SwissEphNet
         }
 
         /// <summary>
+        /// Convert the pointer to an array
+        /// </summary>
+        public T[] ToArray()
+            => BaseArray != null ? BaseArray.Skip(BaseIndex).ToArray() : null;
+
+        /// <summary>
         /// Read value pointed by access
         /// </summary>
         public static implicit operator T(CPointer<T> array) {

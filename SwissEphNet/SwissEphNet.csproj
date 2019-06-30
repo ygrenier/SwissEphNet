@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.0;net40</TargetFrameworks>
@@ -6,18 +6,22 @@
     <RootNamespace>SwissEphNet</RootNamespace>
     <PackageId>SwissEphNet</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.6.0.25</Version>
+    <Version>2.7.1.2</Version>
     <Authors>Yan Grenier</Authors>
     <Company>Yan Grenier</Company>
     <Product>SwissEphNet</Product>
     <Description>Swiss Ephemeris .Net portage</Description>
-    <Copyright>Copyright © Yan Grenier 2014-2018</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/ygrenier/SwissEphNet/master/LICENSE</PackageLicenseUrl>
+    <Copyright>Copyright © Yan Grenier 2014-2019</Copyright>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/ygrenier/SwissEphNet</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ygrenier/SwissEphNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Swiss Ephemeris</PackageTags>
-    <PackageReleaseNotes>2.6.0.24:
+    <PackageReleaseNotes>2.7.1.2:
+- Update to version 2.07.1 of SwissEphemeris
+- Inlcude the PR #34 - swe_house_pos: parameter geolon is actually geolat - thanks to aleksamagicka
+
+2.6.0.24:
 - Include the PR #32 - Make fixed star name parameter ref  - thanks to aleksamagicka
 
 2.6.0.23:
@@ -31,35 +35,9 @@
 
 2.6.0.18:
 - Update the code to the Swiss Ephemeris 2.06.00 version.
-
-2.5.1.16:
-- Add .NETCore 5.0
-- Add PCL Profile 111
-- Add PCL Profile 259
-- Change PCL profile 136 to profile 328
-
-2.5.1.14:
-- Update package to .net Core
-
-
-2.5.1.13 :
-- Update the code to the Swiss Ephemeris 2.05.01 version.
-
-2.4.0.12 :
-- Bug fixes.
-
-
-2.4.0.11 :
-- Bug fix on the sideral calculation.
-
-2.4.0.10 :
-- Update the code to the Swiss Ephemeris 2.04.00 version.
-- Correct the code remove all static fields to permit multiple calculations with multiple SwissEph instances.
-
-2.2.1.9 :
-- Update the code to the Swiss Ephemeris 2.02.01 version.
 </PackageReleaseNotes>
     <NeutralLanguage>Anglais</NeutralLanguage>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -77,5 +55,12 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <DefineConstants>$(DefineConstants);NET40;NOASMATTRIBUTES</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
   
 </Project>

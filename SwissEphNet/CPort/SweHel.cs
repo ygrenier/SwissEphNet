@@ -828,7 +828,7 @@ namespace SwissEphNet.CPort
             CHANGEKO = (100 - 11.6 * mymin(6, altslim)) / 100;
             //if (0) {
             //  static int a = 0;
-            //  //if (a == 0)
+            //  if (a == 0)
             //    printf("bsk=%f %f\n", kOZret, AltS);
             //  a = 1;
             //}
@@ -1412,14 +1412,16 @@ namespace SwissEphNet.CPort
             return -16.57 - 2.5 * (Math.Log(Th) / log10);
         }
 
-        static string tolower_string(ref string str)
+        /* tolower star name, but not Bayer designation */
+        static string tolower_string_star(ref string str)
         {
             //char* sp;
-            //for (sp = str; *sp != '\0'; sp++)
+            //for (sp = str; *sp != '\0' && *sp != ','; sp++)
             //    *sp = tolower(*sp);
-            //return str;
-            str = str?.ToLower();
-            return str;
+            if (str == null) return null;
+            int p = str.IndexOf(',');
+            if (p < 0) return str.ToLower();
+            return str.Substring(0, p - 1).ToLower() + str.Substring(p);
         }
 
         /* Limiting magnitude in dark skies 
@@ -1436,7 +1438,7 @@ namespace SwissEphNet.CPort
             double sunra;
             for (i = 0; i < 7; i++)
                 dret[i] = 0;
-            tolower_string(ref ObjectName);
+            tolower_string_star(ref ObjectName);
             if (DeterObject(ObjectName) == SwissEph.SE_SUN)
             {
                 serr = "it makes no sense to call swe_vis_limit_mag() for the Sun";
@@ -1841,7 +1843,7 @@ namespace SwissEphNet.CPort
             /* note, the fixed stars functions rewrite the star name. The input string 
                may be too short, so we have to make sure we have enough space */
             strcpy_VBsafe(out ObjectName, ObjectNameIn);
-            tolower_string(ref ObjectName);
+            tolower_string_star(ref ObjectName);
             default_heliacal_parameters(datm, dgeo, dobs, helflag);
             SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
             retval = ObjectLoc(JDNDaysUT, dgeo, datm, "sun", 1, helflag, ref AziS, ref serr);
@@ -2875,14 +2877,15 @@ namespace SwissEphNet.CPort
 
         Int32 time_optimum_visibility(double tjd, double[] dgeo, double[] datm, double[] dobs, string ObjectName, Int32 helflag, ref double tret, ref string serr) {
             Int32 retval, retval_sv, i;
-            double t1, t2, vl1, vl2, d, vl, phot_scot_opic, phot_scot_opic_sv; double[] darr = new double[10];
+            double t1, t2, vl1, vl2, d, phot_scot_opic, phot_scot_opic_sv; double[] darr = new double[10];
+            //double vl;
             int t_has_changed;
             tret = tjd;
             retval = swe_vis_limit_mag(tjd, dgeo, datm, dobs, ObjectName, helflag, darr, ref serr);
             if (retval == SwissEph.ERR) return SwissEph.ERR;
             retval_sv = retval;
-            vl = darr[0] - darr[7];
-            vl = -1;
+            //vl = darr[0] - darr[7];
+            //vl = -1;
             t1 = tjd;
             t2 = tjd;
             vl1 = -1;
@@ -3349,7 +3352,7 @@ namespace SwissEphNet.CPort
             /* note, the fixed stars functions rewrite the star name. The input string 
                may be too short, so we have to make sure we have enough space */
             strcpy_VBsafe(out ObjectName, ObjectNameIn);
-            tolower_string(ref ObjectName);
+            tolower_string_star(ref ObjectName);
             default_heliacal_parameters(datm, dgeo, dobs, helflag);
             SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
             Planet = DeterObject(ObjectName);

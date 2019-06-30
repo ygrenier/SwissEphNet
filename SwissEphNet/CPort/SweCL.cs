@@ -594,6 +594,28 @@ namespace SwissEphNet.CPort
             return retflag;
         }
 
+        /*
+          double tjd_ut,       time, Jul. day UT 
+          int32 ipl,           planet number 
+          char* starname,      star name, must be NULL or ”” if not a star 
+          int32 ifl,           ephemeris flag 
+          double *geopos,      return array, 2 doubles, geo. long. and lat.
+                       eastern longitude is positive,
+                       western longitude is negative,
+                       northern latitude is positive,
+          double *attr,        return array, 20 doubles, see below 
+          char *serr           return error string 
+
+          array attr:
+          attr[0]              fraction of object's diameter covered by moon (magnitude)
+          attr[1]              ratio of lunar diameter to object's diameter
+          attr[2]              fraction of object's disc covered by moon (obscuration)
+          attr[3]              diameter of core shadow in km
+          attr[4]              azimuth of object at tjd
+          attr[5]              true altitude of object above horizon at tjd
+          attr[6]              apparent altitude of object above horizon at tjd
+          attr[7]              angular distance of moon from object in degrees
+         */
         public Int32 swe_lun_occult_where(
                 double tjd_ut,
                 Int32 ipl,
@@ -874,23 +896,11 @@ namespace SwissEphNet.CPort
         }
 
         Int32 calc_planet_star(double tjd_et, Int32 ipl, string starname, Int32 iflag, double[] x, ref string serr) {
-            int i;
             int retc = SwissEph.OK;
             if (String.IsNullOrEmpty(starname)) {
                 retc = SE.swe_calc(tjd_et, ipl, iflag, x, ref serr);
             } else {
-                if ((retc = SE.swe_fixstar(ref starname, tjd_et, iflag, x, ref serr)) == SwissEph.OK) {
-                    /* fixstars have the standard distance 1. 
-                     * in the occultation routines, this might lead to errors 
-                     * if interpreted as AU distance. To avoid this, we make it very high.
-                     */
-                    if ((iflag & SwissEph.SEFLG_XYZ) != 0) {
-                        for (i = 0; i < 3; i++)
-                            x[i] *= 1000000000;                                    
-                    } else {
-                        x[2] *= 1000000000;
-                    }
-                }
+                retc = SE.swe_fixstar(ref starname, tjd_et, iflag, x, ref serr);
             }
             return retc;
         }
@@ -2425,7 +2435,7 @@ namespace SwissEphNet.CPort
             double dt1 = 0, dt2 = 0, dtdiv, dtstart;
             double dadd2 = 1;
             double drad, dl;
-            bool is_partial = false;
+            //bool is_partial = false;
             Int32 iflag = SwissEph.SEFLG_TOPOCTR | ifl;
             Int32 iflaggeo = iflag & ~SwissEph.SEFLG_TOPOCTR;
             Int32 iflagcart = iflag | SwissEph.SEFLG_XYZ;
@@ -2442,7 +2452,7 @@ namespace SwissEphNet.CPort
             t = tjd_start;
             tjd = tjd_start;
         next_try:
-            is_partial = false;
+            //is_partial = false;
             if (calc_planet_star(t, ipl, starname, iflaggeo, ls, ref serr) == SwissEph.ERR)
                 return SwissEph.ERR;
             /* fixed stars with an ecliptic latitude > 7  or < -7 cannot have 
@@ -2593,7 +2603,7 @@ namespace SwissEphNet.CPort
             if (dctr > Math.Abs(rsminusrm))
             { /* partial, no 2nd and 3rd contact */
                 tret[2] = tret[3] = 0;
-                is_partial = true;
+                //is_partial = true;
             }
             else
             {
@@ -2659,7 +2669,7 @@ namespace SwissEphNet.CPort
                 }
                 tret[2] -= SE.swe_deltat_ex(tret[2], ifl, ref serr);
                 tret[3] -= SE.swe_deltat_ex(tret[3], ifl, ref serr);
-                is_partial = false;
+                //is_partial = false;
             }
             /* contacts 1 and 4 */
             dc[1] = rsplusrm - dctrmin;
@@ -2780,7 +2790,7 @@ namespace SwissEphNet.CPort
                     tret[6] = tjds;
             }
             /* note, circumpolar sun above horizon is not tested */
-            System.Diagnostics.Debug.WriteLine(is_partial); // Used only for prevent "not used variable" warning
+            //System.Diagnostics.Debug.WriteLine(is_partial); // Used only for prevent "not used variable" warning
             //if (!is_partial) {
                 if ((retc = swe_rise_trans(tret[1], SwissEph.SE_SUN, null, iflag, SwissEph.SE_CALC_RISE, geopos, 0, 0, ref tjdr, ref serr)) == SwissEph.ERR)
                     return SwissEph.ERR;
@@ -2920,8 +2930,8 @@ namespace SwissEphNet.CPort
          * double inalt;        * altitude of object in degrees *
          * double atpress;      * millibars (hectopascal) *
          * double attemp;       * degrees C *
-         * int32  calc_flag;	* either SE_CALC_APP_TO_TRUE or 
-         *                      *        SE_CALC_TRUE_TO_APP
+         * int32  calc_flag;	* either SE_APP_TO_TRUE or 
+         *                      *        SE_TRUE_TO_APP
          */
         public double swe_refrac(double inalt, double atpress, double attemp, Int32 calc_flag) {
             double a, refr;
@@ -3044,8 +3054,8 @@ namespace SwissEphNet.CPort
          * double atpress;      * millibars (hectopascal) *
          * double lapse_rate;    * (dT/dh) [deg K/m]
          * double attemp;       * degrees C *
-         * int32  calc_flag;    * either SE_CALC_APP_TO_TRUE or
-         *                      *        SE_CALC_TRUE_TO_APP
+         * int32  calc_flag;    * either SE_APP_TO_TRUE or
+         *                      *        SE_TRUE_TO_APP
          *
          * function returns:
          * case 1, conversion from true altitude to apparent altitude
@@ -4128,6 +4138,159 @@ namespace SwissEphNet.CPort
             return rdi;
         }
 
+        static double get_sun_rad_plus_refr(Int32 ipl, double dd, Int32 rsmi, double refr)
+        {
+            double rdi = 0;
+            if ((rsmi & SwissEph.SE_BIT_FIXED_DISC_SIZE) != 0) {
+                if (ipl == SwissEph.SE_SUN)
+                    dd = 1.0;
+                else if (ipl == SwissEph.SE_MOON)
+                    dd = 0.00257;
+            }
+            /* apparent radius of disc */
+            if (0 == (rsmi & SwissEph.SE_BIT_DISC_CENTER))
+                rdi = Math.Asin(Sweph.pla_diam[ipl] / 2.0 / Sweph.AUNIT / dd) * SwissEph.RADTODEG;
+            if ((rsmi & SwissEph.SE_BIT_DISC_BOTTOM) != 0)
+                rdi = -rdi;
+            if (0 == (rsmi & SwissEph.SE_BIT_NO_REFRACTION)) {
+                rdi += refr; // (34.5 / 60.0);
+            }
+            return rdi;
+        }
+
+        /* Simple fast algorithm for risings and settings of 
+         * - planets Sun, Moon, Mercury - Pluto + Lunar Nodes and Fixed stars
+         * Does not work well for geographic latitudes
+         * > 65 N/S for the Sun
+         * > 60 N/S for the Moon and the planets
+         * and is called only for latitudes smaller than this.
+         */
+        Int32 rise_set_fast(double tjd_ut, Int32 ipl, Int32 epheflag, Int32 rsmi,
+            double[] dgeo, double atpress, double attemp, ref double tret, ref string serr)
+        {
+            int i;
+            double[] xx = new double[6], xaz = new double[6], xaz2 = new double[6];
+            double dd, dt, refr;
+            double dtsum = 0;
+            Int32 iflag = epheflag & (SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_MOSEPH);
+            Int32 iflagtopo = iflag | SwissEph.SEFLG_EQUATORIAL;
+            double sda, armc, md, dmd, mdrise, rdi, tr, dalt;
+            double decl;
+            double tjd_ut0 = tjd_ut;
+            Int32 facrise = 1;
+            Int32 tohor_flag = SwissEph.SE_EQU2HOR;
+            bool is_second_run = false;
+            int nloop = 2;
+            tret = 0;
+            if (ipl == SwissEph.SE_MOON)
+                nloop = 4;
+            if ((rsmi & SwissEph.SE_CALC_SET) != 0)
+                facrise = -1;
+            if (0 == (rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT))
+            {
+                iflagtopo |= SwissEph.SEFLG_TOPOCTR;
+                SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
+            }
+            run_rise_again:
+            if (SE.swe_calc_ut(tjd_ut, ipl, iflagtopo, xx, ref serr) == SwissEph.ERR)
+                return SwissEph.ERR;
+            /* the diurnal arc is a bit fuzzy, 
+             * - because the object changes declination during the day
+             * - because there is refraction of light
+             * nevertheless this works well as soon as the object is not
+             * circumpolar or near-circumpolar
+             */
+            decl = xx[1];
+            // semi-diurnal arcs
+            sda = -Math.Tan(dgeo[1] * SwissEph.DEGTORAD) * Math.Tan(decl * SwissEph.DEGTORAD);
+            if (sda >= 1) {
+                sda = 10;  // actually sda = 0°, but we give it a value of 10° 
+                           // to account for refraction. value 0 would cause
+                           // problems
+            } else if (sda <= -1) {
+                sda = 180;
+            } else {
+                sda = Math.Acos(sda) * SwissEph.RADTODEG;
+            }
+            // sidereal time at tjd_start
+            armc = SE.swe_degnorm(SE.swe_sidtime(tjd_ut) * 15 + dgeo[0]);
+            // meridian distance of object
+            md = SE.swe_degnorm(xx[0] - armc);
+            mdrise = SE.swe_degnorm(sda * facrise);
+            //dmd = swe_degnorm(md - mdrise - 1);
+            dmd = SE.swe_degnorm(md - mdrise);
+            // Avoid the risk of getting the event of next day:
+#if FALSE
+  if (dmd > 358) {
+    tjd_ut -= 0.1;
+    goto run_rise_again;
+  }
+#else
+            if (dmd > 358)
+            {
+                dmd -= 360;
+            }
+#endif
+            // rough subsequent rising/setting time
+            tr = tjd_ut + dmd / 360;
+            /* if object is sun or moon and rising of upper limb is required,
+             * calculate apparent radius of disk (ignoring refraction);
+             * with other objects disk diameter is ignored. */
+            rdi = 0;
+            /* true altitude of sun, when it appears at the horizon; 
+             * refraction for a body visible at the horizon at 0m above sea,
+             */
+            if (atpress == 0)
+            {
+                /* estimate atmospheric pressure */
+                atpress = 1013.25 * Math.Pow(1 - 0.0065 * dgeo[2] / 288, 5.255);
+            }
+            swe_refrac_extended(0.000001, 0, atpress, attemp, const_lapse_rate, SwissEph.SE_APP_TO_TRUE, xx);
+            refr = xx[1] - xx[0];
+            //fprintf(stderr, "refr=%f, %f, %f\n", refr, xx[0], xx[1]);
+            if ((rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT) != 0)
+            {
+                tohor_flag = SwissEph.SE_ECL2HOR;
+                iflagtopo = iflag;
+            }
+            else
+            {
+                tohor_flag = SwissEph.SE_EQU2HOR; // this is more efficient
+                iflagtopo = iflag | SwissEph.SEFLG_EQUATORIAL;
+                iflagtopo |= SwissEph.SEFLG_TOPOCTR;
+                SE.swe_set_topo(dgeo[0], dgeo[1], dgeo[2]);
+            }
+            for (i = 0; i < nloop; i++)
+            {
+                if (SE.swe_calc_ut(tr, ipl, iflagtopo, xx, ref serr) == SwissEph.ERR)
+                    return SwissEph.ERR;
+                if ((rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT) != 0)
+                    xx[1] = 0;
+                rdi = get_sun_rad_plus_refr(ipl, xx[2], rsmi, refr);
+                swe_azalt(tr, tohor_flag, dgeo, atpress, attemp, xx, xaz);
+                swe_azalt(tr + 0.001, tohor_flag, dgeo, atpress, attemp, xx, xaz2);
+                dd = (xaz2[1] - xaz[1]);
+                dalt = xaz[1] + rdi;
+                dt = dalt / dd / 1000.0;
+                if (dt > 0.1) dt = 0.1;
+                else if (dt < -0.1) dt = -0.1;
+                dtsum += dt;
+                if (false && Math.Abs(dt) > 5.0 / 86400.0 && nloop < 20)
+                    nloop++;
+                tr -= dt;
+            }
+            //fprintf(stderr, "tr-tjd=%f tin=%f tout=%f\n", tr - tjd_ut0, tjd_ut0, tr);
+            // if the event found is before input time, we search next event.
+            if (tr < tjd_ut0 && !is_second_run)
+            {
+                tjd_ut += 0.5;
+                is_second_run = true;
+                goto run_rise_again;
+            }
+            tret = tr;
+            return SwissEph.OK;
+        }
+
         /* rise, set, and meridian transits of sun, moon, planets, and stars
             *
             * tjd_ut	universal time from when on search ought to start
@@ -4136,10 +4299,16 @@ namespace SwissEphNet.CPort
             *              wanted, starname must be NULL or ""
             * epheflag	used for ephemeris only
             * rsmi		SE_CALC_RISE, SE_CALC_SET, SE_CALC_MTRANSIT, SE_CALC_ITRANSIT
-            *              | SE_BIT_DISC_CENTER      for rises of disc center of body
-            *              | SE_BIT_DISC_BOTTOM    for rises of disc bottom of body
-            *              | SE_BIT_NO_REFRACTION    to neglect refraction
-            *              | SE_BIT_FIXED_DISC_SIZE  neglect the effect of distance on disc size
+            *              | SE_BIT_DISC_CENTER       for rises of disc center of body
+            *              | SE_BIT_DISC_BOTTOM       for rises of disc bottom of body
+            *              | SE_BIT_GEOCTR_NO_ECL_LAT use geocentric position of object
+            *                                         and ignore ecliptic latitude
+            *              | SE_BIT_NO_REFRACTION     to neglect refraction
+            *              | SE_BIT_CIVIL_TWILIGHT    calculate civil twilight
+            *              | SE_BIT_NAUTIC_TWILIGHT   calculate nautical twilight
+            *              | SE_BIT_ASTRO_TWILIGHT    calculate astronomical twilight 
+            *              | SE_BIT_FIXED_DISC_SIZE   neglect the effect of distance on disc size
+            *              | SE_BIT_HINDU_RISING      risings according to Hindu astrology 
             * geopos	array of doubles for geogr. long., lat. and height above sea
             * atpress	atmospheric pressure
             * attemp	atmospheric temperature
@@ -4150,12 +4319,30 @@ namespace SwissEphNet.CPort
             * function return value -2 means that the body does not rise or set */
         //#define SEFLG_EPHMASK	(SEFLG_JPLEPH|SEFLG_SWIEPH|SEFLG_MOSEPH)
         public Int32 swe_rise_trans(
-                       double tjd_ut, Int32 ipl, string starname,
-                   Int32 epheflag, Int32 rsmi,
-                       double[] geopos,
-                   double atpress, double attemp,
-                       ref double tret,
-                       ref string serr) {
+            double tjd_ut, Int32 ipl, string starname,
+            Int32 epheflag, Int32 rsmi,
+            double[] geopos,
+            double atpress, double attemp,
+            ref double tret,
+            ref string serr) {
+            Int32 retval = 0;
+            /* Simple fast algorithm for risings and settings of 
+             * - planets Sun, Moon, Mercury - Pluto + Lunar Nodes and Fixed stars
+             * Does not work well for geographic latitudes
+             * > 65 N/S for the Sun
+             * > 60 N/S for the Moon and the planets
+             * Beyond these limits, some risings or settings may be missed.
+             */
+            if (true && (rsmi & (SwissEph.SE_CALC_RISE | SwissEph.SE_CALC_SET)) != 0
+              && 0 == (rsmi & SwissEph.SE_BIT_FORCE_SLOW_METHOD)
+              && 0 == (rsmi & (SwissEph.SE_BIT_CIVIL_TWILIGHT | SwissEph.SE_BIT_NAUTIC_TWILIGHT | SwissEph.SE_BIT_ASTRO_TWILIGHT))
+              && (ipl >= SwissEph.SE_SUN && ipl <= SwissEph.SE_TRUE_NODE)
+              && (Math.Abs(geopos[1]) <= 60 || (ipl == SwissEph.SE_SUN && Math.Abs(geopos[1]) <= 65))
+              )
+            {
+                retval = rise_set_fast(tjd_ut, ipl, epheflag, rsmi, geopos, atpress, attemp, ref tret, ref serr);
+                return retval;
+            }
             return swe_rise_trans_true_hor(tjd_ut, ipl, starname, epheflag, rsmi, geopos, atpress, attemp, 0, ref tret, ref serr);
         }
 
@@ -4179,6 +4366,7 @@ namespace SwissEphNet.CPort
             int jmax = 14;
             double t, te, tt, dt, twohrs = 1.0 / 12.0;
             double curdist;
+            Int32 tohor_flag = SwissEph.SE_EQU2HOR;
             int nazalt = 0;
             int ncalc = 0;
             bool do_fixstar = !String.IsNullOrEmpty(starname);
@@ -4196,8 +4384,14 @@ namespace SwissEphNet.CPort
             /* allowing SEFLG_NONUT and SEFLG_TRUEPOS speeds it up */
             iflag &= (SEFLG_EPHMASK | SwissEph.SEFLG_NONUT | SwissEph.SEFLG_TRUEPOS);
             tret = 0;
-            iflag |= (SwissEph.SEFLG_EQUATORIAL | SwissEph.SEFLG_TOPOCTR);
-            SE.swe_set_topo(geopos[0], geopos[1], geopos[2]);
+            if ((rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT) != 0) {
+                tohor_flag = SwissEph.SE_ECL2HOR;
+            } else {
+                tohor_flag = SwissEph.SE_EQU2HOR;
+                iflag |= SwissEph.SEFLG_EQUATORIAL;
+                iflag |= SwissEph.SEFLG_TOPOCTR;
+                SE.swe_set_topo(geopos[0], geopos[1], geopos[2]);
+            }
             if ((rsmi & (SwissEph.SE_CALC_MTRANSIT | SwissEph.SE_CALC_ITRANSIT)) != 0)
                 return calc_mer_trans(tjd_ut, ipl, epheflag, rsmi,
                     geopos, starname, ref tret, ref serr);
@@ -4230,6 +4424,8 @@ namespace SwissEphNet.CPort
                         return SwissEph.ERR;
                     ncalc++;
                 }
+                if ((rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT) != 0)
+                    xc[1] = 0;
                 /* diameter of object in km */
                 if (ii == 0) {
                     if (do_fixstar)
@@ -4254,7 +4450,7 @@ namespace SwissEphNet.CPort
                 /* apparent radius of disc */
                 rdi = Math.Asin(dd / 2 / Sweph.AUNIT / curdist) * SwissEph.RADTODEG;
                 /* true height of center of body */
-                swe_azalt(t, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, xh[ii]);
+                swe_azalt(t, tohor_flag, geopos, atpress, attemp, xc, xh[ii]);
                 nazalt++;
                 if ((rsmi & SwissEph.SE_BIT_DISC_BOTTOM) != 0) {
                     /* true height of bottom point of body */
@@ -4298,8 +4494,10 @@ namespace SwissEphNet.CPort
                             if (!do_fixstar)
                                 if (SE.swe_calc(te, ipl, iflag, xc, ref serr) == SwissEph.ERR)
                                     return SwissEph.ERR;
+                            if ((rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT) != 0)
+                                xc[1] = 0;
                             ncalc++;
-                            swe_azalt(tt, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                            swe_azalt(tt, tohor_flag, geopos, atpress, attemp, xc, ah);
                             nazalt++;
                             ah[1] -= horhgt;
                             dc[i] = ah[1];
@@ -4327,6 +4525,8 @@ namespace SwissEphNet.CPort
                             te = tc[j] + SE.swe_deltat_ex(tc[j], epheflag, ref serr);
                             if (SE.swe_calc(te, ipl, iflag, xc, ref serr) == SwissEph.ERR)
                                 return SwissEph.ERR;
+                            if ((rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT) != 0)
+                                xc[1] = 0;
                             ncalc++;
                         }
                         curdist = xc[2];
@@ -4340,7 +4540,7 @@ namespace SwissEphNet.CPort
                         /* apparent radius of disc */
                         rdi = Math.Asin(dd / 2 / Sweph.AUNIT / curdist) * SwissEph.RADTODEG;
                         /* true height of center of body */
-                        swe_azalt(tc[j], SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                        swe_azalt(tc[j], tohor_flag, geopos, atpress, attemp, xc, ah);
                         nazalt++;
                         if ((rsmi & SwissEph.SE_BIT_DISC_BOTTOM) != 0) {
                             /* true height of bottom point of body */
@@ -4387,6 +4587,8 @@ namespace SwissEphNet.CPort
                         te = t + SE.swe_deltat_ex(t, epheflag, ref serr);
                         if (SE.swe_calc(te, ipl, iflag, xc, ref serr) == SwissEph.ERR)
                             return SwissEph.ERR;
+                        if ((rsmi & SwissEph.SE_BIT_GEOCTR_NO_ECL_LAT) != 0)
+                            xc[1] = 0;
                         ncalc++;
                     }
                     curdist = xc[2];
@@ -4400,7 +4602,7 @@ namespace SwissEphNet.CPort
                     /* apparent radius of disc */
                     rdi = Math.Asin(dd / 2 / Sweph.AUNIT / curdist) * SwissEph.RADTODEG;
                     /* true height of center of body */
-                    swe_azalt(t, SwissEph.SE_EQU2HOR, geopos, atpress, attemp, xc, ah);
+                    swe_azalt(t, tohor_flag, geopos, atpress, attemp, xc, ah);
                     nazalt++;
                     if ((rsmi & SwissEph.SE_BIT_DISC_BOTTOM) != 0) {
                         /* true height of bottom point of body */
@@ -5339,7 +5541,7 @@ namespace SwissEphNet.CPort
                             return SwissEph.ERR;
                     } else {
                         /* traditional algorithm */
-                        if (SE.swe_get_ayanamsa_ex(tjd_et, iflag, out daya, ref serr) == SwissEph.ERR)
+                        if (SE.Sweph.swi_get_ayanamsa_ex(tjd_et, iflag, out daya, ref serr) == SwissEph.ERR)
                             return SwissEph.ERR;
                         pldat.xreturn[0] -= daya * SwissEph.DEGTORAD;
                         SE.SwephLib.swi_polcart_sp(pldat.xreturn, pldat.xreturn.GetPointer(6));
@@ -5551,7 +5753,6 @@ static const double Gmsm_factor_AA[] = {
             //int32 iflJ2000 = (iflag & SEFLG_EPHMASK)|SEFLG_J2000|SEFLG_EQUATORIAL|SEFLG_XYZ|SEFLG_TRUEPOS|SEFLG_NONUT|SEFLG_SPEED;
             Int32 iflJ2000 = (iflag & SwissEph.SEFLG_EPHMASK) | SwissEph.SEFLG_J2000 | SwissEph.SEFLG_XYZ | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_NONUT | SwissEph.SEFLG_SPEED;
             Int32 iflJ2000p = (iflag & SwissEph.SEFLG_EPHMASK) | SwissEph.SEFLG_J2000 | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_NONUT | SwissEph.SEFLG_SPEED;
-            bool ellipse_is_bary = false;
             double Gmsm = 0;
             Int32 iflg0 = 0;
             double fac, sgn, rxy, rxyz, c2, cosnode, sinnode;
@@ -5572,14 +5773,12 @@ static const double Gmsm_factor_AA[] = {
             /* first, we need a heliocentric distance of the planet */
             if (SE.swe_calc(tjd_et, ipl, iflJ2000p, x, ref serr) == SwissEph.ERR)
                 return SwissEph.ERR;
-            ellipse_is_bary = false;
             r = x[2];
             if (ipl != SwissEph.SE_MOON)
             {
                 if ((iflag & SwissEph.SEFLG_BARYCTR) != 0 && r > 6)
                 {
                     iflJ2000 |= SwissEph.SEFLG_BARYCTR; /* only planets beyond Jupiter */
-                    ellipse_is_bary = true;
                 }
                 else
                 {
@@ -5740,7 +5939,6 @@ static const double Gmsm_factor_AA[] = {
             //  printf("tan=%f, ean=%f, man=%f, mlon=%f\n", dret[7], dret[8], dret[6], dret[9]);
             //  printf("cyc=%f, dmot=%f, cyct=%f, cycs=%f\n", dret[10], dret[11], dret[12], dret[13]);
             //  printf("tperi=%f, rperi=%f, raph=%f\n", dret[14], dret[15], dret[16]);
-            System.Diagnostics.Debug.WriteLine(ellipse_is_bary);    // Used only to prevent "not used variable" warning
             return SwissEph.OK;
         }
 

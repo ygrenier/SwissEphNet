@@ -1872,14 +1872,15 @@ namespace SwissEphNet.CPort
         public double swe_house_pos(
             double armc, double geolat, double eps, char hsys, double[] xpin, ref string serr) {
             double[] xp = new double[6], xeq = new double[6]; double ra, de, mdd, mdn, sad, san;
-            double hpos, sinad, ad, a, admc, adp, samc, demc, asc, mc, acmc, tant;
+            double hpos, sinad, ad, a, admc, adp, samc, asc, mc, acmc, tant;
+            //double demc;
             double fh, ra0, tanfi, fac, dfac, tanx;
             double[] x = new double[3], xasc = new double[3]; double raep, raaz, oblaz, xtemp; /* BK 21.02.2006 */
             double[] hcusp = new double[36], ascmc = new double[10];
             double sine = sind(eps);
             double cose = cosd(eps);
             double c1, c2 = 0, d, hsize;
-            int i, j;
+            int i, j, nloop;
             double dsun = 0, darmc, harmc, y, sinpsi, sa;
             bool is_western_half = false;
             hsys = char.ToUpper(hsys);
@@ -2092,7 +2093,7 @@ namespace SwissEphNet.CPort
                  * if possible; make sure house positions 4 - 9 only appear on western
                  * hemisphere */
                 case 'K': // Koch
-                    demc = atand(sind(armc) * tand(eps));
+                    //demc = atand(sind(armc) * tand(eps));
                     is_invalid = false;
                     is_circumpolar = false;
                     /* object is within a circumpolar circle */
@@ -2389,12 +2390,19 @@ namespace SwissEphNet.CPort
                     hpos = xp[0] / 30.0 + 1;
                     break;
                 case 'T': // Polich-Page ("topocentric")
+                    fh = geolat;
+                    if (fh > 89.999)
+                        fh = 89.999;
+                    if (fh < -89.999)
+                        fh = -89.999;
                     mdd = SE.swe_degnorm(mdd);
                     if (de > 90 - VERY_SMALL)
                         de = 90 - VERY_SMALL;
                     if (de < -90 + VERY_SMALL)
                         de = -90 + VERY_SMALL;
-                    sinad = tand(de) * tand(geolat);
+                    sinad = tand(de) * tand(fh);
+                    if (sinad > 1.0) sinad = 1.0;
+                    if (sinad < -1.0) sinad = -1.0;
                     ad = asind(sinad);
                     a = sinad + cosd(mdd);
                     if (a >= 0)
@@ -2411,13 +2419,13 @@ namespace SwissEphNet.CPort
                         ra = SE.swe_degnorm(armc - mdd);
                     }
                     /* binary search for "topocentric" position line of body */
-                    tanfi = tand(geolat);
-                    fh = geolat;
+                    tanfi = tand(fh);
                     ra0 = SE.swe_degnorm(armc + 90);
                     xp[1] = 1;
                     xeq[1] = de;
                     fac = 2;
-                    while (Math.Abs(xp[1]) > 0.000001) {
+                    nloop = 0;
+                    while (Math.Abs(xp[1]) > 0.000001 && nloop < 1000) {
                         if (xp[1] > 0) {
                             fh = atand(tand(fh) - tanfi / fac);
                             ra0 -= 90 / fac;
@@ -2428,6 +2436,7 @@ namespace SwissEphNet.CPort
                         xeq[0] = SE.swe_degnorm(ra - ra0);
                         SE.swe_cotrans(xeq, xp, 90 - fh);
                         fac *= 2;
+                        nloop++;
                     }
                     hpos = SE.swe_degnorm(ra0 - armc);
                     /* mirror back to west */
@@ -2562,16 +2571,13 @@ namespace SwissEphNet.CPort
             double md;
             double zd;	// zenith distance of house circle, along prime vertical
             double pole, q, w, a, b, c, f, cu, r = 0, rah;
-            double sinlat, coslat, tanlat, sindec, cosdec, tandec, sinecl, cosecl;
+            double sinlat, coslat, tanlat, tandec, sinecl;
             double dec = hsp.sundec;
             sinlat = sind(lat);
             coslat = cosd(lat);
             tanlat = tand(lat);
-            sindec = sind(dec);
-            cosdec = cosd(dec);
             tandec = tand(dec);
             sinecl = sind(ecl);
-            cosecl = cosd(ecl);
             int ih;
             // if (90 - fabs(lat) <= ecl) {
             //   strcpy(hsp->serr, "Sunshine in polar circle not allowed");
@@ -2724,8 +2730,8 @@ namespace SwissEphNet.CPort
         int sunshine_solution_treindl(double ramc, double lat, double ecl, houses hsp)
         {
             double[] xh = new double[13];
-            double mcdec, sinlat, coslat, sindec, cosdec, tandec, sinecl, cosecl;
-            double xhs, pole, a, cosa, alph, alpha2, c, cosc, b, sinzd, zd, rax, equa, hc;
+            double mcdec, sinlat, coslat, cosdec, tandec, sinecl, cosecl;
+            double xhs, pole, a, cosa, alph, alpha2, c, cosc, b, sinzd, zd, rax, hc;
             int ih, retval = SwissEph.OK;
             bool mc_under_horizon;
             double dec = hsp.sundec;
@@ -2735,7 +2741,6 @@ namespace SwissEphNet.CPort
             // }
             sinlat = sind(lat);
             coslat = cosd(lat);
-            sindec = sind(dec);
             cosdec = cosd(dec);
             tandec = tand(dec);
             sinecl = sind(ecl);
@@ -2803,7 +2808,6 @@ namespace SwissEphNet.CPort
                 // night side: triangle north point
                 // sides: 90 - lat, angle zd
                 rax = atand(coslat * tand(zd));
-                equa = acosd(sinlat * sinzd);	// not used
                 // compute pole height (distance of house circle pole from equator
                 // with triangle at west point
                 pole = asind(sinzd * sinlat);
