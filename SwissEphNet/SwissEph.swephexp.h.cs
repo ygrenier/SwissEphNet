@@ -838,9 +838,9 @@ namespace SwissEphNet
             return SweHouse.swe_houses_armc(armc, geolat, eps, hsys, cusps, ascmc);
         }
 
-        public double swe_house_pos(double armc, double geolon, double eps, char hsys, double[] xpin, ref string serr)
+        public double swe_house_pos(double armc, double geolat, double eps, char hsys, double[] xpin, ref string serr)
         {
-            return SweHouse.swe_house_pos(armc, geolon, eps, hsys, xpin, ref serr);
+            return SweHouse.swe_house_pos(armc, geolat, eps, hsys, xpin, ref serr);
         }
 
         public string swe_house_name(char hsys) { return SweHouse.swe_house_name(hsys); }
