@@ -6,7 +6,7 @@
     <RootNamespace>SwissEphNet</RootNamespace>
     <PackageId>SwissEphNet</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.7.1.2</Version>
+    <Version>2.7.1.3</Version>
     <Authors>Yan Grenier</Authors>
     <Company>Yan Grenier</Company>
     <Product>SwissEphNet</Product>
@@ -17,7 +17,7 @@
     <RepositoryUrl>https://github.com/ygrenier/SwissEphNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Swiss Ephemeris</PackageTags>
-    <PackageReleaseNotes>2.7.1.2:
+    <PackageReleaseNotes>2.7.1.3:
 - Update to version 2.07.1 of SwissEphemeris
 - Inlcude the PR #34 - swe_house_pos: parameter geolon is actually geolat - thanks to aleksamagicka
 
