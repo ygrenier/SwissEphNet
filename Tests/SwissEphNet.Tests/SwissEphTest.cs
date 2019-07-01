@@ -547,11 +547,11 @@ namespace SwissEphNet.Tests
         [Fact]
         public void Test_swe_d2l() {
             using (var target = new SwissEph()) {
-                Assert.Equal(0, target.swe_d2l(0));
-                Assert.Equal(123, target.swe_d2l(123.45));
-                Assert.Equal(124, target.swe_d2l(123.987));
-                Assert.Equal(-123, target.swe_d2l(-123.45));
-                Assert.Equal(-124, target.swe_d2l(-123.987));
+                Assert.Equal(0, SwissEph.swe_d2l(0));
+                Assert.Equal(123, SwissEph.swe_d2l(123.45));
+                Assert.Equal(124, SwissEph.swe_d2l(123.987));
+                Assert.Equal(-123, SwissEph.swe_d2l(-123.45));
+                Assert.Equal(-124, SwissEph.swe_d2l(-123.987));
             }
         }
 

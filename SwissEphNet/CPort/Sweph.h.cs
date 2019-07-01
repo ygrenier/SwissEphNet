@@ -86,7 +86,7 @@ namespace SwissEphNet.CPort
          * move over from swephexp.h
          */
 
-        public const String SE_VERSION = "2.07.01";
+        public const String SE_VERSION = "2.08";  //"2.07.02a"
 
         /// <summary>
         /// 2000 January 1.5
@@ -245,7 +245,7 @@ namespace SwissEphNet.CPort
          * the ephemeris is good after the following date:
          */
         /* #define PHOLUS_START    314845.5  	* 1.1.-3850  old limit until v. 2.00 */
-        public const double PHOLUS_START    =640648.5;	/* 1.1.-2958 jul */
+        public const double PHOLUS_START = 640648.5;	/* 1.1.-2958 jul */
         public const double PHOLUS_END = 4390617.5;  	/* 1.1.7309 */
 
         public const double MOSHPLEPH_START = 625000.5;
@@ -303,8 +303,9 @@ namespace SwissEphNet.CPort
         //#if 0
         //#define EARTH_MOON_MRAT =81.30056		/* de406 */
         //#endif
-        public const double AUNIT = 1.49597870691e+11;  	/* au in meters, AA 2006 K6 */
-        public const double CLIGHT = 2.99792458e+8;   	/* m/s, AA 1996 K6 */
+        ////#define AUNIT       	1.49597870691e+11  	/* au in meters, AA 2006 K6 */
+        public const double AUNIT = 1.49597870700e+11;  	/* au in meters, DE431 */
+        public const double CLIGHT = 2.99792458e+8;   	/* m/s, AA 1996 K6 / DE431 */
         //#if 0
         //#define HELGRAVCONST   = 1.32712438e+20;		/* G * M(sun), m^3/sec^2, AA 1996 K6 */
         //#endif
@@ -317,7 +318,7 @@ namespace SwissEphNet.CPort
         public const double EARTH_OBLATENESS = (1.0 / 298.25642);	/* AA 2006 K6 */
         public const double EARTH_ROT_SPEED = (7.2921151467e-5 * 86400); /* in rad/day, expl. suppl., p 162 */
 
-        public const double LIGHTTIME_AUNIT = (499.0047838061 / 3600 / 24);     /* 8.3167 minutes (days), AA 2006 K6 */
+        public const double LIGHTTIME_AUNIT = (499.0047838362 / 3600.0 / 24.0); 	/* 8.3167 minutes (days) */
         public const double PARSEC_TO_AUNIT = 206264.8062471;                   /* 648000/PI, according to IAU Resolution B2, 2016 */
 
         /* node of ecliptic measured on ecliptic 2000 */
@@ -341,7 +342,7 @@ namespace SwissEphNet.CPort
         public double square_sum(CPointer<double> x) { return (x[0] * x[0] + x[1] * x[1] + x[2] * x[2]); }
         public double dot_prod(CPointer<double> x, CPointer<double> y) { return (x[0] * y[0] + x[1] * y[1] + x[2] * y[2]); }
 
-        public int[] PNOINT2JPL = new int[] { SweJPL.J_EARTH, SweJPL.J_MOON, SweJPL.J_MERCURY, SweJPL.J_VENUS, SweJPL.J_MARS, SweJPL.J_JUPITER, 
+        public int[] PNOINT2JPL = new int[] { SweJPL.J_EARTH, SweJPL.J_MOON, SweJPL.J_MERCURY, SweJPL.J_VENUS, SweJPL.J_MARS, SweJPL.J_JUPITER,
             SweJPL.J_SATURN, SweJPL.J_URANUS, SweJPL.J_NEPTUNE, SweJPL.J_PLUTO, SweJPL.J_SUN, };
 
         /* planetary radii in meters */
@@ -373,7 +374,7 @@ namespace SwissEphNet.CPort
          * ayan_t0  ayanamsa value at epoch
          * t0_is_UT true, if t0 is UT
          */
-        public struct aya_init { public double t0; public double ayan_t0; public bool t0_is_UT;};
+        public struct aya_init { public double t0; public double ayan_t0; public bool t0_is_UT; };
         public static aya_init[] ayanamsa = new aya_init[]{
             new aya_init{t0=2433282.5, ayan_t0=24.042044444, t0_is_UT=false},    /* 0: Fagan/Bradley (Default) */
             /*{J1900, 360 - 337.53953},   * 1: Lahiri (Robert Hand) */
@@ -390,9 +391,11 @@ namespace SwissEphNet.CPort
             new aya_init{t0=J1900, ayan_t0=360 - 338.917778, t0_is_UT=false},    /* 7: Shri Yukteshwar; (David Cochrane) */
             //{2412543.5, 20.91, TRUE},          /* 7: Shri Yukteshwar; (Holy Science, p. xx) */
             new aya_init{t0=J1900, ayan_t0=360 - 338.634444, t0_is_UT=false},    /* 8: J.N. Bhasin; (David Cochrane) */
-            new aya_init{t0=1684532.5, ayan_t0=-3.36667, t0_is_UT=true},         /* 9: Babylonian, Kugler 1 */
-            new aya_init{t0=1684532.5, ayan_t0=-4.76667, t0_is_UT=true},         /*10: Babylonian, Kugler 2 */
-            new aya_init{t0=1684532.5, ayan_t0=-5.61667, t0_is_UT=true},         /*11: Babylonian, Kugler 3 */
+            /* 14 Sept. 2018: the following three ayanamshas have been wrong for
+             * many years */
+            new aya_init{t0=1684532.5, ayan_t0=-5.66667, t0_is_UT=true},         /* 9: Babylonian, Kugler 1 */
+            new aya_init{t0=1684532.5, ayan_t0=-4.26667, t0_is_UT=true},         /*10: Babylonian, Kugler 2 */
+            new aya_init{t0=1684532.5, ayan_t0=-3.41667, t0_is_UT=true},         /*11: Babylonian, Kugler 3 */
             new aya_init{t0=1684532.5, ayan_t0=-4.46667, t0_is_UT=true},         /*12: Babylonian, Huber */
             /*{1684532.5, -4.56667, TRUE},         *12: Babylonian, Huber (Swisseph has been wrong for many years!) */
             new aya_init{t0=1673941, ayan_t0=-5.079167, t0_is_UT=true},          /*13: Babylonian, Mercier;
@@ -408,8 +411,8 @@ namespace SwissEphNet.CPort
             new aya_init{t0=1903396.8128654, ayan_t0=0, t0_is_UT=true},	     /*21: Suryasiddhanta, assuming
                                                    ingress of mean Sun into Aries at point
 				                   of mean equinox of date on
-				                   21.3.499, noon, Ujjain (75.7684565 E)
-                                                   = 7:30:31.57 UT */
+				                   21.3.499, near noon, Ujjain (75.7684565 E)
+                                                   = 7:30:31.57 UT = 12:33:36 LMT*/
             new aya_init{t0=1903396.8128654,ayan_t0=-0.21463395, t0_is_UT=true}, /*22: Suryasiddhanta, assuming
 				                   ingress of mean Sun into Aries at
 				                   true position of mean Sun at same epoch */
@@ -440,11 +443,15 @@ namespace SwissEphNet.CPort
                                                   *    based on Kali midnight and SS year length */
             new aya_init{t0=1721057.5, ayan_t0=-3.2, t0_is_UT=true},             /*38: Babylonian (Britton 2010) */
             new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},                       /*39: Sunil Sheoran ("Vedic") */
-            /*{0, 0, FALSE},                       *40: Galactic Center at 0 Capricon (Cochrane) */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},                       /*40: Galactic Center at 0 Capricon (Cochrane) */
+            new aya_init{t0=2451544.5, ayan_t0=25.0, t0_is_UT=true},             /*41: "Galactic Equatorial" (N.A. Fiorenza) */
+            new aya_init{t0=1775845.5, ayan_t0=-2.9422, t0_is_UT=true},          /*42: Vettius Valens (Moon; derived from
+                                                       Holden 1995 p. 12 for epoch of Valens
+					               1 Jan. 150 CE julian) */
             /*{2061539.789532065, 6.83333333, TRUE}, *41: Manjula's Laghumanasa, 10 March 932,
                                                   *    12 PM LMT Ujjain (75.7684565 E),
 				                  *    ayanamsha = 6°50' */
-            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*40: - */
+            new aya_init{t0=0, ayan_t0=0, t0_is_UT=false},	                     /*42: - */
             };
 
         /*
@@ -480,7 +487,8 @@ namespace SwissEphNet.CPort
         /* nutation */
         public class nut
         {
-            public nut() {
+            public nut()
+            {
                 nutlo = new double[2];
                 matrix = new double[3, 3];
             }
@@ -492,10 +500,12 @@ namespace SwissEphNet.CPort
 
         public class plantbl
         {
-            public plantbl() {
+            public plantbl()
+            {
                 max_harmonic = new sbyte[9];
             }
-            public plantbl(sbyte[] m, sbyte mp, sbyte[] at, double[] l1, double[] l2, double[] l3, double d) {
+            public plantbl(sbyte[] m, sbyte mp, sbyte[] at, double[] l1, double[] l2, double[] l3, double d)
+            {
                 max_harmonic = m;
                 max_power_of_t = mp;
                 arg_tbl = at;
@@ -539,7 +549,8 @@ namespace SwissEphNet.CPort
 
         public class save_positions
         {
-            public save_positions() {
+            public save_positions()
+            {
                 xsaves = new double[24];
             }
             public int ipl;
@@ -557,7 +568,8 @@ namespace SwissEphNet.CPort
 
         public class node_data
         {
-            public node_data() {
+            public node_data()
+            {
                 x = new double[6];
                 xreturn = new double[24];
             }
@@ -576,7 +588,8 @@ namespace SwissEphNet.CPort
 
         public class topo_data
         {
-            public topo_data() {
+            public topo_data()
+            {
                 xobs = new double[6];
             }
             public double geolon, geolat, geoalt;
@@ -593,6 +606,7 @@ namespace SwissEphNet.CPort
             public bool t0_is_UT;
         };
 
+        const int SWI_STAR_LENGTH = 40;
         public struct fixed_star
         {
             public string skey;
@@ -600,6 +614,13 @@ namespace SwissEphNet.CPort
             public string starbayer;
             public string starno;
             public double epoch, ra, de, ramot, demot, radvel, parall, mag;
+            //struct fixed_star {
+            //  char skey[SWI_STAR_LENGTH + 2]; // may be prefixed with comma, one char more
+            //  char starname[SWI_STAR_LENGTH + 1];
+            //  char starbayer[SWI_STAR_LENGTH + 1];
+            //  char starno[10];
+            //  double epoch, ra, de, ramot, demot, radvel, parall, mag;
+            //};
         };
 
         /* dpsi and deps loaded for 100 years after 1962 */
@@ -710,7 +731,8 @@ namespace SwissEphNet.CPort
 
         public class plan_data
         {
-            public plan_data() {
+            public plan_data()
+            {
                 x = new double[6];
                 xreturn = new double[24];
             }

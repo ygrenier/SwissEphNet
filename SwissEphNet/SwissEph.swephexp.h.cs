@@ -105,8 +105,8 @@ namespace SwissEphNet
          * definitions for use also by non-C programmers
          ***********************************************************/
 
-        public const double SE_AUNIT_TO_KM = (149597870.691);
-        public const double SE_AUNIT_TO_LIGHTYEAR = (1.0 / 63241.077088071);
+        public const double SE_AUNIT_TO_KM = (149597870.700);
+        public const double SE_AUNIT_TO_LIGHTYEAR = (1.0 / 63241.07708427);
         public const double SE_AUNIT_TO_PARSEC = (1.0 / 206264.8062471);
 
         /* values for gregflag in swe_julday() and swe_revjul() */
@@ -284,11 +284,13 @@ namespace SwissEphNet
         public const int SE_SIDM_ARYABHATA_522 = 37;
         public const int SE_SIDM_BABYL_BRITTON = 38;
         public const int SE_SIDM_TRUE_SHEORAN = 39;
-        //#define SE_SIDM_GALCENT_COCHRANE   	40
-        //#define SE_SIDM_MANJULA         41
+        public const int SE_SIDM_GALCENT_COCHRANE = 40;
+        public const int SE_SIDM_GALEQU_FIORENZA = 41;
+        public const int SE_SIDM_VALENS_MOON = 42;
+        ////#define SE_SIDM_MANJULA         43
         public const int SE_SIDM_USER = 255; /* user-defined ayanamsha, t0 is TT */
 
-        public const int SE_NSIDM_PREDEF = 40;
+        public const int SE_NSIDM_PREDEF = 43;
 
         /* used for swe_nod_aps(): */
         public const int SE_NODBIT_MEAN = 1;   /* mean nodes/apsides */
@@ -356,7 +358,7 @@ namespace SwissEphNet
         public const int SE_BIT_FIXED_DISC_SIZE = 16384; /* or'ed to SE_CALC_RISE/SET:
                                                                 * neglect the effect of distance on
                                                                 * disc size */
-        public const int SE_BIT_FORCE_SLOW_METHOD = 32768;  /* This is only a Astrodienst in-house
+        public const int SE_BIT_FORCE_SLOW_METHOD = 32768;  /* This is only an Astrodienst in-house
                                                              * test flag.It forces the usage
                                                              * of the old, slow calculation of
                                                              * risings and settings. */
@@ -1101,7 +1103,7 @@ namespace SwissEphNet
         /// <summary>
         /// double to int32 with rounding, no overflow check
         /// </summary>
-        public Int32 swe_d2l(double x) { return SwephLib.swe_d2l(x); }
+        public static Int32 swe_d2l(double x) { return SwephLib.swe_d2l(x); }
 
         /// <summary>
         /// monday = 0, ... sunday = 6

@@ -217,6 +217,7 @@ namespace SwissEphNet.CPort
             int i, kmx, khi, nd;
             Int32 ksize; int[] lpt = new int[3];
             sbyte[] ttl = new sbyte[6 * 14 * 3];
+            int nrd; /* unused, removes compile warnings */
             if ((js.jplfptr = SE.Sweph.swi_fopen(Sweph.SEI_FILE_PLANET, js.jplfname, js.jplfpath, ref serr)) == null) {
                 return Sweph.NOT_AVAILABLE;
             }
@@ -224,16 +225,22 @@ namespace SwissEphNet.CPort
              * "JPL Planetary Ephemeris DE404/LE404
              *  Start Epoch: JED=   625296.5-3001 DEC 21 00:00:00
              *  Final Epoch: JED=  2817168.5 3001 JAN 17 00:00:00c */
-            //fread((void *) &ttl[0], 1, 252, js.jplfptr);
+            //nrd = fread((void*)&ttl[0], 1, 252, js->jplfptr);
             ttl = js.jplfptr.ReadSBytes(252);
+            nrd = ttl.Length;
+            if (nrd != 252) return Sweph.NOT_AVAILABLE;
             /* cnam = names of constants */
             //fread((void *) js.ch_cnam, 1, 6*400, js.jplfptr);
             js.ch_cnam = js.jplfptr.ReadChars(6 * 400);
+            nrd = js.ch_cnam.Length;
+            if (nrd != 6 * 400) return Sweph.NOT_AVAILABLE;
             /* ss[0] = start epoch of ephemeris
              * ss[1] = end epoch
              * ss[2] = segment size in days */
             //fread((void *) &ss[0], sizeof(double), 3, js.jplfptr);
             ss = js.jplfptr.ReadDoubles(3);
+            nrd = ss.Length;
+            if (nrd != 3) return Sweph.NOT_AVAILABLE;
             /* reorder ? */
             if (ss[2] < 1 || ss[2] > 200)
                 js.do_reorder = true;
@@ -254,18 +261,21 @@ namespace SwissEphNet.CPort
             /* ncon = number of constants */
             //fread((void *) &ncon, sizeof(int32), 1, js.jplfptr);
             ncon = js.jplfptr.ReadInt32();
+            //if (nrd != 1) return Sweph.NOT_AVAILABLE;
             if (js.do_reorder)
                 //reorder((char *) &ncon, sizeof(int32), 1);
                 ncon = reorder(ncon);
             /* au = astronomical unit */
             //fread((void *) &au, sizeof(double), 1, js.jplfptr);
             au = js.jplfptr.ReadDouble();
+            //if (nrd != 1) return Sweph.NOT_AVAILABLE;
             if (js.do_reorder)
                 //reorder((char *) &au, sizeof(double), 1);
                 au = reorder(au);
             /* emrat = earth moon mass ratio */
             //fread((void *) &emrat, sizeof(double), 1, js.jplfptr);
             emrat = js.jplfptr.ReadDouble();
+            //if (nrd != 1) return NOT_AVAILABLE;
             if (js.do_reorder)
                 //reorder((char *) &emrat, sizeof(double), 1);
                 emrat = reorder(emrat);
@@ -274,18 +284,23 @@ namespace SwissEphNet.CPort
              * ipt[i+2]: number of intervals in segment */
             //fread((void *) &js.eh_ipt[0], sizeof(int32), 36, js.jplfptr);
             js.jplfptr.ReadInt32s(js.eh_ipt, 0, 36);
+            nrd = js.eh_ipt.Length;
+            if (nrd != 36) return Sweph.NOT_AVAILABLE;
             if (js.do_reorder)
                 //reorder((char *) &js.eh_ipt[0], sizeof(int32), 36);
                 reorder(js.eh_ipt);
             /* numde = number of jpl ephemeris "404" with de404 */
             //fread((void *) &numde, sizeof(int32), 1, js.jplfptr);
             numde = js.jplfptr.ReadInt32();
+            //if (nrd != 1) return NOT_AVAILABLE;
             if (js.do_reorder)
                 //reorder((char *) &numde, sizeof(int32), 1);
                 numde = reorder(numde);
             /* read librations */
             //fread(&lpt[0], sizeof(int32), 3, js.jplfptr);
             lpt = js.jplfptr.ReadInt32s(3);
+            nrd = lpt.Length;
+            if (nrd != 3) return Sweph.NOT_AVAILABLE;
             if (js.do_reorder)
                 //reorder((char *) &lpt[0], sizeof(int32), 3);
                 reorder(lpt);
@@ -684,6 +699,7 @@ namespace SwissEphNet.CPort
             double et_mn, et_fr;
             Int32[] ipt = js.eh_ipt;
             sbyte[] ch_ttl = new sbyte[252];
+            int nrd; /* unused, removes compile warnings */
             if (js.jplfptr == null) {
                 ksize = fsizer(ref serr); /* the number of single precision words in a record */
                 nrecl = 4;
@@ -697,32 +713,41 @@ namespace SwissEphNet.CPort
                  *  Final Epoch: JED=  2817168.5 3001 JAN 17 00:00:00c */
                 //fread((void *) ch_ttl, 1, 252, js.jplfptr);
                 ch_ttl = js.jplfptr.ReadSBytes(252);
+                nrd = ch_ttl.Length;
+                if (nrd != 252) return Sweph.NOT_AVAILABLE;
                 /* cnam = names of constants */
                 //fread((void *) js.ch_cnam, 1, 2400, js.jplfptr);
                 js.ch_cnam = js.jplfptr.ReadChars(2400);
+                nrd = js.ch_cnam.Length;
+                if (nrd != 2400) return Sweph.NOT_AVAILABLE;
                 /* ss[0] = start epoch of ephemeris
                  * ss[1] = end epoch
                  * ss[2] = segment size in days */
                 //fread((void *) &js.eh_ss[0], sizeof(double), 3, js.jplfptr);
                 js.eh_ss = js.jplfptr.ReadDoubles(3);
+                nrd = js.eh_ss.Length;
+                if (nrd != 3) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &js.eh_ss[0], sizeof(double), 3);
                     reorder(js.eh_ss);
                 /* ncon = number of constants */
                 //fread((void *) &js.eh_ncon, sizeof(int32), 1, js.jplfptr);
                 js.eh_ncon = js.jplfptr.ReadInt32();
+                //if (nrd != 1) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &js.eh_ncon, sizeof(int32), 1);
                     js.eh_ncon = reorder(js.eh_ncon);
                 /* au = astronomical unit */
                 //fread((void *) &js.eh_au, sizeof(double), 1, js.jplfptr);
                 js.eh_au = js.jplfptr.ReadDouble();
+                //if (nrd != 1) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &js.eh_au, sizeof(double), 1);
                     js.eh_au = reorder(js.eh_au);
                 /* emrat = earth moon mass ratio */
                 //fread((void *) &js.eh_emrat, sizeof(double), 1, js.jplfptr);
                 js.eh_emrat = js.jplfptr.ReadDouble();
+                //if (nrd != 1) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &js.eh_emrat, sizeof(double), 1);
                     js.eh_emrat = reorder(js.eh_emrat);
@@ -731,17 +756,22 @@ namespace SwissEphNet.CPort
                  * ipt[i+2]: number of intervals in segment */
                 //fread((void *) &ipt[0], sizeof(int32), 36, js.jplfptr);
                 js.jplfptr.ReadInt32s(ipt, 0, 36);
+                nrd = ipt.Length;
+                if (nrd != 36) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &ipt[0], sizeof(int32), 36);
                     reorder(ipt, 0, 36);
                 /* numde = number of jpl ephemeris "404" with de404 */
                 //fread((void *) &js.eh_denum, sizeof(int32), 1, js.jplfptr);
                 js.eh_denum = js.jplfptr.ReadInt32();
+                //if (nrd != 1) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &js.eh_denum, sizeof(int32), 1);
                     js.eh_denum = reorder(js.eh_denum);
                 //fread((void *) &lpt[0], sizeof(int32), 3, js.jplfptr);
                 lpt = js.jplfptr.ReadInt32s(3);
+                nrd = lpt.Length;
+                if (nrd != 3) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &lpt[0], sizeof(int32), 3);
                     reorder(lpt);
@@ -750,6 +780,8 @@ namespace SwissEphNet.CPort
                 js.jplfptr.Seek(irecsz, SeekOrigin.Begin);
                 //fread((void *) &js.eh_cval[0], sizeof(double), 400, js.jplfptr);
                 js.eh_cval = js.jplfptr.ReadDoubles(400);
+                nrd = js.eh_cval.Length;
+                if (nrd != 400) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &js.eh_cval[0], sizeof(double), 400);
                     reorder(js.eh_cval);
@@ -791,14 +823,16 @@ namespace SwissEphNet.CPort
                 //FSEEK(js.jplfptr, (off_t) (2L * irecsz), 0);
                 js.jplfptr.Seek(2 * irecsz, SeekOrigin.Begin);
                 //fread((void *) &ts[0], sizeof(double), 2, js.jplfptr);
-                js.jplfptr.ReadDoubles(ts, 0, 2);
+                nrd = js.jplfptr.ReadDoubles(ts, 0, 2);
+                if (nrd != 2) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char *) &ts[0], sizeof(double), 2);
                     reorder(ts, 0, 2);
                 //FSEEK(js.jplfptr, (off_t)((nseg + 2 - 1) * ((off_t)irecsz)), 0);
                 js.jplfptr.Seek((((Int64)nseg + 2 - 1) * ((Int64)irecsz)), SeekOrigin.Begin);
                 //fread((void*)&ts[2], sizeof(double), 2, js.jplfptr);
-                js.jplfptr.ReadDoubles(ts, 2, 2);
+                nrd = js.jplfptr.ReadDoubles(ts, 2, 2);
+                if (nrd != 2) return Sweph.NOT_AVAILABLE;
                 if (js.do_reorder)
                     //reorder((char*)&ts[2], sizeof(double), 2);
                     reorder(ts, 2, 2);

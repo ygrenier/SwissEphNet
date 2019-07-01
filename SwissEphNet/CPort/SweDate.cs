@@ -93,7 +93,7 @@ namespace SwissEphNet.CPort
 
         /*
           swe_date_conversion():
-          This function converts some date+time input {d,m,y,uttime}
+          This function converts some date+time input {y,m,d,uttime}
           into the Julian day number tjd.
           The function checks that the input is a legal combination
           of dates; for illegal dates like 32 January 1993 it returns ERR
@@ -136,7 +136,7 @@ namespace SwissEphNet.CPort
             } else {
                 return SwissEph.ERR;
             }
-        }	/* end date_conversion */
+        }
 
         /*************** swe_julday ********************************************
          * This function returns the absolute Julian day number (JD)
@@ -174,9 +174,6 @@ namespace SwissEphNet.CPort
 
          Original author: Marc Pottenger, Los Angeles.
          with bug fix for year < -4711   15-aug-88 by Alois Treindl
-         (The parameter sequence m,d,y still indicates the US origin,
-          be careful because the similar function date_conversion() uses
-          other parameter sequence and also Astrodienst relative juldate.)
  
          References: Oliver Montenbruck, Grundlagen der Ephemeridenrechnung,
                      Verlag Sterne und Weltraum (1987), p.49 ff

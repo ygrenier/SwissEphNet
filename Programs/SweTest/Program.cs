@@ -2785,7 +2785,7 @@ namespace SweTest
                             igate = hexa[ihex];
                             printf("%2d.%d", igate, iline);
                             if (sp == 'V')
-                                printf(" %2d%%", sweph.swe_d2l(100 * ((xhds / 0.9375) % 1.0)));
+                                printf(" %2d%%", SwissEph.swe_d2l(100 * ((xhds / 0.9375) % 1.0)));
                             break;
                         }
                 }     /* switch */

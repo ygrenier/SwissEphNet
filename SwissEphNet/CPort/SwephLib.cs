@@ -368,14 +368,17 @@ namespace SwissEphNet.CPort
          * motion.
          */
         public void swi_cartpol_sp(CPointer<double> x, CPointer<double> l) {
+            int i;
             double[] xx = new double[6], ll = new double[6];
             double rxy, coslon, sinlon, coslat, sinlat;
             /* zero position */
             if (x[0] == 0 && x[1] == 0 && x[2] == 0) {
-                l[0] = l[1] = l[3] = l[4] = 0;
-                l[5] = Math.Sqrt(SE.Sweph.square_sum((double[])(x + 3)));
-                swi_cartpol(x + 3, l);
-                l[2] = 0;
+                ll[0] = ll[1] = ll[3] = ll[4] = 0;
+                ll[5] = Math.Sqrt(SE.Sweph.square_sum((double[])(x + 3)));
+                swi_cartpol(x + 3, ll);
+                ll[2] = 0;
+                for (i = 0; i <= 5; i++)
+                    l[i] = ll[i];
                 return;
             }
             /* zero speed */
@@ -2336,7 +2339,7 @@ namespace SwissEphNet.CPort
          * the macros TABEND and TABSIZ !
          */
         const int TABSTART = 1620;
-        const int TABEND = 2026;
+        const int TABEND = 2027;
         const int TABSIZ = (TABEND - TABSTART + 1);
         /* we make the table greater for additional values read from external file */
         const int TABSIZ_SPACE = (TABSIZ + 100);
@@ -2398,12 +2401,11 @@ namespace SwissEphNet.CPort
             56.8553, 57.5653, 58.3092, 59.1218, 59.9845, 60.7854, 61.6287, 62.2951, 62.9659, 63.4673,
             /* 2000.0 - 2009.0 */
             63.8285, 64.0908, 64.2998, 64.4734, 64.5736, 64.6876, 64.8452, 65.1464, 65.4574, 65.7768,
-            /* 2010.0 - 2017.0 */
-            66.0699, 66.3246, 66.6030, 66.9069, 67.2810, 67.6439, 68.1024, 68.5927,
-            /* Extrapolated values, 2018 - 2019 */
-            68.9689, 69.35,
-            /* Extrapolated values, 2020 - 2026 */
-            69.80, 70.20, 70.60, 71.00, 71.50, 72.00, 72.50,
+            /* 2010.0 - 2018.0 */
+            66.0699, 66.3246, 66.6030, 66.9069, 67.2810, 67.6439, 68.1024, 68.5927, 68.9676, 69.2202,
+            /* Extrapolated values: 
+             * 2020 - 2027 */
+            69.4456, 70.00,   70.50,   71.00,   71.50,   72.00,   72.50,   73.00,
 
             // Fill with 100
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -2630,6 +2632,8 @@ namespace SwissEphNet.CPort
             double deltat;
             if (swed.delta_t_userdef_is_set)
                 return swed.delta_t_userdef;
+            //if (serr != NULL)
+            //    *serr = '\0';
             calc_deltat(tjd, iflag, out deltat, ref serr);
             return deltat;
         }
@@ -3715,12 +3719,22 @@ namespace SwissEphNet.CPort
 
         public static string swi_right_trim(ref string s)
         {
-            //char* sp = s + strlen(s) - 1;
-            //while (isspace((int)(unsigned char) * sp) && sp >= s)
-            //*sp-- = '\0';
+            //char *sp = s + strlen(s) - 1;
+            //// while (isspace((int)(unsigned char) *sp) && sp >= s)
+            //while (sp >= s && isspace((int)(unsigned char) *sp))
+            //  *sp-- = '\0';
             //return s;
             s = s.TrimEnd();
             return s;
+        }
+
+        public static int swi_strnlen(string str, int n)
+        {
+            //size_t swi_strnlen(const char *str, size_t n) {
+            //  const char * stop = (char *)memchr(str, '\0', n);
+            //  return stop ? stop - str : n;
+            //}
+            return str != null ? str.Length : n;
         }
 
         /*
@@ -3836,7 +3850,7 @@ namespace SwissEphNet.CPort
         /*************************************
         double to int32 with rounding, no overflow check
         *************************************/
-        public Int32 swe_d2l(double x) {
+        public static Int32 swe_d2l(double x) {
             if (x >= 0)
                 return ((Int32)(x + 0.5));
             else
@@ -3961,7 +3975,7 @@ namespace SwissEphNet.CPort
                 ddeg = 0;
             }
             // Sheoran "Vedic" ayanamsha: 0 Aries = 3°20 Ashvini
-            if ((swed.sidd.sid_mode & SwissEph.SE_SIDM_TRUE_SHEORAN) != 0)
+            if ((swed.sidd.sid_mode & SwissEph.SE_SIDM_TRUE_SHEORAN) == SwissEph.SE_SIDM_TRUE_SHEORAN)
                 ddeg = swe_degnorm(ddeg + 3.33333333333333);
             if ((roundflag & SwissEph.SE_SPLIT_DEG_ROUND_DEG) != 0) {
                 dadd = 0.5;
@@ -3979,6 +3993,7 @@ namespace SwissEphNet.CPort
             }
             ddeg += dadd;
             inak = (Int32)(ddeg / dnakshsize);
+            if (inak == 27) inak = 0; // with rounding up from 359.9999
             ddeg = C.fmod(ddeg, dnakshsize);
             ideg = (Int32)ddeg;
             ddeg -= ideg;
@@ -4047,6 +4062,8 @@ namespace SwissEphNet.CPort
             ddeg += dadd;
             if ((roundflag & SwissEph.SE_SPLIT_DEG_ZODIACAL) != 0) {
                 isgn = (Int32)(ddeg / 30);
+                if (isgn == 12) // 360° = 0°
+                    isgn = 0;
                 ddeg = (ddeg % 30.0);
             }
             ideg = (Int32)ddeg;
@@ -4624,39 +4641,6 @@ namespace SwissEphNet.CPort
         //        else
         //        {
         //            strcpy(to, sp);
-        //            free(sp);
-        //        }
-        //    }
-        //    return to;
-        //}
-
-        string swi_strncpy(out string to, string from, int n)
-        {
-            to = (from ?? string.Empty).Substring(0, n);
-            return to;
-        }
-        //char* swi_strncpy(char* to, char* from, size_t n)
-        //{
-        //    char* sp, s[AS_MAXCH];
-        //    if (*from == '\0')
-        //    {
-        //        return to;
-        //    }
-        //    if (strlen(from) < AS_MAXCH)
-        //    {
-        //        strncpy(s, from, n);
-        //        strncpy(to, s, n);
-        //    }
-        //    else
-        //    {
-        //        sp = strdup(from);
-        //        if (sp == NULL)
-        //        {
-        //            strncpy(to, from, n);
-        //        }
-        //        else
-        //        {
-        //            strncpy(to, sp, n);
         //            free(sp);
         //        }
         //    }

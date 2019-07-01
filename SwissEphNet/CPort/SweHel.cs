@@ -247,7 +247,7 @@ namespace SwissEphNet.CPort
             double OpticDia = dobs[4];
             double OpticTrans = dobs[5];
             bool is_scotopic = false;
-            //JDNDaysUT = JDNDaysUT; /* currently not used, statement prevents compiler warning */
+            JDNDaysUT += 0.0; /* currently not used, statement prevents compiler warning */
             SNi = SN;
             if (SNi <= 0.00000001) SNi = 0.00000001;
             /* 23 jaar as standard from Garstang*/
@@ -560,7 +560,7 @@ namespace SwissEphNet.CPort
         double SunRA(double JDNDaysUT, Int32 helflag, ref string serr) {
             int imon = 0, iday = 0, iyar = 0, calflag = SwissEph.SE_GREG_CAL;
             double dut = 0;
-            //helflag = helflag; /* statement prevents compiler warning */
+            helflag += 0; /* statement prevents compiler warning */
             serr = null;
             if (JDNDaysUT == SunRA_tjdlast)
                 return SunRA_ralast;
@@ -1245,7 +1245,7 @@ namespace SwissEphNet.CPort
         */
         double Bcity(double Value, double Press) {
             double Bcity = Value;
-            //Press = Press; /* unused; statement prevents compiler warning */
+            Press += 0.0; /* unused; statement prevents compiler warning */
             Bcity = mymax(Bcity, 0);
             return Bcity;
         }
@@ -1425,6 +1425,8 @@ namespace SwissEphNet.CPort
         }
 
         /* Limiting magnitude in dark skies 
+         * for information about input parameters, see function swe_heliacal_ut().
+         *
          * function returns:
          * -1   Error
          * -2   Object is below horizon
@@ -1572,6 +1574,7 @@ namespace SwissEphNet.CPort
             sunra = SunRA(tjdut, helflag, ref serr);
             if (!String.IsNullOrEmpty(serr))
                 return SwissEph.ERR;
+            default_heliacal_parameters(datm, dgeo, dobs, helflag);
             return TopoArcVisionis(mag, dobs, alt_obj, azi_obj, alt_moon, azi_moon, tjdut, azi_sun, sunra, dgeo[1], dgeo[2], datm, helflag, ref dret, ref serr);
         }
 
@@ -1664,6 +1667,7 @@ namespace SwissEphNet.CPort
                 return SwissEph.ERR;
             }
             SE.SwephLib.swi_set_tid_acc(tjdut, helflag, 0, ref serr);
+            default_heliacal_parameters(datm, dgeo, dobs, helflag);
             return HeliacalAngle(mag, dobs, azi_obj, alt_moon, azi_moon, tjdut, azi_sun, dgeo, datm, helflag, dret, ref serr);
         }
 
@@ -1788,7 +1792,9 @@ namespace SwissEphNet.CPort
 
         /*###################################################################
         ' JDNDaysUT [JDN]
-        ' HPheno
+        ' for information about input parameters, see function swe_heliacal_ut().
+        '
+        ' output values:
         '0=AltO [deg]		topocentric altitude of object (unrefracted)
         '1=AppAltO [deg]        apparent altitude of object (refracted)
         '2=GeoAltO [deg]        geocentric altitude of object
@@ -3213,7 +3219,7 @@ namespace SwissEphNet.CPort
             Int32 epheflag = helflag & (SwissEph.SEFLG_JPLEPH | SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_MOSEPH);
             dret[0] = tjdstart; /* will be returned in error case */
             if (TypeEvent == 1 || TypeEvent == 2) {
-                serr = "error: the moon has no morning first or evening last";
+                serr_ret = "error: the moon has no morning first or evening last";
                 return SwissEph.ERR;
             }
             ObjectName = "moon";
@@ -3316,11 +3322,21 @@ namespace SwissEphNet.CPort
         '                   a good default would be 0.25
         '                   VR=-1: the ktot is calculated from the other atmospheric 
         '                   constants.
-        ' age [Year]        default 36, experienced sky observer in ancient times
+        '
+        ' dobs[6]           observer parameters
+        ' - age [Year]      default 36, experienced sky observer in ancient times
         '                   optimum age is 23
-        ' SN                Snellen factor of the visual aquity of the observer
+        ' - SN              Snellen factor of the visual aquity of the observer
         '                   default 1
         '                   see: http://www.i-see.org/eyecharts.html#make-your-own
+        ' The following parameters of dobs[] are only relevant if the flag
+        ' SE_HELFLAG_OPTICAL_PARAMS is set:
+        ' - is_binocular    0 = monocular, 1 = binocular (actually a boolean)
+        ' - OpticMagn       telescope magnification: 
+        '                   0 = default to naked eye (binocular), 1 = naked eye
+        ' - OpticDia        optical aperture (telescope diameter) in mm
+        ' - OpticTrans      optical transmission
+        '
         ' TypeEvent         1 morning first
         '                   2 evening last
         '                   3 evening first
@@ -3347,7 +3363,6 @@ namespace SwissEphNet.CPort
                 MaxCountSynodicPeriod = MAX_COUNT_SYNPER_MAX;
             /*  if (helflag & SE_HELFLAG_SEARCH_1_PERIOD)
                   MaxCountSynodicPeriod = 1; */
-            serr = String.Empty;
             serr_ret = String.Empty;
             /* note, the fixed stars functions rewrite the star name. The input string 
                may be too short, so we have to make sure we have enough space */
