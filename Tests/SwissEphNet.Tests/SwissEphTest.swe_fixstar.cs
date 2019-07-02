@@ -34,15 +34,15 @@ namespace SwissEphNet.Tests
                 Assert.Equal("Aldebaran,alTau", name);
                 Assert.Equal(69.43785467706, xx[0], 11);
                 Assert.Equal(-5.46862068665, xx[1], 11);
-                Assert.Equal(4214065.97278593667, xx[2], 8);
+                Assert.Equal(4214356.43826371, xx[2], 8);
 #if DEBUG
-                Assert.Equal(0.00013214702, xx[3], 8);
-                Assert.Equal(0.00000203067, xx[4], 8);
-                Assert.Equal(0.01628316977, xx[5], 8);
+                Assert.Equal(0.00014896, xx[3], 8);
+                Assert.Equal(1.723E-05, xx[4], 8);
+                Assert.Equal(0.01522108, xx[5], 8);
 #else
-                Assert.Equal(0.00013206, xx[3], 8);
-                Assert.Equal(0.000002036239, xx[4], 8);
-                Assert.Equal(0.01626915, xx[5], 8);
+                Assert.Equal(0.00014887, xx[3], 8);
+                Assert.Equal(1.724E-05, xx[4], 8);
+                Assert.Equal(0.01536112, xx[5], 8);
 #endif
 
                 name = "test";
@@ -77,10 +77,14 @@ namespace SwissEphNet.Tests
                 Assert.Equal("Aldebaran,alTau", name);
                 Assert.Equal(69.43785475383, xx[0], 11);
                 Assert.Equal(-5.46862068520, xx[1], 11);
-                Assert.Equal(4214065.97281017154, xx[2], 8);
-                Assert.Equal(0.00013401939, xx[3], 6);
-                Assert.Equal(0.00000139627, xx[4], 6);
-                Assert.Equal(0.01542237974, xx[5], 6);
+                Assert.Equal(4214356.43827158, xx[2], 7);
+                Assert.Equal(0.000151, xx[3], 6);
+                Assert.Equal(1.7E-05, xx[4], 6);
+#if DEBUG
+                Assert.Equal(0.015532, xx[5], 6);
+#else
+                Assert.Equal(0.01536, xx[5], 6);
+#endif
             }
         }
 

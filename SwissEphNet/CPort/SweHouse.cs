@@ -103,6 +103,7 @@ namespace SwissEphNet.CPort
         //                           double *cusp, 
         //                           double *ascmc);
         //static int sidereal_houses_trad(double tjde, 
+        //               int32 iflag,
         //                           double armc, 
         //                           double eps, 
         //                           double nutl, 
@@ -220,6 +221,11 @@ namespace SwissEphNet.CPort
             SE.SwephLib.swi_nutation(tjde, 0, nutlo);
             for (i = 0; i < 2; i++)
                 nutlo[i] *= SwissEph.RADTODEG;
+            if ((iflag & SwissEph.SEFLG_NONUT) != 0)
+            {
+                for (i = 0; i < 2; i++)
+                    nutlo[i] = 0;
+            }
 #if TRACE
             //swi_open_trace(NULL);
             //if (swi_trace_count <= TRACE_COUNT_MAX) {
@@ -240,6 +246,7 @@ namespace SwissEphNet.CPort
 #endif
             /*houses_to_sidereal(tjde, geolat, hsys, eps, cusp, ascmc, iflag);*/
             armc = SE.swe_degnorm(SE.swe_sidtime0(tjd_ut, eps_mean + nutlo[1], nutlo[0]) * 15 + geolon);
+            //fprintf(stderr, "armc=%f, iflag=%d\n", armc, iflag);
             if (char.ToUpper(hsys) == 'I')
             {	// compute sun declination for sunshine houses
                 int flags = SwissEph.SEFLG_SPEED | SwissEph.SEFLG_EQUATORIAL;
@@ -254,7 +261,7 @@ namespace SwissEphNet.CPort
                 else if ((sip.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0)
                     retc = sidereal_houses_ssypl(tjde, armc, eps_mean + nutlo[1], nutlo, geolat, hsys, cusp, ascmc);
                 else
-                    retc = sidereal_houses_trad(tjde, armc, eps_mean + nutlo[1], nutlo[0], geolat, hsys, cusp, ascmc);
+                    retc = sidereal_houses_trad(tjde, iflag, armc, eps_mean + nutlo[1], nutlo[0], geolat, hsys, cusp, ascmc);
             } else {
                 retc = swe_houses_armc(armc, geolat, eps_mean + nutlo[1], hsys, cusp, ascmc);
                 if (char.ToUpper(hsys) == 'I')   // compute sun declination for sunshine houses
@@ -511,6 +518,7 @@ namespace SwissEphNet.CPort
 
         /* common simplified procedure */
         int sidereal_houses_trad(double tjde,
+                                   Int32 iflag,
                                    double armc,
                                    double eps,
                                    double nutl,
@@ -523,18 +531,25 @@ namespace SwissEphNet.CPort
             int ito;
             char ihs = char.ToUpper(hsys);
             char ihs2 = ihs;
-            ay = SE.swe_get_ayanamsa(tjde);
+            string sdummy = null;
+            // ay = swe_get_ayanamsa(tjde);
+            //fprintf(stderr, "ay=%f\n", ay);
+            retc = SE.Sweph.swe_get_ayanamsa_ex(tjde, iflag, out ay, ref sdummy);
+            //fprintf(stderr, "ay=%f\n", ay);
+            //fprintf(stderr, "nutl=%f\n", nutl);
             if (ihs == 'G')
                 ito = 36;
             else
                 ito = 12;
             if (ihs == 'W')  /* whole sign houses: treat as 'E' and fix later */
                 ihs2 = 'E';
+            //fprintf(stderr, "armc=%f\n", armc);
             //if (hsys == 'P') fprintf(stderr, "ay=%f, t=%f %c", ay, tjde, (char) hsys);
             retc = swe_houses_armc(armc, lat, eps, ihs2, cusp, ascmc);
             //if (hsys == 'P') fprintf(stderr, "  h1=%f", cusp[1]);
             for (i = 1; i <= ito; i++) {
-                cusp[i] = SE.swe_degnorm(cusp[i] - ay - nutl);
+                //cusp[i] = SE.swe_degnorm(cusp[i] - ay - nutl);
+                cusp[i] = SE.swe_degnorm(cusp[i] - ay);
                 if (ihs == 'W') /* whole sign houses */
                     cusp[i] -= (cusp[i] % 30.0);
             }
@@ -546,7 +561,8 @@ namespace SwissEphNet.CPort
             for (i = 0; i < SwissEph.SE_NASCMC; i++) {
                 if (i == 2)	/* armc */
                     continue;
-                ascmc[i] = SE.swe_degnorm(ascmc[i] - ay - nutl);
+                //ascmc[i] = SE.swe_degnorm(ascmc[i] - ay - nutl);
+                ascmc[i] = SE.swe_degnorm(ascmc[i] - ay);
             }
             //if (hsys == 'P') fprintf(stderr, " => %f\n", cusp[1]);
             return retc;
@@ -1083,7 +1099,7 @@ namespace SwissEphNet.CPort
                         if (q > 90) q = 180 - q;
                         if (q < 1e-30)
                         {    // degenerate case of quadrant = zer0
-                            r = double.PositiveInfinity;
+                            //r = double.PositiveInfinity;
                             x_ = xr = xr3 = 0;
                             xr4 = 180;
                         }
@@ -1852,8 +1868,6 @@ namespace SwissEphNet.CPort
          * is currently provided for the following house methods:
          * Y APC houses, L Pullen SD, Q Pullen SR, I Sunshine, S Sripati.
          *
-         * For the following house methods only a simplified calcul
-         *
          * IMPORTANT: This function should NOT be used for sidereal astrology.
          * If you cannot avoid doing so, please note:
          * - The input longitudes (xpin) MUST always be tropical, even if you 
@@ -2532,7 +2546,7 @@ namespace SwissEphNet.CPort
             return hpos;
         }
 
-        int sunshine_init(double lat, double dec, CPointer<double> xh)
+        static int sunshine_init(double lat, double dec, CPointer<double> xh)
         {
             double ad, nsa, dsa, arg;
             // ascensional difference: sin ad = tan dec tan lat

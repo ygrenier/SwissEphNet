@@ -103,16 +103,16 @@ namespace SwissEphNet.CPort
         //#define HOUSES 	struct houses;
         public const double VERY_SMALL = 1E-10;
 
-        public double degtocs(double x) { return (SE.swe_d2l((x) * SwissEph.DEG)); }
-        public double cstodeg(double x) { return (double)((x) * SwissEph.CS2DEG); }
+        public static double degtocs(double x) { return (SwissEph.swe_d2l((x) * SwissEph.DEG)); }
+        public static double cstodeg(double x) { return (double)((x) * SwissEph.CS2DEG); }
 
-        public double sind(double x) { return Math.Sin((x) * SwissEph.DEGTORAD); }
-        public double cosd(double x) { return Math.Cos((x) * SwissEph.DEGTORAD); }
-        public double tand(double x) { return Math.Tan((x) * SwissEph.DEGTORAD); }
-        public double asind(double x) { return (Math.Asin(x) * SwissEph.RADTODEG); }
-        public double acosd(double x) { return (Math.Acos(x) * SwissEph.RADTODEG); }
-        public double atand(double x) { return (Math.Atan(x) * SwissEph.RADTODEG); }
-        public double atan2d(double y, double x) { return (Math.Atan2(y, x) * SwissEph.RADTODEG); }
+        public static double sind(double x) { return Math.Sin((x) * SwissEph.DEGTORAD); }
+        public static double cosd(double x) { return Math.Cos((x) * SwissEph.DEGTORAD); }
+        public static double tand(double x) { return Math.Tan((x) * SwissEph.DEGTORAD); }
+        public static double asind(double x) { return (Math.Asin(x) * SwissEph.RADTODEG); }
+        public static double acosd(double x) { return (Math.Acos(x) * SwissEph.RADTODEG); }
+        public static double atand(double x) { return (Math.Atan(x) * SwissEph.RADTODEG); }
+        public static double atan2d(double y, double x) { return (Math.Atan2(y, x) * SwissEph.RADTODEG); }
 
     }
 }

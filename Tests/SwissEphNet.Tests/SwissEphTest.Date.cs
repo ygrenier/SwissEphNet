@@ -89,7 +89,7 @@ namespace SwissEphNet.Tests
             using (var swe = new SwissEph())
             {
                 var tjd_ut = swe.swe_julday(2017, 8, 26, 11.25, SwissEph.SE_GREG_CAL);
-                Assert.Equal(0.00079683, swe.swe_deltat(tjd_ut), 8);
+                Assert.Equal(0.00079691, swe.swe_deltat(tjd_ut), 8);
             }
             using (var swe = new SwissEph())
             {
@@ -105,7 +105,7 @@ namespace SwissEphNet.Tests
                         isLoaded = true;
                     }
                 };
-                Assert.Equal(0.00079683, swe.swe_deltat(tjd_ut), 8);
+                Assert.Equal(0.00079691, swe.swe_deltat(tjd_ut), 8);
                 Assert.True(isLoaded);
             }
         }
@@ -322,13 +322,13 @@ namespace SwissEphNet.Tests
                 year = 2030;
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
-                Assert.Equal(2462729.5216829, dret[0], 7);
+                Assert.Equal(2462729.5216863, dret[0], 7);
                 Assert.Equal(2462729.5208333, dret[1], 7);
                 Assert.Null(serr);
 
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_JUL_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
-                Assert.Equal(2462742.5216830, dret[0], 7);
+                Assert.Equal(2462742.5216864, dret[0], 7);
                 Assert.Equal(2462742.5208333, dret[1], 7);
                 Assert.Null(serr);
 
@@ -413,7 +413,7 @@ namespace SwissEphNet.Tests
                 Assert.Equal(16, day);
                 Assert.Equal(0, hour);
                 Assert.Equal(30, min);
-                Assert.Equal(15.164525806904, sec, 12);
+                Assert.Equal(14.865311980247, sec, 12);
 
                 swe.swe_jdet_to_utc(2462742.52185908, SwissEph.SE_JUL_CAL, ref year, ref month, ref day, ref hour, ref min, ref sec);
                 Assert.Equal(2030, year);
@@ -421,7 +421,7 @@ namespace SwissEphNet.Tests
                 Assert.Equal(16, day);
                 Assert.Equal(0, hour);
                 Assert.Equal(30, min);
-                Assert.Equal(15.216104686260, sec, 12);
+                Assert.Equal(14.917051792145, sec, 12);
 
             }
         }
@@ -542,7 +542,7 @@ namespace SwissEphNet.Tests
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2458849.50082389, dret[0], 8);
-                Assert.Equal(2458849.50001602, dret[1], 8);
+                Assert.Equal(2458849.50002012, dret[1], 8);
                 Assert.Null(serr);
             }
 
@@ -563,7 +563,7 @@ namespace SwissEphNet.Tests
                 res = swe.swe_utc_to_jd(year, month, day, hour, min, sec, SwissEph.SE_GREG_CAL, dret, ref serr);
                 Assert.Equal(SwissEph.OK, res);
                 Assert.Equal(2458849.50082389, dret[0], 8);
-                Assert.Equal(2458849.50001602, dret[1], 8);
+                Assert.Equal(2458849.50002012, dret[1], 8);
                 Assert.Null(serr);
             }
         }

@@ -42,8 +42,8 @@ namespace SwissEphNet.Tests
         [Fact]
         public void TestVersion() {
             using (var target = new SwissEph()) {
-                Assert.Equal("2.07.01", target.swe_version());
-                Assert.Equal("2.07.01-net-0003", target.swe_dotnet_version());
+                Assert.Equal("2.08", target.swe_version());
+                Assert.Equal("2.08.00-net-0001", target.swe_dotnet_version());
             }
         }
 
@@ -547,11 +547,11 @@ namespace SwissEphNet.Tests
         [Fact]
         public void Test_swe_d2l() {
             using (var target = new SwissEph()) {
-                Assert.Equal(0, target.swe_d2l(0));
-                Assert.Equal(123, target.swe_d2l(123.45));
-                Assert.Equal(124, target.swe_d2l(123.987));
-                Assert.Equal(-123, target.swe_d2l(-123.45));
-                Assert.Equal(-124, target.swe_d2l(-123.987));
+                Assert.Equal(0, SwissEph.swe_d2l(0));
+                Assert.Equal(123, SwissEph.swe_d2l(123.45));
+                Assert.Equal(124, SwissEph.swe_d2l(123.987));
+                Assert.Equal(-123, SwissEph.swe_d2l(-123.45));
+                Assert.Equal(-124, SwissEph.swe_d2l(-123.987));
             }
         }
 

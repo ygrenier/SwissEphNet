@@ -134,6 +134,11 @@ namespace SwissEphNet.CPort
             public int series_no; public double tstart;
         };
 
+        // Saros cycle numbers of solar eclipses with date of initial 
+        // eclipse. Table was derived from the table of the Nasa Eclipse Web Site:
+        // https://eclipse.gsfc.nasa.gov/SEsaros/SEsaros0-180.html
+        // Note, for eclipse dates =< 15 Feb -1604 and eclipse dates
+        // >= 2 Sep 2666, Saros cycle numbers cannot always be given.
         const double SAROS_CYCLE = 6585.3213;
         const int NSAROS_SOLAR = 181;
         static saros_data[] saros_data_solar = new saros_data[NSAROS_SOLAR]  {
@@ -320,6 +325,11 @@ namespace SwissEphNet.CPort
             new saros_data(180, 2729226.5), /* 08 Apr 2760 */
         };
 
+        // Saros cycle numbers of lunar eclipses with date of initial 
+        // eclipse. Table was derived from the table of the Nasa Eclipse Web Site:
+        // https://eclipse.gsfc.nasa.gov/LEsaros/LEsaroscat.html
+        // Note, for eclipse dates =< 29 April -1337 and eclipse dates
+        // >= 10 Aug 2892, Saros cycle numbers cannot always be given.
         const int NSAROS_LUNAR = 180;
         static saros_data[] saros_data_lunar = new saros_data[NSAROS_LUNAR]{
             new saros_data(1, 782437.5), /* 14 Mar -2570 */
@@ -934,9 +944,11 @@ namespace SwissEphNet.CPort
                   double[] geopos,
                   double[] attr,
                   ref string serr) {
-            Int32 retflag, retflag2;
+            Int32 retflag, retflag2, i;
             double[] dcore = new double[10], ls = new double[6], xaz = new double[6];
             double[] geopos2 = new double[20];
+            for (i = 0; i <= 10; i++)
+                attr[i] = 0;
             if (geopos[2] < Sweph.SEI_ECL_GEOALT_MIN || geopos[2] > Sweph.SEI_ECL_GEOALT_MAX)
             {
                 if (serr != null)
@@ -961,6 +973,13 @@ namespace SwissEphNet.CPort
             attr[6] = xaz[2];
             if (xaz[2] <= 0)
                 retflag = 0;
+            if (retflag == 0)
+            {
+                for (i = 0; i <= 3; i++)
+                    attr[i] = 0;
+                for (i = 8; i <= 10; i++)
+                    attr[i] = 0;
+            }
             return retflag;
         }
 
@@ -1126,6 +1145,7 @@ namespace SwissEphNet.CPort
                 /* saros series and member */
                 for (i = 0; i < NSAROS_SOLAR; i++) {
                     d = (tjd_ut - saros_data_solar[i].tstart) / SAROS_CYCLE;
+                    if (d < 0 && d * SAROS_CYCLE > -2) d = 0.0000001;
                     if (d < 0) continue;
                     j = (int)d;
                     if ((d - j) * SAROS_CYCLE < 2) {
@@ -3058,6 +3078,15 @@ namespace SwissEphNet.CPort
          *                      *        SE_TRUE_TO_APP
          *
          * function returns:
+         * function returns:
+         * double *dret;        * array of 4 doubles; declare 20 doubles !
+         * - dret[0] true altitude, if possible; otherwise input value
+         * - dret[1] apparent altitude, if possible; otherwise input value
+         * - dret[2] refraction
+         * - dret[3] dip of the horizon
+         * 
+         * The body is above the horizon if the dret[0] != dret[1]
+         *
          * case 1, conversion from true altitude to apparent altitude
          * - apparent altitude, if body appears above is observable above ideal horizon
          * - true altitude (the input value), otherwise
@@ -3068,12 +3097,6 @@ namespace SwissEphNet.CPort
          *   is a plausible apparent altitude, i.e. if it is a position above the ideal
          *   horizon
          * - the input altitude otherwise
-         *
-         * in addition the array dret[] is given the following values
-         * - dret[0] true altitude, if possible; otherwise input value
-         * - dret[1] apparent altitude, if possible; otherwise input value
-         * - dret[2] refraction
-         * - dret[3] dip of the horizon
          *
          * The body is above the horizon if the dret[0] != dret[1]
          */
@@ -3375,6 +3398,7 @@ namespace SwissEphNet.CPort
             /* saros series and member */
             for (i = 0; i < NSAROS_LUNAR; i++) {
                 d = (tjd_ut - saros_data_lunar[i].tstart) / SAROS_CYCLE;
+                if (d < 0 && d * SAROS_CYCLE > -2) d = 0.0000001;
                 if (d < 0) continue;
                 j = (int)d;
                 if ((d - j) * SAROS_CYCLE < 2) {
@@ -3840,7 +3864,7 @@ namespace SwissEphNet.CPort
             double fac;
             double T, inx, om, sinB, u1, u2, du;
             double ph1, ph2; double[] me = new double[2];
-            Int32 iflagp, epheflag;
+            Int32 iflagp, epheflag, retflag, epheflag2;
             string serr2 = string.Empty;
             iflag &= ~(SwissEph.SEFLG_JPLHOR | SwissEph.SEFLG_JPLHOR_APPROX);
             /* function calls for Pluto with asteroid number 134340
@@ -3869,16 +3893,28 @@ namespace SwissEphNet.CPort
             /*  
              * geocentric planet
              */
-            if (SE.swe_calc(tjd, (int)ipl, iflag | SwissEph.SEFLG_XYZ, xx, ref serr) == SwissEph.ERR)
+            if ((retflag = SE.swe_calc(tjd, (int)ipl, iflag | SwissEph.SEFLG_XYZ, xx, ref serr)) == SwissEph.ERR)
                 /* int cast can be removed when swe_calc() gets int32 ipl definition */
                 return SwissEph.ERR;
+            // check epheflag and adjust iflag
+            epheflag2 = retflag & SEFLG_EPHMASK;
+            if (epheflag != epheflag2)
+            {
+                iflag &= ~epheflag;
+                iflagp &= ~epheflag;
+                iflag |= epheflag2;
+                iflagp |= epheflag2;
+                epheflag = epheflag2;
+            }
             if (SE.swe_calc(tjd, (int)ipl, iflag, lbr, ref serr) == SwissEph.ERR)
                 /* int cast can be removed when swe_calc() gets int32 ipl definition */
                 return SwissEph.ERR;
             /* if moon, we need sun as well, for magnitude */
             if (ipl == SwissEph.SE_MOON)
+            {
                 if (SE.swe_calc(tjd, SwissEph.SE_SUN, iflag | SwissEph.SEFLG_XYZ, xxs, ref serr) == SwissEph.ERR)
                     return SwissEph.ERR;
+            }
             if (ipl != SwissEph.SE_SUN && ipl != SwissEph.SE_EARTH &&
               ipl != SwissEph.SE_MEAN_NODE && ipl != SwissEph.SE_TRUE_NODE &&
               ipl != SwissEph.SE_MEAN_APOG && ipl != SwissEph.SE_OSCU_APOG) {
@@ -3931,7 +3967,8 @@ namespace SwissEphNet.CPort
                 } else if (ipl == SwissEph.SE_MOON) {
                     /* formula according to Allen, C.W., 1976, Astrophysical Quantities */
                     /*attr[4] = -21.62 + 5 * log10(384410497.8 / EARTH_RADIUS) / log10(10) + 0.026 * Math.Abs(attr[0]) + 0.000000004 * pow(attr[0], 4);*/
-                    attr[4] = -21.62 + 5 * Math.Log10(lbr[2] * Sweph.AUNIT / Sweph.EARTH_RADIUS) / Math.Log10(10) + 0.026 * Math.Abs(attr[0]) + 0.000000004 * Math.Pow(attr[0], 4);
+                    //attr[4] = -21.62 + 5 * Math.Log10(lbr[2] * Sweph.AUNIT / Sweph.EARTH_RADIUS) / Math.Log10(10) + 0.026 * Math.Abs(attr[0]) + 0.000000004 * Math.Pow(attr[0], 4);
+                    attr[4] = -21.62 + 5 * Math.Log10(lbr[2] * Sweph.AUNIT / Sweph.EARTH_RADIUS) + 0.026 * Math.Abs(attr[0]) + 0.000000004 * Math.Pow(attr[0], 4);
                     //#if 0
                     //      /* ratio apparent diameter : average diameter */
                     //      fac = attr[3] / (asin(pla_diam[SE_MOON] / 2.0 / 384400000.0) * 2 * SwissEph.RADTODEG);
@@ -3946,7 +3983,8 @@ namespace SwissEphNet.CPort
                     //      attr[4] = mag_elem[ipl,0] - 2.5 * log10(fac);
                     //#endif
                     /*printf("1 = %f, 2 = %f\n", mag, mag2);*/
-                } else if (ipl == SwissEph.SE_SATURN) {
+                }
+                else if (ipl == SwissEph.SE_SATURN) {
                     /* rings are considered according to Meeus, p. 301ff. (German version 329ff.) */
                     T = (tjd - dt - Sweph.J2000) / 36525.0;
                     inx = (28.075216 - 0.012998 * T + 0.000004 * T * T) * SwissEph.DEGTORAD;
@@ -4075,7 +4113,7 @@ namespace SwissEphNet.CPort
             }
             if (!string.IsNullOrEmpty(serr2))
                 serr = serr2;
-            return SwissEph.OK;
+            return iflag;
         }
 
         public Int32 swe_pheno_ut(double tjd_ut, Int32 ipl, Int32 iflag, double[] attr, ref string serr) {
@@ -5084,8 +5122,9 @@ namespace SwissEphNet.CPort
             if (ipl == SwissEph.SE_MEAN_NODE || ipl == SwissEph.SE_TRUE_NODE ||
                 ipl == SwissEph.SE_MEAN_APOG || ipl == SwissEph.SE_OSCU_APOG ||
                 ipl < 0 ||
-                (ipl >= SwissEph.SE_NPLANETS && ipl <= SwissEph.SE_AST_OFFSET)) {
-                /*(ipl >= SE_FICT_OFFSET && ipl - SE_FICT_OFFSET < SE_NFICT_ELEM)) */
+                (ipl >= SwissEph.SE_NPLANETS && ipl <= SwissEph.SE_AST_OFFSET))
+                // (ipl >= SE_FICT_OFFSET && ipl - SE_FICT_OFFSET < SE_NFICT_ELEM)) 
+            {
                 serr = C.sprintf("nodes/apsides for planet %5.0f are not implemented", (double)ipl);
                 if (xnasc != null)
                     for (i = 0; i <= 5; i++)
@@ -5419,6 +5458,7 @@ namespace SwissEphNet.CPort
                 SE.SwephLib.swi_precess(xp, tjd_et, iflag, Sweph.J_TO_J2000);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     SE.Sweph.swi_precess_speed(xp, tjd_et, iflag, Sweph.J_TO_J2000);
+                //      fprintf(stderr, "%.17f, %.17f, %.17f, %.17f, %.17f, %.17f\n", xp[0], xp[1], xp[2], xp[3], xp[4], xp[5]);
                 /*********************
                  * to barycenter 
                  *********************/
