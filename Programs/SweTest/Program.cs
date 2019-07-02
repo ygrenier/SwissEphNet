@@ -1,4 +1,5 @@
 ﻿#define MSDOS
+//#define NO_SWE_GLP
 
 /*
    This is a port of the Swiss Ephemeris Free Edition, Version 2.00.00
@@ -94,6 +95,7 @@ namespace SweTest
 
         #region Strings
         /* attention: Microsoft Compiler does not accept strings > 2048 char */
+
         static string infocmd0 = @"
   Swetest computes a complete set of geocentric planetary positions,
   for a given date or a sequence of dates.
@@ -210,16 +212,28 @@ namespace SweTest
         static string infocmd3 = @"
         -geopos[long,lat,elev]	
         Geographic position. Can be used for azimuth and altitude
-                or topocentric or house cups calculations.
+                or house cups calculations.
                 The longitude, latitude (degrees with DECIMAL fraction)
         and elevation (meters) can be given, with
         commas separated, + for east and north. If none are given,
-        Greenwich is used: 0,51.5,0
+		Greenwich is used: 0,51.5,0.
+		For topocentric planet positions please user the parameter -topo
      sidereal astrology:
     -ay..   ayanamsha, with number of method, e.g. ay0 for Fagan/Bradley
-    -sid..    sidereal, with number of method (see below)
-    -sidt0..  sidereal, projection on ecliptic of t0 
-    -sidsp..  sidereal, projection on solar system plane 
+	-sid..    sidereal, with number of method (see below)
+	-sidt0..  dito, but planets are projected on the ecliptic plane of the
+	          reference date of the ayanamsha (more info in general documentation
+		  www.astro.com/swisseph/swisseph.htm)
+	-sidsp..  dito, but planets are projected on the solar system plane.
+		  (see www.astro.com/swisseph/swisseph.htm)
+        -sidudef[jd,ay0,...]  sidereal, with user defined ayanamsha; 
+	          jd=julian day number in TT/ET
+	          ay0=initial value of ayanamsha, 
+		  ...=optional parameters, comma-sparated:
+		  'jdisut': ayanamsha reference date is UT
+		  'eclt0':  project on ecliptic of reference date (like -sidt0..)
+		  'ssyplane':  project on solar system plane (like -sidsp..)
+		  e.g. '-sidudef2452163.8333333,25.0,jdisut': ayanamsha is 25.0° on JD 2452163.8333333 UT
            number of ayanamsha method:
        0 for Fagan/Bradley
        1 for Lahiri
@@ -288,6 +302,7 @@ namespace SweTest
         -testaa97
         -roundsec         round to seconds
         -roundmin         round to minutes
+	-dms              use dms instead of fractions, at some places
      observer position:
         -hel    compute heliocentric positions
         -bary   compute barycentric positions (bar. earth instead of node) 
@@ -295,7 +310,7 @@ namespace SweTest
         topocentric positions. The longitude, latitude (degrees with
         DECIMAL fraction) and elevation (meters) can be given, with
         commas separated, + for east and north. If none are given,
-        Zuerich is used: 8.55,47.38,400
+		Greenwich is used 0.00,51.50,0
      orbital elements:
         -orbel  compute osculating orbital elements relative to the
 	        mean ecliptic J2000. (Note, all values, including time of
@@ -488,6 +503,8 @@ namespace SweTest
         b latitude decimal
         R distance decimal in AU
         r distance decimal in AU, Moon in seconds parallax
+        W distance decimal in light years
+        w distance decimal in km
         q relative distance (1000=nearest, 0=furthest)
         A right ascension in hh:mm:ss
         a right ascension hours decimal
@@ -587,6 +604,7 @@ namespace SweTest
         /**************************************************************/
 
         //#include "swephexp.h" 	/* this includes  "sweodef.h" */
+        //#include "swephlib.h"
 
         /*
          * programmers warning: It looks much worse than it is!
@@ -674,6 +692,8 @@ namespace SweTest
         //static int cut_str_any(char *s, char *cutlist, char *cpos[], int nmax);
         //#endif
         //static int32 call_swe_fixstar(char *star, double te, int32 iflag, double *x, char *serr);
+        //static void jd_to_time_string(double jut, char* stimeout);
+        //static char* our_strcpy(char* to, char* from);
 
         /* globals shared between main() and print_line() */
         static string fmt = "PLBRS";
@@ -685,6 +705,7 @@ namespace SweTest
         static string serr_save = string.Empty, serr_warn = string.Empty;
         static int gregflag = SwissEph.SE_GREG_CAL;
         static int diff_mode = 0;
+        static bool use_dms = false;
         static bool universal_time = false;
         static bool universal_time_utc = false;
         static Int32 round_flag = 0;
@@ -695,6 +716,8 @@ namespace SweTest
         static Int32 special_mode = 0;
         static bool do_orbital_elements = false;
         static bool hel_using_AV = false;
+        static bool with_header = true;
+        static bool with_chart_link = false;
         static double[] x = new double[6], x2 = new double[6], xequ = new double[6], xcart = new double[6],
             xcartq = new double[6], xobl = new double[6], xaz = new double[6], xt = new double[6], xsv = new double[6];
         static double hpos, hpos2, hposj, armc;
@@ -763,7 +786,7 @@ namespace SweTest
             //  char hostname[80];
             //#endif
             int i, j, n, iflag_f = -1, iflgt;
-            int line_count, line_limit = 32000;
+            int line_count, line_limit = 36525; // days in a century
             double daya;
             double top_long = 0.0;	/* Greenwich UK */
             double top_lat = 51.5;
@@ -775,12 +798,13 @@ namespace SweTest
             string sdate = String.Empty;
             string begindate = null;
             string stimein = string.Empty;
+            string stimeout = string.Empty;
             Int32 iflgret;
             bool is_first = true;
-            bool with_header = true;
             bool with_glp = false;
             bool with_header_always = false;
             bool do_ayanamsa = false;
+            double aya_t0 = 0, aya_val0 = 0;
             bool no_speed = false;
             Int32 sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
             double t2, tstep = 1, thour = 0;
@@ -807,6 +831,8 @@ namespace SweTest
                         universal_time_utc = true;
                         if ((argv[i].Length) > 4)
                         {
+                            //strncpy(stimein, argv[i] + 4, 30);
+                            //stimein[30] = '\0';
                             stimein = argv[i].Substring(4, 30);
                         }
                     }
@@ -815,11 +841,11 @@ namespace SweTest
                         universal_time = true;
                         if (argv[i].Length > 3)
                         {
-                            //stimein = string.Empty;
-                            //strncat(stimein, argv[i] + 3, 30);
                             stimein = argv[i].Substring(3);
                             if (stimein.Length > 30)
                                 stimein = stimein.Substring(0, 30);
+                            //strncpy(stimein, argv[i] + 3, 30);
+                            //stimein[30] = '\0';
                         }
                     }
                     else if (argv[i].StartsWith("-glp"))
@@ -868,6 +894,23 @@ namespace SweTest
                         if (sid_mode == 0)
                             sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                         sid_mode |= SwissEph.SE_SIDBIT_SSY_PLANE;
+                    }
+                    else if (argv[i].StartsWith("-sidudef"))
+                    {
+                        iflag |= SwissEph.SEFLG_SIDEREAL;
+                        sid_mode = SwissEph.SE_SIDM_USER;
+                        s1 = argv[i].Substring(8);
+                        aya_t0 = C.atof(s1);
+                        sp = string.Empty;
+                        if ((spi = C.strchr(s1, ',')) >= 0)
+                        {
+                            sp = s1.Substring(spi + 1);
+                            aya_val0 = C.atof(sp);
+                        }
+                        if ((spi = C.strstr(sp, "jdisut")) >= 0)
+                        {
+                            sid_mode |= SwissEph.SE_SIDBIT_USER_UT;
+                        }
                         //sweph.swe_set_sid_mode(sid_mode, 0, 0);
                     }
                     else if (argv[i].StartsWith("-sid"))
@@ -894,6 +937,8 @@ namespace SweTest
                         whicheph = SwissEph.SEFLG_JPLEPH;
                         if (argv[i].Length > 5)
                         {
+                            //strncpy(fname, argv[i] + 5, AS_MAXCH - 1);
+                            //fname[AS_MAXCH - 1] = '\0';
                             fname = argv[i].Substring(5);
                         }
                     }
@@ -901,6 +946,8 @@ namespace SweTest
                     {
                         if (argv[i].Length > 5)
                         {
+                            //strncpy(ephepath, argv[i] + 5, AS_MAXCH - 1);
+                            //ephepath[AS_MAXCH - 1] = '\0';
                             ephepath = argv[i].Substring(5);
                         }
                     }
@@ -929,7 +976,9 @@ namespace SweTest
                     else if (argv[i].StartsWith("-house"))
                     {
                         sout = String.Empty;
-                        C.sscanf(argv[i].Substring(6), "%lf,%lf,%c", ref top_long, ref top_lat, ref sout);
+                        sp = argv[i].Substring(6);
+                        if (sp.StartsWith("[")) sp = sp.Substring(1);
+                        C.sscanf(sp, "%lf,%lf,%c", ref top_long, ref top_lat, ref sout);
                         top_elev = 0;
                         if (!String.IsNullOrEmpty(sout)) ihsy = sout[0];
                         do_houses = true;
@@ -946,12 +995,16 @@ namespace SweTest
                     else if (argv[i].StartsWith("-topo"))
                     {
                         iflag |= SwissEph.SEFLG_TOPOCTR;
-                        C.sscanf(argv[i].Substring(5), "%lf,%lf,%lf", ref top_long, ref top_lat, ref top_elev);
+                        sp = argv[i].Substr(5);
+                        if (sp.StartsWith("[")) sp = sp.Substring(1);
+                        C.sscanf(sp, "%lf,%lf,%lf", ref top_long, ref top_lat, ref top_elev);
                         have_geopos = true;
                     }
                     else if (argv[i].StartsWith("-geopos"))
                     {
-                        C.sscanf(argv[i].Substring(7), "%lf,%lf,%lf", ref top_long, ref top_lat, ref top_elev);
+                        sp = argv[i].Substring(7);
+                        if (sp.StartsWith("[")) sp = sp.Substring(1);
+                        C.sscanf(sp, "%lf,%lf,%lf", ref top_long, ref top_lat, ref top_elev);
                         have_geopos = true;
                     }
                     else if (String.Compare(argv[i], "-true") == 0)
@@ -1002,14 +1055,17 @@ namespace SweTest
                         time_flag |= BIT_TIME_LMT;
                         if (argv[i].Length > 4)
                         {
-                            stimein = string.Empty;
-                            stimein += argv[i].Substring(4, Math.Min(30, argv[i].Length - 4));
+                            C.strncpy(out stimein, argv[i].Substring(4), 30);
                         }
                     }
                     else if (String.Compare(argv[i], "-lat") == 0)
                     {
                         universal_time = true;
                         time_flag |= BIT_TIME_LAT;
+                    }
+                    else if (C.strcmp(argv[i], "-clink") == 0)
+                    {
+                        with_chart_link = true;
                     }
                     else if (String.Compare(argv[i], "-lunecl") == 0)
                     {
@@ -1115,8 +1171,12 @@ namespace SweTest
                     {
                         special_event = SP_HELIACAL;
                         search_flag = 0;
-                        if (argv[i].Length > 4)
-                            search_flag = int.Parse(argv[i].Substring(4));
+                        //if (argv[i].Length > 4)
+                        //    search_flag = int.Parse(argv[i].Substring(4));
+                        sp = argv[i].Substring(4);
+                        if (sp.StartsWith("[")) sp = sp.Substring(1);
+                        if (C.strlen(sp) > 0)
+                            search_flag = C.atoi(sp);
                         have_geopos = true;
                         if (argv[i].Contains("AV")) hel_using_AV = true;
                     }
@@ -1124,6 +1184,7 @@ namespace SweTest
                     {
                         C.sscanf(argv[i].Substring(3), "%lf,%lf,%lf,%lf", ref datm[0], ref datm[1], ref datm[2], ref datm[3]);
                         sp = argv[i].Substring(3);
+                        if (sp.StartsWith("[")) sp = sp.Substring(1);
                         j = 0;
                         var parts = sp.Split(',');
                         while (j < 4 && j < parts.Length)
@@ -1136,11 +1197,15 @@ namespace SweTest
                     }
                     else if (argv[i].StartsWith("-obs"))
                     {
-                        C.sscanf(argv[i].Substring(4), "%lf,%lf", ref (dobs[0]), ref (dobs[1]));
+                        sp = argv[i].Substring(4);
+                        if (sp.StartsWith("[")) sp = sp.Substring(1);
+                        C.sscanf(sp, "%lf,%lf", ref (dobs[0]), ref (dobs[1]));
                     }
                     else if (argv[i].StartsWith("-opt"))
                     {
-                        C.sscanf(argv[i].Substring(4), "%lf,%lf,%lf,%lf,%lf,%lf", ref (dobs[0]), ref (dobs[1]), ref (dobs[2]), ref (dobs[3]), ref (dobs[4]), ref (dobs[5]));
+                        sp = argv[i].Substring(4);
+                        if (sp.StartsWith("[")) sp = sp.Substring(1);
+                        C.sscanf(sp, "%lf,%lf,%lf,%lf,%lf,%lf", ref (dobs[0]), ref (dobs[1]), ref (dobs[2]), ref (dobs[3]), ref (dobs[4]), ref (dobs[5]));
                     }
                     else if (argv[i].StartsWith("-orbel"))
                     {
@@ -1237,9 +1302,13 @@ namespace SweTest
                     }
                     else if (argv[i].StartsWith("-g"))
                     {
-                        have_gap_parameter = true;
                         gap = argv[i].Substring(2);
+                        have_gap_parameter = true;
                         if (String.IsNullOrEmpty(gap)) gap = "\t";
+                    }
+                    else if (C.strcmp(argv[i], "-dms") == 0)
+                    {
+                        use_dms = true;
                     }
                     else if (argv[i].StartsWith("-d") || argv[i].StartsWith("-D"))
                     {
@@ -1261,10 +1330,11 @@ namespace SweTest
                     }
                     else if (argv[i].StartsWith("-t"))
                     {
-                        if (argv[i].Length > 2)
+                        if (C.strlen(argv[i]) > 2)
                         {
-                            stimein = argv[i].Substring(2, Math.Min(30, argv[i].Length - 2));
+                            C.strncat(ref stimein, argv[i].Substring(2), 30);
                         }
+
                     }
                     else if (argv[i].StartsWith("-h") || argv[i].StartsWith("-?"))
                     {
@@ -1301,7 +1371,7 @@ namespace SweTest
                     else
                     {
                         sout = "illegal option ";
-                        sout += argv[i];
+                        C.strncat(ref sout, argv[i], 100);
                         sout += "\n";
                         Console.Write(sout);
                         return 1;
@@ -1389,7 +1459,12 @@ namespace SweTest
                     sweph.swe_set_interpolate_nut(true);
                 //#endif
                 if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0 || do_ayanamsa)
-                    sweph.swe_set_sid_mode(sid_mode, 0, 0);
+                {
+                    if ((sid_mode & SwissEph.SE_SIDM_USER) != 0)
+                        sweph.swe_set_sid_mode(sid_mode, aya_t0, aya_val0);
+                    else
+                        sweph.swe_set_sid_mode(sid_mode, 0, 0);
+                }
                 geopos[0] = top_long;
                 geopos[1] = top_lat;
                 geopos[2] = top_elev;
@@ -1408,7 +1483,6 @@ namespace SweTest
                     }
                     else
                     {
-                        sdate = String.Empty;
                         sdate = begindate;
                         begindate = ".";  /* to exit afterwards */
                     }
@@ -1570,28 +1644,31 @@ namespace SweTest
                             gregflag = SwissEph.SE_JUL_CAL;
                         else if (sdate.Contains("greg"))
                             gregflag = SwissEph.SE_GREG_CAL;
+                        delt = sweph.swe_deltat_ex(t, iflag, ref serr);
+                        if (!universal_time)
+                        {
+                            delt = sweph.swe_deltat_ex(t - delt, iflag, ref serr);
+                        }
                         t2 = t;
+                        // output line: 
+                        // "date (dmy) 4.6.2017 greg.   2:07:00 TT		version 2.07.02"
                         sweph.swe_revjul(t2, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         if (with_header)
                         {
+#if !NO_SWE_GLP             // -DNO_SWE_GLP to suppress this function, on C# uncomment the define at top of the file
                             if (with_glp)
-                                printf("\npath: %s", sweph.swe_get_library_path());
+                            {
+                                sout = sweph.swe_get_library_path();
+                                printf("\npath: %s", sout);
+                            }
+#endif
                             printf("\ndate (dmy) %d.%d.%d", jday, jmon, jyear);
                             if (gregflag != 0)
                                 Console.Write(" greg.");
                             else
                                 Console.Write(" jul.");
-                            t2 = jut + 0.5 / 3600000.0; // rounding to millisec
-                            printf("  % 2d:", (int)t2); // hour
-                            t2 = (t2 - (Int32)t2) * 60;
-                            printf("%02d:", (int)t2);  // min
-                            t2 = (t2 - (Int32)t2) * 60;
-                            printf("%02d", (int)t2); // sec
-                            t2 = (t2 - (Int32)t2) * 1000;
-                            if ((Int32)t2 > 0)
-                            {
-                                printf(".%03d", (int)t2); // millisec, if > 0
-                            }
+                            jd_to_time_string(jut, out stimeout);
+                            printf(stimeout);
                             if (universal_time)
                             {
                                 if ((time_flag & BIT_TIME_LMT) != 0)
@@ -1605,9 +1682,9 @@ namespace SweTest
                             }
                             printf("\t\tversion %s", sweph.swe_version());
                         }
-                        delt = sweph.swe_deltat_ex(t, iflag, ref serr);
                         if (universal_time)
                         {
+                            // "LMT: 2457908.588194444"
                             if ((time_flag & BIT_TIME_LMT) != 0)
                             {
                                 if (with_header)
@@ -1616,12 +1693,10 @@ namespace SweTest
                                     t -= geopos[0] / 15.0 / 24.0;
                                 }
                             }
+                            // "UT:  2457908.565972222     delta t: 68.761612 sec"
                             if (with_header)
                             {
                                 printf("\nUT:  %.9f", t);
-                            }
-                            if (with_header)
-                            {
                                 printf("     delta t: %f sec", delt * 86400.0);
                             }
                             te = t + delt;
@@ -1631,11 +1706,19 @@ namespace SweTest
                         {
                             te = t;
                             tut = t - delt;
+                            // "UT:  2457908.565972222     delta t: 68.761612 sec"
+                            if (with_header)
+                            {
+                                printf("\nUT:  %.9f", tut);
+                                printf("     delta t: %f sec", delt * 86400.0);
+                            }
                         }
                         iflgret = sweph.swe_calc(te, SwissEph.SE_ECL_NUT, iflag, xobl, ref serr);
                         if (with_header)
                         {
+                            // "TT:  2457908.566768074
                             printf("\nTT:  %.9f", te);
+                            // "ayanamsa =   24° 5'51.6509 (Lahiri)"
                             if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
                             {
                                 if (sweph.swe_get_ayanamsa_ex(te, iflag, out daya, ref serr) == SwissEph.ERR)
@@ -1645,6 +1728,7 @@ namespace SweTest
                                 }
                                 printf("   ayanamsa = %s (%s)", dms(daya, round_flag), sweph.swe_get_ayanamsa_name(sid_mode));
                             }
+                            // "geo. long 8.000000, lat 47.000000, alt 0.000000"
                             if (have_geopos)
                             {
                                 printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
@@ -1653,9 +1737,17 @@ namespace SweTest
                                 iflag = iflag_f;
                             if (plsel.IndexOf('o') < 0)
                             {
-                                printf("\n%-15s %s", "Epsilon (true)", dms(xobl[0], round_flag));
+                                if ((iflag & (SwissEph.SEFLG_NONUT | SwissEph.SEFLG_SIDEREAL)) != 0)
+                                {
+                                    printf("\n%-15s %s", "Epsilon (m)", dms(xobl[0], round_flag));
+                                }
+                                else
+                                {
+                                    printf("\n%-15s %s%s", "Epsilon (t/m)", dms(xobl[0], round_flag), gap);
+                                    printf("%s", dms(xobl[1], round_flag));
+                                }
                             }
-                            if (plsel.IndexOf('n') < 0)
+                            if (C.strchr(plsel, 'n') < 0 && 0 == (iflag & (SwissEph.SEFLG_NONUT | SwissEph.SEFLG_SIDEREAL)))
                             {
                                 Console.Write("\nNutation        ");
                                 Console.Write(dms(xobl[2], round_flag));
@@ -2377,7 +2469,7 @@ namespace SweTest
                             if (universal_time)
                                 printf(" UT");
                             else
-                                printf(" ET");
+                                printf(" TT");
                         }
                         break;
                     case 't':
@@ -2619,6 +2711,14 @@ namespace SweTest
                         if (is_label) { printf("distAU   "); break; }
                         printf("%# 14.9f", x[2]);
                         break;
+                    case 'W':
+                        if (is_label) { printf("distLY   "); break; }
+                        printf("%# 14.9f", x[2] * SwissEph.SE_AUNIT_TO_LIGHTYEAR);
+                        break;
+                    case 'w':
+                        if (is_label) { printf("distkm   "); break; }
+                        printf("%# 14.9f", x[2] * SwissEph.SE_AUNIT_TO_KM);
+                        break;
                     case 'r':
                         if (is_label) { printf("dist"); break; }
                         if (ipl == SwissEph.SE_MOON)
@@ -2635,7 +2735,7 @@ namespace SweTest
                         }
                         else
                         {
-                            printf("%# 14.9f", x[2]);
+                            printf("%# 14.9f", x[2] * SwissEph.SE_AUNIT_TO_LIGHTYEAR);
                         }
                         break;
                     case 'q':
@@ -2705,9 +2805,15 @@ namespace SweTest
                                     Console.Write("nodDesc");
                                     break;
                                 }
-                                printf("%# 11.7f", xasc[0]);
+                                if (use_dms)
+                                    Console.Write(dms(xasc[0], round_flag | BIT_ZODIAC));
+                                else
+                                    printf("%# 11.7f", xasc[0]);
                                 Console.Write(gap);
-                                printf("%# 11.7f", xdsc[0]);
+                                if (use_dms)
+                                    Console.Write(dms(xdsc[0], round_flag | BIT_ZODIAC));
+                                else
+                                    printf("%# 11.7f", xdsc[0]);
                             }
                         };
                         break;
@@ -2717,6 +2823,7 @@ namespace SweTest
                         {
                             double[] xfoc = new double[6], xaph = new double[6], xper = new double[6];
                             int imeth = (sp == char.ToLower(sp)) ? SwissEph.SE_NODBIT_MEAN : SwissEph.SE_NODBIT_OSCU;
+                            //	fprintf(stderr, "c=%c\n", *sp);
                             iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, null, null, xper, xaph, ref serr);
                             if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F'))
                             {
@@ -2725,6 +2832,8 @@ namespace SweTest
                                     Console.Write("peri");
                                     Console.Write(gap);
                                     Console.Write("apo");
+                                    Console.Write(gap);
+                                    Console.Write("focus");
                                     break;
                                 }
                                 printf("%# 11.7f", xper[0]);
@@ -2735,12 +2844,6 @@ namespace SweTest
                             iflgret = sweph.swe_nod_aps(te, ipl, iflag, imeth, null, null, xper, xfoc, ref serr);
                             if (iflgret >= 0 && (ipl <= SwissEph.SE_NEPTUNE || sp == 'F'))
                             {
-                                if (is_label)
-                                {
-                                    Console.Write(gap);
-                                    Console.Write("focus");
-                                    break;
-                                }
                                 Console.Write(gap);
                                 printf("%# 11.7f", xfoc[0]);
                             }
@@ -2842,6 +2945,7 @@ namespace SweTest
             if ((iflg & BIT_ZODIAC) != 0)
             {
                 izod = (int)(xv / 30);
+                if (izod == 12) izod = 0;
                 xv = (xv % 30.0);
                 kdeg = (Int32)xv;
                 s = C.sprintf(" %2d %s ", kdeg, zod_nam[izod]);
@@ -2983,8 +3087,10 @@ namespace SweTest
         {
             //char* sp;
             //char s[LEN_SOUT];
-            //if (!have_gap_parameter)
-            //    return;
+            if (!have_gap_parameter)
+                return;
+            if (gap.StartsWith("\t"))
+                return;
             //while ((sp = strchr(sout, '\t')) != NULL && strlen(sout) + strlen(gap) < LEN_SOUT) {
             //    strcpy(s, sp + 1);
             //    strcpy(sp, gap);
@@ -3004,18 +3110,19 @@ namespace SweTest
             if (have_gap_parameter) sout += "\t";  // C.sprintf(sout + strlen(sout), "\t");
             if (trise == 0)
             {
-                sout += "         -                     ";
+                sout += "         -\t           -    ";
             }
             else
             {
                 sweph.swe_revjul(trise, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                 sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
             }
+            if (have_gap_parameter) sout += "\t";   // sprintf(sout + strlen(sout), "\t");
             sout += "set      ";
             if (have_gap_parameter) sout += "\t";  // C.sprintf(sout + strlen(sout), "\t");
             if (tset == 0)
             {
-                sout += "         -                     ";
+                sout += "         -\t           -    ";
             }
             else
             {
@@ -3053,6 +3160,9 @@ namespace SweTest
             if (Math.Abs(geopos[1]) < 60 && ipl >= SwissEph.SE_SUN && ipl <= SwissEph.SE_PLUTO)
                 dayfrac = 0.01;
             sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
+            // "geo. long 8.000000, lat 47.000000, alt 0.000000"
+            if (with_header)
+                printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
             do_printf("\n");
             tnext = t_ut;
             // the code is designed for looping with -nxxx over many days, during which
@@ -3170,35 +3280,69 @@ namespace SweTest
                         retc = ut_to_lmt_lat(tret[1], geopos, out (tret[1]), ref serr);
                     }
                     sout = "mtransit ";
-                    if (tret[0] == 0 || tret[0] > tret[1]) sout += "         -                     ";
+                    if (have_gap_parameter) sout += "\t"; ;
+                    if (tret[0] == 0 || tret[0] > tret[1]) sout += "         -\t           -    ";
                     else
                     {
                         sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s    ", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
+                    if (have_gap_parameter) sout += "\t"; ;
                     sout += "itransit ";
-                    if (tret[1] == 0) sout += "         -                     \n";
+                    if (have_gap_parameter) sout += "\t"; ;
+                    if (tret[1] == 0) sout += "         -\t           -    \n";
                     else
                     {
                         sweph.swe_revjul(tret[1], gregflag, ref jyear, ref jmon, ref jday, ref jut);
                         sout += C.sprintf("%2d.%02d.%04d\t%s\n", jday, jmon, jyear, hms(jut, BIT_LZEROES));
                     }
+                    if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                     do_printf(sout);
                 }
             }
-            if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
             return retc;
+        }
+
+        static string get_gregjul(int gregflag, int year)
+        {
+            if (gregflag == SwissEph.SE_JUL_CAL) return "jul";
+            if (year < 1700) return "greg";
+            return string.Empty;
+        }
+
+        // print lon and lat string in minute precision
+        static void format_lon_lat(out string slon, out string slat, double lon, double lat)
+        {
+            int roundflag, ideg, imin, isec, isgn;
+            double dsecfr;
+            char c;
+            roundflag = SwissEph.SE_SPLIT_DEG_ROUND_SEC;
+            sweph.swe_split_deg(lon, roundflag, out ideg, out imin, out isec, out dsecfr, out isgn);
+            c = (lon < 0) ? 'w' : 'e';
+            slon = C.sprintf("%d%c%02d%02d", Math.Abs(ideg), c, imin, isec);
+            sweph.swe_split_deg(lat, roundflag, out ideg, out imin, out isec, out dsecfr, out isgn);
+            c = (lat < 0) ? 's' : 'n';
+            slat = C.sprintf("%d%c%02d%02d", Math.Abs(ideg), c, imin, isec);
         }
 
         static Int32 call_lunar_eclipse(double t_ut, Int32 whicheph, Int32 special_mode, double[] geopos, ref string serr)
         {
             int i, ii, retc = SwissEph.OK, eclflag, ecl_type = 0;
-            int ihou, imin, isec, isgn;
-            double dfrc, dt; double[] attr = new double[30];
-            string s1 = string.Empty, sout_short = string.Empty, sfmt = string.Empty;
+            int rval, ihou, imin, isec, isgn;
+            double dfrc; double[] attr = new double[30]; double dt; double[] xx = new double[6], geopos_max = new double[3];
+            string s1 = string.Empty, s2 = string.Empty, sout_short = string.Empty, sfmt = string.Empty, styp = "none", sgj;
+            string slon = string.Empty, slat = string.Empty, saros = string.Empty;
+            geopos_max[0] = 0; geopos_max[1] = 0;
             /* no selective eclipse type set, set all */
+            if (with_chart_link) do_printf("<pre>");
             if ((search_flag & SwissEph.SE_ECL_ALLTYPES_LUNAR) == 0)
                 search_flag |= SwissEph.SE_ECL_ALLTYPES_LUNAR;
+            // "geo. long 8.000000, lat 47.000000, alt 0.000000"
+            if ((special_mode & SP_MODE_LOCAL) != 0)
+            {
+                if (with_header)
+                    printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
+            }
             do_printf("\n");
             for (ii = 0; ii < nstep; ii++, t_ut += direction)
             {
@@ -3285,6 +3429,7 @@ namespace SweTest
                     }
                     sout = "lunar eclipse\t";
                     sweph.swe_revjul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                    sgj = get_gregjul(gregflag, jyear);
                     /*if ((eclflag = swe_lun_eclipse_how(t_ut, whicheph, geopos, attr, serr)) == ERR) {
                       do_printf(serr);
                       return ERR;
@@ -3293,8 +3438,9 @@ namespace SweTest
                     s1 = C.sprintf("%d min %4.2f sec", (int)dt, (dt % 1.0) * 60);
                     /* short output: 
                      * date, time of day, umbral magnitude, umbral duration, saros series, member number */
-                    sout_short = C.sprintf("%s\t%2d.%2d.%4d\t%s\t%.3f\t%s\t%d\t%d\n", sout, jday, jmon, jyear, hms(jut, 0), attr[8], s1, (int)attr[9], (int)attr[10]);
-                    sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f\tsaros %d/%d\t%.6f\tdt=%.2f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[0], attr[1], (int)attr[9], (int)attr[10], t_ut, sweph.swe_deltat(t_ut) * 86400);
+                    saros = C.sprintf("%d/%d", (int)attr[9], (int)attr[10]);
+                    sout_short = C.sprintf("%s\t%2d.%2d.%4d%s\t%s\t%.3f\t%s\t%s\n", sout, jday, jmon, jyear, sgj, hms(jut, 0), attr[8], s1, saros);
+                    sout += C.sprintf("%2d.%02d.%04d%s\t%s\t%.4f/%.4f\tsaros %s\t%.6f\n", jday, jmon, jyear, sgj, hms(jut, BIT_LZEROES), attr[0], attr[1], saros, t_ut);
                     /* second line:
                      * eclipse times, penumbral, partial, total begin and end */
                     if (have_gap_parameter) sout += "\t";
@@ -3342,16 +3488,19 @@ namespace SweTest
                     t_ut = tret[0];
                     if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0)
                     {
-                        sout = ("total   ");
+                        styp = "Total";
+                        sout = "total ";
                         ecl_type = ECL_LUN_TOTAL;
                     }
                     if ((eclflag & SwissEph.SE_ECL_PENUMBRAL) != 0)
                     {
+                        styp = "Penumbral";
                         sout = ("penumb. ");
                         ecl_type = ECL_LUN_PENUMBRAL;
                     }
                     if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
                     {
+                        styp = "Partial";
                         sout = ("partial ");
                         ecl_type = ECL_LUN_PARTIAL;
                     }
@@ -3377,13 +3526,22 @@ namespace SweTest
                         }
                     }
                     t_ut = tret[0];
+                    rval = sweph.swe_calc_ut(t_ut, SwissEph.SE_MOON, whicheph | SwissEph.SEFLG_EQUATORIAL, xx, ref s1);
+                    if (rval < 0)
+                        C.strcat(ref s1, "\n");
+                    do_printf(s1);
                     sweph.swe_revjul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
+                    geopos_max[0] = sweph.swe_degnorm(xx[0] - sweph.swe_sidtime(t_ut) * 15);
+                    if (geopos_max[0] > 180) geopos_max[0] -= 360;
+                    geopos_max[1] = xx[1];
+                    sgj = get_gregjul(gregflag, jyear);
                     dt = (tret[3] - tret[2]) * 24 * 60;
                     s1 = C.sprintf("%d min %4.2f sec", (int)dt, (dt % 1.0) * 60);
                     /* short output: 
                      * date, time of day, umbral magnitude, umbral duration, saros series, member number */
-                    sout_short = C.sprintf("%s\t%2d.%2d.%4d\t%s\t%.3f\t%s\t%d\t%d\n", sout, jday, jmon, jyear, hms(jut, 0), attr[8], s1, (int)attr[9], (int)attr[10]);
-                    sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f\tsaros %d/%d\t%.6f\tdt=%.2f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[0], attr[1], (int)attr[9], (int)attr[10], t_ut, sweph.swe_deltat_ex(t_ut, whicheph, ref serr) * 86400);
+                    saros = C.sprintf("%d/%d", (int)attr[9], (int)attr[10]);
+                    sout_short = C.sprintf("%s\t%2d.%2d.%4d%s\t%s\t%.3f\t%s\t%s\n", sout, jday, jmon, jyear, sgj, hms(jut, 0), attr[8], s1, saros);
+                    sout += C.sprintf("%2d.%02d.%04d%s\t%s\t%.4f/%.4f\tsaros %s\t%.6f\tdt=%.2f\n", jday, jmon, jyear, sgj, hms(jut, BIT_LZEROES), attr[0], attr[1], saros, t_ut, sweph.swe_deltat_ex(t_ut, whicheph, ref serr) * 86400);
                     /* second line:
                      * eclipse times, penumbral, partial, total begin and end */
                     if (have_gap_parameter) sout += "\t";
@@ -3416,9 +3574,10 @@ namespace SweTest
                     if ((special_mode & SP_MODE_HOCAL) != 0)
                     {
                         sweph.swe_split_deg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
-                        sout = C.sprintf("\"%04d %02d %02d %02d.%02d %d\",\n", jyear, jmon, jday, ihou, imin, ecl_type);
+                        sout = C.sprintf("\"%04d%s %02d %02d %02d.%02d %d\",\n", jyear, sgj, jmon, jday, ihou, imin, ecl_type);
                     }
                 }
+                sout += C.sprintf("\t%s\t%s\tMoon in Zenith\n", C.strcpy(out s1, dms(geopos_max[0], BIT_ROUND_SEC)), C.strcpy(out s2, dms(geopos_max[1], BIT_ROUND_SEC)));
                 if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                 if (short_output)
                 {
@@ -3428,7 +3587,23 @@ namespace SweTest
                 {
                     do_printf(sout);
                 }
+                if (with_chart_link)
+                {
+                    string snat;
+                    string stim;
+                    int iflg = 0;
+                    char cal = gregflag != 0 ? 'g' : 'j';
+                    C.strcpy(out stim, hms(jut, BIT_LZEROES));
+                    format_lon_lat(out slon, out slat, geopos_max[0], geopos_max[1]);
+                    //while (*stim == ' ') our_strcpy(stim, stim + 1);
+                    stim = stim.TrimStart();
+                    if (stim.StartsWith("0")) our_strcpy(out stim, stim.Substring(1));
+                    snat = C.sprintf("Lunar Eclipse %s,%s,e,%d,%d,%d,%s,h0e,%cnu,%d,Moon Zenith location,,%s,%s,u,0,0,0", saros, styp, jday, jmon, jyear, stim, cal, iflg, slon, slat);
+                    sout = C.sprintf("<a href='https://www.astro.com/cgi/chart.cgi?muasp=1;nhor=1;act=chmnat;nd1=%s;rs=1;iseclipse=1' target='eclipse'>chart link</a>\n\n", snat);
+                    do_printf(sout);
+                }
             }
+            if (with_chart_link) do_printf("</pre>\n");
             return SwissEph.OK;
         }
 
@@ -3436,14 +3611,21 @@ namespace SweTest
         {
             int i, ii, retc = SwissEph.OK, eclflag, ecl_type = 0;
             double dt; double[] tret = new double[30], attr = new double[30], geopos_max = new double[3];
-            string s1 = string.Empty, s2 = string.Empty, sout_short = string.Empty;
+            string slon = string.Empty, slat = string.Empty, saros = string.Empty;
+            string s1 = string.Empty, s2 = string.Empty, sout_short = string.Empty, styp = "none", sgj;
             bool has_found = false;
             /* no selective eclipse type set, set all */
+            if (with_chart_link) do_printf("<pre>");
             if ((search_flag & SwissEph.SE_ECL_ALLTYPES_SOLAR) == 0)
                 search_flag |= SwissEph.SE_ECL_ALLTYPES_SOLAR;
             /* for local eclipses: set geographic position of observer */
             if ((special_mode & SP_MODE_LOCAL) != 0)
+            {
                 sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
+                // "geo. long 8.000000, lat 47.000000, alt 0.000000"
+                if (with_header)
+                    printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
+            }
             do_printf("\n");
             for (ii = 0; ii < nstep; ii++, t_ut += direction)
             {
@@ -3505,8 +3687,10 @@ namespace SweTest
                             t_ut = tret[0];
                             sweph.swe_revjul(t_ut, gregflag, ref jyear, ref jmon, ref jday, ref jut);
                             dt = (tret[3] - tret[2]) * 24 * 60;
-                            sout += C.sprintf("%2d.%02d.%04d\t%s\t%.4f/%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, BIT_LZEROES), attr[8], attr[0], attr[2], (int)attr[9], (int)attr[10], t_ut);
-                            sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, (dt % 1.0) * 60);
+                            sgj = get_gregjul(gregflag, jyear);
+                            saros = C.sprintf("%d/%d", (int)attr[9], (int)attr[10]);
+                            sout += C.sprintf("%2d.%02d.%04d%s\t%s\t%.4f/%.4f/%.4f\tsaros %s\t%.6f\n", jday, jmon, jyear, sgj, hms(jut, BIT_LZEROES), attr[8], attr[0], attr[2], saros, t_ut);
+                            sout += C.sprintf("\t%d min %4.2f sec\t", (int)dt, C.fmod(dt, 1) * 60);
                             if ((eclflag & SwissEph.SE_ECL_1ST_VISIBLE) != 0)
                             {
                                 sout += C.sprintf("%s ", hms_from_tjd(tret[1]));
@@ -3570,27 +3754,31 @@ namespace SweTest
                     t_ut = tret[0];
                     if ((eclflag & SwissEph.SE_ECL_TOTAL) != 0)
                     {
-                        sout = ("total   ");
+                        styp = "Total";
+                        sout = ("total");
                         ecl_type = ECL_SOL_TOTAL;
                     }
                     if ((eclflag & SwissEph.SE_ECL_ANNULAR) != 0)
                     {
-                        sout = ("annular ");
+                        styp = "Annular";
+                        sout = ("annular");
                         ecl_type = ECL_SOL_ANNULAR;
                     }
                     if ((eclflag & SwissEph.SE_ECL_ANNULAR_TOTAL) != 0)
                     {
-                        sout = ("ann-tot ");
+                        styp = "Annular-Total";
+                        sout = ("ann-tot");
                         ecl_type = ECL_SOL_ANNULAR;	/* by Alois: what is this ? */
                     }
                     if ((eclflag & SwissEph.SE_ECL_PARTIAL) != 0)
                     {
-                        sout = ("partial ");
+                        styp = "Partial";
+                        sout = ("partial");
                         ecl_type = ECL_SOL_PARTIAL;
                     }
                     if ((eclflag & SwissEph.SE_ECL_NONCENTRAL) != 0 && 0 == (eclflag & SwissEph.SE_ECL_PARTIAL))
-                        sout += ("non-central ");
-                    if (have_gap_parameter) sout += "\t";
+                        sout = " non-central";
+                    sout += C.sprintf(" solar\t");
                     sweph.swe_sol_eclipse_where(t_ut, whicheph, geopos_max, attr, ref serr);
                     if ((time_flag & (BIT_TIME_LMT | BIT_TIME_LAT)) != 0)
                     {
@@ -3608,8 +3796,10 @@ namespace SweTest
                         }
                     }
                     sweph.swe_revjul(tret[0], gregflag, ref jyear, ref jmon, ref jday, ref jut);
-                    sout_short = C.sprintf("%s\t%2d.%2d.%4d\t%s\t%.3f", sout, jday, jmon, jyear, hms(jut, 0), attr[8]);
-                    sout += C.sprintf("%2d.%02d.%04d\t%s\t%f km\t%.4f/%.4f/%.4f\tsaros %d/%d\t%.6f\n", jday, jmon, jyear, hms(jut, 0), attr[3], attr[8], attr[0], attr[2], (int)attr[9], (int)attr[10], tret[0]);
+                    sgj = get_gregjul(gregflag, jyear);
+                    saros = C.sprintf("%d/%d", (int)attr[9], (int)attr[10]);
+                    sout_short = C.sprintf("%s\t%2d.%2d.%4d%s\t%s\t%.3f", sout, jday, jmon, jyear, sgj, hms(jut, 0), attr[8]);
+                    sout += C.sprintf("%2d.%02d.%04d%s\t%s\t%f km\t%.4f/%.4f/%.4f\tsaros %s\t%.6f\n", jday, jmon, jyear, sgj, hms(jut, 0), attr[3], attr[8], attr[0], attr[2], saros, tret[0]);
                     sout += C.sprintf("\t%s ", hms_from_tjd(tret[2]));
                     if (have_gap_parameter) sout += "\t";
                     if (tret[4] != 0)
@@ -3634,9 +3824,7 @@ namespace SweTest
                     if (have_gap_parameter) sout += "\t";
                     sout += C.sprintf("dt=%.1f", sweph.swe_deltat_ex(tret[0], whicheph, ref serr) * 86400.0);
                     sout += "\n";
-                    s1 = dms(geopos_max[0], BIT_ROUND_MIN);
-                    s2 = dms(geopos_max[1], BIT_ROUND_MIN);
-                    sout += C.sprintf("\t%s\t%s", s1, s2);
+                    sout += C.sprintf("\t%s\t%s", C.strcpy(out s1, dms(geopos_max[0], BIT_ROUND_SEC)), C.strcpy(out s2, dms(geopos_max[1], BIT_ROUND_SEC)));
                     sout += ("\t");
                     sout_short += ("\t");
                     if (0 == (eclflag & SwissEph.SE_ECL_PARTIAL) && 0 == (eclflag & SwissEph.SE_ECL_NONCENTRAL))
@@ -3663,7 +3851,7 @@ namespace SweTest
                         int ihou, imin, isec, isgn;
                         double dfrc;
                         sweph.swe_split_deg(jut, SwissEph.SE_SPLIT_DEG_ROUND_MIN, out ihou, out imin, out isec, out dfrc, out isgn);
-                        sout = C.sprintf("\"%04d %02d %02d %02d.%02d %d\",\n", jyear, jmon, jday, ihou, imin, ecl_type);
+                        sout = C.sprintf("\"%04d%s %02d %02d %02d.%02d %d\",\n", jyear, sgj, jmon, jday, ihou, imin, ecl_type);
                     }
                     /*printf("len=%ld\n", strlen(sout));*/
                     if (short_output)
@@ -3675,8 +3863,24 @@ namespace SweTest
                         if (have_gap_parameter) insert_gap_string_for_tabs(ref sout, gap);
                         do_printf(sout);
                     }
+                    if (with_chart_link)
+                    {
+                        string snat;
+                        string stim;
+                        int iflg = 0; // NAT_IFLG_UNKNOWN_TIME;
+                        char cal = gregflag != 0 ? 'g' : 'j';
+                        format_lon_lat(out slon, out slat, geopos_max[0], geopos_max[1]);
+                        C.strcpy(out stim, hms(jut, BIT_LZEROES));
+                        //while (*stim == ' ') our_strcpy(stim, stim + 1);
+                        stim = stim.TrimStart();
+                        if (stim.StartsWith("0")) our_strcpy(out stim, stim + 1);
+                        snat = C.sprintf("Solar Eclipse %s,%s,e,%d,%d,%d,%s,h0e,%cnu,%d,Location of Maximum,,%s,%s,u,0,0,0", saros, styp, jday, jmon, jyear, stim, cal, iflg, slon, slat);
+                        sout = C.sprintf("<a href='https://www.astro.com/cgi/chart.cgi?muasp=1;nhor=1;act=chmnat;nd1=%s;rs=1;iseclipse=1;topo=1' target='eclipse'>chart link</a>\n\n", snat);
+                        do_printf(sout);
+                    }
                 }
             }
+            if (with_chart_link) do_printf("</pre>\n");
             return SwissEph.OK;
         }
 
@@ -3692,7 +3896,11 @@ namespace SweTest
                 search_flag |= SwissEph.SE_ECL_ALLTYPES_SOLAR;
             /* for local occultations: set geographic position of observer */
             if ((special_mode & SP_MODE_LOCAL) != 0)
+            {
                 sweph.swe_set_topo(geopos[0], geopos[1], geopos[2]);
+                if (with_header)
+                    printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
+            }
             do_printf("\n");
             for (ii = 0; ii < nstep; ii++)
             {
@@ -3989,7 +4197,11 @@ namespace SweTest
                 obj_name = star;
             else
                 obj_name = sweph.swe_get_planet_name(ipl);
-            do_printf("\n");
+            if (with_header)
+            {
+                printf("\ngeo. long %f, lat %f, alt %f", geopos[0], geopos[1], geopos[2]);
+                do_printf("\n");
+            }
             for (ii = 0; ii < nstep; ii++, t_ut = dret[0] + 1)
             {
                 sout = String.Empty;
@@ -4281,6 +4493,23 @@ namespace SweTest
             s = s.Trim(' ');
         }
 
+        static void jd_to_time_string(double jut, out string stimeout)
+        {
+            double t2;
+            //t2 = jut + 0.5 / 3600000.0; // rounding to millisec
+            t2 = jut + 0.5 / 3600000.0; // rounding to millisec
+            stimeout = C.sprintf("  % 2d:", (int)t2); // hour
+            t2 = (t2 - (Int32)t2) * 60;
+            stimeout += C.sprintf("%02d:", (int)t2);  // min
+            t2 = (t2 - (Int32)t2) * 60;
+            stimeout += C.sprintf("%02d", (int)t2); // sec
+            t2 = (t2 - (Int32)t2) * 1000;
+            if ((Int32)t2 > 0)
+            {
+                stimeout += C.sprintf(".%03d", (int)t2); // millisec, if > 0
+            }
+        }
+
         //#if MSDOS
         ///**************************************************************
         //cut the string s at any char in cutlist; put pointers to partial strings
@@ -4313,6 +4542,35 @@ namespace SweTest
         //  return (n);
         //}	/* cutstr */
         //#endif
+
+        static string our_strcpy(out string to, string from)
+        {
+            if (string.IsNullOrEmpty(from))
+            {
+                to = string.Empty;
+                return to;
+            }
+            to = from;
+            //if (strlen(from) < AS_MAXCH)
+            //{
+            //    strcpy(s, from);
+            //    strcpy(to, s);
+            //}
+            //else
+            //{
+            //    sp = strdup(from);
+            //    if (sp == NULL)
+            //    {
+            //        strcpy(to, from);
+            //    }
+            //    else
+            //    {
+            //        strcpy(to, sp);
+            //        free(sp);
+            //    }
+            //}
+            return to;
+        }
 
         static void printf(String format, params object[] args)
         {

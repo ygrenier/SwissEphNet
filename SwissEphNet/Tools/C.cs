@@ -93,13 +93,27 @@ namespace SwissEphNet
 #if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void strcpy(out string a, string b) => a = b;
+        public static string strcpy(out string a, string b) => a = b;
 
 #if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public static void strncpy(out string a, string b, int n)
             => a = b != null ? b.Substring(0, Math.Min(n, b.Length)) : null;
+
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void strcat(ref string a, string b) => a = string.Concat(a, b);
+
+#if !NET40
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void strncat(ref string a, string b, int n) {
+            n = Math.Min(n, b?.Length ?? 0);
+            if (n > 0)
+                a = string.Concat(a, b.Substr(0, n));
+        }
 
 #if !NET40
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
