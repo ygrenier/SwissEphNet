@@ -27,12 +27,12 @@ namespace SwissEphNet.Tests
 
                 swe.swe_set_topo(geopos[0], geopos[1], geopos[2]);
                 swe.swe_calc(tjd, SwissEph.SE_SUN, 33024, xin2, ref serr);
-                Assert.Equal(142.781802332174, xin2[0], 12);
+                Assert.Equal(142.781802332173, xin2[0], 12);
                 Assert.Equal(6.0673071E-05, xin2[1], 12);
                 Assert.Equal(1.012695777714, xin2[2], 12);
 
                 swe.swe_calc(tjd, SwissEph.SE_SUN, 33024, xin3, ref serr);
-                Assert.Equal(142.781802332174, xin3[0], 12);
+                Assert.Equal(142.781802332173, xin3[0], 12);
                 Assert.Equal(6.0673071E-05, xin3[1], 12);
                 Assert.Equal(1.012695777714, xin3[2], 12);
             }
