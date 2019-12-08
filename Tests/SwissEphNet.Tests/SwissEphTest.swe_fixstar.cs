@@ -45,10 +45,10 @@ namespace SwissEphNet.Tests
                 Assert.Equal(0.01536112, xx[5], 8);
 #endif
 
-                name = "test";
+                name = "unknown";
                 iflag = swe.swe_fixstar(ref name, tjd, SwissEph.SEFLG_MOSEPH, xx, ref serr);
                 Assert.Equal(SwissEph.ERR, iflag);
-                Assert.Equal("star test not found", serr);
+                Assert.Equal("star unknown not found", serr);
             }
         }
 
