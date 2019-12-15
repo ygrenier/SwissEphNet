@@ -3712,8 +3712,30 @@ namespace SwissEphNet.CPort
             //}
             //if (n < nmax) cpos[n] = NULL;
             //return (n);
-            cpos = s?.Split(cutlist, nmax, StringSplitOptions.RemoveEmptyEntries) ??
-                Enumerable.Range(0, nmax).Select(i => string.Empty).ToArray();
+
+            s = s ?? string.Empty;
+            int ps = 0, pe = s.Length;
+            List<string> result = new List<string>();
+            int p = ps;
+            while (p < pe)
+            {
+                char c = s[p];
+                if(cutlist.Contains(c) && result.Count < nmax)
+                {
+                    result.Add(s.Substring(ps, p - ps));
+                    while (p < pe && cutlist.Contains(s[p])) p++;
+                    ps = p;
+                }
+                if (c == '\n' || c == '\r')
+                {
+                    pe = p;
+                    break;
+                }
+                p++;
+            }
+            if (ps < pe)
+                result.Add(s.Substring(ps, pe - ps));
+            cpos = result.ToArray();
             return cpos.Length;
         }	/* cutstr */
 

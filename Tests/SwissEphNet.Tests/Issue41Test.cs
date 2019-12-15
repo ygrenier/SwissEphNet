@@ -82,7 +82,7 @@ namespace SwissEphNet.Tests
             yield return new object[] { "aldebaran", 4, "Aldebaran,alTau", null };
             yield return new object[] { "aldeb", -1, "", "error, swe_fixstar(): could not find star name aldeb" };
             yield return new object[] { ",alTau", 4, "Aldebaran,alTau", null };
-            yield return new object[] { "aldeb%", -1, "", "star aldeb% not found" };
+            yield return new object[] { "aldeb%", 4, "Aldebaran,alTau", null };
             yield return new object[] { "Spica", 4, "Spica,alVir", null };
             yield return new object[] { "alVir", -1, "", "error, swe_fixstar(): could not find star name alvir" };
             yield return new object[] { ",alVir", 4, "Spica,alVir", null };

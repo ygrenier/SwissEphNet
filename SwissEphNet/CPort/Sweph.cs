@@ -1399,7 +1399,7 @@ namespace SwissEphNet.CPort
             /* close SWISSEPH files */
             for (i = 0; i < SEI_NEPHFILES; i++)
             {
-                if (swed.fidat[i].fptr != null)
+                if (swed.fidat[i]?.fptr != null)
                     swed.fidat[i].fptr.Dispose();
                 swed.fidat[i] = new file_data();
             }
@@ -6785,7 +6785,7 @@ namespace SwissEphNet.CPort
         /* function for sorting fixed stars with qsort() */
         static int fixedstar_name_compare(fixed_star star1, fixed_star star2)
         {
-            return string.Compare(star1.skey, star2.skey);
+            return string.Compare(star1.skey, star2.skey, StringComparison.Ordinal);
         }
 
         /* help function for finding a fixed star with bsearch() */
@@ -6936,7 +6936,7 @@ namespace SwissEphNet.CPort
             {
                 if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE, swed.ephepath, ref serr)) == null)
                 {
-                    swed.is_old_starfile = false;
+                    swed.is_old_starfile = true;
                     if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null)
                     {
                         swed.is_old_starfile = false;
@@ -6979,7 +6979,7 @@ namespace SwissEphNet.CPort
                 nrecs++;
                 //sprintf(fstdata.skey, "~%s", fstdata.starbayer); // ~ sorts after alnum
                 fstdata.skey = C.sprintf(",%s", fstdata.starbayer); // , sorts before alnum
-                                                                    // remove white spaces from star bayer name
+                // remove white spaces from star bayer name
                 fstdata.skey = fstdata.skey.Replace(" ", string.Empty);
                 last_starbayer = fstdata.starbayer;
                 if ((retc = save_star_in_struct(nrecs, fstdata, ref serr)) == ERR) return ERR;
@@ -7006,7 +7006,7 @@ namespace SwissEphNet.CPort
          * double xx[6]      position and speed
          * char *serr        error return string
          */
-        Int32 fixstar_calc_from_struct(ref fixed_star stardata, double tjd, Int32 iflag, string star, CPointer<double> xx, ref string serr)
+        Int32 fixstar_calc_from_struct(ref fixed_star stardata, double tjd, Int32 iflag, ref string star, CPointer<double> xx, ref string serr)
         {
             int i;
             Int32 retc = OK;
@@ -7373,12 +7373,13 @@ namespace SwissEphNet.CPort
                     return ERR;
                 }
                 searchkey = sstar;
-                len = sstar.Length - 1;
+                len = sstar.Length;
                 //searchkey[len] = '\0';
                 searchkey = searchkey.Substring(0, len);
                 for (i = 0; i < ndata; i++)
                 {
-                    if (string.Equals(stardatabegp[i].skey.Substring(0, len), searchkey))
+                    //if (string.Equals(stardatabegp[i].skey.Substring(0, len), searchkey))
+                    if (stardatabegp[i].skey.StartsWith(searchkey))
                     {
                         stardata = stardatabegp[i];
                         return OK;
@@ -7418,7 +7419,7 @@ namespace SwissEphNet.CPort
             }
         }
 
-        static bool get_builtin_star(ref string star, out string sstar, out string srecord)
+        static bool get_builtin_star(ref string star, ref string sstar, out string srecord)
         {
             /* some stars are built-in, because they are required for Hindu
              * sidereal ephemerides */
@@ -7488,7 +7489,6 @@ namespace SwissEphNet.CPort
                 return true;
             }
             srecord = null;
-            sstar = null;
             return false;
         }
 
@@ -7541,7 +7541,7 @@ namespace SwissEphNet.CPort
                 stardata = last_stardata;
                 goto found;
             }
-            if (get_builtin_star(ref star, out sstar, out srecord))
+            if (get_builtin_star(ref star, ref sstar, out srecord))
             {
                 is_builtin_star = true;
             }
@@ -7560,7 +7560,7 @@ namespace SwissEphNet.CPort
             //strcpy(slast_stardata, srecord);
             last_stardata = stardata;
             slast_starname = sstar;
-            if ((retc = fixstar_calc_from_struct(ref stardata, tjd, iflag, star, xx, ref serr)) == ERR)
+            if ((retc = fixstar_calc_from_struct(ref stardata, tjd, iflag, ref star, xx, ref serr)) == ERR)
                 goto return_err;
 #if TRACE
             trace_swe_fixstar(2, star, tjd, iflag, xx, ref serr);
@@ -8704,7 +8704,7 @@ namespace SwissEphNet.CPort
                 strcpy(out srecord, slast_stardata);
                 goto found;
             }
-            if (get_builtin_star(ref star, out sstar, out srecord))
+            if (get_builtin_star(ref star, ref sstar, out srecord))
             {
                 goto found;
             }
