@@ -27,7 +27,7 @@ namespace SwissEphNet.Tests
 
                 // The issue raised a FormatException
                 swe.swe_calc_ut(tjd, SwissEph.SE_AST_OFFSET + 5, SwissEph.SEFLG_SWIEPH, xx, ref serr);
-                Assert.Equal(130.764380953383, xx[0], 12);
+                Assert.Equal(130.764380953383, xx[0], 11);
                 Assert.Equal(-1.0445487020471, xx[1], 13);
                 Assert.Equal(3.0793896379558, xx[2], 13);
                 Assert.Equal(0, xx[3], 13);

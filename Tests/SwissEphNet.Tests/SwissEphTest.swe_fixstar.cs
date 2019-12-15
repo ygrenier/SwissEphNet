@@ -81,7 +81,11 @@ namespace SwissEphNet.Tests
                 Assert.Equal(0.000151, xx[3], 6);
                 Assert.Equal(1.7E-05, xx[4], 6);
 #if DEBUG
+#if NET_STANDARD
+                Assert.Equal(0.015543, xx[5], 6);
+#else
                 Assert.Equal(0.015532, xx[5], 6);
+#endif
 #else
                 Assert.Equal(0.01536, xx[5], 6);
 #endif
