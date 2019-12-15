@@ -89,7 +89,8 @@ namespace SwissEphNet.CPort
     partial class Sweph : BaseCPort
     {
         public Sweph(SwissEph se)
-            : base(se) {
+            : base(se)
+        {
             pnoint2jpl = PNOINT2JPL.ToArray();
         }
 
@@ -108,7 +109,8 @@ namespace SwissEphNet.CPort
 
         struct meff_ele
         {
-            public meff_ele(double ar, double am) {
+            public meff_ele(double ar, double am)
+            {
                 r = ar;
                 m = am;
             }
@@ -153,7 +155,8 @@ namespace SwissEphNet.CPort
         //0,		/* timeout */
         //{0,0,0,0,0,0,0,0,}, /* astro_models */
         //                };
-        internal swe_data swed = new swe_data() {
+        internal swe_data swed = new swe_data()
+        {
             ephe_path_is_set = false,
             jpl_file_is_open = false,
             fixfp = null,
@@ -296,7 +299,8 @@ namespace SwissEphNet.CPort
         //static void trace_swe_get_planet_name(int swtch, int ipl, char *s);
         //#endif
 
-        public string swe_version() {
+        public string swe_version()
+        {
             return SE_VERSION;
         }
 
@@ -375,7 +379,8 @@ namespace SwissEphNet.CPort
          * -> If no speed flag has been specified, no speed will be returned.
          */
         public Int32 swe_calc(double tjd, int ipl, Int32 iflag,
-            double[] xx, ref string serr) {
+            double[] xx, ref string serr)
+        {
             int i, j;
             Int32 iflgsave = iflag;
             Int32 epheflag;
@@ -447,7 +452,8 @@ namespace SwissEphNet.CPort
                 epheflag = SwissEph.SEFLG_JPLEPH;
             else
                 epheflag = SwissEph.SEFLG_SWIEPH;
-            if (swi_init_swed_if_start() == 1 && 0 == (epheflag & SwissEph.SEFLG_MOSEPH)) {
+            if (swi_init_swed_if_start() == 1 && 0 == (epheflag & SwissEph.SEFLG_MOSEPH))
+            {
                 serr = "Please call swe_set_ephe_path() or swe_set_jplfile() before calling swe_calc() or swe_calc_ut()";
             }
             if (swed.last_epheflag != epheflag)
@@ -501,14 +507,16 @@ namespace SwissEphNet.CPort
              * because all asteroids called by MPC number share the same
              * save area.
              */
-            if (sd.tsave == tjd && tjd != 0 && ipl == sd.ipl) {
+            if (sd.tsave == tjd && tjd != 0 && ipl == sd.ipl)
+            {
                 if ((sd.iflgsave & ~SwissEph.SEFLG_COORDSYS) == (iflag & ~SwissEph.SEFLG_COORDSYS))
                     goto end_swe_calc;
             }
             /* 
              * otherwise, new position must be computed 
              */
-            if (!use_speed3) {
+            if (!use_speed3)
+            {
                 /* 
                  * with high precision speed from one call of swecalc() 
                  * (FAST speed)
@@ -517,14 +525,17 @@ namespace SwissEphNet.CPort
                 sd.ipl = ipl;
                 if ((sd.iflgsave = swecalc(tjd, ipl, iflag, sd.xsaves, out serr)) == ERR)
                     goto return_error;
-            } else {
+            }
+            else
+            {
                 /* 
                  * with speed from three calls of swecalc(), slower and less accurate.
                  * (SLOW speed, for test only)
                  */
                 sd.tsave = tjd;
                 sd.ipl = ipl;
-                switch (ipl) {
+                switch (ipl)
+                {
                     case SwissEph.SE_MOON:
                         dt = MOON_SPEED_INTV;
                         break;
@@ -551,10 +562,13 @@ namespace SwissEphNet.CPort
                 denormalize_positions(x0, sd.xsaves, x2);
                 calc_speed(x0, sd.xsaves, x2, dt);
             }
-            end_swe_calc:
-            if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0) {
+        end_swe_calc:
+            if ((iflag & SwissEph.SEFLG_EQUATORIAL) != 0)
+            {
                 xs = sd.xsaves.GetPointer(12);	/* equatorial coordinates */
-            } else {
+            }
+            else
+            {
                 xs = sd.xsaves;	/* ecliptic coordinates */
             }
             if ((iflag & SwissEph.SEFLG_XYZ) != 0)
@@ -567,19 +581,25 @@ namespace SwissEphNet.CPort
                 x[j] = xs + j;
             for (j = i; j < 6; j++)
                 x[j] = 0;
-            if ((iflag & (SwissEph.SEFLG_SPEED3 | SwissEph.SEFLG_SPEED)) != 0) {
+            if ((iflag & (SwissEph.SEFLG_SPEED3 | SwissEph.SEFLG_SPEED)) != 0)
+            {
                 for (j = 3; j < 6; j++)
                     x[j] = (xs + j);
             }
             //#if 1
-            if ((iflag & SwissEph.SEFLG_RADIANS) != 0) {
-                if (ipl == SwissEph.SE_ECL_NUT) {
+            if ((iflag & SwissEph.SEFLG_RADIANS) != 0)
+            {
+                if (ipl == SwissEph.SE_ECL_NUT)
+                {
                     for (j = 0; j < 4; j++)
                         x[j] *= SwissEph.DEGTORAD;
-                } else {
+                }
+                else
+                {
                     for (j = 0; j < 2; j++)
                         x[j] *= SwissEph.DEGTORAD;
-                    if ((iflag & (SwissEph.SEFLG_SPEED3 | SwissEph.SEFLG_SPEED)) != 0) {
+                    if ((iflag & (SwissEph.SEFLG_SPEED3 | SwissEph.SEFLG_SPEED)) != 0)
+                    {
                         for (j = 3; j < 5; j++)
                             x[j] *= SwissEph.DEGTORAD;
                     }
@@ -600,7 +620,7 @@ namespace SwissEphNet.CPort
             trace_swe_calc(2, tjd, ipl, iflag, xx, serr);
 #endif
             return iflag;
-            return_error:
+        return_error:
             for (i = 0; i <= 5; i++)
                 xx[i] = 0;
 #if TRACE
@@ -634,7 +654,8 @@ namespace SwissEphNet.CPort
             return retval;
         }
 
-        Int32 swecalc(double tjd, int ipl, Int32 iflag, CPointer<double> x, out string serr) {
+        Int32 swecalc(double tjd, int ipl, Int32 iflag, CPointer<double> x, out string serr)
+        {
             int i;
             int ipli, ipli_ast, ifno;
             int retc;
@@ -682,7 +703,8 @@ namespace SwissEphNet.CPort
             if ((iflag & SwissEph.SEFLG_JPLEPH) != 0)
                 epheflag = SwissEph.SEFLG_JPLEPH;
             /* no barycentric calculations with Moshier ephemeris */
-            if ((iflag & SwissEph.SEFLG_BARYCTR) != 0 && (iflag & SwissEph.SEFLG_MOSEPH) != 0) {
+            if ((iflag & SwissEph.SEFLG_BARYCTR) != 0 && (iflag & SwissEph.SEFLG_MOSEPH) != 0)
+            {
                 serr = "barycentric Moshier positions are not supported.";
                 return ERR;
             }
@@ -703,7 +725,8 @@ namespace SwissEphNet.CPort
              *                                        * 
              * ecliptic and nutation                  * 
              ******************************************/
-            if (ipl == SwissEph.SE_ECL_NUT) {
+            if (ipl == SwissEph.SE_ECL_NUT)
+            {
                 x[0] = swed.oec.eps + swed.nut.nutlo[1];	/* true ecliptic */
                 x[1] = swed.oec.eps;			/* mean ecliptic */
                 x[2] = swed.nut.nutlo[0];		/* nutation in longitude */
@@ -715,12 +738,15 @@ namespace SwissEphNet.CPort
                 /****************************************** 
                  * moon                                   * 
                  ******************************************/
-            } else if (ipl == SwissEph.SE_MOON) {
+            }
+            else if (ipl == SwissEph.SE_MOON)
+            {
                 /* internal planet number */
                 ipli = SEI_MOON;
                 pdp = swed.pldat[ipli];
                 xp = pdp.xreturn;
-                switch (epheflag) {
+                switch (epheflag)
+                {
                     case SwissEph.SEFLG_JPLEPH:
                         retc = jplplan(tjd, ipli, iflag, DO_SAVE, null, null, null, ref serr);
                         /* read error or corrupt file */
@@ -728,21 +754,26 @@ namespace SwissEphNet.CPort
                             goto return_error;
                         /* jpl ephemeris not on disk or date beyond ephemeris range 
                          *     or file corrupt */
-                        if (retc == NOT_AVAILABLE) {
+                        if (retc == NOT_AVAILABLE)
+                        {
                             iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
                             serr += " \ntrying Swiss Eph; ";
                             goto sweph_moon;
-                        } else if (retc == BEYOND_EPH_LIMITS) {
-                            if (tjd > MOSHLUEPH_START && tjd < MOSHLUEPH_END) {
+                        }
+                        else if (retc == BEYOND_EPH_LIMITS)
+                        {
+                            if (tjd > MOSHLUEPH_START && tjd < MOSHLUEPH_END)
+                            {
                                 iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_MOSEPH;
                                 serr += " \nusing Moshier Eph; ";
                                 goto moshier_moon;
-                            } else
+                            }
+                            else
                                 goto return_error;
                         }
                         break;
                     case SwissEph.SEFLG_SWIEPH:
-                        sweph_moon:
+                    sweph_moon:
                         //#if 0
                         //    /* for hel. or bary. position, we need earth and sun as well;
                         //         * this is done by sweplan(), but not by swemoon() */
@@ -758,17 +789,20 @@ namespace SwissEphNet.CPort
                         if (retc == ERR)
                             goto return_error;
                         /* if sweph file not found, switch to moshier */
-                        if (retc == NOT_AVAILABLE) {
-                            if (tjd > MOSHLUEPH_START && tjd < MOSHLUEPH_END) {
+                        if (retc == NOT_AVAILABLE)
+                        {
+                            if (tjd > MOSHLUEPH_START && tjd < MOSHLUEPH_END)
+                            {
                                 iflag = (iflag & ~SwissEph.SEFLG_SWIEPH) | SwissEph.SEFLG_MOSEPH;
                                 serr = " \nusing Moshier eph.; ";
                                 goto moshier_moon;
-                            } else
+                            }
+                            else
                                 goto return_error;
                         }
                         break;
                     case SwissEph.SEFLG_MOSEPH:
-                        moshier_moon:
+                    moshier_moon:
                         retc = SE.SwemMoon.swi_moshmoon(tjd, DO_SAVE, null, ref serr);/**/
                         if (retc == ERR)
                             goto return_error;
@@ -787,7 +821,9 @@ namespace SwissEphNet.CPort
                  * barycentric sun                            * 
                  * (only JPL and SWISSEPH ephemerises)        *
                  **********************************************/
-            } else if (ipl == SwissEph.SE_SUN && (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if (ipl == SwissEph.SE_SUN && (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+            {
                 /* barycentric sun must be handled separately because of
                  * the following reasons:
                  * ordinary planetary computations use the function 
@@ -803,23 +839,27 @@ namespace SwissEphNet.CPort
                  * separate handling. */
                 ipli = SEI_SUN;	/* = SEI_EARTH ! */
                 xp = pedp.xreturn;
-                switch (epheflag) {
+                switch (epheflag)
+                {
                     case SwissEph.SEFLG_JPLEPH:
                         /* open ephemeris, if still closed */
-                        if (!swed.jpl_file_is_open) {
+                        if (!swed.jpl_file_is_open)
+                        {
                             retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref serr);
                             if (retc != OK)
                                 goto sweph_sbar;
                         }
                         retc = SE.SweJPL.swi_pleph(tjd, SweJPL.J_SUN, SweJPL.J_SBARY, psdp.x, ref serr);
-                        if (retc == ERR || retc == BEYOND_EPH_LIMITS) {
+                        if (retc == ERR || retc == BEYOND_EPH_LIMITS)
+                        {
                             SE.SweJPL.swi_close_jpl_file();
                             swed.jpl_file_is_open = false;
                             goto return_error;
                         }
                         /* jpl ephemeris not on disk or date beyond ephemeris range 
                      *     or file corrupt */
-                        if (retc == NOT_AVAILABLE) {
+                        if (retc == NOT_AVAILABLE)
+                        {
                             iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
                             serr = (serr ?? String.Empty) + serr;
                             goto sweph_sbar;
@@ -827,7 +867,7 @@ namespace SwissEphNet.CPort
                         psdp.teval = tjd;
                         break;
                     case SwissEph.SEFLG_SWIEPH:
-                        sweph_sbar:
+                    sweph_sbar:
                         /* sweplan() provides barycentric sun as a by-product in save area;
                          * it is saved in swed.pldat[SEI_SUNBARY].x */
                         retc = sweplan(tjd, SEI_EARTH, SEI_FILE_PLANET, iflag, DO_SAVE, null, null, null, null, ref serr);
@@ -875,27 +915,36 @@ namespace SwissEphNet.CPort
                 /****************************************** 
                  * mercury - pluto                        * 
                  ******************************************/
-            } else if (ipl == SwissEph.SE_SUN 	/* main planet */
-                || ipl == SwissEph.SE_MERCURY
-                || ipl == SwissEph.SE_VENUS
-                || ipl == SwissEph.SE_MARS
-                || ipl == SwissEph.SE_JUPITER
-                || ipl == SwissEph.SE_SATURN
-                || ipl == SwissEph.SE_URANUS
-                || ipl == SwissEph.SE_NEPTUNE
-                || ipl == SwissEph.SE_PLUTO
-                || ipl == SwissEph.SE_EARTH) {
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0) {
-                    if (ipl == SwissEph.SE_SUN) {
+            }
+            else if (ipl == SwissEph.SE_SUN     /* main planet */
+              || ipl == SwissEph.SE_MERCURY
+              || ipl == SwissEph.SE_VENUS
+              || ipl == SwissEph.SE_MARS
+              || ipl == SwissEph.SE_JUPITER
+              || ipl == SwissEph.SE_SATURN
+              || ipl == SwissEph.SE_URANUS
+              || ipl == SwissEph.SE_NEPTUNE
+              || ipl == SwissEph.SE_PLUTO
+              || ipl == SwissEph.SE_EARTH)
+            {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+                {
+                    if (ipl == SwissEph.SE_SUN)
+                    {
                         /* heliocentric position of Sun does not exist */
                         for (i = 0; i < 24; i++)
                             x[i] = 0;
                         return iflag;
                     }
-                } else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+                }
+                else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     ;
-                } else {		/* geocentric */
-                    if (ipl == SwissEph.SE_EARTH) {
+                }
+                else
+                {		/* geocentric */
+                    if (ipl == SwissEph.SE_EARTH)
+                    {
                         /* geocentric position of Earth does not exist */
                         for (i = 0; i < 24; i++)
                             x[i] = 0;
@@ -915,8 +964,11 @@ namespace SwissEphNet.CPort
                  * mean lunar node                            * 
                  * for comment s. moshmoon.c, swi_mean_node() *
                  **********************************************/
-            } else if (ipl == SwissEph.SE_MEAN_NODE) {
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if (ipl == SwissEph.SE_MEAN_NODE)
+            {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     /* heliocentric/barycentric lunar node not allowed */
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
@@ -941,7 +993,8 @@ namespace SwissEphNet.CPort
                     goto return_error;
                 /* to avoid infinitesimal deviations from latitude = 0 
                  * that result from conversions */
-                if ((iflag & SwissEph.SEFLG_SIDEREAL) == 0 && (iflag & SwissEph.SEFLG_J2000) == 0) {
+                if ((iflag & SwissEph.SEFLG_SIDEREAL) == 0 && (iflag & SwissEph.SEFLG_J2000) == 0)
+                {
                     ndp.xreturn[1] = 0.0;	/* ecl. latitude       */
                     ndp.xreturn[4] = 0.0;	/*               speed */
                     ndp.xreturn[5] = 0.0;	/*      radial   speed */
@@ -954,8 +1007,11 @@ namespace SwissEphNet.CPort
                  * mean lunar apogee ('dark moon', 'lilith')  *
                  * for comment s. moshmoon.c, swi_mean_apog() *
                  **********************************************/
-            } else if (ipl == SwissEph.SE_MEAN_APOG) {
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if (ipl == SwissEph.SE_MEAN_APOG)
+            {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     /* heliocentric/barycentric lunar apogee not allowed */
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
@@ -987,8 +1043,11 @@ namespace SwissEphNet.CPort
                 /*********************************************** 
                  * osculating lunar node ('true node')         *    
                  ***********************************************/
-            } else if (ipl == SwissEph.SE_TRUE_NODE) {
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if (ipl == SwissEph.SE_TRUE_NODE)
+            {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     /* heliocentric/barycentric lunar node not allowed */
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
@@ -1000,7 +1059,8 @@ namespace SwissEphNet.CPort
                 iflag = ndp.xflgs;
                 /* to avoid infinitesimal deviations from latitude = 0 
                  * that result from conversions */
-                if ((iflag & SwissEph.SEFLG_SIDEREAL) == 0 && (iflag & SwissEph.SEFLG_J2000) == 0) {
+                if ((iflag & SwissEph.SEFLG_SIDEREAL) == 0 && (iflag & SwissEph.SEFLG_J2000) == 0)
+                {
                     ndp.xreturn[1] = 0.0;	/* ecl. latitude       */
                     ndp.xreturn[4] = 0.0;	/*               speed */
                     ndp.xreturn[8] = 0.0;	/* z coordinate        */
@@ -1011,8 +1071,11 @@ namespace SwissEphNet.CPort
                 /*********************************************** 
                  * osculating lunar apogee                     *    
                  ***********************************************/
-            } else if (ipl == SwissEph.SE_OSCU_APOG) {
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if (ipl == SwissEph.SE_OSCU_APOG)
+            {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     /* heliocentric/barycentric lunar apogee not allowed */
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
@@ -1035,8 +1098,11 @@ namespace SwissEphNet.CPort
                 /*********************************************** 
                  * interpolated lunar apogee                   *    
                  ***********************************************/
-            } else if (ipl == SwissEph.SE_INTP_APOG) {
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if (ipl == SwissEph.SE_INTP_APOG)
+            {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     /* heliocentric/barycentric lunar apogee not allowed */
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
@@ -1059,8 +1125,11 @@ namespace SwissEphNet.CPort
                 /*********************************************** 
                  * interpolated lunar perigee                  *    
                  ***********************************************/
-            } else if (ipl == SwissEph.SE_INTP_PERG) {
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if (ipl == SwissEph.SE_INTP_PERG)
+            {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     /* heliocentric/barycentric lunar apogee not allowed */
                     for (i = 0; i < 24; i++)
                         x[i] = 0;
@@ -1075,17 +1144,20 @@ namespace SwissEphNet.CPort
                 /*********************************************** 
                  * minor planets                               *    
                  ***********************************************/
-            } else if (ipl == SwissEph.SE_CHIRON
-              || ipl == SwissEph.SE_PHOLUS
-              || ipl == SwissEph.SE_CERES		/* Ceres - Vesta */
-              || ipl == SwissEph.SE_PALLAS
-              || ipl == SwissEph.SE_JUNO
-              || ipl == SwissEph.SE_VESTA
-              || ipl > SwissEph.SE_AST_OFFSET) {
+            }
+            else if (ipl == SwissEph.SE_CHIRON
+            || ipl == SwissEph.SE_PHOLUS
+            || ipl == SwissEph.SE_CERES     /* Ceres - Vesta */
+            || ipl == SwissEph.SE_PALLAS
+            || ipl == SwissEph.SE_JUNO
+            || ipl == SwissEph.SE_VESTA
+            || ipl > SwissEph.SE_AST_OFFSET)
+            {
                 /* internal planet number */
                 if (ipl < SwissEph.SE_NPLANETS)
                     ipli = pnoext2int[ipl];
-                else if (ipl <= SwissEph.SE_AST_OFFSET + MPC_VESTA) {
+                else if (ipl <= SwissEph.SE_AST_OFFSET + MPC_VESTA)
+                {
                     ipli = SEI_CERES + ipl - SwissEph.SE_AST_OFFSET - 1;
                     ipl = SwissEph.SE_CERES + ipl - SwissEph.SE_AST_OFFSET - 1;
                     //#if 0
@@ -1096,7 +1168,9 @@ namespace SwissEphNet.CPort
                     //      ipli = SEI_PHOLUS;
                     //      ipl = SE_PHOLUS;
                     //#endif
-                } else {			/* any asteroid except*/
+                }
+                else
+                {			/* any asteroid except*/
                     ipli = SEI_ANYBODY;
                 }
                 if (ipli == SEI_ANYBODY)
@@ -1109,18 +1183,20 @@ namespace SwissEphNet.CPort
                     ifno = SEI_FILE_ANY_AST;
                 else
                     ifno = SEI_FILE_MAIN_AST;
-                if (ipli == SEI_CHIRON && (tjd < CHIRON_START || tjd > CHIRON_END)) {
+                if (ipli == SEI_CHIRON && (tjd < CHIRON_START || tjd > CHIRON_END))
+                {
                     serr = C.sprintf("Chiron's ephemeris is restricted to JD %8.1f - JD %8.1f",
                         CHIRON_START, CHIRON_END);
                     return ERR;
                 }
-                if (ipli == SEI_PHOLUS && (tjd < PHOLUS_START || tjd > PHOLUS_END)) {
+                if (ipli == SEI_PHOLUS && (tjd < PHOLUS_START || tjd > PHOLUS_END))
+                {
                     serr = C.sprintf(
                         "Pholus's ephemeris is restricted to JD %8.1f - JD %8.1f",
                         PHOLUS_START, PHOLUS_END);
                     return ERR;
                 }
-                do_asteroid:
+            do_asteroid:
                 /* earth and sun are also needed */
                 retc = main_planet(tjd, SEI_EARTH, epheflag, iflag, ref serr);
                 if (retc == ERR)
@@ -1128,7 +1204,8 @@ namespace SwissEphNet.CPort
                 /* iflag (ephemeris bit) has possibly changed in main_planet() */
                 iflag = swed.pldat[SEI_EARTH].xflgs;
                 /* asteroid */
-                if (!String.IsNullOrWhiteSpace(serr)) {
+                if (!String.IsNullOrWhiteSpace(serr))
+                {
                     serr2 = serr;
                     serr = String.Empty;
                 }
@@ -1142,13 +1219,16 @@ namespace SwissEphNet.CPort
                 /* app_pos_etc_plan() might have failed, if t(light-time)
                  * is beyond ephemeris range. in this case redo with Moshier 
                  */
-                if (retc == NOT_AVAILABLE || retc == BEYOND_EPH_LIMITS) {
-                    if (epheflag != SwissEph.SEFLG_MOSEPH) {
+                if (retc == NOT_AVAILABLE || retc == BEYOND_EPH_LIMITS)
+                {
+                    if (epheflag != SwissEph.SEFLG_MOSEPH)
+                    {
                         iflag = (iflag & ~SwissEph.SEFLG_EPHMASK) | SwissEph.SEFLG_MOSEPH;
                         epheflag = SwissEph.SEFLG_MOSEPH;
                         serr += "\nusing Moshier eph.; ";
                         goto do_asteroid;
-                    } else
+                    }
+                    else
                         goto return_error;
                 }
                 /* add warnings from earth/sun computation */
@@ -1158,7 +1238,9 @@ namespace SwissEphNet.CPort
                  * fictitious planets                          *    
                  * (Isis-Transpluto and Uranian planets)       *
                  ***********************************************/
-            } else if (ipl >= SwissEph.SE_FICT_OFFSET && ipl <= SwissEph.SE_FICT_MAX) {
+            }
+            else if (ipl >= SwissEph.SE_FICT_OFFSET && ipl <= SwissEph.SE_FICT_MAX)
+            {
                 //#if 0
                 //       ipl == SE_CUPIDO
                 //    || ipl == SE_HADES
@@ -1176,7 +1258,7 @@ namespace SwissEphNet.CPort
                 ipli = SEI_ANYBODY;
                 pdp = swed.pldat[ipli];
                 xp = pdp.xreturn;
-                do_fict_plan:
+            do_fict_plan:
                 /* the earth for geocentric position */
                 retc = main_planet(tjd, SEI_EARTH, epheflag, iflag, ref serr);
                 /* iflag (ephemeris bit) has possibly changed in main_planet() */
@@ -1192,29 +1274,34 @@ namespace SwissEphNet.CPort
                 /* app_pos_etc_plan_osc() might have failed, if t(light-time)
                  * is beyond ephemeris range. in this case redo with Moshier 
                  */
-                if (retc == NOT_AVAILABLE || retc == BEYOND_EPH_LIMITS) {
-                    if (epheflag != SwissEph.SEFLG_MOSEPH) {
+                if (retc == NOT_AVAILABLE || retc == BEYOND_EPH_LIMITS)
+                {
+                    if (epheflag != SwissEph.SEFLG_MOSEPH)
+                    {
                         iflag = (iflag & ~SwissEph.SEFLG_EPHMASK) | SwissEph.SEFLG_MOSEPH;
                         epheflag = SwissEph.SEFLG_MOSEPH;
                         serr += "\nusing Moshier eph.; ";
                         goto do_fict_plan;
-                    } else
+                    }
+                    else
                         goto return_error;
                 }
                 /*********************************************** 
                  * invalid body number                         *    
                  ***********************************************/
-            } else {
+            }
+            else
+            {
                 serr = C.sprintf("illegal planet number %d.", ipl);
                 goto return_error;
             }
             for (i = 0; i < 24; i++)
                 x[i] = xp[i];
             return (iflag);
-            /*********************************************** 
-             * return error                                * 
-             ***********************************************/
-            return_error:;
+        /*********************************************** 
+         * return error                                * 
+         ***********************************************/
+        return_error:;
             for (i = 0; i < 24; i++)
                 x[i] = 0;
             return ERR;
@@ -1306,11 +1393,13 @@ namespace SwissEphNet.CPort
         /* closes all open files, frees space of planetary data, 
          * deletes memory of all computed positions 
          */
-        public void swe_close() {
+        public void swe_close()
+        {
             int i;
             /* close SWISSEPH files */
-            for (i = 0; i < SEI_NEPHFILES; i++) {
-                if (swed.fidat[i].fptr != null)
+            for (i = 0; i < SEI_NEPHFILES; i++)
+            {
+                if (swed.fidat[i]?.fptr != null)
                     swed.fidat[i].fptr.Dispose();
                 swed.fidat[i] = new file_data();
             }
@@ -1321,7 +1410,8 @@ namespace SwissEphNet.CPort
             swed.jpl_file_is_open = false;
             swed.jpldenum = 0;
             /* close fixed stars */
-            if (swed.fixfp != null) {
+            if (swed.fixfp != null)
+            {
                 swed.fixfp.Dispose();
                 swed.fixfp = null;
             }
@@ -1386,7 +1476,8 @@ namespace SwissEphNet.CPort
          * won't return planet positions previously computed from other
          * ephemerides
          */
-        public void swe_set_ephe_path(string path) {
+        public void swe_set_ephe_path(string path)
+        {
             int i, iflag;
             string s; string sdummy = null;
             //string sp;
@@ -1429,7 +1520,8 @@ namespace SwissEphNet.CPort
             iflag = SwissEph.SEFLG_SWIEPH | SwissEph.SEFLG_J2000 | SwissEph.SEFLG_TRUEPOS | SwissEph.SEFLG_ICRS;
             swed.last_epheflag = 2;
             swe_calc(J2000, SwissEph.SE_MOON, iflag, xx, ref sdummy);
-            if (swed.fidat[SEI_FILE_MOON].fptr != null) {
+            if (swed.fidat[SEI_FILE_MOON].fptr != null)
+            {
                 SE.SwephLib.swi_set_tid_acc(0, 0, swed.fidat[SEI_FILE_MOON].sweph_denum, ref sdummy);
             }
 #if TRACE
@@ -1461,7 +1553,8 @@ namespace SwissEphNet.CPort
 #endif
         }
 
-        void load_dpsi_deps() {
+        void load_dpsi_deps()
+        {
             CFile fp;
             string s, sdummy = String.Empty;
             string[] cpos;
@@ -1470,7 +1563,8 @@ namespace SwissEphNet.CPort
             if (swed.eop_dpsi_loaded > 0)
                 return;
             fp = swi_fopen(-1, SwephLib.DPSI_DEPS_IAU1980_FILE_EOPC04, swed.ephepath, ref sdummy);
-            if (fp == null) {
+            if (fp == null)
+            {
                 swed.eop_dpsi_loaded = ERR;
                 return;
             }
@@ -1485,13 +1579,15 @@ namespace SwissEphNet.CPort
                 return;
             }
             swed.eop_tjd_beg_horizons = SwephLib.DPSI_DEPS_IAU1980_TJD0_HORIZONS;
-            while ((s = fp.ReadLine()) != null) {
+            while ((s = fp.ReadLine()) != null)
+            {
                 cpos = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 if ((iyear = int.Parse(cpos[0])) == 0)
                     continue;
                 mjd = int.Parse(cpos[3]);
                 /* is file in one-day steps? */
-                if (mjdsv > 0 && mjd - mjdsv != 1) {
+                if (mjdsv > 0 && mjd - mjdsv != 1)
+                {
                     /* we cannot return error but we note it as follows: */
                     swed.eop_dpsi_loaded = -2;
                     fp.Dispose();
@@ -1513,14 +1609,16 @@ namespace SwissEphNet.CPort
             fp = swi_fopen(-1, SwephLib.DPSI_DEPS_IAU1980_FILE_FINALS, swed.ephepath, ref sdummy);
             if (fp == null)
                 return; /* return without error as existence of file is not mandatory */
-            while ((s = fp.ReadLine()) != null) {
+            while ((s = fp.ReadLine()) != null)
+            {
                 mjd = atoi(s.Substring(7));
                 if (mjd + TJDOFS <= swed.eop_tjd_end)
                     continue;
                 if (n >= Sweph.SWE_DATA_DPSI_DEPS)
                     return;
                 /* are data in one-day steps? */
-                if (mjdsv > 0 && mjd - mjdsv != 1) {
+                if (mjdsv > 0 && mjd - mjdsv != 1)
+                {
                     /* no error, as we do have data; however, if this file is usefull,
                      * then swed.eop_dpsi_loaded will be set to 2 */
                     swed.eop_dpsi_loaded = -3;
@@ -1530,12 +1628,14 @@ namespace SwissEphNet.CPort
                 /* dpsi, deps Bulletin B */
                 dpsi = atof(s.Substring(168));
                 deps = atof(s.Substring(178));
-                if (dpsi == 0) {
+                if (dpsi == 0)
+                {
                     /* try dpsi, deps Bulletin A */
                     dpsi = atof(s.Substring(99));
                     deps = atof(s.Substring(118));
                 }
-                if (dpsi == 0) {
+                if (dpsi == 0)
+                {
                     swed.eop_dpsi_loaded = 2;
                     /*printf("dpsi from %f to %f \n", swed.eop_tjd_beg, swed.eop_tjd_end);*/
                     fp.Dispose();
@@ -1557,7 +1657,8 @@ namespace SwissEphNet.CPort
          * won't return planet positions previously computed from other
          * ephemerides
          */
-        public void swe_set_jpl_file(string fname) {
+        public void swe_set_jpl_file(string fname)
+        {
             string sp, sdummy = String.Empty;
             int retc, spi;
             double[] ss = new double[3];
@@ -1577,8 +1678,10 @@ namespace SwissEphNet.CPort
             swed.jplfnam = sp;
             /* open ephemeris, if still closed */
             retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref sdummy);
-            if (retc == OK) {
-                if (swed.jpldenum >= 403) {
+            if (retc == OK)
+            {
+                if (swed.jpldenum >= 403)
+                {
                     /*if (INCLUDE_CODE_FOR_DPSI_DEPS_IAU1980) */
                     load_dpsi_deps();
                 }
@@ -1610,7 +1713,8 @@ namespace SwissEphNet.CPort
         /* calculates obliquity of ecliptic and stores it together
          * with its date, sine, and cosine
          */
-        void calc_epsilon(double tjd, Int32 iflag, epsilon e) {
+        void calc_epsilon(double tjd, Int32 iflag, epsilon e)
+        {
             e.teps = tjd;
             e.eps = SE.SwephLib.swi_epsiln(tjd, iflag);
             e.seps = Math.Sin(e.eps);
@@ -1638,25 +1742,32 @@ namespace SwissEphNet.CPort
          * &swed.pldat[ipli].x[];
          */
         int main_planet(double tjd, int ipli, Int32 epheflag, Int32 iflag,
-                       ref string serr) {
+                       ref string serr)
+        {
             int retc;
-            switch (epheflag) {
+            switch (epheflag)
+            {
                 case SwissEph.SEFLG_JPLEPH:
                     retc = jplplan(tjd, ipli, iflag, DO_SAVE, null, null, null, ref serr);
                     /* read error or corrupt file */
                     if (retc == ERR)
                         return ERR;
                     /* jpl ephemeris not on disk or date beyond ephemeris range */
-                    if (retc == NOT_AVAILABLE) {
+                    if (retc == NOT_AVAILABLE)
+                    {
                         iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
                         serr += " \ntrying Swiss Eph; ";
                         goto sweph_planet;
-                    } else if (retc == BEYOND_EPH_LIMITS) {
-                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END) {
+                    }
+                    else if (retc == BEYOND_EPH_LIMITS)
+                    {
+                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END)
+                        {
                             iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_MOSEPH;
                             serr += " \nusing Moshier Eph; ";
                             goto moshier_planet;
-                        } else
+                        }
+                        else
                             return ERR;
                     }
                     /* geocentric, lighttime etc. */
@@ -1667,32 +1778,40 @@ namespace SwissEphNet.CPort
                     if (retc == ERR)
                         return ERR;
                     /* t for light-time beyond ephemeris range */
-                    if (retc == NOT_AVAILABLE) {
+                    if (retc == NOT_AVAILABLE)
+                    {
                         iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
                         serr += " \ntrying Swiss Eph; ";
                         goto sweph_planet;
-                    } else if (retc == BEYOND_EPH_LIMITS) {
-                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END) {
+                    }
+                    else if (retc == BEYOND_EPH_LIMITS)
+                    {
+                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END)
+                        {
                             iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_MOSEPH;
                             serr += " \nusing Moshier Eph; ";
                             goto moshier_planet;
-                        } else
+                        }
+                        else
                             return ERR;
                     }
                     break;
                 case SwissEph.SEFLG_SWIEPH:
-                    sweph_planet:
+                sweph_planet:
                     /* compute barycentric planet (+ earth, sun, moon) */
                     retc = sweplan(tjd, ipli, SEI_FILE_PLANET, iflag, DO_SAVE, null, null, null, null, ref serr);
                     if (retc == ERR)
                         return ERR;
                     /* if sweph file not found, switch to moshier */
-                    if (retc == NOT_AVAILABLE) {
-                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END) {
+                    if (retc == NOT_AVAILABLE)
+                    {
+                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END)
+                        {
                             iflag = (iflag & ~SwissEph.SEFLG_SWIEPH) | SwissEph.SEFLG_MOSEPH;
                             serr += " \nusing Moshier eph.; ";
                             goto moshier_planet;
-                        } else
+                        }
+                        else
                             return ERR;
                     }
                     /* geocentric, lighttime etc. */
@@ -1703,17 +1822,20 @@ namespace SwissEphNet.CPort
                     if (retc == ERR)
                         return ERR;
                     /* if sweph file for t(lighttime) not found, switch to moshier */
-                    if (retc == NOT_AVAILABLE) {
-                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END) {
+                    if (retc == NOT_AVAILABLE)
+                    {
+                        if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END)
+                        {
                             iflag = (iflag & ~SwissEph.SEFLG_SWIEPH) | SwissEph.SEFLG_MOSEPH;
                             serr += " \nusing Moshier eph.; ";
                             goto moshier_planet;
-                        } else
+                        }
+                        else
                             return ERR;
                     }
                     break;
                 case SwissEph.SEFLG_MOSEPH:
-                    moshier_planet:
+                moshier_planet:
                     retc = SE.SwemPlan.swi_moshplan(tjd, ipli, DO_SAVE, null, null, ref serr);/**/
                     if (retc == ERR)
                         return ERR;
@@ -1755,23 +1877,26 @@ namespace SwissEphNet.CPort
          */
         int main_planet_bary(double tjd, int ipli, Int32 epheflag, Int32 iflag, bool do_save,
                        CPointer<double> xp, CPointer<double> xe, CPointer<double> xs, CPointer<double> xm,
-                       ref string serr) {
+                       ref string serr)
+        {
             int i, retc;
-            switch (epheflag) {
+            switch (epheflag)
+            {
                 case SwissEph.SEFLG_JPLEPH:
                     retc = jplplan(tjd, ipli, iflag, do_save, xp, xe, xs, ref serr);
                     /* read error or corrupt file */
                     if (retc == ERR || retc == BEYOND_EPH_LIMITS)
                         return retc;
                     /* jpl ephemeris not on disk or date beyond ephemeris range */
-                    if (retc == NOT_AVAILABLE) {
+                    if (retc == NOT_AVAILABLE)
+                    {
                         iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
                         serr += " \ntrying Swiss Eph; ";
                         goto sweph_planet;
                     }
                     break;
                 case SwissEph.SEFLG_SWIEPH:
-                    sweph_planet:
+                sweph_planet:
                     /* compute barycentric planet (+ earth, sun, moon) */
                     retc = sweplan(tjd, ipli, SEI_FILE_PLANET, iflag, do_save, xp, xe, xs, xm, ref serr);
                     //#if 0
@@ -1798,8 +1923,8 @@ namespace SwissEphNet.CPort
                     //#endif
                     break;
                 case SwissEph.SEFLG_MOSEPH:
-                    //#if 1
-                    moshier_planet:
+                //#if 1
+                moshier_planet:
                     //#endif
                     retc = SE.SwemPlan.swi_moshplan(tjd, ipli, do_save, xp, xe, ref serr);/**/
                     if (retc == ERR)
@@ -1824,7 +1949,8 @@ namespace SwissEphNet.CPort
          * xp		array of 6 doubles for lunar position and speed
          * serr		error string
          */
-        int swemoon(double tjd, Int32 iflag, bool do_save, CPointer<double> xpret, ref string serr) {
+        int swemoon(double tjd, Int32 iflag, bool do_save, CPointer<double> xpret, ref string serr)
+        {
             int i, retc;
             plan_data pdp = swed.pldat[SEI_MOON];
             Int32 speedf1, speedf2;
@@ -1839,14 +1965,18 @@ namespace SwissEphNet.CPort
             speedf2 = iflag & SwissEph.SEFLG_SPEED;
             if (tjd == pdp.teval
               && pdp.iephe == SwissEph.SEFLG_SWIEPH
-              && (0 == speedf2 || speedf1 != 0)) {
+              && (0 == speedf2 || speedf1 != 0))
+            {
                 xp = pdp.x;
-            } else {
+            }
+            else
+            {
                 /* call sweph for moon */
                 retc = sweph(tjd, SEI_MOON, SEI_FILE_MOON, iflag, null, do_save, xp, ref serr);
                 if (retc != OK)
                     return (retc);
-                if (do_save) {
+                if (do_save)
+                {
                     pdp.teval = tjd;
                     pdp.xflgs = -1;
                     pdp.iephe = SwissEph.SEFLG_SWIEPH;
@@ -1884,7 +2014,8 @@ namespace SwissEphNet.CPort
          */
         int sweplan(double tjd, int ipli, int ifno, Int32 iflag, bool do_save,
                    CPointer<double> xpret, CPointer<double> xperet, CPointer<double> xpsret, CPointer<double> xpmret,
-                   ref string serr) {
+                   ref string serr)
+        {
             int i, retc;
             bool do_earth = false, do_moon = false, do_sunbary = false;
             plan_data pdp = swed.pldat[ipli];
@@ -1903,7 +2034,8 @@ namespace SwissEphNet.CPort
                 do_sunbary = true;
             if (do_save || ipli == SEI_EARTH || xperet != null)
                 do_earth = true;
-            if (ipli == SEI_MOON) {
+            if (ipli == SEI_MOON)
+            {
                 //#if 0
                 //  if (iflag & (SEFLG_HELCTR | SEFLG_BARYCTR | SEFLG_NOABERR)) 
                 //      do_earth = TRUE;
@@ -1916,12 +2048,15 @@ namespace SwissEphNet.CPort
             }
             if (do_save || ipli == SEI_MOON || ipli == SEI_EARTH || xperet != null || xpmret != null)
                 do_moon = true;
-            if (do_save) {
+            if (do_save)
+            {
                 xp = pdp.x;
                 xpe = pebdp.x;
                 xps = psbdp.x;
                 xpm = pmdp.x;
-            } else {
+            }
+            else
+            {
                 xp = xxp;
                 xpe = xxe;
                 xps = xxs;
@@ -1929,16 +2064,20 @@ namespace SwissEphNet.CPort
             }
             speedf2 = iflag & SwissEph.SEFLG_SPEED;
             /* barycentric sun */
-            if (do_sunbary) {
+            if (do_sunbary)
+            {
                 speedf1 = psbdp.xflgs & SwissEph.SEFLG_SPEED;
                 /* if planet has already been computed for this date, return 
                  * if speed flag has been turned on, recompute planet */
                 if (tjd == psbdp.teval
                   && psbdp.iephe == SwissEph.SEFLG_SWIEPH
-                  && (speedf2 == 0 || speedf1 != 0)) {
+                  && (speedf2 == 0 || speedf1 != 0))
+                {
                     for (i = 0; i <= 5; i++)
                         xps[i] = psbdp.x[i];
-                } else {
+                }
+                else
+                {
                     retc = sweph(tjd, SEI_SUNBARY, SEI_FILE_PLANET, iflag, null, do_save, xps, ref serr);/**/
                     if (retc != OK)
                         return (retc);
@@ -1948,19 +2087,24 @@ namespace SwissEphNet.CPort
                         xpsret[i] = xps[i];
             }
             /* moon */
-            if (do_moon) {
+            if (do_moon)
+            {
                 speedf1 = pmdp.xflgs & SwissEph.SEFLG_SPEED;
                 if (tjd == pmdp.teval
                   && pmdp.iephe == SwissEph.SEFLG_SWIEPH
-                  && (speedf2 == 0 || speedf1 != 0)) {
+                  && (speedf2 == 0 || speedf1 != 0))
+                {
                     for (i = 0; i <= 5; i++)
                         xpm[i] = pmdp.x[i];
-                } else {
+                }
+                else
+                {
                     retc = sweph(tjd, SEI_MOON, SEI_FILE_MOON, iflag, null, do_save, xpm, ref serr);
                     if (retc == ERR)
                         return (retc);
                     /* if moon file doesn't exist, take moshier moon */
-                    if (swed.fidat[SEI_FILE_MOON].fptr == null) {
+                    if (swed.fidat[SEI_FILE_MOON].fptr == null)
+                    {
                         serr = " \nusing Moshier eph. for moon; ";
                         retc = SE.SwemMoon.swi_moshmoon(tjd, do_save, xpm, ref serr);
                         if (retc != OK)
@@ -1972,14 +2116,18 @@ namespace SwissEphNet.CPort
                         xpmret[i] = xpm[i];
             }
             /* barycentric earth */
-            if (do_earth) {
+            if (do_earth)
+            {
                 speedf1 = pebdp.xflgs & SwissEph.SEFLG_SPEED;
                 if (tjd == pebdp.teval
                   && pebdp.iephe == SwissEph.SEFLG_SWIEPH
-                  && (speedf2 == 0 || speedf1 != 0)) {
+                  && (speedf2 == 0 || speedf1 != 0))
+                {
                     for (i = 0; i <= 5; i++)
                         xpe[i] = pebdp.x[i];
-                } else {
+                }
+                else
+                {
                     retc = sweph(tjd, SEI_EMB, SEI_FILE_PLANET, iflag, null, do_save, xpe, ref serr);
                     if (retc != OK)
                         return (retc);
@@ -1998,30 +2146,41 @@ namespace SwissEphNet.CPort
                     for (i = 0; i <= 5; i++)
                         xperet[i] = xpe[i];
             }
-            if (ipli == SEI_MOON) {
+            if (ipli == SEI_MOON)
+            {
                 for (i = 0; i <= 5; i++)
                     xp[i] = xpm[i];
-            } else if (ipli == SEI_EARTH) {
+            }
+            else if (ipli == SEI_EARTH)
+            {
                 for (i = 0; i <= 5; i++)
                     xp[i] = xpe[i];
-            } else if (ipli == SEI_SUN) {
+            }
+            else if (ipli == SEI_SUN)
+            {
                 for (i = 0; i <= 5; i++)
                     xp[i] = xps[i];
-            } else {
+            }
+            else
+            {
                 /* planet */
                 speedf1 = pdp.xflgs & SwissEph.SEFLG_SPEED;
                 if (tjd == pdp.teval
                   && pdp.iephe == SwissEph.SEFLG_SWIEPH
-                  && (speedf2 == 0 || speedf1 != 0)) {
+                  && (speedf2 == 0 || speedf1 != 0))
+                {
                     for (i = 0; i <= 5; i++)
                         xp[i] = pdp.x[i];
                     return (OK);
-                } else {
+                }
+                else
+                {
                     retc = sweph(tjd, ipli, ifno, iflag, null, do_save, xp, ref serr);
                     if (retc != OK)
                         return (retc);
                     /* if planet is heliocentric, it must be transformed to barycentric */
-                    if ((pdp.iflg & SEI_FLG_HELIO) != 0) {
+                    if ((pdp.iflg & SEI_FLG_HELIO) != 0)
+                    {
                         /* now barycentric planet */
                         for (i = 0; i <= 2; i++)
                             xp[i] += xps[i];
@@ -2057,7 +2216,8 @@ namespace SwissEphNet.CPort
          * the positions will be written into the save area (swed.pldat[ipli].x)
          */
         int jplplan(double tjd, int ipli, Int32 iflag, bool do_save,
-                   CPointer<double> xpret, CPointer<double> xperet, CPointer<double> xpsret, ref string serr) {
+                   CPointer<double> xpret, CPointer<double> xperet, CPointer<double> xpsret, ref string serr)
+        {
             int i, retc;
             bool do_earth = false, do_sunbary = false;
             double[] ss = new double[3];
@@ -2075,11 +2235,14 @@ namespace SwissEphNet.CPort
                tjd_tdb = tjd + (0.001657 * Math.Sin(628.3076 * T + 6.2401)
                   + 0.000022 * Math.Sin(575.3385 * T + 4.2970)
                   + 0.000014 * Math.Sin(1256.6152 * T + 6.1969)) / 8640.0;*/
-            if (do_save) {
+            if (do_save)
+            {
                 xp = pdp.x;
                 xpe = pedp.x;
                 xps = psdp.x;
-            } else {
+            }
+            else
+            {
                 xp = xxp;
                 xpe = xxe;
                 xps = xxs;
@@ -2093,16 +2256,20 @@ namespace SwissEphNet.CPort
             if (ipli == SEI_MOON)
                 ictr = SweJPL.J_EARTH;
             /* open ephemeris, if still closed */
-            if (!swed.jpl_file_is_open) {
+            if (!swed.jpl_file_is_open)
+            {
                 retc = open_jpl_file(ss, swed.jplfnam, swed.ephepath, ref serr);
                 if (retc != OK)
                     return (retc);
             }
-            if (do_earth) {
+            if (do_earth)
+            {
                 /* barycentric earth */
-                if (tjd != pedp.teval || tjd == 0) {
+                if (tjd != pedp.teval || tjd == 0)
+                {
                     retc = SE.SweJPL.swi_pleph(tjd, SweJPL.J_EARTH, SweJPL.J_SBARY, xpe, ref serr);
-                    if (do_save) {
+                    if (do_save)
+                    {
                         pedp.teval = tjd;
                         pedp.xflgs = -1;	/* new light-time etc. required */
                         pedp.iephe = SwissEph.SEFLG_JPLEPH;
@@ -2114,7 +2281,8 @@ namespace SwissEphNet.CPort
                         return retc;
                     }
                 }
-                else {
+                else
+                {
                     xpe = pedp.x;
                 }
                 if (xperet != null)
@@ -2122,11 +2290,14 @@ namespace SwissEphNet.CPort
                         xperet[i] = xpe[i];
 
             }
-            if (do_sunbary) {
+            if (do_sunbary)
+            {
                 /* barycentric sun */
-                if (tjd != psdp.teval || tjd == 0) {
+                if (tjd != psdp.teval || tjd == 0)
+                {
                     retc = SE.SweJPL.swi_pleph(tjd, SweJPL.J_SUN, SweJPL.J_SBARY, xps, ref serr);
-                    if (do_save) {
+                    if (do_save)
+                    {
                         psdp.teval = tjd;
                         psdp.xflgs = -1;
                         psdp.iephe = SwissEph.SEFLG_JPLEPH;
@@ -2138,7 +2309,8 @@ namespace SwissEphNet.CPort
                         return retc;
                     }
                 }
-                else {
+                else
+                {
                     xps = psdp.x;
                 }
                 if (xpsret != null)
@@ -2146,21 +2318,30 @@ namespace SwissEphNet.CPort
                         xpsret[i] = xps[i];
             }
             /* earth is wanted */
-            if (ipli == SEI_EARTH) {
+            if (ipli == SEI_EARTH)
+            {
                 for (i = 0; i <= 5; i++)
                     xp[i] = xpe[i];
                 /* sunbary is wanted */
-            } if (ipli == SEI_SUNBARY) {
+            }
+            if (ipli == SEI_SUNBARY)
+            {
                 for (i = 0; i <= 5; i++)
                     xp[i] = xps[i];
                 /* other planet */
-            } else {
+            }
+            else
+            {
                 /* if planet already computed */
-                if (tjd == pdp.teval && pdp.iephe == SwissEph.SEFLG_JPLEPH) {
+                if (tjd == pdp.teval && pdp.iephe == SwissEph.SEFLG_JPLEPH)
+                {
                     xp = pdp.x;
-                } else {
+                }
+                else
+                {
                     retc = SE.SweJPL.swi_pleph(tjd, pnoint2jpl[ipli], ictr, xp, ref serr);
-                    if (do_save) {
+                    if (do_save)
+                    {
                         pdp.teval = tjd;
                         pdp.xflgs = -1;
                         pdp.iephe = SwissEph.SEFLG_JPLEPH;
@@ -2196,7 +2377,8 @@ namespace SwissEphNet.CPort
          * xp		return array of 6 doubles for planet's position
          * serr		error string
          */
-        int sweph(double tjd, int ipli, int ifno, Int32 iflag, CPointer<double> xsunb, bool do_save, CPointer<double> xpret, ref string serr) {
+        int sweph(double tjd, int ipli, int ifno, Int32 iflag, CPointer<double> xsunb, bool do_save, CPointer<double> xpret, ref string serr)
+        {
             int i, ipl, retc, subdirlen;
             string s = String.Empty, subdirnam = String.Empty, fname = String.Empty/*, sp*/;
             int spi;
@@ -2223,7 +2405,8 @@ namespace SwissEphNet.CPort
             if (tjd == pdp.teval
               && pdp.iephe == SwissEph.SEFLG_SWIEPH
               && (0 == speedf2 || speedf1 != 0)
-                  && ipl < SEI_ANYBODY) {
+                  && ipl < SEI_ANYBODY)
+            {
                 if (xpret != null)
                     for (i = 0; i <= 5; i++)
                         xpret[i] = pdp.x[i];
@@ -2232,11 +2415,13 @@ namespace SwissEphNet.CPort
             /****************************** 
              * get correct ephemeris file * 
              ******************************/
-            if (fdp.fptr != null) {
+            if (fdp.fptr != null)
+            {
                 /* if tjd is beyond file range, close old file.
                  * if new asteroid, close old file. */
                 if (tjd < fdp.tfstart || tjd > fdp.tfend
-                  || (ipl == SEI_ANYBODY && ipli != pdp.ibdy)) {
+                  || (ipl == SEI_ANYBODY && ipli != pdp.ibdy))
+                {
                     //fclose(fdp.fptr);
                     fdp.fptr.Dispose();
                     fdp.fptr = null;
@@ -2249,7 +2434,8 @@ namespace SwissEphNet.CPort
                 }
             }
             /* if sweph file not open, find and open it */
-            if (fdp.fptr == null) {
+            if (fdp.fptr == null)
+            {
                 SE.SwephLib.swi_gen_filename(tjd, ipli, out fname);
                 //sp = strrchr(subdirnam, (int)*DIR_GLUE);
                 //if (sp != NULL) {
@@ -2259,27 +2445,33 @@ namespace SwissEphNet.CPort
                 //    subdirlen = 0;
                 //}
                 spi = fname.LastIndexOf(SwissEph.DIR_GLUE);
-                if (spi > 0) {
+                if (spi > 0)
+                {
                     subdirnam = fname.Substring(0, spi);
                     subdirlen = subdirnam.Length;
-                } else {
+                }
+                else
+                {
                     subdirlen = 0;
                 }
                 s = fname;
-                again:
+            again:
                 fdp.fptr = swi_fopen(ifno, s, swed.ephepath, ref serr);
-                if (fdp.fptr == null) {
+                if (fdp.fptr == null)
+                {
                     /*
                      * if it is a numbered asteroid file, try also for short files (..s.se1)
                      * On the second try, the inserted 's' will be seen and not tried again.
                      */
-                    if (ipli > SwissEph.SE_AST_OFFSET) {
+                    if (ipli > SwissEph.SE_AST_OFFSET)
+                    {
                         int sppi = s.IndexOf('.');
                         //if (spp > s && *(spp - 1) != 's') {	/* no 's' before '.' ? */
                         //    spp=C.sprintf("s.%s", SE_FILE_SUFFIX);	/* insert an 's' */
                         //    goto again;
                         //}
-                        if (sppi > 1 && s[sppi - 1] != 's') {
+                        if (sppi > 1 && s[sppi - 1] != 's')
+                        {
                             s = C.sprintf("%ss.%s", s.Substring(0, sppi), SE_FILE_SUFFIX);
                             goto again;
                         }
@@ -2292,7 +2484,8 @@ namespace SwissEphNet.CPort
                         sppi--;	/* point to the character before '.' which must be a 's' */
                         // remove the s
                         s = s.Substring(0, sppi) + s.Substring(sppi + 1);
-                        if (s.StartsWith(subdirnam)) {
+                        if (s.StartsWith(subdirnam))
+                        {
                             s = s.Substring(subdirlen + 1);
                             goto again;
                         }
@@ -2308,7 +2501,8 @@ namespace SwissEphNet.CPort
             /* if first ephemeris file (J-3000), it might start a mars period
              * after -3000. if last ephemeris file (J3000), it might end a
              * 4000-day-period before 3000. */
-            if (tjd < fdp.tfstart || tjd > fdp.tfend) {
+            if (tjd < fdp.tfstart || tjd > fdp.tfend)
+            {
                 if (tjd < fdp.tfstart)
                     s = C.sprintf("jd %f < Swiss Eph. lower limit %f;",
                           tjd, fdp.tfstart);
@@ -2323,7 +2517,8 @@ namespace SwissEphNet.CPort
              * get planet's position      
              ******************************/
             /* get new segment, if necessary */
-            if (pdp.segp == null || tjd < pdp.tseg0 || tjd > pdp.tseg1) {
+            if (pdp.segp == null || tjd < pdp.tseg0 || tjd > pdp.tseg1)
+            {
                 retc = get_new_segment(tjd, ipl, ifno, ref serr);
                 if (retc != OK)
                     return (retc);
@@ -2344,7 +2539,8 @@ namespace SwissEphNet.CPort
              * 2. the speed flag has been specified.
              */
             need_speed = (do_save || (iflag & SwissEph.SEFLG_SPEED) != 0);
-            for (i = 0; i <= 2; i++) {
+            for (i = 0; i <= 2; i++)
+            {
                 xp[i] = SE.SwephLib.swi_echeb(t, pdp.segp.GetPointer(i * pdp.ncoe), pdp.neval);
                 if (need_speed)
                     xp[i + 3] = SE.SwephLib.swi_edcheb(t, pdp.segp.GetPointer(i * pdp.ncoe), pdp.neval) / pdp.dseg * 2;
@@ -2360,7 +2556,8 @@ namespace SwissEphNet.CPort
              * have to compute barycentric earth and subtract heliocentric
              * earth from it. this may be necessary with calls from 
              * sweplan() and from app_pos_etc_sun() (light-time). */
-            if (ipl == SEI_SUNBARY && (pdp.iflg & SEI_FLG_EMBHEL) != 0) {
+            if (ipl == SEI_SUNBARY && (pdp.iflg & SEI_FLG_EMBHEL) != 0)
+            {
                 /* sweph() calls sweph() !!! for EMB.
                  * Attention: a new calculation must be forced in any case.
                  * Otherwise EARTH (instead of EMB) will possibly taken from 
@@ -2383,8 +2580,10 @@ namespace SwissEphNet.CPort
             //#if 1
             /* asteroids are heliocentric.
              * if JPL or SWISSEPH, convert to barycentric */
-            if ((iflag & SwissEph.SEFLG_JPLEPH) != 0 || (iflag & SwissEph.SEFLG_SWIEPH) != 0) {
-                if (ipl >= SEI_ANYBODY) {
+            if ((iflag & SwissEph.SEFLG_JPLEPH) != 0 || (iflag & SwissEph.SEFLG_SWIEPH) != 0)
+            {
+                if (ipl >= SEI_ANYBODY)
+                {
                     for (i = 0; i <= 2; i++)
                         xp[i] += xsunb[i];
                     if (need_speed)
@@ -2393,7 +2592,8 @@ namespace SwissEphNet.CPort
                 }
             }
             //#endif
-            if (do_save) {
+            if (do_save)
+            {
                 pdp.teval = tjd;
                 pdp.xflgs = -1;	/* do new computation of light-time etc. */
                 if (ifno == SEI_FILE_PLANET || ifno == SEI_FILE_MOON)
@@ -2410,7 +2610,8 @@ namespace SwissEphNet.CPort
         /*
          * Alois 2.12.98: inserted error message generation for file not found 
          */
-        public CFile swi_fopen(int ifno, string fname, string ephepath, ref string serr) {
+        public CFile swi_fopen(int ifno, string fname, string ephepath, ref string serr)
+        {
             int np, i/*, j*/;
             CFile fp = null;
             string fnamp;
@@ -2427,10 +2628,12 @@ namespace SwissEphNet.CPort
             cpos = s1.Split(new char[] { SwissEph.PATH_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
             np = cpos.Length;
             s = String.Empty;
-            for (i = 0; i < np; i++) {
+            for (i = 0; i < np; i++)
+            {
                 s = cpos[i];
                 fnamp = s.TrimEnd('\\', '/') + "\\" + fname;
-                if (ifno >= 0) {
+                if (ifno >= 0)
+                {
                     swed.fidat[ifno].fnam = fnamp;
                 }
                 fp = SE.LoadFile(fnamp);
@@ -2509,7 +2712,8 @@ namespace SwissEphNet.CPort
          * iflag	flags
          * serr         error string
          */
-        int app_pos_etc_plan(int ipli, Int32 iflag, ref string serr) {
+        int app_pos_etc_plan(int ipli, Int32 iflag, ref string serr)
+        {
             int i, j, niter, retc = OK;
             int ipl, ifno, ibody;
             Int32 flg1, flg2;
@@ -2523,20 +2727,25 @@ namespace SwissEphNet.CPort
             Int32 epheflag = iflag & SwissEph.SEFLG_EPHMASK;
             dtsave_for_defl = 0;
             /* ephemeris file */
-            if (ipli > SwissEph.SE_AST_OFFSET) {
+            if (ipli > SwissEph.SE_AST_OFFSET)
+            {
                 ifno = SEI_FILE_ANY_AST;
                 ibody = IS_ANY_BODY;
                 pdp = swed.pldat[SEI_ANYBODY];
-            } else if (ipli == SEI_CHIRON
-                || ipli == SEI_PHOLUS
-                || ipli == SEI_CERES
-                || ipli == SEI_PALLAS
-                || ipli == SEI_JUNO
-                || ipli == SEI_VESTA) {
+            }
+            else if (ipli == SEI_CHIRON
+              || ipli == SEI_PHOLUS
+              || ipli == SEI_CERES
+              || ipli == SEI_PALLAS
+              || ipli == SEI_JUNO
+              || ipli == SEI_VESTA)
+            {
                 ifno = SEI_FILE_MAIN_AST;
                 ibody = IS_MAIN_ASTEROID;
                 pdp = swed.pldat[ipli];
-            } else {
+            }
+            else
+            {
                 ifno = SEI_FILE_PLANET;
                 ibody = IS_PLANET;
                 pdp = swed.pldat[ipli];
@@ -2553,7 +2762,8 @@ namespace SwissEphNet.CPort
              * date, then return */
             flg1 = iflag & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
             flg2 = pdp.xflgs & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
-            if (flg1 == flg2) {
+            if (flg1 == flg2)
+            {
                 pdp.xflgs = iflag;
                 pdp.iephe = iflag & SwissEph.SEFLG_EPHMASK;
                 return OK;
@@ -2562,7 +2772,8 @@ namespace SwissEphNet.CPort
             for (i = 0; i <= 5; i++)
                 xx[i] = pdp.x[i];
             /* if heliocentric position is wanted */
-            if ((iflag & SwissEph.SEFLG_HELCTR) != 0) {
+            if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+            {
                 if (pdp.iephe == SwissEph.SEFLG_JPLEPH || pdp.iephe == SwissEph.SEFLG_SWIEPH)
                     for (i = 0; i <= 5; i++)
                         xx[i] -= swed.pldat[SEI_SUNBARY].x[i];
@@ -2571,19 +2782,25 @@ namespace SwissEphNet.CPort
              * observer: geocenter or topocenter
              ************************************/
             /* if topocentric position is wanted  */
-            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+            {
                 if (swed.topd.teval != pedp.teval
-                  || swed.topd.teval == 0) {
+                  || swed.topd.teval == 0)
+                {
                     if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
-                } else {
+                }
+                else
+                {
                     for (i = 0; i <= 5; i++)
                         xobs[i] = swed.topd.xobs[i];
                 }
                 /* barycentric position of observer */
                 for (i = 0; i <= 5; i++)
                     xobs[i] = xobs[i] + pedp.x[i];
-            } else {
+            }
+            else
+            {
                 /* barycentric position of geocenter */
                 for (i = 0; i <= 5; i++)
                     xobs[i] = pedp.x[i];
@@ -2591,13 +2808,15 @@ namespace SwissEphNet.CPort
             /*******************************
              * light-time geocentric       * 
              *******************************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS))
+            {
                 /* number of iterations - 1 */
                 if (pdp.iephe == SwissEph.SEFLG_JPLEPH || pdp.iephe == SwissEph.SEFLG_SWIEPH)
                     niter = 1;
                 else 	/* SwissEph.SEFLG_MOSEPH or planet from osculating elements */
                     niter = 0;
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     /* 
                      * Apparent speed is influenced by the fact that dt changes with
                      * time. This makes a difference of several hundredths of an
@@ -2609,8 +2828,10 @@ namespace SwissEphNet.CPort
                      */
                     for (i = 0; i <= 2; i++)
                         xxsv[i] = xxsp[i] = xx[i] - xx[i + 3];
-                    for (j = 0; j <= niter; j++) {
-                        for (i = 0; i <= 2; i++) {
+                    for (j = 0; j <= niter; j++)
+                    {
+                        for (i = 0; i <= 2; i++)
+                        {
                             dx[i] = xxsp[i];
                             if (0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR))
                                 dx[i] -= (xobs[i] - xobs[i + 3]);
@@ -2625,8 +2846,10 @@ namespace SwissEphNet.CPort
                         xxsp[i] = xxsv[i] - xxsp[i];
                 }
                 /* dt and t(apparent) */
-                for (j = 0; j <= niter; j++) {
-                    for (i = 0; i <= 2; i++) {
+                for (j = 0; j <= niter; j++)
+                {
+                    for (i = 0; i <= 2; i++)
+                    {
                         dx[i] = xx[i];
                         if (0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR))
                             dx[i] -= xobs[i];
@@ -2645,22 +2868,28 @@ namespace SwissEphNet.CPort
                         xxsp[i] = pdp.x[i] - xx[i] - xxsp[i];
                 }
                 /* new position, accounting for light-time (accurate) */
-                switch (epheflag) {
+                switch (epheflag)
+                {
                     case SwissEph.SEFLG_JPLEPH:
                         if (ibody >= IS_ANY_BODY)
                             ipl = -1; /* will not be used */ /*pnoint2jpl[SEI_ANYBODY];*/
                         else
                             ipl = pnoint2jpl[ipli];
-                        if (ibody == IS_PLANET) {
+                        if (ibody == IS_PLANET)
+                        {
                             retc = SE.SweJPL.swi_pleph(t, ipl, SweJPL.J_SBARY, xx, ref serr);
-                            if (retc != OK) {
+                            if (retc != OK)
+                            {
                                 SE.SweJPL.swi_close_jpl_file();
                                 swed.jpl_file_is_open = false;
                             }
-                        } else { 	/* asteroid */
+                        }
+                        else
+                        { 	/* asteroid */
                             /* first sun */
                             retc = SE.SweJPL.swi_pleph(t, SweJPL.J_SUN, SweJPL.J_SBARY, xsun, ref serr);
-                            if (retc != OK) {
+                            if (retc != OK)
+                            {
                                 SE.SweJPL.swi_close_jpl_file();
                                 swed.jpl_file_is_open = false;
                             }
@@ -2671,9 +2900,11 @@ namespace SwissEphNet.CPort
                             return (retc);
                         /* for accuracy in speed, we need earth as well */
                         if ((iflag & SwissEph.SEFLG_SPEED) != 0
-                          && 0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR)) {
+                          && 0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR))
+                        {
                             retc = SE.SweJPL.swi_pleph(t, SweJPL.J_EARTH, SweJPL.J_SBARY, xearth, ref serr);
-                            if (retc != OK) {
+                            if (retc != OK)
+                            {
                                 SE.SweJPL.swi_close_jpl_file();
                                 swed.jpl_file_is_open = false;
                                 return (retc);
@@ -2681,9 +2912,12 @@ namespace SwissEphNet.CPort
                         }
                         break;
                     case SwissEph.SEFLG_SWIEPH:
-                        if (ibody == IS_PLANET) {
+                        if (ibody == IS_PLANET)
+                        {
                             retc = sweplan(t, ipli, ifno, iflag, NO_SAVE, xx, xearth, xsun, null, ref serr);
-                        } else { 		/*asteroid*/
+                        }
+                        else
+                        { 		/*asteroid*/
                             retc = sweplan(t, SEI_EARTH, SEI_FILE_PLANET, iflag, NO_SAVE, xearth, null, xsun, null, ref serr);
                             if (retc == OK)
                                 retc = sweph(t, ipli, ifno, iflag, xsun, NO_SAVE, xx, ref serr);
@@ -2709,10 +2943,14 @@ namespace SwissEphNet.CPort
                      * for precise speed, we need earth as well.
                      */
                         if ((iflag & SwissEph.SEFLG_SPEED) != 0
-                          && 0 == (iflag & (SwissEph.SEFLG_HELCTR | SwissEph.SEFLG_BARYCTR))) {
-                            if (ibody == IS_PLANET) {
+                          && 0 == (iflag & (SwissEph.SEFLG_HELCTR | SwissEph.SEFLG_BARYCTR)))
+                        {
+                            if (ibody == IS_PLANET)
+                            {
                                 retc = SE.SwemPlan.swi_moshplan(t, ipli, NO_SAVE, xxsv, xearth, ref serr);
-                            } else {		/* if asteroid */
+                            }
+                            else
+                            {		/* if asteroid */
                                 retc = sweph(t, ipli, ifno, iflag, null, NO_SAVE, xxsv, ref serr);
                                 if (retc == OK)
                                     retc = SE.SwemPlan.swi_moshplan(t, SEI_EARTH, NO_SAVE, xearth, xearth, ref serr);
@@ -2729,19 +2967,24 @@ namespace SwissEphNet.CPort
                         }
                         break;
                 }
-                if ((iflag & SwissEph.SEFLG_HELCTR) != 0) {
+                if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+                {
                     if (pdp.iephe == SwissEph.SEFLG_JPLEPH || pdp.iephe == SwissEph.SEFLG_SWIEPH)
                         for (i = 0; i <= 5; i++)
                             xx[i] -= swed.pldat[SEI_SUNBARY].x[i];
                 }
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     /* observer position for t(light-time) */
-                    if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+                    if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+                    {
                         if (swi_get_observer(t, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs2, ref serr) != OK)
                             return ERR;
                         for (i = 0; i <= 5; i++)
                             xobs2[i] += xearth[i];
-                    } else {
+                    }
+                    else
+                    {
                         for (i = 0; i <= 5; i++)
                             xobs2[i] = xearth[i];
                     }
@@ -2750,7 +2993,8 @@ namespace SwissEphNet.CPort
             /*******************************
              * conversion to geocenter     * 
              *******************************/
-            if (0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR)) {
+            if (0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR))
+            {
                 /* subtract earth */
                 for (i = 0; i <= 5; i++)
                     xx[i] -= xobs[i];
@@ -2762,7 +3006,8 @@ namespace SwissEphNet.CPort
                 //    xx[i] += swed.pldat[SEI_SUNBARY].x[i];
                 //    }
                 //#endif
-                if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0) {
+                if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0)
+                {
                     /* 
                      * Apparent speed is also influenced by
                      * the change of dt during motion.
@@ -2785,7 +3030,8 @@ namespace SwissEphNet.CPort
             /**********************************
              * 'annual' aberration of light   *
              **********************************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR))
+            {
                 /* SEFLG_NOABERR is on, if SEFLG_HELCTR or SEFLG_BARYCTR */
                 swi_aberr_light(xx, xobs, iflag);
                 /* 
@@ -2793,7 +3039,8 @@ namespace SwissEphNet.CPort
                  * the difference of speed of the earth between t and t-dt. 
                  * Neglecting this would involve an error of several 0.1"
                  */
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     for (i = 3; i <= 5; i++)
                         xx[i] += xobs[i] - xobs2[i];
                 }
@@ -2817,12 +3064,15 @@ namespace SwissEphNet.CPort
             /************************************************
              * precession, equator 2000 . equator of date *
              ************************************************/
-            if (0 == (iflag & SwissEph.SEFLG_J2000)) {
+            if (0 == (iflag & SwissEph.SEFLG_J2000))
+            {
                 SE.SwephLib.swi_precess(xx, pdp.teval, iflag, J2000_TO_J);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     swi_precess_speed(xx, pdp.teval, iflag, J2000_TO_J);
                 oe = swed.oec;
-            } else {
+            }
+            else
+            {
                 oe = swed.oec2000;
             }
             return app_pos_rest(pdp, iflag, xx, xxsv, ref oe, ref serr);
@@ -2830,7 +3080,8 @@ namespace SwissEphNet.CPort
 
         int app_pos_rest(plan_data pdp, Int32 iflag,
                                CPointer<double> xx, CPointer<double> x2000,
-                               ref epsilon oe, ref string serr) {
+                               ref epsilon oe, ref string serr)
+        {
             int i;
             double[] daya = new double[2];
             double[] xxsv = new double[24];
@@ -2850,7 +3101,8 @@ namespace SwissEphNet.CPort
             SE.SwephLib.swi_coortrf2(xx, xx, oe.seps, oe.ceps);
             if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                 SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, oe.seps, oe.ceps);
-            if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
+            if (0 == (iflag & SwissEph.SEFLG_NONUT))
+            {
                 SE.SwephLib.swi_coortrf2(xx, xx, swed.nut.snut, swed.nut.cnut);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, swed.nut.snut, swed.nut.cnut);
@@ -2861,16 +3113,22 @@ namespace SwissEphNet.CPort
             /************************************
              * sidereal positions               *
              ************************************/
-            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+            {
                 /* project onto ecliptic t0 */
-                if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0) {
+                if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0)
+                {
                     if (swi_trop_ra2sid_lon(x2000, pdp.xreturn.GetPointer(6), pdp.xreturn.GetPointer(18), iflag) != OK)
                         return ERR;
                     /* project onto solar system equator */
-                } else if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0) {
+                }
+                else if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0)
+                {
                     if (swi_trop_ra2sid_lon_sosy(x2000, pdp.xreturn.GetPointer(6), iflag) != OK)
                         return ERR;
-                } else {
+                }
+                else
+                {
                     /* traditional algorithm */
                     SE.SwephLib.swi_cartpol_sp(pdp.xreturn.GetPointer(6), pdp.xreturn);
                     /* note, swi_get_ayanamsa_ex() disturbs present calculations, if sun is calculated with 
@@ -2897,7 +3155,8 @@ namespace SwissEphNet.CPort
              * radians to degrees *
              **********************/
             /*if ((iflag & SEFLG_RADIANS) == 0) {*/
-            for (i = 0; i < 2; i++) {
+            for (i = 0; i < 2; i++)
+            {
                 pdp.xreturn[i] *= SwissEph.RADTODEG;		/* ecliptic */
                 pdp.xreturn[i + 3] *= SwissEph.RADTODEG;
                 pdp.xreturn[i + 12] *= SwissEph.RADTODEG;	/* equator */
@@ -2911,7 +3170,8 @@ namespace SwissEphNet.CPort
             return OK;
         }
 
-        public void swe_set_sid_mode(Int32 sid_mode, double t0, double ayan_t0) {
+        public void swe_set_sid_mode(Int32 sid_mode, double t0, double ayan_t0)
+        {
             sid_data sip = swed.sidd;
             swi_init_swed_if_start();
             try
@@ -2926,7 +3186,8 @@ namespace SwissEphNet.CPort
                       || sid_mode == SwissEph.SE_SIDM_J1900
                       || sid_mode == SwissEph.SE_SIDM_B1950
                       || sid_mode == SwissEph.SE_SIDM_GALALIGN_MARDYKS
-                      ) {
+                      )
+                {
                     sip.sid_mode &= ~SwissEph.SE_SIDBIT_SSY_PLANE;
                     sip.sid_mode |= SwissEph.SE_SIDBIT_ECL_T0;
                 }
@@ -2936,7 +3197,7 @@ namespace SwissEphNet.CPort
                     || sid_mode == SwissEph.SE_SIDM_TRUE_SHEORAN
                     || sid_mode == SwissEph.SE_SIDM_TRUE_MULA
                     || sid_mode == SwissEph.SE_SIDM_GALCENT_0SAG
-                    || sid_mode == SwissEph.SE_SIDM_GALCENT_COCHRANE 
+                    || sid_mode == SwissEph.SE_SIDM_GALCENT_COCHRANE
                     || sid_mode == SwissEph.SE_SIDM_GALCENT_RGILBRAND
                     || sid_mode == SwissEph.SE_SIDM_GALCENT_MULA_WILHELM
                     || sid_mode == SwissEph.SE_SIDM_GALEQU_IAU1958
@@ -2947,19 +3208,23 @@ namespace SwissEphNet.CPort
                 if (sid_mode >= SwissEph.SE_NSIDM_PREDEF && sid_mode != SwissEph.SE_SIDM_USER)
                     sip.sid_mode = sid_mode = SwissEph.SE_SIDM_FAGAN_BRADLEY;
                 swed.ayana_is_set = true;
-                if (sid_mode == SwissEph.SE_SIDM_USER) {
+                if (sid_mode == SwissEph.SE_SIDM_USER)
+                {
                     sip.t0 = t0;
                     sip.ayan_t0 = ayan_t0;
                     sip.t0_is_UT = false;
                     if ((sip.sid_mode & SwissEph.SE_SIDBIT_USER_UT) != 0)
                         sip.t0_is_UT = true;
-                } else {
+                }
+                else
+                {
                     sip.t0 = ayanamsa[sid_mode].t0;
                     sip.ayan_t0 = ayanamsa[sid_mode].ayan_t0;
                     sip.t0_is_UT = ayanamsa[sid_mode].t0_is_UT;
                 }
             }
-            finally {
+            finally
+            {
                 swed.sidd = sip;
             }
             swi_force_app_pos_etc();
@@ -2970,10 +3235,14 @@ namespace SwissEphNet.CPort
             nut nuttmp = new nut();
             nut nutp = nuttmp;  /* dummy assign, to silence gcc warning */
             Int32 retval = swi_get_ayanamsa_ex(tjd_et, iflag, out daya, ref serr);
-            if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
-                if (tjd_et == swed.nut.tnut) {
+            if (0 == (iflag & SwissEph.SEFLG_NONUT))
+            {
+                if (tjd_et == swed.nut.tnut)
+                {
                     nutp = swed.nut;
-                } else {
+                }
+                else
+                {
                     nutp = nuttmp;
                     SE.SwephLib.swi_nutation(tjd_et, iflag, nutp.nutlo);
                 }
@@ -3028,7 +3297,8 @@ namespace SwissEphNet.CPort
             }
             if (!swed.ayana_is_set)
                 swe_set_sid_mode(SwissEph.SE_SIDM_FAGAN_BRADLEY, 0, 0);
-            if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA) {
+            if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_CITRA)
+            {
                 star = "Spica"; /* Citra */
                 if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                 {
@@ -3038,7 +3308,8 @@ namespace SwissEphNet.CPort
                 daya = SE.swe_degnorm(x[0] - 180);
                 return (retflag & SwissEph.SEFLG_EPHMASK);
             }
-            if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI) {
+            if (sip.sid_mode == SwissEph.SE_SIDM_TRUE_REVATI)
+            {
                 star = ",zePsc"; /* Revati */
                 if ((retflag = swe_fixstar(ref star, tjd_et, iflag_true, x, ref serr)) == ERR)
                     return ERR;
@@ -3209,7 +3480,8 @@ namespace SwissEphNet.CPort
             return daya;
         }
 
-        public double swe_get_ayanamsa_ut(double tjd_ut) {
+        public double swe_get_ayanamsa_ut(double tjd_ut)
+        {
             double daya;
             string sdummy = null;
             Int32 iflag = SE.SwephLib.swi_guess_ephe_flag();
@@ -3222,14 +3494,16 @@ namespace SwissEphNet.CPort
          * xout 	ecliptical sidereal position (relative to ecliptic t0)
          * xoutr 	equatorial sidereal position (relative to equator t0)
          */
-        public int swi_trop_ra2sid_lon(CPointer<double> xin, CPointer<double> xout, CPointer<double> xoutr, Int32 iflag) {
+        public int swi_trop_ra2sid_lon(CPointer<double> xin, CPointer<double> xout, CPointer<double> xoutr, Int32 iflag)
+        {
             double[] x = new double[6];
             int i;
             sid_data sip = swed.sidd;
             epsilon oectmp = new epsilon();
             for (i = 0; i <= 5; i++)
                 x[i] = xin[i];
-            if (sip.t0 != J2000) {
+            if (sip.t0 != J2000)
+            {
                 /* iflag must not contain SwissEph.SEFLG_JPLHOR here */
                 SE.SwephLib.swi_precess(x, sip.t0, 0, J2000_TO_J);
                 SE.SwephLib.swi_precess(x.GetPointer(3), sip.t0, 0, J2000_TO_J);	/* speed */
@@ -3254,7 +3528,8 @@ namespace SwissEphNet.CPort
          * xout 	ecliptical sidereal position
          * xoutr 	equatorial sidereal position
          */
-        public int swi_trop_ra2sid_lon_sosy(CPointer<double> xin, CPointer<double> xout, Int32 iflag) {
+        public int swi_trop_ra2sid_lon_sosy(CPointer<double> xin, CPointer<double> xout, Int32 iflag)
+        {
             double[] x = new double[6], x0 = new double[6];
             int i;
             sid_data sip = swed.sidd;
@@ -3278,7 +3553,8 @@ namespace SwissEphNet.CPort
             /* zero point of t0 in J2000 system */
             x0[0] = 1;
             x0[1] = x0[2] = 0;
-            if (sip.t0 != J2000) {
+            if (sip.t0 != J2000)
+            {
                 /* iflag must not contain SEFLG_JPLHOR here */
                 SE.SwephLib.swi_precess(x0, sip.t0, 0, J_TO_J2000);
             }
@@ -3309,7 +3585,8 @@ namespace SwissEphNet.CPort
          * ipli		planet number
          * iflag	flags
          */
-        int app_pos_etc_plan_osc(int ipl, int ipli, Int32 iflag, ref string serr) {
+        int app_pos_etc_plan_osc(int ipl, int ipli, Int32 iflag, ref string serr)
+        {
             int i, j, niter, retc;
             double[] xx = new double[6], dx = new double[3]; double dt, dtsave_for_defl;
             double[] xearth = new double[6], xsun = new double[6], xmoon = new double[6];
@@ -3338,39 +3615,54 @@ namespace SwissEphNet.CPort
              * observer: geocenter or topocenter
              ************************************/
             /* if topocentric position is wanted  */
-            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+            {
                 if (swed.topd.teval != pedp.teval
-                  || swed.topd.teval == 0) {
+                  || swed.topd.teval == 0)
+                {
                     if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
-                } else {
+                }
+                else
+                {
                     for (i = 0; i <= 5; i++)
                         xobs[i] = swed.topd.xobs[i];
                 }
                 /* barycentric position of observer */
                 for (i = 0; i <= 5; i++)
                     xobs[i] = xobs[i] + pedp.x[i];
-            } else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0)
+            {
                 for (i = 0; i <= 5; i++)
                     xobs[i] = 0;
-            } else if ((iflag & SwissEph.SEFLG_HELCTR) != 0) {
-                if ((iflag & SwissEph.SEFLG_MOSEPH) != 0) {
+            }
+            else if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+            {
+                if ((iflag & SwissEph.SEFLG_MOSEPH) != 0)
+                {
                     for (i = 0; i <= 5; i++)
                         xobs[i] = 0;
-                } else {
+                }
+                else
+                {
                     for (i = 0; i <= 5; i++)
                         xobs[i] = psdp.x[i];
                 }
-            } else {
+            }
+            else
+            {
                 for (i = 0; i <= 5; i++)
                     xobs[i] = pedp.x[i];
             }
             /*******************************
              * light-time                  * 
              *******************************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS))
+            {
                 niter = 1;
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     /* 
                      * Apparent speed is influenced by the fact that dt changes with
                      * motion. This makes a difference of several hundredths of an
@@ -3382,8 +3674,10 @@ namespace SwissEphNet.CPort
                      */
                     for (i = 0; i <= 2; i++)
                         xxsv[i] = xxsp[i] = xx[i] - xx[i + 3];
-                    for (j = 0; j <= niter; j++) {
-                        for (i = 0; i <= 2; i++) {
+                    for (j = 0; j <= niter; j++)
+                    {
+                        for (i = 0; i <= 2; i++)
+                        {
                             dx[i] = xxsp[i];
                             if (0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR))
                                 dx[i] -= (xobs[i] - xobs[i + 3]);
@@ -3398,8 +3692,10 @@ namespace SwissEphNet.CPort
                         xxsp[i] = xxsv[i] - xxsp[i];
                 }
                 /* dt and t(apparent) */
-                for (j = 0; j <= niter; j++) {
-                    for (i = 0; i <= 2; i++) {
+                for (j = 0; j <= niter; j++)
+                {
+                    for (i = 0; i <= 2; i++)
+                    {
                         dx[i] = xx[i];
                         if (0 == (iflag & SwissEph.SEFLG_HELCTR) && 0 == (iflag & SwissEph.SEFLG_BARYCTR))
                             dx[i] -= xobs[i];
@@ -3409,12 +3705,14 @@ namespace SwissEphNet.CPort
                     dtsave_for_defl = dt;
                     /* new position: subtract t * speed 
                      */
-                    for (i = 0; i <= 2; i++) {
+                    for (i = 0; i <= 2; i++)
+                    {
                         xx[i] = pdp.x[i] - dt * pdp.x[i + 3];/**/
                         xx[i + 3] = pdp.x[i + 3];
                     }
                 }
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     /* part of daily motion resulting from change of dt */
                     for (i = 0; i <= 2; i++)
                         xxsp[i] = pdp.x[i] - xx[i] - xxsp[i];
@@ -3425,12 +3723,15 @@ namespace SwissEphNet.CPort
                         return ERR;
                     if (retc != OK)
                         return (retc);
-                    if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+                    if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+                    {
                         if (swi_get_observer(t, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs2, ref serr) != OK)
                             return ERR;
                         for (i = 0; i <= 5; i++)
                             xobs2[i] += xearth[i];
-                    } else {
+                    }
+                    else
+                    {
                         for (i = 0; i <= 5; i++)
                             xobs2[i] = xearth[i];
                     }
@@ -3441,7 +3742,8 @@ namespace SwissEphNet.CPort
              *******************************/
             for (i = 0; i <= 5; i++)
                 xx[i] -= xobs[i];
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS))
+            {
                 /* 
                  * Apparent speed is also influenced by
                  * the change of dt during motion.
@@ -3463,7 +3765,8 @@ namespace SwissEphNet.CPort
             /**********************************
              * 'annual' aberration of light   *
              **********************************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR))
+            {
                 /* SEFLG_NOABERR is on, if SEFLG_HELCTR or SEFLG_BARYCTR */
                 swi_aberr_light(xx, xobs, iflag);
                 /* 
@@ -3481,12 +3784,14 @@ namespace SwissEphNet.CPort
             /************************************************
              * precession, equator 2000 . equator of date *
              ************************************************/
-            if (0 == (iflag & SwissEph.SEFLG_J2000)) {
+            if (0 == (iflag & SwissEph.SEFLG_J2000))
+            {
                 SE.SwephLib.swi_precess(xx, pdp.teval, iflag, J2000_TO_J);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     swi_precess_speed(xx, pdp.teval, iflag, J2000_TO_J);
                 oe = swed.oec;
-            } else
+            }
+            else
                 oe = swed.oec2000;
             return app_pos_rest(pdp, iflag, xx, xxsv, ref oe, ref serr);
         }
@@ -3494,7 +3799,8 @@ namespace SwissEphNet.CPort
         /* influence of precession on speed 
          * xx		position and speed of planet in equatorial cartesian
          *		coordinates */
-        public void swi_precess_speed(CPointer<double> xx, double t, Int32 iflag, int direction) {
+        public void swi_precess_speed(CPointer<double> xx, double t, Int32 iflag, int direction)
+        {
             epsilon oe;
             double fac, dpre, dpre2, ddummy;
             double tprec = (t - J2000) / 36525.0;
@@ -3504,7 +3810,9 @@ namespace SwissEphNet.CPort
             {
                 fac = 1;
                 oe = swed.oec;
-            } else {
+            }
+            else
+            {
                 fac = -1;
                 oe = swed.oec2000;
             }
@@ -3538,10 +3846,12 @@ namespace SwissEphNet.CPort
         /* multiplies cartesian equatorial coordinates with previously
          * calculated nutation matrix. also corrects speed. 
          */
-        public void swi_nutate(CPointer<double> xx, Int32 iflag, bool backward) {
+        public void swi_nutate(CPointer<double> xx, Int32 iflag, bool backward)
+        {
             int i;
             double[] x = new double[6], xv = new double[6];
-            for (i = 0; i <= 2; i++) {
+            for (i = 0; i <= 2; i++)
+            {
                 if (backward)
                     x[i] = xx[0] * swed.nut.matrix[i, 0] +
                        xx[1] * swed.nut.matrix[i, 1] +
@@ -3551,10 +3861,12 @@ namespace SwissEphNet.CPort
                        xx[1] * swed.nut.matrix[1, i] +
                        xx[2] * swed.nut.matrix[2, i];
             }
-            if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+            if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+            {
                 /* correct speed:
                  * first correct rotation */
-                for (i = 0; i <= 2; i++) {
+                for (i = 0; i <= 2; i++)
+                {
                     if (backward)
                         x[i + 3] = xx[3] * swed.nut.matrix[i, 0] +
                              xx[4] * swed.nut.matrix[i, 1] +
@@ -3566,7 +3878,8 @@ namespace SwissEphNet.CPort
                 }
                 /* then apparent motion due to change of nutation during day.
                  * this makes a difference of 0.01" */
-                for (i = 0; i <= 2; i++) {
+                for (i = 0; i <= 2; i++)
+                {
                     if (backward)
                         xv[i] = xx[0] * swed.nutv.matrix[i, 0] +
                                xx[1] * swed.nutv.matrix[i, 1] +
@@ -3647,7 +3960,8 @@ namespace SwissEphNet.CPort
          *              and gravitational light deflection
          * xe    	earth's position and speed
          */
-        public void swi_aberr_light(CPointer<double> xx, CPointer<double> xe, Int32 iflag) {
+        public void swi_aberr_light(CPointer<double> xx, CPointer<double> xe, Int32 iflag)
+        {
             int i;
             double[] xxs = new double[6], v = new double[6], u = new double[6]; double ru;
             double[] xx2 = new double[6]; double dx1, dx2;
@@ -3665,7 +3979,8 @@ namespace SwissEphNet.CPort
             f2 = 1.0 + f1 / (1.0 + b_1);
             for (i = 0; i <= 2; i++)
                 xx[i] = (b_1 * xx[i] + f2 * ru * v[i]) / (1.0 + f1);
-            if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+            if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+            {
                 /* correction of speed
                  * the influence of aberration on apparent velocity can
                  * reach 0.4"/day
@@ -3677,7 +3992,8 @@ namespace SwissEphNet.CPort
                 f2 = 1.0 + f1 / (1.0 + b_1);
                 for (i = 0; i <= 2; i++)
                     xx2[i] = (b_1 * u[i] + f2 * ru * v[i]) / (1.0 + f1);
-                for (i = 0; i <= 2; i++) {
+                for (i = 0; i <= 2; i++)
+                {
                     dx1 = xx[i] - xxs[i];
                     dx2 = xx2[i] - u[i];
                     dx1 -= dx2;
@@ -3691,7 +4007,8 @@ namespace SwissEphNet.CPort
          * xx		planet's position accounted for light-time
          * dt		dt of light-time
          */
-        public void swi_deflect_light(CPointer<double> xx, double dt, Int32 iflag) {
+        public void swi_deflect_light(CPointer<double> xx, double dt, Int32 iflag)
+        {
             int i;
             double[] xx2 = new double[6];
             double[] u = new double[6], e = new double[6], q = new double[6]; double ru, re, rq, uq, ue, qe, g1, g2;
@@ -3720,13 +4037,16 @@ namespace SwissEphNet.CPort
                     e[i] = xearth[i];
             /* Q = planetbary(t-tau) - sunbary(t-tau) = 'planethel' */
             /* first compute sunbary(t-tau) for */
-            if (iephe == SwissEph.SEFLG_JPLEPH || iephe == SwissEph.SEFLG_SWIEPH) {
+            if (iephe == SwissEph.SEFLG_JPLEPH || iephe == SwissEph.SEFLG_SWIEPH)
+            {
                 for (i = 0; i <= 2; i++)
                     /* this is sufficient precision */
                     xsun[i] = psdp.x[i] - dt * psdp.x[i + 3];
                 for (i = 3; i <= 5; i++)
                     xsun[i] = psdp.x[i];
-            } else {
+            }
+            else
+            {
                 for (i = 0; i <= 5; i++)
                     xsun[i] = psdp.x[i];
             }
@@ -3735,7 +4055,8 @@ namespace SwissEphNet.CPort
             ru = Math.Sqrt(square_sum(u));
             rq = Math.Sqrt(square_sum(q));
             re = Math.Sqrt(square_sum(e));
-            for (i = 0; i <= 2; i++) {
+            for (i = 0; i <= 2; i++)
+            {
                 u[i] /= ru;
                 q[i] /= rq;
                 e[i] /= re;
@@ -3764,7 +4085,8 @@ namespace SwissEphNet.CPort
             /* compute deflected position */
             for (i = 0; i <= 2; i++)
                 xx2[i] = ru * (u[i] + g1 / g2 * (uq * e[i] - ue * q[i]));
-            if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+            if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+            {
                 /* correction of speed
                  * influence of light deflection on a planet's apparent speed:
                  * for an outer planet at the solar limb with 
@@ -3793,11 +4115,13 @@ namespace SwissEphNet.CPort
                 for (i = 0; i <= 2; i++)
                     u[i] = xx[i] - dtsp * xx[i + 3];
                 /* Eh = earthbary(t) - sunbary(t) = earthhel */
-                if (iephe == SwissEph.SEFLG_JPLEPH || iephe == SwissEph.SEFLG_SWIEPH) {
+                if (iephe == SwissEph.SEFLG_JPLEPH || iephe == SwissEph.SEFLG_SWIEPH)
+                {
                     for (i = 0; i <= 2; i++)
                         e[i] = xearth[i] - psdp.x[i] -
                                dtsp * (xearth[i + 3] - psdp.x[i + 3]);
-                } else
+                }
+                else
                     for (i = 0; i <= 2; i++)
                         e[i] = xearth[i] - dtsp * xearth[i + 3];
                 /* Q = planetbary(t-tau) - sunbary(t-tau) = 'planethel' */
@@ -3807,7 +4131,8 @@ namespace SwissEphNet.CPort
                 ru = Math.Sqrt(square_sum(u));
                 rq = Math.Sqrt(square_sum(q));
                 re = Math.Sqrt(square_sum(e));
-                for (i = 0; i <= 2; i++) {
+                for (i = 0; i <= 2; i++)
+                {
                     u[i] /= ru;
                     q[i] /= rq;
                     e[i] /= re;
@@ -3825,7 +4150,8 @@ namespace SwissEphNet.CPort
                 g2 = 1.0 + qe;
                 for (i = 0; i <= 2; i++)
                     xx3[i] = ru * (u[i] + g1 / g2 * (uq * e[i] - ue * q[i]));
-                for (i = 0; i <= 2; i++) {
+                for (i = 0; i <= 2; i++)
+                {
                     dx1 = xx2[i] - xx[i];
                     dx2 = xx3[i] - u[i] * ru;
                     dx1 -= dx2;
@@ -3846,7 +4172,8 @@ namespace SwissEphNet.CPort
          * iflag	flags
          * serr         error string
          */
-        int app_pos_etc_sun(Int32 iflag, ref string serr) {
+        int app_pos_etc_sun(Int32 iflag, ref string serr)
+        {
             int i, j, niter, retc = OK;
             Int32 flg1, flg2;
             double[] xx = new double[6], xxsv = new double[6], dx = new double[3]; double dt = 0, t = 0;
@@ -3858,7 +4185,8 @@ namespace SwissEphNet.CPort
              * date, then return */
             flg1 = iflag & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
             flg2 = pedp.xflgs & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
-            if (flg1 == flg2) {
+            if (flg1 == flg2)
+            {
                 pedp.xflgs = iflag;
                 pedp.iephe = iflag & SwissEph.SEFLG_EPHMASK;
                 return OK;
@@ -3867,19 +4195,25 @@ namespace SwissEphNet.CPort
              * observer: geocenter or topocenter
              ************************************/
             /* if topocentric position is wanted  */
-            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+            {
                 if (swed.topd.teval != pedp.teval
-                  || swed.topd.teval == 0) {
+                  || swed.topd.teval == 0)
+                {
                     if (swi_get_observer(pedp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
-                } else {
+                }
+                else
+                {
                     for (i = 0; i <= 5; i++)
                         xobs[i] = swed.topd.xobs[i];
                 }
                 /* barycentric position of observer */
                 for (i = 0; i <= 5; i++)
                     xobs[i] = xobs[i] + pedp.x[i];
-            } else {
+            }
+            else
+            {
                 /* barycentric position of geocenter */
                 for (i = 0; i <= 5; i++)
                     xobs[i] = pedp.x[i];
@@ -3896,7 +4230,8 @@ namespace SwissEphNet.CPort
             /*******************************
              * light-time                  * 
              *******************************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS))
+            {
                 /* number of iterations - 1 
                  * the following if() does the following:
                  * with jpl and swiss ephemeris:
@@ -3911,8 +4246,10 @@ namespace SwissEphNet.CPort
                  *     light-time correction of heliocentric earth position.
                  */
                 if (pedp.iephe == SwissEph.SEFLG_JPLEPH || pedp.iephe == SwissEph.SEFLG_SWIEPH
-                  || (iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0) {
-                    for (i = 0; i <= 5; i++) {
+                  || (iflag & SwissEph.SEFLG_HELCTR) != 0 || (iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
+                    for (i = 0; i <= 5; i++)
+                    {
                         xearth[i] = xobs[i];
                         if (pedp.iephe == SwissEph.SEFLG_MOSEPH)
                             xsun[i] = 0;
@@ -3920,9 +4257,11 @@ namespace SwissEphNet.CPort
                             xsun[i] = psdp.x[i];
                     }
                     niter = 1;	/* # of iterations */
-                    for (j = 0; j <= niter; j++) {
+                    for (j = 0; j <= niter; j++)
+                    {
                         /* distance earth-sun */
-                        for (i = 0; i <= 2; i++) {
+                        for (i = 0; i <= 2; i++)
+                        {
                             dx[i] = xearth[i];
                             if (0 == (iflag & SwissEph.SEFLG_BARYCTR))
                                 dx[i] -= xsun[i];
@@ -3931,7 +4270,8 @@ namespace SwissEphNet.CPort
                         dt = Math.Sqrt(square_sum(dx)) * AUNIT / CLIGHT / 86400.0;
                         t = pedp.teval - dt;
                         /* new position */
-                        switch (pedp.iephe) {
+                        switch (pedp.iephe)
+                        {
                             /* if geocentric sun, new sun at t' 
                              * if heliocentric or barycentric earth, new earth at t' */
                             case SwissEph.SEFLG_JPLEPH:
@@ -3939,7 +4279,8 @@ namespace SwissEphNet.CPort
                                     retc = SE.SweJPL.swi_pleph(t, SweJPL.J_EARTH, SweJPL.J_SBARY, xearth, ref serr);
                                 else
                                     retc = SE.SweJPL.swi_pleph(t, SweJPL.J_SUN, SweJPL.J_SBARY, xsun, ref serr);
-                                if (retc != OK) {
+                                if (retc != OK)
+                                {
                                     SE.SweJPL.swi_close_jpl_file();
                                     swed.jpl_file_is_open = false;
                                     return (retc);
@@ -3967,7 +4308,8 @@ namespace SwissEphNet.CPort
                             return (retc);
                     }
                     /* apparent heliocentric earth */
-                    for (i = 0; i <= 5; i++) {
+                    for (i = 0; i <= 5; i++)
+                    {
                         xx[i] = xearth[i];
                         if (0 == (iflag & SwissEph.SEFLG_BARYCTR))
                             xx[i] -= xsun[i];
@@ -3986,7 +4328,8 @@ namespace SwissEphNet.CPort
             /**********************************
              * 'annual' aberration of light   *
              **********************************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR))
+            {
                 /* SEFLG_NOABERR is on, if SEFLG_HELCTR or SEFLG_BARYCTR */
                 swi_aberr_light(xx, xobs, iflag);
             }
@@ -3994,7 +4337,8 @@ namespace SwissEphNet.CPort
                 for (i = 3; i <= 5; i++)
                     xx[i] = 0;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403)
+            {
                 SE.SwephLib.swi_bias(xx, t, iflag, false);
             }/**/
             /* save J2000 coordinates; required for sidereal positions */
@@ -4003,12 +4347,14 @@ namespace SwissEphNet.CPort
             /************************************************
              * precession, equator 2000 -> equator of date *
              ************************************************/
-            if (0 == (iflag & SwissEph.SEFLG_J2000)) {
+            if (0 == (iflag & SwissEph.SEFLG_J2000))
+            {
                 SE.SwephLib.swi_precess(xx, pedp.teval, iflag, J2000_TO_J);/**/
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     swi_precess_speed(xx, pedp.teval, iflag, J2000_TO_J);/**/
                 oe = swed.oec;
-            } else
+            }
+            else
                 oe = swed.oec2000;
             return app_pos_rest(pedp, iflag, xx, xxsv, ref oe, ref serr);
         }
@@ -4028,7 +4374,8 @@ namespace SwissEphNet.CPort
          * consider the motions of the earth and the moon 
          * related to the solar system barycenter.
          */
-        int app_pos_etc_moon(Int32 iflag, ref string serr) {
+        int app_pos_etc_moon(Int32 iflag, ref string serr)
+        {
             int i;
             Int32 flg1, flg2;
             double[] xx = new double[6], xxsv = new double[6], xobs = new double[6], xxm = new double[6], xs = new double[6], xe = new double[6], xobs2 = new double[6];
@@ -4043,13 +4390,15 @@ namespace SwissEphNet.CPort
              * date, then return */
             flg1 = iflag & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
             flg2 = pdp.xflgs & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
-            if (flg1 == flg2) {
+            if (flg1 == flg2)
+            {
                 pdp.xflgs = iflag;
                 pdp.iephe = iflag & SwissEph.SEFLG_EPHMASK;
                 return OK;
             }
             /* the conversions will be done with xx[]. */
-            for (i = 0; i <= 5; i++) {
+            for (i = 0; i <= 5; i++)
+            {
                 xx[i] = pdp.x[i];
                 xxm[i] = xx[i];
             }
@@ -4061,12 +4410,16 @@ namespace SwissEphNet.CPort
             /*******************************
              * observer
              *******************************/
-            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+            {
                 if (swed.topd.teval != pdp.teval
-                  || swed.topd.teval == 0) {
+                  || swed.topd.teval == 0)
+                {
                     if (swi_get_observer(pdp.teval, iflag | SwissEph.SEFLG_NONUT, DO_SAVE, xobs, ref serr) != OK)
                         return ERR;
-                } else {
+                }
+                else
+                {
                     for (i = 0; i <= 5; i++)
                         xobs[i] = swed.topd.xobs[i];
                 }
@@ -4074,17 +4427,23 @@ namespace SwissEphNet.CPort
                     xxm[i] -= xobs[i];
                 for (i = 0; i <= 5; i++)
                     xobs[i] += pedp.x[i];
-            } else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+            }
+            else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0)
+            {
                 for (i = 0; i <= 5; i++)
                     xobs[i] = 0;
                 for (i = 0; i <= 5; i++)
                     xxm[i] += pedp.x[i];
-            } else if ((iflag & SwissEph.SEFLG_HELCTR) != 0) {
+            }
+            else if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+            {
                 for (i = 0; i <= 5; i++)
                     xobs[i] = psdp.x[i];
                 for (i = 0; i <= 5; i++)
                     xxm[i] += pedp.x[i] - psdp.x[i];
-            } else {
+            }
+            else
+            {
                 for (i = 0; i <= 5; i++)
                     xobs[i] = pedp.x[i];
             }
@@ -4092,17 +4451,20 @@ namespace SwissEphNet.CPort
              * light-time                  * 
              *******************************/
             t = pdp.teval;
-            if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0) {
+            if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0)
+            {
                 dt = Math.Sqrt(square_sum(xxm)) * AUNIT / CLIGHT / 86400.0;
                 t = pdp.teval - dt;
-                switch (pdp.iephe) {
+                switch (pdp.iephe)
+                {
                     case SwissEph.SEFLG_JPLEPH:
                         retc = SE.SweJPL.swi_pleph(t, SweJPL.J_MOON, SweJPL.J_EARTH, xx, ref serr);
                         if (retc == OK)
                             retc = SE.SweJPL.swi_pleph(t, SweJPL.J_EARTH, SweJPL.J_SBARY, xe, ref serr);
                         if (retc == OK && (iflag & SwissEph.SEFLG_HELCTR) != 0)
                             retc = SE.SweJPL.swi_pleph(t, SweJPL.J_SUN, SweJPL.J_SBARY, xs, ref serr);
-                        if (retc != OK) {
+                        if (retc != OK)
+                        {
                             SE.SweJPL.swi_close_jpl_file();
                             swed.jpl_file_is_open = false;
                         }
@@ -4118,7 +4480,8 @@ namespace SwissEphNet.CPort
                         break;
                     case SwissEph.SEFLG_MOSEPH:
                         /* this method results in an error of a milliarcsec in speed */
-                        for (i = 0; i <= 2; i++) {
+                        for (i = 0; i <= 2; i++)
+                        {
                             xx[i] -= dt * xx[i + 3];
                             xe[i] = pedp.x[i] - dt * pedp.x[i + 3];
                             xe[i + 3] = pedp.x[i + 3];
@@ -4127,18 +4490,25 @@ namespace SwissEphNet.CPort
                         }
                         break;
                 }
-                if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+                if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+                {
                     if (swi_get_observer(t, iflag | SwissEph.SEFLG_NONUT, NO_SAVE, xobs2, ref sdummy) != OK)
                         return ERR;
                     for (i = 0; i <= 5; i++)
                         xobs2[i] += xe[i];
-                } else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0) {
+                }
+                else if ((iflag & SwissEph.SEFLG_BARYCTR) != 0)
+                {
                     for (i = 0; i <= 5; i++)
                         xobs2[i] = 0;
-                } else if ((iflag & SwissEph.SEFLG_HELCTR) != 0) {
+                }
+                else if ((iflag & SwissEph.SEFLG_HELCTR) != 0)
+                {
                     for (i = 0; i <= 5; i++)
                         xobs2[i] = xs[i];
-                } else {
+                }
+                else
+                {
                     for (i = 0; i <= 5; i++)
                         xobs2[i] = xe[i];
                 }
@@ -4151,7 +4521,8 @@ namespace SwissEphNet.CPort
             /**********************************
              * 'annual' aberration of light   *
              **********************************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS) && 0 == (iflag & SwissEph.SEFLG_NOABERR))
+            {
                 /* SEFLG_NOABERR is on, if SEFLG_HELCTR or SEFLG_BARYCTR */
                 swi_aberr_light(xx, xobs, iflag);
                 /* 
@@ -4170,7 +4541,8 @@ namespace SwissEphNet.CPort
                 for (i = 3; i <= 5; i++)
                     xx[i] = 0;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_MOON, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_MOON, iflag) >= 403)
+            {
                 SE.SwephLib.swi_bias(xx, t, iflag, false);
             }/**/
             /* save J2000 coordinates; required for sidereal positions */
@@ -4179,12 +4551,14 @@ namespace SwissEphNet.CPort
             /************************************************
              * precession, equator 2000 -> equator of date *
              ************************************************/
-            if (0 == (iflag & SwissEph.SEFLG_J2000)) {
+            if (0 == (iflag & SwissEph.SEFLG_J2000))
+            {
                 SE.SwephLib.swi_precess(xx, pdp.teval, iflag, J2000_TO_J);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     swi_precess_speed(xx, pdp.teval, iflag, J2000_TO_J);
                 oe = swed.oec;
-            } else
+            }
+            else
                 oe = swed.oec2000;
             return app_pos_rest(pdp, iflag, xx, xxsv, ref oe, ref serr);
         }
@@ -4195,7 +4569,8 @@ namespace SwissEphNet.CPort
          * iflag	flags
          * serr         error string
          */
-        int app_pos_etc_sbar(Int32 iflag, ref string serr) {
+        int app_pos_etc_sbar(Int32 iflag, ref string serr)
+        {
             int i;
             double[] xx = new double[6], xxsv = new double[6]; double dt;
             plan_data psdp = swed.pldat[SEI_EARTH];
@@ -4207,7 +4582,8 @@ namespace SwissEphNet.CPort
             /**************
              * light-time *
              **************/
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS))
+            {
                 dt = Math.Sqrt(square_sum(xx)) * AUNIT / CLIGHT / 86400.0;
                 for (i = 0; i <= 2; i++)
                     xx[i] -= dt * xx[i + 3];	/* apparent position */
@@ -4216,7 +4592,8 @@ namespace SwissEphNet.CPort
                 for (i = 3; i <= 5; i++)
                     xx[i] = 0;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403)
+            {
                 SE.SwephLib.swi_bias(xx, psdp.teval, iflag, false);
             }/**/
             /* save J2000 coordinates; required for sidereal positions */
@@ -4225,12 +4602,14 @@ namespace SwissEphNet.CPort
             /************************************************
              * precession, equator 2000 -> equator of date *
              ************************************************/
-            if (0 == (iflag & SwissEph.SEFLG_J2000)) {
+            if (0 == (iflag & SwissEph.SEFLG_J2000))
+            {
                 SE.SwephLib.swi_precess(xx, psbdp.teval, iflag, J2000_TO_J);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     swi_precess_speed(xx, psbdp.teval, iflag, J2000_TO_J);
                 oe = swed.oec;
-            } else
+            }
+            else
                 oe = swed.oec2000;
             return app_pos_rest(psdp, iflag, xx, xxsv, ref oe, ref serr);
         }
@@ -4250,7 +4629,8 @@ namespace SwissEphNet.CPort
          * iflag	flags
          * serr         error string
          */
-        int app_pos_etc_mean(int ipl, Int32 iflag, ref string serr) {
+        int app_pos_etc_mean(int ipl, Int32 iflag, ref string serr)
+        {
             int i;
             Int32 flg1, flg2;
             double[] xx = new double[6], xxsv = new double[6];
@@ -4264,7 +4644,8 @@ namespace SwissEphNet.CPort
              * date, then return */
             flg1 = iflag & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
             flg2 = pdp.xflgs & ~SwissEph.SEFLG_EQUATORIAL & ~SwissEph.SEFLG_XYZ;
-            if (flg1 == flg2) {
+            if (flg1 == flg2)
+            {
                 pdp.xflgs = iflag;
                 pdp.iephe = iflag & SwissEph.SEFLG_EPHMASK;
                 return OK;
@@ -4291,11 +4672,13 @@ namespace SwissEphNet.CPort
             /* J2000 coordinates; required for sidereal positions */
             if (((iflag & SwissEph.SEFLG_SIDEREAL) != 0
               && (swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0)
-                || (swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0) {
+                || (swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0)
+            {
                 for (i = 0; i <= 5; i++)
                     xxsv[i] = xx[i];
                 /* xxsv is not J2000 yet! */
-                if (pdp.teval != J2000) {
+                if (pdp.teval != J2000)
+                {
                     SE.SwephLib.swi_precess(xxsv, pdp.teval, iflag, J_TO_J2000);
                     if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                         swi_precess_speed(xxsv, pdp.teval, iflag, J_TO_J2000);
@@ -4304,12 +4687,14 @@ namespace SwissEphNet.CPort
             /*****************************************************
              * if no precession, equator of date -> equator 2000 *
              *****************************************************/
-            if ((iflag & SwissEph.SEFLG_J2000) != 0) {
+            if ((iflag & SwissEph.SEFLG_J2000) != 0)
+            {
                 SE.SwephLib.swi_precess(xx, pdp.teval, iflag, J_TO_J2000);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     swi_precess_speed(xx, pdp.teval, iflag, J_TO_J2000);
                 oe = swed.oec2000;
-            } else
+            }
+            else
                 oe = swed.oec;
             return app_pos_rest(pdp, iflag, xx, xxsv, ref oe, ref serr);
         }
@@ -4320,7 +4705,8 @@ namespace SwissEphNet.CPort
          * ifno		file number
          * serr		error string
          */
-        int get_new_segment(double tjd, int ipli, int ifno, ref string serr) {
+        int get_new_segment(double tjd, int ipli, int ifno, ref string serr)
+        {
             int i, j, k, m, n, o, icoord, retc;
             Int32 iseg;
             Int32 fpos;
@@ -4350,11 +4736,13 @@ namespace SwissEphNet.CPort
             if (pdp.segp == null)
                 pdp.segp = new double[pdp.ncoe * 3];
             //memset((void*)pdp.segp, 0, (size_t)pdp.ncoe * 3 * 8);
-            for (int ii = 0; ii < pdp.segp.Length; ii++) {
+            for (int ii = 0; ii < pdp.segp.Length; ii++)
+            {
                 pdp.segp[ii] = 0;
             }
             /* read coefficients for 3 coordinates */
-            for (icoord = 0; icoord < 3; icoord++) {
+            for (icoord = 0; icoord < 3; icoord++)
+            {
                 idbl = icoord * pdp.ncoe;
                 /* first read header */
                 /* first bit indicates number of sizes of packed coefficients */
@@ -4374,7 +4762,9 @@ namespace SwissEphNet.CPort
                     nsize[4] = (int)c[3] / 16;
                     nsize[5] = (int)c[3] % 16;
                     nco = nsize[0] + nsize[1] + nsize[2] + nsize[3] + nsize[4] + nsize[5];
-                } else {
+                }
+                else
+                {
                     nsizes = 4;
                     nsize[0] = (int)c[0] / 16;
                     nsize[1] = (int)c[0] % 16;
@@ -4384,7 +4774,8 @@ namespace SwissEphNet.CPort
                 }
                 /* there may not be more coefficients than interpolation
                  * order + 1 */
-                if (nco > pdp.ncoe) {
+                if (nco > pdp.ncoe)
+                {
                     //serr=C.sprintf("error in ephemeris file: %d coefficients instead of %d. ", nco, pdp.ncoe);
                     //if (strlen(serr) + strlen(fdp.fnam) < AS_MAXCH - 1) {
                     serr = C.sprintf("error in ephemeris file %s: %d coefficients instead of %d. ", fdp.fnam, nco, pdp.ncoe);
@@ -4394,10 +4785,12 @@ namespace SwissEphNet.CPort
                     return (ERR);
                 }
                 /* now unpack */
-                for (i = 0; i < nsizes; i++) {
+                for (i = 0; i < nsizes; i++)
+                {
                     if (nsize[i] == 0)
                         continue;
-                    if (i < 4) {
+                    if (i < 4)
+                    {
                         j = (4 - i);
                         k = nsize[i];
                         retc = do_fread(longs, j, k, 4, ref fp, SEI_CURR_FPOS, freord, fendian, ifno, ref serr);
@@ -4410,7 +4803,9 @@ namespace SwissEphNet.CPort
                             else
                                 pdp.segp[idbl] = (longs[m] / 2) / 1e+9 * pdp.rmax / 2;
                         }
-                    } else if (i == 4) {		/* half byte packing */
+                    }
+                    else if (i == 4)
+                    {		/* half byte packing */
                         j = 1;
                         k = (nsize[i] + 1) / 2;
                         retc = do_fread(longs, j, k, 4, ref fp, SEI_CURR_FPOS, freord, fendian, ifno, ref serr);
@@ -4418,10 +4813,12 @@ namespace SwissEphNet.CPort
                             goto return_error_gns;
                         for (m = 0, j = 0;
                              m < k && j < nsize[i];
-                             m++) {
+                             m++)
+                        {
                             for (n = 0, o = 16;
                                  n < 2 && j < nsize[i];
-                                 n++, j++, idbl++, longs[m] %= (uint)o, o /= 16) {
+                                 n++, j++, idbl++, longs[m] %= (uint)o, o /= 16)
+                            {
                                 if ((longs[m] & o) != 0)
                                     pdp.segp[idbl] =
                                      -(((longs[m] + o) / o / 2) * pdp.rmax / 2 / 1e+9);
@@ -4429,7 +4826,9 @@ namespace SwissEphNet.CPort
                                     pdp.segp[idbl] = (longs[m] / o / 2) * pdp.rmax / 2 / 1e+9;
                             }
                         }
-                    } else if (i == 5) {		/* quarter byte packing */
+                    }
+                    else if (i == 5)
+                    {		/* quarter byte packing */
                         j = 1;
                         k = (nsize[i] + 3) / 4;
                         retc = do_fread(longs, j, k, 4, ref fp, SEI_CURR_FPOS, freord, fendian, ifno, ref serr);
@@ -4437,10 +4836,12 @@ namespace SwissEphNet.CPort
                             return (retc);
                         for (m = 0, j = 0;
                              m < k && j < nsize[i];
-                             m++) {
+                             m++)
+                        {
                             for (n = 0, o = 64;
                                  n < 4 && j < nsize[i];
-                                 n++, j++, idbl++, longs[m] %= (uint)o, o /= 4) {
+                                 n++, j++, idbl++, longs[m] %= (uint)o, o /= 4)
+                            {
                                 if ((longs[m] & o) != 0)
                                     pdp.segp[idbl] =
                                      -(((longs[m] + o) / o / 2) * pdp.rmax / 2 / 1e+9);
@@ -4459,7 +4860,7 @@ namespace SwissEphNet.CPort
             //  }
             //#endif
             return (OK);
-            return_error_gns:
+        return_error_gns:
             fdp.fptr.Dispose();
             fdp.fptr = null;
             free_planets();
@@ -4591,9 +4992,12 @@ namespace SwissEphNet.CPort
             if (!fp.Read(ref testendian))
                 goto file_damage;
             /* is byte order correct?            */
-            if (testendian == SEI_FILE_TEST_ENDIAN) {
+            if (testendian == SEI_FILE_TEST_ENDIAN)
+            {
                 freord = SEI_FILE_NOREORD;
-            } else {
+            }
+            else
+            {
                 freord = SEI_FILE_REORD;
                 //sp = (char*)&lng;
                 //c = (char*)&testendian;
@@ -4832,14 +5236,14 @@ namespace SwissEphNet.CPort
                 }/**/
             }
             return (OK);
-            file_damage:
+        file_damage:
             //if (serr != null) {
             //*serr = '\0';
             //if (strlen(serr_file_damage) + strlen(fdp.fnam) < AS_MAXCH) {
             serr = C.sprintf(serr_file_damage, fdp.fnam);
-            //}
-            //}
-            return_error:
+        //}
+        //}
+        return_error:
             fdp.fptr.Dispose();
             fdp.fptr = null;
             free_planets();
@@ -4860,7 +5264,8 @@ namespace SwissEphNet.CPort
          * ifno		file number
          * serr		error string
          */
-        int do_fread(byte[] trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(byte[] trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             int i, j, k;
             int totsize;
             byte[] space = new byte[1000];
@@ -4869,24 +5274,34 @@ namespace SwissEphNet.CPort
             if (fpos >= 0)
                 fp.Seek(fpos, SeekOrigin.Begin);
             /* if no byte reorder has to be done, and read size == return size */
-            if (0 == freord && size == corrsize) {
-                if (fp.Read(trg, 0, totsize) == 0) {
+            if (0 == freord && size == corrsize)
+            {
+                if (fp.Read(trg, 0, totsize) == 0)
+                {
                     serr = C.sprintf("Ephemeris file %s is damaged (2).", swed.fidat[ifno].fnam);
                     return (ERR);
-                } else
+                }
+                else
                     return (OK);
-            } else {
-                if (fp.Read(space, 0, totsize) == 0) {
+            }
+            else
+            {
+                if (fp.Read(space, 0, totsize) == 0)
+                {
                     serr = C.sprintf("Ephemeris file %s is damaged (4).", swed.fidat[ifno].fnam);
                     return (ERR);
                 }
-                if (size != corrsize) {
-                    for (int ii = 0; ii < count * corrsize; ii++) {
+                if (size != corrsize)
+                {
+                    for (int ii = 0; ii < count * corrsize; ii++)
+                    {
                         targ[ii] = 0;
                     }
                 }
-                for (i = 0; i < count; i++) {
-                    for (j = size - 1; j >= 0; j--) {
+                for (i = 0; i < count; i++)
+                {
+                    for (j = size - 1; j >= 0; j--)
+                    {
                         if (freord != 0)
                             k = size - j - 1;
                         else
@@ -4901,57 +5316,69 @@ namespace SwissEphNet.CPort
             }
             return (OK);
         }
-        int do_fread(CPointer<char> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(CPointer<char> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             var buff = new byte[count * corrsize];
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
-            for (int i = 0; i < count * corrsize; i++) {
+            for (int i = 0; i < count * corrsize; i++)
+            {
                 trg[i] = (char)buff[i];
             }
             return res;
         }
-        int do_fread(CPointer<uint> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(CPointer<uint> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             var buff = new byte[count * corrsize];
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++)
+            {
                 trg[i] = BitConverter.ToUInt32(buff, i * corrsize);
             }
             return res;
         }
-        int do_fread(CPointer<int> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(CPointer<int> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             var buff = new byte[count * corrsize];
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++)
+            {
                 trg[i] = BitConverter.ToInt32(buff, i * corrsize);
             }
             return res;
         }
-        int do_fread(CPointer<double> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(CPointer<double> trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             var buff = new byte[count * corrsize];
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++)
+            {
                 trg[i] = BitConverter.ToDouble(buff, i * corrsize);
             }
             return res;
         }
-        int do_fread(ref short trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(ref short trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             byte[] buff = BitConverter.GetBytes(trg);
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
             trg = BitConverter.ToInt16(buff, 0);
             return res;
         }
-        int do_fread(ref Int32 trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(ref Int32 trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             byte[] buff = BitConverter.GetBytes(trg);
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
             trg = BitConverter.ToInt32(buff, 0);
             return res;
         }
-        int do_fread(ref UInt32 trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(ref UInt32 trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             byte[] buff = BitConverter.GetBytes(trg);
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
             trg = BitConverter.ToUInt32(buff, 0);
             return res;
         }
-        int do_fread(ref Double trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr) {
+        int do_fread(ref Double trg, int size, int count, int corrsize, ref CFile fp, Int32 fpos, int freord, int fendian, int ifno, ref string serr)
+        {
             byte[] buff = BitConverter.GetBytes(trg);
             var res = do_fread(buff, size, count, corrsize, ref fp, fpos, freord, fendian, ifno, ref serr);
             trg = BitConverter.ToDouble(buff, 0);
@@ -4964,7 +5391,8 @@ namespace SwissEphNet.CPort
          *
          * ipli		planet number
          */
-        void rot_back(int ipli) {
+        void rot_back(int ipli)
+        {
             int i;
             double t, tdiff;
             double qav, pav, dn;
@@ -4983,23 +5411,28 @@ namespace SwissEphNet.CPort
             chcfy = chcfx + nco;
             chcfz = chcfx + 2 * nco;
             tdiff = (t - pdp.telem) / 365250.0;
-            if (ipli == SEI_MOON) {
+            if (ipli == SEI_MOON)
+            {
                 dn = pdp.prot + tdiff * pdp.dprot;
                 i = (int)(dn / TWOPI);
                 dn -= i * TWOPI;
                 qav = (pdp.qrot + tdiff * pdp.dqrot) * Math.Cos(dn);
                 pav = (pdp.qrot + tdiff * pdp.dqrot) * Math.Sin(dn);
-            } else {
+            }
+            else
+            {
                 qav = pdp.qrot + tdiff * pdp.dqrot;
                 pav = pdp.prot + tdiff * pdp.dprot;
             }
             /*calculate cosine and sine of average perihelion longitude. */
-            for (i = 0; i < nco; i++) {
+            for (i = 0; i < nco; i++)
+            {
                 x[i, 0] = chcfx[i];
                 x[i, 1] = chcfy[i];
                 x[i, 2] = chcfz[i];
             }
-            if ((pdp.iflg & SEI_FLG_ELLIPSE) != 0) {
+            if ((pdp.iflg & SEI_FLG_ELLIPSE) != 0)
+            {
                 refepx = pdp.refep;
                 refepy = refepx + nco;
                 omtild = pdp.peri + tdiff * pdp.dperi;
@@ -5008,7 +5441,8 @@ namespace SwissEphNet.CPort
                 com = Math.Cos(omtild);
                 som = Math.Sin(omtild);
                 /*add reference orbit.  */
-                for (i = 0; i < nco; i++) {
+                for (i = 0; i < nco; i++)
+                {
                     x[i, 0] = chcfx[i] + com * refepx[i] - som * refepy[i];
                     x[i, 1] = chcfy[i] + com * refepy[i] + som * refepx[i];
                 }
@@ -5032,7 +5466,8 @@ namespace SwissEphNet.CPort
             uiy[1] = (1.0 - qav * qav + pav * pav) * cosih2;
             uiy[2] = 2.0 * qav * cosih2;
             /*     rotate to actual orientation in space.         */
-            for (i = 0; i < nco; i++) {
+            for (i = 0; i < nco; i++)
+            {
                 xrot = x[i, 0] * uix[0] + x[i, 1] * uiy[0] + x[i, 2] * uiz[0];
                 yrot = x[i, 0] * uix[1] + x[i, 1] * uiy[1] + x[i, 2] * uiz[1];
                 zrot = x[i, 0] * uix[2] + x[i, 1] * uiy[2] + x[i, 2] * uiz[2];
@@ -5041,13 +5476,15 @@ namespace SwissEphNet.CPort
                 x[i, 0] = xrot;
                 x[i, 1] = yrot;
                 x[i, 2] = zrot;
-                if (ipli == SEI_MOON) {
+                if (ipli == SEI_MOON)
+                {
                     /* rotate to j2000 equator */
                     x[i, 1] = ceps2000 * yrot - seps2000 * zrot;
                     x[i, 2] = seps2000 * yrot + ceps2000 * zrot;
                 }
             }
-            for (i = 0; i < nco; i++) {
+            for (i = 0; i < nco; i++)
+            {
                 chcfx[i] = x[i, 0];
                 chcfy[i] = x[i, 1];
                 chcfz[i] = x[i, 2];
@@ -5060,7 +5497,8 @@ namespace SwissEphNet.CPort
          *                                                  earth (output)
          * xmoon= geocentric position or velocity vector of moon
          */
-        void embofs(CPointer<double> xemb, CPointer<double> xmoon) {
+        void embofs(CPointer<double> xemb, CPointer<double> xmoon)
+        {
             int i;
             for (i = 0; i <= 2; i++)
                 xemb[i] -= xmoon[i] / (EARTH_MOON_MRAT + 1.0);
@@ -5070,7 +5508,8 @@ namespace SwissEphNet.CPort
          * nu		pointer to nutation data structure
          * oe		pointer to epsilon data structure
          */
-        void nut_matrix(nut nu, epsilon oe) {
+        void nut_matrix(nut nu, epsilon oe)
+        {
             double psi, eps;
             double sinpsi, cospsi, sineps, coseps, sineps0, coseps0;
             psi = nu.nutlo[0];
@@ -5164,7 +5603,8 @@ namespace SwissEphNet.CPort
          * of t0(ayanamsa) or J2000. it is excluded by
          * #ifdef SID_TNODE_FROM_ECL_T0
          */
-        int lunar_osc_elem(double tjd, int ipl, Int32 iflag, ref string serr) {
+        int lunar_osc_elem(double tjd, int ipl, Int32 iflag, ref string serr)
+        {
             int i, j, istart;
             int ipli = SEI_MOON;
             Int32 epheflag = SwissEph.SEFLG_DEFAULTEPH;
@@ -5189,17 +5629,21 @@ namespace SwissEphNet.CPort
             double uu, ny, sema, ecce, Gmsm, c2, v2, pp;
             Int32 speedf1, speedf2;
             sid_data sip = new sid_data();
-            if (SID_TNODE_FROM_ECL_T0) {
+            if (SID_TNODE_FROM_ECL_T0)
+            {
                 sip = swed.sidd;
                 epsilon oectmp = new epsilon();
-                if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+                if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+                {
                     calc_epsilon(sip.t0, iflag, oectmp);
                     oe = oectmp;
-                } else if ((iflag & SwissEph.SEFLG_J2000) != 0)
+                }
+                else if ((iflag & SwissEph.SEFLG_J2000) != 0)
                     oe = swed.oec2000;
                 else
                     oe = swed.oec;
-            } else
+            }
+            else
                 oe = swed.oec;
             ndp = swed.nddat[ipl];
             /* if elements have already been computed for this date, return 
@@ -5211,7 +5655,8 @@ namespace SwissEphNet.CPort
             if (tjd == ndp.teval
               && tjd != 0
               && flg1 == flg2
-              && (0 == speedf2 || speedf1 != 0)) {
+              && (0 == speedf2 || speedf1 != 0))
+            {
                 ndp.xflgs = iflag;
                 ndp.iephe = iflag & SwissEph.SEFLG_EPHMASK;
                 return OK;
@@ -5252,11 +5697,13 @@ namespace SwissEphNet.CPort
             //if (serr != NULL)
             //    *serr = '\0';
             serr = String.Empty;
-            three_positions:
-            switch (epheflag) {
+        three_positions:
+            switch (epheflag)
+            {
                 case SwissEph.SEFLG_JPLEPH:
                     speed_intv = NODE_CALC_INTV;
-                    for (i = istart; i <= 2; i++) {
+                    for (i = istart; i <= 2; i++)
+                    {
                         if (i == 0)
                             t = tjd - speed_intv;
                         else if (i == 1)
@@ -5274,7 +5721,8 @@ namespace SwissEphNet.CPort
                          * the simple formual 'x[j] -= dt * speed' should not be 
                          * used here. the error would be greater than the advantage
                          * of computation speed. */
-                        if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && retc >= OK) {
+                        if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && retc >= OK)
+                        {
                             dt = Math.Sqrt(square_sum(xpos[i])) * AUNIT / CLIGHT / 86400.0;
                             retc = jplplan(t - dt, ipli, iflag, NO_SAVE, xpos[i], null, null, ref serr);/**/
                             /* read error or corrupt file */
@@ -5282,20 +5730,25 @@ namespace SwissEphNet.CPort
                                 return (ERR);
                         }
                         /* jpl ephemeris not on disk, or date beyond ephemeris range */
-                        if (retc == NOT_AVAILABLE) {
+                        if (retc == NOT_AVAILABLE)
+                        {
                             iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_SWIEPH;
                             epheflag = SwissEph.SEFLG_SWIEPH;
                             //if (serr != NULL && strlen(serr) + 30 < AS_MAXCH)
                             serr += " \ntrying Swiss Eph; ";
                             break;
-                        } else if (retc == BEYOND_EPH_LIMITS) {
-                            if (tjd > MOSHLUEPH_START && tjd < MOSHLUEPH_END) {
+                        }
+                        else if (retc == BEYOND_EPH_LIMITS)
+                        {
+                            if (tjd > MOSHLUEPH_START && tjd < MOSHLUEPH_END)
+                            {
                                 iflag = (iflag & ~SwissEph.SEFLG_JPLEPH) | SwissEph.SEFLG_MOSEPH;
                                 epheflag = SwissEph.SEFLG_MOSEPH;
                                 //if (serr != NULL && strlen(serr) + 30 < AS_MAXCH)
                                 serr += " \nusing Moshier Eph; ";
                                 break;
-                            } else
+                            }
+                            else
                                 return ERR;
                         }
                         /* precession and nutation etc. */
@@ -5307,7 +5760,8 @@ namespace SwissEphNet.CPort
                     //      sweph_moon:
                     //#endif
                     speed_intv = NODE_CALC_INTV;
-                    for (i = istart; i <= 2; i++) {
+                    for (i = istart; i <= 2; i++)
+                    {
                         if (i == 0)
                             t = tjd - speed_intv;
                         else if (i == 1)
@@ -5318,20 +5772,24 @@ namespace SwissEphNet.CPort
                         if (retc == ERR)
                             return (ERR);
                         /* light-time-corrected moon for apparent node (~ 0.006") */
-                        if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && retc >= OK) {
+                        if ((iflag & SwissEph.SEFLG_TRUEPOS) == 0 && retc >= OK)
+                        {
                             dt = Math.Sqrt(square_sum(xpos[i])) * AUNIT / CLIGHT / 86400.0;
                             retc = swemoon(t - dt, iflag | SwissEph.SEFLG_SPEED, NO_SAVE, xpos[i], ref serr);/**/
                             if (retc == ERR)
                                 return (ERR);
                         }
-                        if (retc == NOT_AVAILABLE) {
-                            if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END) {
+                        if (retc == NOT_AVAILABLE)
+                        {
+                            if (tjd > MOSHPLEPH_START && tjd < MOSHPLEPH_END)
+                            {
                                 iflag = (iflag & ~SwissEph.SEFLG_SWIEPH) | SwissEph.SEFLG_MOSEPH;
                                 epheflag = SwissEph.SEFLG_MOSEPH;
                                 //if (serr != NULL && strlen(serr) + 30 < AS_MAXCH)
                                 serr += " \nusing Moshier eph.; ";
                                 break;
-                            } else
+                            }
+                            else
                                 return ERR;
                         }
                         /* precession and nutation etc. */
@@ -5345,7 +5803,8 @@ namespace SwissEphNet.CPort
                     /* with moshier moon, we need a greater speed_intv, because here the
                      * node and apogee oscillate wildly within small intervals */
                     speed_intv = NODE_CALC_INTV_MOSH;
-                    for (i = istart; i <= 2; i++) {
+                    for (i = istart; i <= 2; i++)
+                    {
                         if (i == 0)
                             t = tjd - speed_intv;
                         else if (i == 1)
@@ -5378,7 +5837,8 @@ namespace SwissEphNet.CPort
             /* node is always needed, even if apogee is wanted */
             ndnp = swed.nddat[SEI_TRUE_NODE];
             /* three nodes */
-            for (i = istart; i <= 2; i++) {
+            for (i = istart; i <= 2; i++)
+            {
                 if (Math.Abs(xpos[i][5]) < 1e-15)
                     xpos[i][5] = 1e-15;
                 fac = xpos[i][2] / xpos[i][5];
@@ -5395,13 +5855,16 @@ namespace SwissEphNet.CPort
              * ellipse. 
              */
             /* save position and speed */
-            for (i = 0; i <= 2; i++) {
+            for (i = 0; i <= 2; i++)
+            {
                 ndnp.x[i] = xx[2][i];
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     b = (xx[1][i] - xx[0][i]) / 2;
                     a = (xx[1][i] + xx[0][i]) / 2 - xx[2][i];
                     ndnp.x[i + 3] = (2 * a + b) / speed_intv;
-                } else
+                }
+                else
                     ndnp.x[i + 3] = 0;
                 ndnp.teval = tjd;
                 ndnp.iephe = epheflag;
@@ -5413,7 +5876,8 @@ namespace SwissEphNet.CPort
             ndap = swed.nddat[SEI_OSCU_APOG];
             Gmsm = GEOGCONST * (1 + 1 / EARTH_MOON_MRAT) / AUNIT / AUNIT / AUNIT * 86400.0 * 86400.0;
             /* three apogees */
-            for (i = istart; i <= 2; i++) {
+            for (i = istart; i <= 2; i++)
+            {
                 /* node */
                 rxy = Math.Sqrt(xx[i][0] * xx[i][0] + xx[i][1] * xx[i][1]);
                 cosnode = xx[i][0] / rxy;
@@ -5467,7 +5931,8 @@ namespace SwissEphNet.CPort
                     xx[i][j] *= r[0] / r[1];
             }
             /* save position and speed */
-            for (i = 0; i <= 2; i++) {
+            for (i = 0; i <= 2; i++)
+            {
                 /* apogee */
                 ndap.x[i] = xxa[2][i];
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
@@ -5490,14 +5955,16 @@ namespace SwissEphNet.CPort
              * light-time is already contained in lunar positions.
              * now compute polar and equatorial coordinates:
              **********************************************************************/
-            for (j = 0; j <= 1; j++) {
+            for (j = 0; j <= 1; j++)
+            {
                 double[] x = new double[6];
                 if (j == 0)
                     ndp = swed.nddat[SEI_TRUE_NODE];
                 else
                     ndp = swed.nddat[SEI_OSCU_APOG];
                 //memset(ndp.xreturn, 0, 24 * sizeof(double));
-                for (int ii = 0; ii < ndp.xreturn.Length; ii++) {
+                for (int ii = 0; ii < ndp.xreturn.Length; ii++)
+                {
                     ndp.xreturn[ii] = 0;
                 }
                 /* cartesian ecliptic */
@@ -5509,15 +5976,18 @@ namespace SwissEphNet.CPort
                 SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(6), ndp.xreturn.GetPointer(18), -oe.seps, oe.ceps);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(9), ndp.xreturn.GetPointer(21), -oe.seps, oe.ceps);
-                if (SID_TNODE_FROM_ECL_T0) {
+                if (SID_TNODE_FROM_ECL_T0)
+                {
                     /* sideral: we return NORMAL equatorial coordinates, there are no
                      * sidereal ones */
-                    if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+                    if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+                    {
                         /* to J2000 */
                         SE.SwephLib.swi_precess(ndp.xreturn.GetPointer(18), sip.t0, iflag, J_TO_J2000);
                         if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                             swi_precess_speed(ndp.xreturn.GetPointer(21), sip.t0, iflag, J_TO_J2000);
-                        if (0 == (iflag & SwissEph.SEFLG_J2000)) {
+                        if (0 == (iflag & SwissEph.SEFLG_J2000))
+                        {
                             /* to tjd */
                             SE.SwephLib.swi_precess(ndp.xreturn.GetPointer(18), tjd, iflag, J2000_TO_J);
                             if ((iflag & SwissEph.SEFLG_SPEED) != 0)
@@ -5525,7 +5995,8 @@ namespace SwissEphNet.CPort
                         }
                     }
                 }
-                if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
+                if (0 == (iflag & SwissEph.SEFLG_NONUT))
+                {
                     SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(18), ndp.xreturn.GetPointer(18), -swed.nut.snut, swed.nut.cnut);
                     if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                         SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(21), ndp.xreturn.GetPointer(21), -swed.nut.snut, swed.nut.cnut);
@@ -5534,16 +6005,21 @@ namespace SwissEphNet.CPort
                 SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(18), ndp.xreturn.GetPointer(12));
                 ndp.xflgs = iflag;
                 ndp.iephe = iflag & SwissEph.SEFLG_EPHMASK;
-                if (SID_TNODE_FROM_ECL_T0) {
+                if (SID_TNODE_FROM_ECL_T0)
+                {
                     /* node and apogee are already referred to t0; 
                      * nothing has to be done */
-                } else {
-                    if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+                }
+                else
+                {
+                    if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+                    {
                         /* node and apogee are referred to t; 
                          * the ecliptic position must be transformed to t0 */
                         /* rigorous algorithm */
                         if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0
-                          || (swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0) {
+                          || (swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0)
+                        {
                             for (i = 0; i <= 5; i++)
                                 x[i] = ndp.xreturn[18 + i];
                             /* remove nutation */
@@ -5564,7 +6040,9 @@ namespace SwissEphNet.CPort
                             /* traditional algorithm;
                              * this is a bit clumsy, but allows us to keep the
                              * sidereal code together */
-                        } else {
+                        }
+                        else
+                        {
                             SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(6), ndp.xreturn);
                             if (swi_get_ayanamsa_with_speed(ndp.teval, iflag, daya, ref serr) == ERR)
                                 return ERR;
@@ -5572,7 +6050,9 @@ namespace SwissEphNet.CPort
                             ndp.xreturn[3] -= daya[1] * SwissEph.DEGTORAD;
                             SE.SwephLib.swi_polcart_sp(ndp.xreturn, ndp.xreturn.GetPointer(6));
                         }
-                    } else if ((iflag & SwissEph.SEFLG_J2000) != 0) {
+                    }
+                    else if ((iflag & SwissEph.SEFLG_J2000) != 0)
+                    {
                         /* node and apogee are referred to t; 
                          * the ecliptic position must be transformed to J2000 */
                         for (i = 0; i <= 5; i++)
@@ -5594,7 +6074,8 @@ namespace SwissEphNet.CPort
                  * radians to degrees *
                  **********************/
                 /*if (!(iflag & SwissEph.SEFLG_RADIANS)) {*/
-                for (i = 0; i < 2; i++) {
+                for (i = 0; i < 2; i++)
+                {
                     ndp.xreturn[i] *= SwissEph.RADTODEG;	/* ecliptic */
                     ndp.xreturn[i + 3] *= SwissEph.RADTODEG;
                     ndp.xreturn[i + 12] *= SwissEph.RADTODEG;	/* equator */
@@ -5609,7 +6090,8 @@ namespace SwissEphNet.CPort
 
         /* lunar osculating elements, i.e.
          */
-        int intp_apsides(double tjd, int ipl, Int32 iflag, ref string serr) {
+        int intp_apsides(double tjd, int ipl, Int32 iflag, ref string serr)
+        {
             int i;
             Int32 flg1, flg2;
             plan_data ndp;
@@ -5632,7 +6114,8 @@ namespace SwissEphNet.CPort
             if (tjd == ndp.teval
               && tjd != 0
               && flg1 == flg2
-              && (0 == speedf2 || speedf1 != 0)) {
+              && (0 == speedf2 || speedf1 != 0))
+            {
                 ndp.xflgs = iflag;
                 ndp.iephe = iflag & SwissEph.SEFLG_MOSEPH;
                 return OK;
@@ -5640,30 +6123,35 @@ namespace SwissEphNet.CPort
             /*********************************************
              * now three apsides * 
              *********************************************/
-            for (t = tjd - speed_intv, i = 0; i < 3; t += speed_intv, i++) {
+            for (t = tjd - speed_intv, i = 0; i < 3; t += speed_intv, i++)
+            {
                 if (0 == (iflag & SwissEph.SEFLG_SPEED) && i != 1) continue;
                 SE.SwemMoon.swi_intp_apsides(t, xpos[i], ipl);
             }
             /************************************************************
              * apsis with speed                                         * 
              ************************************************************/
-            for (i = 0; i < 3; i++) {
+            for (i = 0; i < 3; i++)
+            {
                 xx[i] = xpos[1][i];
                 xx[i + 3] = 0;
             }
-            if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+            if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+            {
                 xx[3] = SE.swe_difrad2n(xpos[2][0], xpos[0][0]) / speed_intv / 2.0;
                 xx[4] = (xpos[2][1] - xpos[0][1]) / speed_intv / 2.0;
                 xx[5] = (xpos[2][2] - xpos[0][2]) / speed_intv / 2.0;
             }
             //memset((void*)ndp.xreturn, 0, 24 * sizeof(double));
-            for (int ii = 0; ii < 24; ii++) {
+            for (int ii = 0; ii < 24; ii++)
+            {
                 ndp.xreturn[ii] = 0;
             }
             /* ecliptic polar to cartesian */
             SE.SwephLib.swi_polcart_sp(xx, xx);
             /* light-time */
-            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS)) {
+            if (0 == (iflag & SwissEph.SEFLG_TRUEPOS))
+            {
                 dt = Math.Sqrt(square_sum(xx)) * AUNIT / CLIGHT / 86400.0;
                 for (i = 1; i < 3; i++)
                     xx[i] -= dt * xx[i + 3];
@@ -5678,12 +6166,14 @@ namespace SwissEphNet.CPort
             ndp.teval = tjd;
             ndp.xflgs = iflag;
             ndp.iephe = iflag & SwissEph.SEFLG_EPHMASK;
-            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+            {
                 /* apogee is referred to t; 
                  * the ecliptic position must be transformed to t0 */
                 /* rigorous algorithm */
                 if ((swed.sidd.sid_mode & SwissEph.SE_SIDBIT_ECL_T0) != 0
-                || (swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0) {
+                || (swed.sidd.sid_mode & SwissEph.SE_SIDBIT_SSY_PLANE) != 0)
+                {
                     for (i = 0; i <= 5; i++)
                         x[i] = ndp.xreturn[18 + i];
                     /* precess to J2000 */
@@ -5698,7 +6188,9 @@ namespace SwissEphNet.CPort
                     /* to polar */
                     SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(6), ndp.xreturn);
                     SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(18), ndp.xreturn.GetPointer(12));
-                } else {
+                }
+                else
+                {
                     /* traditional algorithm */
                     SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(6), ndp.xreturn);
                     if (swi_get_ayanamsa_with_speed(ndp.teval, iflag, daya, ref serr) == ERR)
@@ -5708,7 +6200,9 @@ namespace SwissEphNet.CPort
                     SE.SwephLib.swi_polcart_sp(ndp.xreturn, ndp.xreturn.GetPointer(6));
                     SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(18), ndp.xreturn.GetPointer(12));
                 }
-            } else if ((iflag & SwissEph.SEFLG_J2000) != 0) {
+            }
+            else if ((iflag & SwissEph.SEFLG_J2000) != 0)
+            {
                 /* node and apogee are referred to t; 
                  * the ecliptic position must be transformed to J2000 */
                 for (i = 0; i <= 5; i++)
@@ -5724,10 +6218,13 @@ namespace SwissEphNet.CPort
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(21), ndp.xreturn.GetPointer(9), swed.oec2000.seps, swed.oec2000.ceps);
                 SE.SwephLib.swi_cartpol_sp(ndp.xreturn.GetPointer(6), ndp.xreturn);
-            } else {
+            }
+            else
+            {
                 /* tropical ecliptic positions */
                 /* precession has already been taken into account, but not nutation */
-                if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
+                if (0 == (iflag & SwissEph.SEFLG_NONUT))
+                {
                     swi_nutate(ndp.xreturn.GetPointer(18), iflag, false);
                 }
                 /* equatorial polar */
@@ -5736,7 +6233,8 @@ namespace SwissEphNet.CPort
                 SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(18), ndp.xreturn.GetPointer(6), oe.seps, oe.ceps);
                 if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                     SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(21), ndp.xreturn.GetPointer(9), oe.seps, oe.ceps);
-                if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
+                if (0 == (iflag & SwissEph.SEFLG_NONUT))
+                {
                     SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(6), ndp.xreturn.GetPointer(6), nut.snut, nut.cnut);
                     if ((iflag & SwissEph.SEFLG_SPEED) != 0)
                         SE.SwephLib.swi_coortrf2(ndp.xreturn.GetPointer(9), ndp.xreturn.GetPointer(9), nut.snut, nut.cnut);
@@ -5748,7 +6246,8 @@ namespace SwissEphNet.CPort
              * radians to degrees *
              **********************/
             /*if (!(iflag & SwissEph.SEFLG_RADIANS)) {*/
-            for (i = 0; i < 2; i++) {
+            for (i = 0; i < 2; i++)
+            {
                 ndp.xreturn[i] *= SwissEph.RADTODEG;		/* ecliptic */
                 ndp.xreturn[i + 3] *= SwissEph.RADTODEG;
                 ndp.xreturn[i + 12] *= SwissEph.RADTODEG;	/* equator */
@@ -5770,7 +6269,8 @@ namespace SwissEphNet.CPort
          * xx           array equatorial cartesian position and speed
          * serr         error string
          */
-        public int swi_plan_for_osc_elem(Int32 iflag, double tjd, CPointer<double> xx) {
+        public int swi_plan_for_osc_elem(Int32 iflag, double tjd, CPointer<double> xx)
+        {
             int i;
             double[] x = new double[6];
             nut nuttmp = new nut();
@@ -5779,7 +6279,8 @@ namespace SwissEphNet.CPort
             epsilon oectmp = new epsilon();
             sid_data sip = new sid_data(); ;
             /* ICRS to J2000 */
-            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403) {
+            if (0 == (iflag & SwissEph.SEFLG_ICRS) && swi_get_denum(SEI_SUN, iflag) >= 403)
+            {
                 SE.SwephLib.swi_bias(xx, tjd, iflag, false);
             }/**/
             /************************************************
@@ -5817,18 +6318,22 @@ namespace SwissEphNet.CPort
 #endif
             */
 
-            if (SID_TNODE_FROM_ECL_T0) {
+            if (SID_TNODE_FROM_ECL_T0)
+            {
                 sip = swed.sidd;
                 /* For sidereal calculation we need node refered*
                  * to ecliptic of t0 of ayanamsa                *
                  ************************************************/
-                if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+                if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+                {
                     tjd = sip.t0;
                     SE.SwephLib.swi_precess(xx, tjd, iflag, J2000_TO_J);
                     SE.SwephLib.swi_precess(xx + 3, tjd, iflag, J2000_TO_J);
                     calc_epsilon(tjd, iflag, oectmp);
                     oe = oectmp;
-                } else if (0 == (iflag & SwissEph.SEFLG_J2000)) {
+                }
+                else if (0 == (iflag & SwissEph.SEFLG_J2000))
+                {
                     SE.SwephLib.swi_precess(xx, tjd, iflag, J2000_TO_J);
                     SE.SwephLib.swi_precess(xx + 3, tjd, iflag, J2000_TO_J);
                     /* epsilon */
@@ -5836,14 +6341,18 @@ namespace SwissEphNet.CPort
                         oe = swed.oec;
                     else if (tjd == J2000)
                         oe = swed.oec2000;
-                    else {
+                    else
+                    {
                         calc_epsilon(tjd, iflag, oectmp);
                         oe = oectmp;
                     }
 
-                } else	/* if SEFLG_J2000 */
+                }
+                else	/* if SEFLG_J2000 */
                     oe = swed.oec2000;
-            } else {
+            }
+            else
+            {
                 SE.SwephLib.swi_precess(xx, tjd, iflag, J2000_TO_J);
                 SE.SwephLib.swi_precess(xx + 3, tjd, iflag, J2000_TO_J);
                 /* epsilon */
@@ -5851,7 +6360,8 @@ namespace SwissEphNet.CPort
                     oe = swed.oec;
                 else if (tjd == J2000)
                     oe = swed.oec2000;
-                else {
+                else
+                {
                     calc_epsilon(tjd, iflag, oectmp);
                     oe = oectmp;
                 }
@@ -5862,14 +6372,22 @@ namespace SwissEphNet.CPort
                * again: speed vector must be rotated, but not *
                * added 'speed' of nutation                    *
                ************************************************/
-            if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
-                if (tjd == swed.nut.tnut) {
+            if (0 == (iflag & SwissEph.SEFLG_NONUT))
+            {
+                if (tjd == swed.nut.tnut)
+                {
                     nutp = swed.nut;
-                } else if (tjd == J2000) {
+                }
+                else if (tjd == J2000)
+                {
                     nutp = swed.nut2000;
-                } else if (tjd == swed.nutv.tnut) {
+                }
+                else if (tjd == swed.nutv.tnut)
+                {
                     nutp = swed.nutv;
-                } else {
+                }
+                else
+                {
                     nutp = nuttmp;
                     SE.SwephLib.swi_nutation(tjd, iflag, nutp.nutlo);
                     nutp.tnut = tjd;
@@ -5877,14 +6395,16 @@ namespace SwissEphNet.CPort
                     nutp.cnut = Math.Cos(nutp.nutlo[1]);
                     nut_matrix(nutp, oe);
                 }
-                for (i = 0; i <= 2; i++) {
+                for (i = 0; i <= 2; i++)
+                {
                     x[i] = xx[0] * nutp.matrix[0, i] +
                        xx[1] * nutp.matrix[1, i] +
                        xx[2] * nutp.matrix[2, i];
                 }
                 /* speed:
                  * rotation only */
-                for (i = 0; i <= 2; i++) {
+                for (i = 0; i <= 2; i++)
+                {
                     x[i + 3] = xx[3] * nutp.matrix[0, i] +
                          xx[4] * nutp.matrix[1, i] +
                          xx[5] * nutp.matrix[2, i];
@@ -5897,13 +6417,16 @@ namespace SwissEphNet.CPort
              ************************************************/
             SE.SwephLib.swi_coortrf2(xx, xx, oe.seps, oe.ceps);
             SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, oe.seps, oe.ceps);
-            if (SID_TNODE_FROM_ECL_T0 && (iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+            if (SID_TNODE_FROM_ECL_T0 && (iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+            {
                 /* subtract ayan_t0 */
                 SE.SwephLib.swi_cartpol_sp(xx, xx);
                 xx[0] -= sip.ayan_t0;
                 SE.SwephLib.swi_polcart_sp(xx, xx);
-            } else
-                if (0 == (iflag & SwissEph.SEFLG_NONUT)) {
+            }
+            else
+                if (0 == (iflag & SwissEph.SEFLG_NONUT))
+            {
                 SE.SwephLib.swi_coortrf2(xx, xx, nutp.snut, nutp.cnut);
                 SE.SwephLib.swi_coortrf2(xx + 3, xx + 3, nutp.snut, nutp.cnut);
             }
@@ -6019,7 +6542,8 @@ namespace SwissEphNet.CPort
           new meff_ele(0.010, 0.002767),
           new meff_ele(0.000, 0.000000)
         };
-        double meff(double r) {
+        double meff(double r)
+        {
             double f, m;
             int i;
             if (r <= 0)
@@ -6033,10 +6557,12 @@ namespace SwissEphNet.CPort
             return m;
         }
 
-        void denormalize_positions(CPointer<double> x0, CPointer<double> x1, CPointer<double> x2) {
+        void denormalize_positions(CPointer<double> x0, CPointer<double> x1, CPointer<double> x2)
+        {
             int i;
             /* x*[0] = ecliptic longitude, x*[12] = rectascension */
-            for (i = 0; i <= 12; i += 12) {
+            for (i = 0; i <= 12; i += 12)
+            {
                 if (x1[i] - x0[i] < -180)
                     x0[i] -= 360;
                 if (x1[i] - x0[i] > 180)
@@ -6048,11 +6574,14 @@ namespace SwissEphNet.CPort
             }
         }
 
-        void calc_speed(CPointer<double> x0, CPointer<double> x1, CPointer<double> x2, double dt) {
+        void calc_speed(CPointer<double> x0, CPointer<double> x1, CPointer<double> x2, double dt)
+        {
             int i, j, k;
             double a, b;
-            for (j = 0; j <= 18; j += 6) {
-                for (i = 0; i < 3; i++) {
+            for (j = 0; j <= 18; j += 6)
+            {
+                for (i = 0; i < 3; i++)
+                {
                     k = j + i;
                     b = (x2[k] - x0[k]) / 2;
                     a = (x2[k] + x0[k]) / 2 - x1[k];
@@ -6061,18 +6590,22 @@ namespace SwissEphNet.CPort
             }
         }
 
-        void swi_check_ecliptic(double tjd, Int32 iflag) {
-            if (swed.oec2000.teps != J2000) {
+        void swi_check_ecliptic(double tjd, Int32 iflag)
+        {
+            if (swed.oec2000.teps != J2000)
+            {
                 calc_epsilon(J2000, iflag, swed.oec2000);
             }
-            if (tjd == J2000) {
+            if (tjd == J2000)
+            {
                 swed.oec.teps = swed.oec2000.teps;
                 swed.oec.eps = swed.oec2000.eps;
                 swed.oec.seps = swed.oec2000.seps;
                 swed.oec.ceps = swed.oec2000.ceps;
                 return;
             }
-            if (swed.oec.teps != tjd || tjd == 0) {
+            if (swed.oec.teps != tjd || tjd == 0)
+            {
                 calc_epsilon(tjd, iflag, swed.oec);
             }
         }
@@ -6081,21 +6614,24 @@ namespace SwissEphNet.CPort
         /* computes nutation, if it is wanted and has not yet been computed.
          * if speed flag has been turned on since last computation, 
          * nutation is recomputed */
-        void swi_check_nutation(double tjd, Int32 iflag) {
+        void swi_check_nutation(double tjd, Int32 iflag)
+        {
             Int32 speedf1, speedf2;
             double t;
             speedf1 = nutflag & SwissEph.SEFLG_SPEED;
             speedf2 = iflag & SwissEph.SEFLG_SPEED;
             if ((iflag & SwissEph.SEFLG_NONUT) == 0
               && (tjd != swed.nut.tnut || tjd == 0
-              || (speedf1 == 0 && speedf2 != 0))) {
+              || (speedf1 == 0 && speedf2 != 0)))
+            {
                 SE.SwephLib.swi_nutation(tjd, iflag, swed.nut.nutlo);
                 swed.nut.tnut = tjd;
                 swed.nut.snut = Math.Sin(swed.nut.nutlo[1]);
                 swed.nut.cnut = Math.Cos(swed.nut.nutlo[1]);
                 nutflag = iflag;
                 nut_matrix(swed.nut, swed.oec);
-                if ((iflag & SwissEph.SEFLG_SPEED) != 0) {
+                if ((iflag & SwissEph.SEFLG_SPEED) != 0)
+                {
                     /* once more for 'speed' of nutation, which is needed for 
                      * planetary speeds */
                     t = tjd - NUT_SPEED_INTV;
@@ -6112,7 +6648,8 @@ namespace SwissEphNet.CPort
          * - corrects nonsensical iflags
          * - completes incomplete iflags
          */
-        Int32 plaus_iflag(Int32 iflag, Int32 ipl, double tjd, out string serr) {
+        Int32 plaus_iflag(Int32 iflag, Int32 ipl, double tjd, out string serr)
+        {
             Int32 epheflag = 0;
             serr = null;
             int jplhor_model = swed.astro_models[SwissEph.SE_MODEL_JPLHOR_MODE];
@@ -6124,7 +6661,8 @@ namespace SwissEphNet.CPort
                 iflag &= ~SwissEph.SEFLG_JPLHOR_APPROX;
             /* if topocentric bit, turn helio- and barycentric bits off;
              */
-            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0) {
+            if ((iflag & SwissEph.SEFLG_TOPOCTR) != 0)
+            {
                 iflag = iflag & ~(SwissEph.SEFLG_HELCTR | SwissEph.SEFLG_BARYCTR);
             }
             /* if barycentric bit, turn heliocentric bit off */
@@ -6141,7 +6679,8 @@ namespace SwissEphNet.CPort
                 iflag |= SwissEph.SEFLG_NONUT;
             /* if sidereal bit is set, set also no_nutation bit *
              * also turn JPL Horizons mode off */
-            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0) {
+            if ((iflag & SwissEph.SEFLG_SIDEREAL) != 0)
+            {
                 iflag |= SwissEph.SEFLG_NONUT;
                 iflag = iflag & ~(SwissEph.SEFLG_JPLHOR | SwissEph.SEFLG_JPLHOR_APPROX);
             }
@@ -6168,7 +6707,8 @@ namespace SwissEphNet.CPort
             if (ipl >= SwissEph.SE_FICT_OFFSET && ipl <= SwissEph.SE_FICT_MAX)
                 iflag = iflag & ~(SwissEph.SEFLG_JPLHOR | SwissEph.SEFLG_JPLHOR_APPROX);
             /* SwissEph.SEFLG_JPLHOR requires SwissEph.SEFLG_ICRS, if calculated with * precession/nutation IAU 1980 and corrections dpsi, deps */
-            if ((iflag & SwissEph.SEFLG_JPLHOR) != 0) {
+            if ((iflag & SwissEph.SEFLG_JPLHOR) != 0)
+            {
                 if (swed.eop_dpsi_loaded <= 0)
                 {
                     switch (swed.eop_dpsi_loaded)
@@ -6209,9 +6749,9 @@ namespace SwissEphNet.CPort
             /* traditional name of star to lower case;
              * keep uppercase with Bayer/Flamsteed designations after comma */
             int p = sstar.IndexOf(',');
-            if (p >= 0)
+            if (p > 0)
                 sstar = sstar.Substring(0, p - 1).ToLower() + sstar.Substring(p);
-            else
+            else if (p < 0)
                 sstar = sstar.ToLower();
             if (sstar == string.Empty)
             {
@@ -6245,7 +6785,7 @@ namespace SwissEphNet.CPort
         /* function for sorting fixed stars with qsort() */
         static int fixedstar_name_compare(fixed_star star1, fixed_star star2)
         {
-            return string.Compare(star1.skey, star2.skey);
+            return string.Compare(star1.skey, star2.skey, StringComparison.Ordinal);
         }
 
         /* help function for finding a fixed star with bsearch() */
@@ -6396,7 +6936,7 @@ namespace SwissEphNet.CPort
             {
                 if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE, swed.ephepath, ref serr)) == null)
                 {
-                    swed.is_old_starfile = false;
+                    swed.is_old_starfile = true;
                     if ((swed.fixfp = swi_fopen(SEI_FILE_FIXSTAR, SwissEph.SE_STARFILE_OLD, swed.ephepath, ref sdummy)) == null)
                     {
                         swed.is_old_starfile = false;
@@ -6439,7 +6979,7 @@ namespace SwissEphNet.CPort
                 nrecs++;
                 //sprintf(fstdata.skey, "~%s", fstdata.starbayer); // ~ sorts after alnum
                 fstdata.skey = C.sprintf(",%s", fstdata.starbayer); // , sorts before alnum
-                                                                    // remove white spaces from star bayer name
+                // remove white spaces from star bayer name
                 fstdata.skey = fstdata.skey.Replace(" ", string.Empty);
                 last_starbayer = fstdata.starbayer;
                 if ((retc = save_star_in_struct(nrecs, fstdata, ref serr)) == ERR) return ERR;
@@ -6466,7 +7006,7 @@ namespace SwissEphNet.CPort
          * double xx[6]      position and speed
          * char *serr        error return string
          */
-        Int32 fixstar_calc_from_struct(ref fixed_star stardata, double tjd, Int32 iflag, string star, CPointer<double> xx, ref string serr)
+        Int32 fixstar_calc_from_struct(ref fixed_star stardata, double tjd, Int32 iflag, ref string star, CPointer<double> xx, ref string serr)
         {
             int i;
             Int32 retc = OK;
@@ -6481,8 +7021,8 @@ namespace SwissEphNet.CPort
             epsilon oe = swed.oec2000;
             iflgsave = iflag;
             iflag |= SwissEph.SEFLG_SPEED; /* we need this in order to work correctly */
-                                           //if (serr != NULL)
-                                           //  *serr = '\0';
+            //if (serr != NULL)
+            //  *serr = '\0';
             iflag = plaus_iflag(iflag, -1, tjd, out serr);
             epheflag = iflag & SwissEph.SEFLG_EPHMASK;
             if (swi_init_swed_if_start() == 1 && 0 == (epheflag & SwissEph.SEFLG_MOSEPH) /*&& serr != NULL*/)
@@ -6667,7 +7207,7 @@ namespace SwissEphNet.CPort
             {
                 SE.SwephLib.swi_bias(x, tjd, iflag, false);
             }/**/
-             /* save J2000 coordinates; required for sidereal positions */
+            /* save J2000 coordinates; required for sidereal positions */
             for (i = 0; i <= 5; i++)
                 xxsv[i] = x[i];
             /************************************************
@@ -6791,6 +7331,7 @@ namespace SwissEphNet.CPort
             bool is_bayer = false;
             CPointer<fixed_star> stardatap;
             CPointer<fixed_star> stardatabegp;
+            sstar = sstar ?? string.Empty;
             if (sstar.StartsWith(","))
             {
                 is_bayer = true;
@@ -6817,7 +7358,7 @@ namespace SwissEphNet.CPort
                     return ERR;
                 }
                 stardata = swed.fixed_stars[star_nr - 1]; // keys start from 1
-                                                           //printf("seq.number: %s, %s, %s, %f\n", stardata.skey, stardata.starname, stardata.starbayer, stardata.mag);
+                                                          //printf("seq.number: %s, %s, %s, %f\n", stardata.skey, stardata.starname, stardata.starbayer, stardata.mag);
                 return OK;
                 /* traditional name with wildcard '%' at end of string */
             }
@@ -6832,12 +7373,13 @@ namespace SwissEphNet.CPort
                     return ERR;
                 }
                 searchkey = sstar;
-                len = sstar.Length - 1;
+                len = sstar.Length;
                 //searchkey[len] = '\0';
-                searchkey = searchkey.Substring(0, len);
+                searchkey = searchkey.Substring(0, len - 1);
                 for (i = 0; i < ndata; i++)
                 {
-                    if (string.Equals(stardatabegp[i].skey.Substring(0, len), searchkey))
+                    //if (string.Equals(stardatabegp[i].skey.Substring(0, len), searchkey))
+                    if (stardatabegp[i].skey.StartsWith(searchkey))
                     {
                         stardata = stardatabegp[i];
                         return OK;
@@ -6847,7 +7389,9 @@ namespace SwissEphNet.CPort
                 serr = sprintf("error, swe_fixstar(): star search string %s did not match", sstar);
                 return ERR;
                 /* traditional name or Bayer/Flamsteed: find it with binary search */
-            } else {
+            }
+            else
+            {
                 searchkey = sstar;
                 if (is_bayer)
                 {
@@ -6875,7 +7419,7 @@ namespace SwissEphNet.CPort
             }
         }
 
-        static bool get_builtin_star(ref string star, out string sstar, out string srecord)
+        static bool get_builtin_star(ref string star, ref string sstar, out string srecord)
         {
             /* some stars are built-in, because they are required for Hindu
              * sidereal ephemerides */
@@ -6945,7 +7489,6 @@ namespace SwissEphNet.CPort
                 return true;
             }
             srecord = null;
-            sstar = null;
             return false;
         }
 
@@ -6992,15 +7535,18 @@ namespace SwissEphNet.CPort
             if (retc == ERR)
                 goto return_err;
             /* star elements from last call: */
-            if (swed.n_fixstars_records > 0 && strcmp(slast_starname, sstar) == 0) {
+            if (swed.n_fixstars_records > 0 && strcmp(slast_starname, sstar) == 0)
+            {
                 //   strcpy(srecord, slast_stardata);
                 stardata = last_stardata;
                 goto found;
             }
-            if (get_builtin_star(ref star, out sstar, out srecord)) {
+            if (get_builtin_star(ref star, ref sstar, out srecord))
+            {
                 is_builtin_star = true;
             }
-            if (is_builtin_star) {
+            if (is_builtin_star)
+            {
                 retc = fixstar_cut_string(srecord, ref star, ref stardata, ref serr);
                 //printf("builtin: %s, %s, %s, %f\n", stardata.skey, stardata.starname, stardata.starbayer, stardata.mag);
                 goto found;
@@ -7014,13 +7560,13 @@ namespace SwissEphNet.CPort
             //strcpy(slast_stardata, srecord);
             last_stardata = stardata;
             slast_starname = sstar;
-            if ((retc = fixstar_calc_from_struct(ref stardata, tjd, iflag, star, xx, ref serr)) == ERR)
+            if ((retc = fixstar_calc_from_struct(ref stardata, tjd, iflag, ref star, xx, ref serr)) == ERR)
                 goto return_err;
 #if TRACE
             trace_swe_fixstar(2, star, tjd, iflag, xx, ref serr);
 #endif
             return iflag;
-            return_err:
+        return_err:
             for (i = 0; i <= 5; i++)
                 xx[i] = 0;
 #if TRACE
@@ -7094,7 +7640,7 @@ namespace SwissEphNet.CPort
             mag = stardata.mag;
             star = sprintf("%s,%s", stardata.starname, stardata.starbayer);
             return OK;
-            return_err:
+        return_err:
             mag = 0;
             return retc;
         }
@@ -7747,7 +8293,7 @@ namespace SwissEphNet.CPort
                 //}
                 return ERR;
             }
-            found:
+        found:
             strcpy(out srecord, s);
             retc = fixstar_cut_string(srecord, ref star, ref stardata, ref serr);
             if (retc == ERR) return ERR;
@@ -7883,7 +8429,7 @@ namespace SwissEphNet.CPort
             if (epoch != 0)
             {
                 SE.SwephLib.swi_icrs2fk5(x, iflag, true); /* backward, i. e. to icrf */
-                                                          /* with ephemerides < DE403, we now convert to J2000 */
+                /* with ephemerides < DE403, we now convert to J2000 */
                 if (swi_get_denum(SEI_SUN, iflag) >= 403)
                 {
                     SE.SwephLib.swi_bias(x, J2000, SwissEph.SEFLG_SPEED, false);
@@ -7992,7 +8538,7 @@ namespace SwissEphNet.CPort
             {
                 SE.SwephLib.swi_bias(x, tjd, iflag, false);
             }/**/
-             /* save J2000 coordinates; required for sidereal positions */
+            /* save J2000 coordinates; required for sidereal positions */
             for (i = 0; i <= 5; i++)
                 xxsv[i] = x[i];
             /************************************************
@@ -8158,7 +8704,7 @@ namespace SwissEphNet.CPort
                 strcpy(out srecord, slast_stardata);
                 goto found;
             }
-            if (get_builtin_star(ref star, out sstar, out srecord))
+            if (get_builtin_star(ref star, ref sstar, out srecord))
             {
                 goto found;
             }
@@ -8235,7 +8781,7 @@ namespace SwissEphNet.CPort
             int retc;
             double[] dparams = new double[20];
             //if (serr != NULL)
-                serr = string.Empty;
+            serr = string.Empty;
             retc = fixstar_format_search_name(star, ref sstar, ref serr);
             if (retc == ERR)
                 goto return_err;
@@ -8243,7 +8789,7 @@ namespace SwissEphNet.CPort
             {
                 ; // is Bayer designation
             }
-            else if (sstar.Length>0 && char.IsDigit(sstar[0]))
+            else if (sstar.Length > 0 && char.IsDigit(sstar[0]))
             {
                 ; // is a sequential star number
             }

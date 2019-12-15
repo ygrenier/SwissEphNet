@@ -6,7 +6,7 @@
     <RootNamespace>SwissEphNet</RootNamespace>
     <PackageId>SwissEphNet</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.8.0.1</Version>
+    <Version>2.8.0.2</Version>
     <Authors>Yan Grenier</Authors>
     <Company>Yan Grenier</Company>
     <Product>SwissEphNet</Product>
@@ -17,7 +17,10 @@
     <RepositoryUrl>https://github.com/ygrenier/SwissEphNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Swiss Ephemeris</PackageTags>
-    <PackageReleaseNotes>2.8.0.1:
+    <PackageReleaseNotes>2.8.0.2:
+- Fix the #41 issue
+
+2.8.0.1:
 - Update to version 2.08 of SwissEphemeris
 
 2.7.1.3:

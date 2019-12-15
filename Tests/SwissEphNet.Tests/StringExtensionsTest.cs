@@ -9,7 +9,7 @@ namespace SwissEphNet.Tests
         [Fact]
         public void TestContainsChar() {
             String s = null;
-            Assert.False(s.Contains('a'));
+            Assert.False(s?.Contains('a') ?? false);
 
             Assert.False("".Contains('a'));
             Assert.False("AbCd".Contains('a'));
