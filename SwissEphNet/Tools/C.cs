@@ -72,7 +72,20 @@ namespace SwissEphNet
             }
             public int Compare(TVal x, TVal y)
             {
-                return Comparer(Key, y);
+                bool xIsDefault = x == null || x.Equals(default(TVal));
+                bool yIsDefault = y == null || y.Equals(default(TVal));
+                if (yIsDefault && !xIsDefault)
+                {
+                    int c = Comparer(Key, x);
+                    if (c != 0) return -c;
+                    return c;
+                }
+                else if (xIsDefault && !yIsDefault)
+                {
+                    return Comparer(Key, y);
+                }
+                else
+                    return -1;
             }
             public TKey Key { get; }
             public Func<TKey, TVal, int> Comparer { get; }

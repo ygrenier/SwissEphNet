@@ -7375,7 +7375,7 @@ namespace SwissEphNet.CPort
                 searchkey = sstar;
                 len = sstar.Length;
                 //searchkey[len] = '\0';
-                searchkey = searchkey.Substring(0, len);
+                searchkey = searchkey.Substring(0, len - 1);
                 for (i = 0; i < ndata; i++)
                 {
                     //if (string.Equals(stardatabegp[i].skey.Substring(0, len), searchkey))
